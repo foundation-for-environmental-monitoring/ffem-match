@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#ffffff</color>
+
+    <color name="primary">#585858</color>
+    <color name="primary_dark">#4d4d4d</color>
+    <color name="accent">#2d2d2d</color>
+    <color name="primary_background">#ccc</color>
+    <color name="background">#fff</color>
+    <color name="button_main">#CDCDCD</color>
+    <color name="button_main_highlight">#848484</color>
+    <color name="button_text">#e33b3b3b</color>
+    <color name="button_text_soft">#e33b3b3b</color>
+
+    <color name="button_green">#CDCDCD</color>
+    <color name="button_green_selected">#848484</color>
+
+    <color name="fab_button_background">#282828</color>
+
+    <!-- Diagnostic -->
+    <color name="diagnostic">#910228</color>
+    <color name="diagnostic_status">#830023</color>
+
+    <color name="text_primary">#d9222222</color>
+    <color name="text_secondary">#d9161616</color>
+
+    <color name="text_links">#0078A7</color>
+
+    <color name="window_background">#fff</color>
+
+    <color name="gray">#2d2d2d</color>
+    <color name="white">#ffffff</color>
+    <color name="yellow">#ffeb3b</color>
+
+    <color name="error_background">#2afac900</color>
+    <color name="destructive">#ff0000</color>
+
+    <!-- StripTest -->
+    <color name="spring_green">#39FF14</color>
+
+    <!-- card colors -->
+    <color name="card_background">#ffffff</color>
+    <color name="card_shadow_1">#d4d4d4</color>
+    <color name="card_shadow_2">#dddddd</color>
+
+    <color name="main_button_blue">#CDCDCD</color>
+</resources>

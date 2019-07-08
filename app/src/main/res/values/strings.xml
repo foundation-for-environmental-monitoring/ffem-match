@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">ffem Lite</string>
+
+    <string name="intro_msg_1">Quick colorimetric analysis to determine contaminants in water.</string>
+    <string name="intro_msg_2">To begin, launch ffem Collect and select a report question in a survey.</string>
+    <string name="go_to_external_app">Launch ffem Collect</string>
+
+</resources>

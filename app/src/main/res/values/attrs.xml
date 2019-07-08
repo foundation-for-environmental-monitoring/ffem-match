@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="BaseActivity">
+        <attr name="primaryButtonStyle" format="reference" />
+        <attr name="secondaryButtonStyle" format="reference" />
+        <attr name="primaryButtonColor" format="color" />
+        <attr name="fabButtonColor" format="color" />
+        <attr name="textColorPrimary" format="color" />
+        <attr name="longButtonStyle" format="reference" />
+        <attr name="longButtonText" format="color" />
+        <attr name="dialogDestructiveButton" format="reference" />
+        <attr name="primaryBackgroundStyle" format="reference" />
+        <attr name="toolbarHeight" format="dimension" />
+        <attr name="toolbarMargin" format="dimension" />
+        <attr name="progressTint" format="color" />
+        <attr name="progressTintInverse" format="color" />
+    </declare-styleable>
+</resources>
