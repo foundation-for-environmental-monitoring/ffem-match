@@ -1,8 +1,29 @@
 <resources>
     <string name="app_name">ffem Lite</string>
+    <string name="app_slogan">Water Quality System</string>
+    <string name="copyrightMessage">Copyright © ffem</string>
+    <string name="legalInformation">Legal Information</string>
+
+    <string name="navigate_up">Navigate up</string>
 
     <string name="intro_msg_1">Quick colorimetric analysis to determine contaminants in water.</string>
     <string name="intro_msg_2">To begin, launch ffem Collect and select a report question in a survey.</string>
     <string name="go_to_external_app">Launch ffem Collect</string>
 
+    <!-- Software notices -->
+    <string name="software_notices">Software Notices</string>
+    <string name="software_incorporates_material">This software incorporates material from the projects listed below</string>
+
+    <!-- Support -->
+
+    <!--Software notices-->
+    <string name="apache_license_2">Apache License 2.0</string>
+    <string name="mit_license">MIT License</string>
+    <string name="gnu_license">GNU GPL v2</string>
+    <string name="cca_license">CC BY 4.0 International</string>
+    <string name="eclipse_public_license">Eclipse Public License 1.0</string>
+
+    <string name="version">Version</string>
+    <string name="about">About</string>
+    <string name="settings">Settings</string>
 </resources>
