@@ -46,23 +46,46 @@
             android:textAlignment="center"
             android:textSize="@dimen/default_text_size" />
 
-        <Button
-            android:id="@+id/button_ok"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="52dp"
-            android:layout_marginEnd="16dp"
-            android:onClick="onOkClicked"
-            android:paddingStart="20dp"
-            android:paddingTop="20dp"
-            android:paddingEnd="20dp"
-            android:paddingBottom="20dp"
-            android:text="@string/go_to_external_app"
-            android:textSize="18dp"
-            android:theme="?primaryButtonStyle"
-            tools:ignore="SpUsage" />
+            android:orientation="vertical">
 
+            <Button
+                android:id="@+id/button_ok"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="52dp"
+                android:layout_marginEnd="16dp"
+                android:onClick="onOkClicked"
+                android:paddingStart="20dp"
+                android:paddingTop="20dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="20dp"
+                android:text="@string/go_to_external_app"
+                android:textSize="18dp"
+                android:theme="?primaryButtonStyle"
+                tools:ignore="SpUsage" />
+
+            <Button
+                android:id="@+id/button_start"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="22dp"
+                android:layout_marginEnd="16dp"
+                android:onClick="onStartClicked"
+                android:paddingStart="20dp"
+                android:paddingTop="20dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="20dp"
+                android:text="@string/start_test"
+                android:textSize="18dp"
+                android:theme="?primaryButtonStyle"
+                tools:ignore="SpUsage" />
+        </LinearLayout>
     </LinearLayout>
 </layout>

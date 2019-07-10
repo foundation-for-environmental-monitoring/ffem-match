@@ -36,12 +36,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onOkClicked(@Suppress("UNUSED_PARAMETER") view: View) {
-
-        var intent: Intent? = Intent(baseContext, BarcodeCaptureActivity::class.java)
-        startActivity(intent)
-
-        intent = packageManager
-            .getLaunchIntentForPackage(EXTERNAL_APP_PACKAGE_NAME)
+        val intent = packageManager.getLaunchIntentForPackage(EXTERNAL_APP_PACKAGE_NAME)
         if (intent != null) {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             startActivity(intent)
@@ -49,6 +44,11 @@ class MainActivity : AppCompatActivity() {
         } else {
             alertDependantAppNotFound()
         }
+    }
+
+    fun onStartClicked(@Suppress("UNUSED_PARAMETER") view: View) {
+        val intent: Intent? = Intent(baseContext, BarcodeCaptureActivity::class.java)
+        startActivity(intent)
     }
 
     private fun closeApp(delay: Int) {

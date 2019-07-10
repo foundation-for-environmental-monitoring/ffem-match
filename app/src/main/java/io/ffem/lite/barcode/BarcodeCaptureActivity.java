@@ -349,7 +349,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements B
             }
         }
 
-        sendImage("pH", null);
+        sendDummyImage("pH", null);
 
 //        if (best != null) {
 //            captureImage(best.displayValue, best.getBoundingBox());
@@ -358,7 +358,9 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements B
         return false;
     }
 
-    private void sendImage(String pH, Object o) {
+    private void sendDummyImage(String pH, Object o) {
+        Timber.d("isExternalStorageWritable :%s", isPermissionsGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE));
+
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ph_bottle);
 
         sendToServer("pH", bitmap);
@@ -384,9 +386,9 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements B
             Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
             Timber.d("width: " + bitmap.getWidth() + ", height:" + bitmap.getHeight());
 
-            bitmap = Utilities.rotateImage(bitmap, 270);
+            bitmap = Utilities.INSTANCE.rotateImage(bitmap, 270);
 
-            bitmap = Utilities.detectBarcode(bitmap, getApplicationContext());
+            bitmap = Utilities.INSTANCE.detectBarcode(bitmap, getApplicationContext());
 
             sendToServer(barcodeValue, bitmap);
         });
@@ -394,7 +396,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements B
 
     private void sendToServer(String barcodeValue, Bitmap bitmap) {
 
-        String filePath = Utilities.savePicture(barcodeValue, Utilities.bitmapToBytes(bitmap));
+        String filePath = Utilities.INSTANCE.savePicture(barcodeValue, Utilities.INSTANCE.bitmapToBytes(bitmap));
         try {
             // Add barcode value as exif metadata in the image.
             String imageDescription = "{\"test_type\" : " + barcodeValue + "}";
@@ -406,7 +408,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements B
         }
 
         try {
-//                Utilities.uploadToServer(filePath);
+//            Utilities.uploadToServer(filePath);
 
             File file = new File(filePath);
             String contentType = file.toURL().openConnection().getContentType();
@@ -490,7 +492,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements B
         //do something with barcode data returned
         Timber.d("Captured barcode: " + barcode.displayValue + ", bounds :  " + barcode.getBoundingBox());
 
-        if (Utilities.isValidAspectRatio(barcode)) {
+        if (Utilities.INSTANCE.isValidAspectRatio(barcode)) {
             captureImage(barcode.displayValue, barcode.getBoundingBox());
         }
     }
