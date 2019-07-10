@@ -4,6 +4,7 @@
     <string name="copyrightMessage">Copyright © ffem</string>
     <string name="legalInformation">Legal Information</string>
 
+    <string name="ok">OK</string>
     <string name="navigate_up">Navigate up</string>
 
     <string name="intro_msg_1">Quick colorimetric analysis to determine contaminants in water.</string>
@@ -14,7 +15,10 @@
     <string name="software_notices">Software Notices</string>
     <string name="software_incorporates_material">This software incorporates material from the projects listed below</string>
 
-    <!-- Support -->
+    <!--Alerts-->
+    <string name="app_not_found">App not found</string>
+    <string name="install_app">ffem Collect is not installed.\n\nPlease install ffem Collect app from Play store.</string>
+    <string name="go_to_play_store">Go to Play store</string>
 
     <!--Software notices-->
     <string name="apache_license_2">Apache License 2.0</string>
@@ -26,4 +30,8 @@
     <string name="version">Version</string>
     <string name="about">About</string>
     <string name="settings">Settings</string>
+
+    <string name="permission_camera_rationale">Access to the camera is needed for detection</string>
+    <string name="no_camera_permission">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
+    <string name="low_storage_error">Face detector dependencies cannot be downloaded due to low device storage</string>
 </resources>

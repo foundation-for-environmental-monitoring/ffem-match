@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="io.ffem.lite">
 
+    <uses-permission android:name="android.permission.CAMERA" />
+
     <application
         android:name="io.ffem.lite.app.App"
         android:allowBackup="false"
@@ -22,7 +24,10 @@
         <activity
             android:name=".preference.SettingsActivity"
             android:screenOrientation="nosensor" />
-        <activity android:name=".ui.AboutActivity" />
+        <activity
+            android:name=".ui.AboutActivity"
+            android:screenOrientation="nosensor" />
+        <activity android:name=".barcode.BarcodeCaptureActivity" />
     </application>
 
 </manifest>
