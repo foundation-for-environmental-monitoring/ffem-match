@@ -9,12 +9,11 @@ import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import io.ffem.lite.R
 import io.ffem.lite.barcode.BarcodeCaptureActivity
 import io.ffem.lite.preference.SettingsActivity
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
     companion object {
         private const val EXTERNAL_APP_PACKAGE_NAME = "io.ffem.collect"
@@ -23,6 +22,13 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        setTitle(R.string.app_name)
+    }
+
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -48,7 +54,16 @@ class MainActivity : AppCompatActivity() {
 
     fun onStartClicked(@Suppress("UNUSED_PARAMETER") view: View) {
         val intent: Intent? = Intent(baseContext, BarcodeCaptureActivity::class.java)
-        startActivity(intent)
+        startActivityForResult(intent, 100)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == 100) {
+            val intent: Intent? = Intent(baseContext, ResultActivity::class.java)
+            startActivityForResult(intent, 101)
+        }
     }
 
     private fun closeApp(delay: Int) {
