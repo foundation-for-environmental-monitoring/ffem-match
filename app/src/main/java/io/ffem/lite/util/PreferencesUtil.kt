@@ -92,6 +92,12 @@ object PreferencesUtil {
         return sharedPreferences.getString(getKey(context, keyId), defaultValue)
     }
 
+    fun getString(context: Context, key: String, defaultValue: String): String? {
+        val sharedPreferences = PreferenceManager
+            .getDefaultSharedPreferences(context)
+        return sharedPreferences.getString(key, defaultValue)
+    }
+
     /**
      * Sets a string value to preferences.
      *
@@ -105,5 +111,14 @@ object PreferencesUtil {
         editor.putString(getKey(context, keyId), value)
         editor.apply()
     }
+
+    fun setString(context: Context, key: String, value: String) {
+        val sharedPreferences = PreferenceManager
+            .getDefaultSharedPreferences(context)
+        val editor = sharedPreferences.edit()
+        editor.putString(key, value)
+        editor.apply()
+    }
+
 
 }

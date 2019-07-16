@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import io.ffem.lite.R
 import io.ffem.lite.model.ResultResponse
 import io.ffem.lite.remote.ApiService
+import io.ffem.lite.util.PreferencesUtil
 import kotlinx.android.synthetic.main.fragment_result.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -31,6 +32,7 @@ class ResultFragment : Fragment() {
     }
 
     private lateinit var progressDialog: ProgressDialog
+    private var requestCount = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,7 +40,6 @@ class ResultFragment : Fragment() {
     ): View? {
         return inflater.inflate(R.layout.fragment_result, container, false)
     }
-
 
     override fun onResume() {
         super.onResume()
@@ -58,7 +59,7 @@ class ResultFragment : Fragment() {
 
         Handler().postDelayed({
             getResult()
-        }, 35000)
+        }, 40000)
     }
 
     private fun getResult() {
@@ -69,7 +70,10 @@ class ResultFragment : Fragment() {
             .build()
 
         val api = retrofit.create(ApiService::class.java)
-        val call = api.getResponse("1")
+
+        val testId = PreferencesUtil.getString(activity!!, "testRunId", "")
+
+        val call = api.getResponse(testId.toString())
         call.enqueue(object : Callback<ResultResponse> {
 
             override fun onResponse(call: Call<ResultResponse>?, response: Response<ResultResponse>?) {
@@ -77,13 +81,21 @@ class ResultFragment : Fragment() {
                 progressDialog.dismiss()
 
                 val result = message?.result
-                textTitle.text = message?.title
-                textResult.text = result?.replace(message.title, "")
+                val title = message?.title
+                textTitle.text = title
+                textResult.text = result?.replace(title.toString(), "")
             }
 
             override fun onFailure(call: Call<ResultResponse>?, t: Throwable?) {
                 Timber.e(t.toString())
-                progressDialog.dismiss()
+                requestCount++
+                if (requestCount < 7) {
+                    Handler().postDelayed({
+                        getResult()
+                    }, 10000)
+                } else {
+                    progressDialog.dismiss()
+                }
             }
         })
     }
