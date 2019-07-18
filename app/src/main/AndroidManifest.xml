@@ -19,15 +19,18 @@
         android:theme="@style/AppTheme.Main"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name=".ui.ResultActivity"
-            android:screenOrientation="nosensor" />
-        <activity android:name=".ui.MainActivity">
+            android:name=".ui.ResultListActivity"
+            android:screenOrientation="nosensor">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.ResultActivity"
+            android:screenOrientation="nosensor" />
+        <activity android:name=".ui.MainActivity" />
         <activity
             android:name=".preference.SettingsActivity"
             android:screenOrientation="nosensor" />
