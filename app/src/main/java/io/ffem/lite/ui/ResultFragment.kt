@@ -11,7 +11,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import io.ffem.lite.R
+import io.ffem.lite.app.AppDatabase
 import io.ffem.lite.model.ResultResponse
+import io.ffem.lite.model.TestResult
 import io.ffem.lite.remote.ApiService
 import io.ffem.lite.util.PreferencesUtil
 import kotlinx.android.synthetic.main.fragment_result.*
@@ -80,10 +82,17 @@ class ResultFragment : Fragment() {
                 val message = response?.body()
                 progressDialog.dismiss()
 
-                val result = message?.result
+                val id = message?.id
                 val title = message?.title
+                val result = message?.result?.replace(title.toString(), "")
                 textTitle.text = title
-                textResult.text = result?.replace(title.toString(), "")
+                textResult.text = result
+
+                val db = AppDatabase.getDatabase(context!!)
+
+                val resultData = db.resultDao().getResult(id)
+
+                db.resultDao().insert(TestResult(id.toString(), title.toString(), resultData.date, result!!))
             }
 
             override fun onFailure(call: Call<ResultResponse>?, t: Throwable?) {

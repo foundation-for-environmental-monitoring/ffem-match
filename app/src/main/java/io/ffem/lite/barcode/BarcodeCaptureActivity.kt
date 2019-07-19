@@ -44,11 +44,14 @@ import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
 import com.google.android.material.snackbar.Snackbar
 import io.ffem.lite.R
+import io.ffem.lite.app.AppDatabase
+import io.ffem.lite.model.TestResult
 import io.ffem.lite.util.PreferencesUtil
 import okhttp3.*
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
+import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -445,14 +448,18 @@ class BarcodeCaptureActivity : AppCompatActivity(), BarcodeGraphicTracker.Barcod
 
                     val intent = Intent()
                     setResult(Activity.RESULT_OK, intent)
-
                     response.body()!!.close()
+                    val db = AppDatabase.getDatabase(baseContext)
+
+                    val date = Date()
+                    val formatter = SimpleDateFormat("MMM dd yyyy HH:mma", Locale.US)
+
+                    db.resultDao().insert(TestResult(testId, barcodeValue, formatter.format(date), ""))
+
                     finish()
 
                 }
             })
-
-
         } catch (e: Exception) {
             e.printStackTrace()
         }

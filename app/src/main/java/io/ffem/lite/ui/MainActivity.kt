@@ -22,7 +22,6 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        supportActionBar?.setDisplayHomeAsUpEnabled(false)
         setTitle(R.string.app_name)
     }
 
@@ -55,15 +54,6 @@ class MainActivity : BaseActivity() {
     fun onStartClicked(@Suppress("UNUSED_PARAMETER") view: View) {
         val intent: Intent? = Intent(baseContext, BarcodeCaptureActivity::class.java)
         startActivityForResult(intent, 100)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == 100) {
-            val intent: Intent? = Intent(baseContext, ResultActivity::class.java)
-            startActivityForResult(intent, 101)
-        }
     }
 
     private fun closeApp(delay: Int) {
