@@ -12,6 +12,7 @@ import android.view.View
 import io.ffem.lite.R
 import io.ffem.lite.barcode.BarcodeCaptureActivity
 import io.ffem.lite.preference.SettingsActivity
+import io.ffem.lite.util.NetUtil
 
 class MainActivity : BaseActivity() {
 
@@ -52,8 +53,10 @@ class MainActivity : BaseActivity() {
     }
 
     fun onStartClicked(@Suppress("UNUSED_PARAMETER") view: View) {
-        val intent: Intent? = Intent(baseContext, BarcodeCaptureActivity::class.java)
-        startActivityForResult(intent, 100)
+        if (NetUtil.isInternetConnected(this)) {
+            val intent: Intent? = Intent(baseContext, BarcodeCaptureActivity::class.java)
+            startActivityForResult(intent, 100)
+        }
     }
 
     private fun closeApp(delay: Int) {

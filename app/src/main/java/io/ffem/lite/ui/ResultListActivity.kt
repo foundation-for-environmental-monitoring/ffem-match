@@ -11,6 +11,7 @@ import io.ffem.lite.barcode.BarcodeCaptureActivity
 import io.ffem.lite.model.ResultResponse
 import io.ffem.lite.model.TestResult
 import io.ffem.lite.remote.ApiService
+import io.ffem.lite.util.NetUtil
 import io.ffem.lite.util.PreferencesUtil
 import retrofit2.Call
 import retrofit2.Callback
@@ -62,12 +63,14 @@ class ResultListActivity : BaseActivity() {
         super.onResume()
         Handler().postDelayed({
             getResult()
-        }, 5000)
+        }, 50)
     }
 
     fun onStartClicked(@Suppress("UNUSED_PARAMETER") view: View) {
-        val intent: Intent? = Intent(baseContext, BarcodeCaptureActivity::class.java)
-        startActivityForResult(intent, 100)
+        if (NetUtil.isInternetConnected(this)) {
+            val intent: Intent? = Intent(baseContext, BarcodeCaptureActivity::class.java)
+            startActivityForResult(intent, 100)
+        }
     }
 
     private fun getResult() {
