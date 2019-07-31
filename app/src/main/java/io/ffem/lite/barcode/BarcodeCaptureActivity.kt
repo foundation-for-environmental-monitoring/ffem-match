@@ -386,7 +386,7 @@ class BarcodeCaptureActivity : AppCompatActivity(), BarcodeGraphicTracker.Barcod
             Timber.d("isExternalStorageReadable :%s", isPermissionsGranted(Manifest.permission.READ_EXTERNAL_STORAGE))
             Timber.d("isCameraPermission :%s", isPermissionsGranted(Manifest.permission.CAMERA))
             var bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-            Timber.d("width: " + bitmap.width + ", height:" + bitmap.height)
+            Timber.d("width: %s, height: %s", bitmap.width, bitmap.height)
 
             bitmap = Utilities.rotateImage(bitmap, 270)
 

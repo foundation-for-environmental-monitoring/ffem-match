@@ -3,6 +3,8 @@ package io.ffem.lite.ui
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import io.ffem.lite.R
@@ -10,6 +12,7 @@ import io.ffem.lite.app.AppDatabase
 import io.ffem.lite.barcode.BarcodeCaptureActivity
 import io.ffem.lite.model.ResultResponse
 import io.ffem.lite.model.TestResult
+import io.ffem.lite.preference.SettingsActivity
 import io.ffem.lite.remote.ApiService
 import io.ffem.lite.util.NetUtil
 import io.ffem.lite.util.PreferencesUtil
@@ -128,5 +131,15 @@ class ResultListActivity : BaseActivity() {
                 }
             }
         })
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    fun onSettingsClick(@Suppress("UNUSED_PARAMETER") item: MenuItem) {
+        val intent = Intent(baseContext, SettingsActivity::class.java)
+        startActivity(intent)
     }
 }

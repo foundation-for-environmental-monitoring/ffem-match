@@ -44,7 +44,7 @@
                 android:layout_marginBottom="2dp"
                 android:text="@{String.valueOf(result.id)}"
                 android:textColor="#737373"
-                android:textSize="14sp"
+                android:textSize="13sp"
                 tools:text="Test id" />
 
             <TextView
@@ -62,16 +62,33 @@
             android:id="@+id/textValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
             android:clickable="false"
             android:focusable="false"
             android:gravity="center"
-            android:text="@{result.value}"
+            android:text="@{result.value }"
             android:textIsSelectable="false"
             android:textSize="30sp"
+            android:visibility="@{result.value.isEmpty() ? View.GONE : View.VISIBLE}"
             app:layout_constraintBottom_toBottomOf="@id/layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="2.5" />
+
+        <TextView
+            android:id="@+id/textProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:clickable="false"
+            android:focusable="false"
+            android:gravity="center"
+            android:text="@string/analyzing"
+            android:textIsSelectable="false"
+            android:textSize="14sp"
+            android:visibility="@{result.value.isEmpty() ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="@id/layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
