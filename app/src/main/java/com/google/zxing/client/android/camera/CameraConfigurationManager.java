@@ -72,30 +72,6 @@ final class CameraConfigurationManager {
         return null;
     }
 
-    public static void setTorchEnabled(Camera.Parameters parameters,
-                                       boolean enabled) {
-        List<String> supportedFlashModes = parameters.getSupportedFlashModes();
-        String flashMode;
-        if (enabled) {
-            flashMode = findSettableValue("flash mode",
-                    supportedFlashModes,
-                    Camera.Parameters.FLASH_MODE_TORCH,
-                    Camera.Parameters.FLASH_MODE_ON);
-        } else {
-            flashMode = findSettableValue("flash mode",
-                    supportedFlashModes,
-                    Camera.Parameters.FLASH_MODE_OFF);
-        }
-        if (flashMode != null) {
-            if (flashMode.equals(parameters.getFlashMode())) {
-                Timber.i("Flash mode already set to %s", flashMode);
-            } else {
-                Timber.i("Setting flash mode to %s", flashMode);
-                parameters.setFlashMode(flashMode);
-            }
-        }
-    }
-
     public static void setBestExposure(Camera.Parameters parameters,
                                        boolean lightOn) {
 
@@ -189,8 +165,6 @@ final class CameraConfigurationManager {
         }
         Timber.i("Preview size on screen: %s", previewSizeOnScreen);
     }
-
-    // All references to Torch are removed from here, methods, variables...
 
     void setDesiredCameraParameters(OpenCamera camera, boolean safeMode) {
 
@@ -326,31 +300,5 @@ final class CameraConfigurationManager {
 
         Timber.i("Found best approximate preview size: %s", bestSize);
         return bestSize;
-    }
-
-    boolean getTorchState(Camera camera) {
-        if (camera != null) {
-            Camera.Parameters parameters = camera.getParameters();
-            if (parameters != null) {
-                String flashMode = camera.getParameters().getFlashMode();
-                return flashMode != null && (Camera.Parameters.FLASH_MODE_ON.equals(flashMode)
-                        || Camera.Parameters.FLASH_MODE_TORCH.equals(flashMode));
-            }
-        }
-        return false;
-    }
-
-    void setTorchEnabled(Camera camera, boolean enabled) {
-        Camera.Parameters parameters = camera.getParameters();
-        setTorchEnabled(parameters, enabled, false);
-        camera.setParameters(parameters);
-    }
-
-    void setTorchEnabled(Camera.Parameters parameters, boolean enabled, boolean safeMode) {
-        setTorchEnabled(parameters, enabled);
-
-        if (!safeMode) {
-            setBestExposure(parameters, enabled);
-        }
     }
 }

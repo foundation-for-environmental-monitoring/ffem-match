@@ -132,7 +132,7 @@ class BarcodeCaptureActivity : AppCompatActivity(), BarcodeGraphicTracker.Barcod
 
         findViewById<View>(R.id.topLayout).setOnClickListener(listener)
         Snackbar.make(
-            mGraphicOverlay!!, R.string.permission_camera_rationale,
+            mGraphicOverlay!!, R.string.camera_permission_required,
             Snackbar.LENGTH_INDEFINITE
         )
             .setAction(R.string.ok, listener)
