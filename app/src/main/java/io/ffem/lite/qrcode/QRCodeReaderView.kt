@@ -52,7 +52,7 @@ class QRCodeReaderView @JvmOverloads constructor(context: Context, attrs: Attrib
     private var mCameraManager: CameraManager? = null
     private var mQrDecodingEnabled = true
     private var decodeFrameTask: DecodeFrameTask? = null
-    private var decodeHints: Map<DecodeHintType, Any>? = null
+    private var decodeHints: Map<DecodeHintType, Any>? = mapOf(DecodeHintType.TRY_HARDER to 1)
 
     init {
 
@@ -239,6 +239,10 @@ class QRCodeReaderView @JvmOverloads constructor(context: Context, attrs: Attrib
 
             try {
 
+//                val points = null
+//                val resBitmap = BitmapFactory.decodeResource(view.resources, R.drawable.color_card)
+//                val bitmap = bitmapToBinaryBitmap(resBitmap)
+
                 val detectorResult = view.detector!!.detect(bitmap.blackMatrix, hintsRef.get())
                 val points = detectorResult.points
 
@@ -268,9 +272,16 @@ class QRCodeReaderView @JvmOverloads constructor(context: Context, attrs: Attrib
                 bottom += 10
 
                 val newBitmap = cropImage(bytes, top, left, right, bottom)
-                //final Bitmap newBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+//                val newBitmap = cropImage(getImageByteArray(resBitmap), top, left, right, bottom)
 
-                return Result("Testing", ByteArray(0), points, BarcodeFormat.QR_CODE)
+                val barCodeBitmap = cropImage(getImageByteArray(newBitmap), 0, 26, 480, 60)
+
+//                val barCodeBitmap = BitmapFactory.decodeResource(view.resources, R.drawable.barcode)
+
+                val barCodeText = readBarcode(barCodeBitmap)
+
+                return Result(barCodeText, ByteArray(0), points, BarcodeFormat.QR_CODE)
+
             } catch (e: NotFoundException) {
                 Timber.d("No QR Code found")
             } catch (e: FormatException) {
@@ -290,8 +301,8 @@ class QRCodeReaderView @JvmOverloads constructor(context: Context, attrs: Attrib
             // Notify we found a QRCode
             if (view != null && result != null && view.mOnQRCodeReadListener != null) {
                 // Transform resultPoints to View coordinates
-                val transformedPoints = transformToViewCoordinates(view, result.resultPoints)
-                view.mOnQRCodeReadListener!!.onQRCodeRead(result.text, transformedPoints)
+//                val transformedPoints = transformToViewCoordinates(view, result.resultPoints)
+//                view.mOnQRCodeReadListener!!.onQRCodeRead(result.text, transformedPoints)
             }
         }
 
@@ -327,6 +338,43 @@ class QRCodeReaderView @JvmOverloads constructor(context: Context, attrs: Attrib
                 .newInstance(data, 0, data.size, false)
             val rect = Rect(left, top, right, bottom)
             return regionDecoder.decodeRegion(rect, BitmapFactory.Options())
+        }
+
+        fun getImageByteArray(bmp: Bitmap): ByteArray {
+            val baos = ByteArrayOutputStream()
+            bmp.compress(Bitmap.CompressFormat.PNG, 100, baos)
+            return baos.toByteArray()
+        }
+
+        fun readBarcode(bitmap: Bitmap): String? {
+            var contents: String? = null
+
+            val intArray = IntArray(bitmap.width * bitmap.height)
+            bitmap.getPixels(intArray, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
+
+            val source = RGBLuminanceSource(bitmap.width, bitmap.height, intArray)
+            val reader = MultiFormatReader()
+
+            try {
+                val result = reader.decode(BinaryBitmap(HybridBinarizer(source)))
+                contents = result.toString()
+            } catch (e: NotFoundException) {
+                e.printStackTrace()
+            } catch (e: ChecksumException) {
+                e.printStackTrace()
+            } catch (e: FormatException) {
+                e.printStackTrace()
+            }
+
+            return contents
+        }
+
+
+        fun bitmapToBinaryBitmap(bitmap: Bitmap): BinaryBitmap {
+            val intArray = IntArray(bitmap.width * bitmap.height)
+            bitmap.getPixels(intArray, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
+            val source = RGBLuminanceSource(bitmap.width, bitmap.height, intArray)
+            return BinaryBitmap(HybridBinarizer(source))
         }
     }
 }

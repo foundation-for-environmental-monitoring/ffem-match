@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:Suppress("DEPRECATION")
+
 package io.ffem.lite.barcode
 
 import android.Manifest
@@ -95,11 +97,10 @@ class BarcodeCaptureActivity : AppCompatActivity(), BarcodeGraphicTracker.Barcod
         gestureDetector = GestureDetector(this, CaptureGestureListener())
         scaleGestureDetector = ScaleGestureDetector(this, ScaleListener())
 
-        Snackbar.make(
-            mGraphicOverlay!!, "Tap to capture. Pinch/Stretch to zoom",
-            Snackbar.LENGTH_LONG
-        )
-            .show()
+//        Snackbar.make(
+//            mGraphicOverlay!!, "Tap to capture. Pinch/Stretch to zoom",
+//            Snackbar.LENGTH_LONG
+//        ).show()
     }
 
     /**
@@ -123,7 +124,7 @@ class BarcodeCaptureActivity : AppCompatActivity(), BarcodeGraphicTracker.Barcod
 
         val thisActivity = this
 
-        val listener = { view: View ->
+        val listener = { _: View ->
             ActivityCompat.requestPermissions(
                 thisActivity, permissions,
                 RC_HANDLE_CAMERA_PERM
@@ -277,15 +278,10 @@ class BarcodeCaptureActivity : AppCompatActivity(), BarcodeGraphicTracker.Barcod
             return
         }
 
-        Timber.e(
-            "Permission not granted: results len = " + grantResults.size +
-                    " Result code = " + if (grantResults.size > 0) grantResults[0] else "(empty)"
-        )
-
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Multi tracker sample")
             .setMessage(R.string.no_camera_permission)
-            .setPositiveButton(R.string.ok, { dialog, id -> finish() })
+            .setPositiveButton(R.string.ok) { _, _ -> finish() }
             .show()
     }
 
@@ -337,7 +333,7 @@ class BarcodeCaptureActivity : AppCompatActivity(), BarcodeGraphicTracker.Barcod
 
         for (graphic in mGraphicOverlay!!.graphics) {
             val barcode = graphic.barcode
-            if (barcode.boundingBox.contains(x.toInt(), y.toInt())) {
+            if (barcode!!.boundingBox.contains(x.toInt(), y.toInt())) {
                 // Exact hit, no need to keep looking.
                 best = barcode
                 break
@@ -351,24 +347,23 @@ class BarcodeCaptureActivity : AppCompatActivity(), BarcodeGraphicTracker.Barcod
             }
         }
 
-        sendDummyImage("pH", null)
+//        sendDummyImage("pH")
 
-        //        if (best != null) {
-        //            captureImage(best.displayValue, best.getBoundingBox());
-        //        }
+        if (best != null) {
+            captureImage(best.displayValue, best.boundingBox)
+        }
 
         return false
     }
 
-    private fun sendDummyImage(pH: String, o: Any?) {
+    private fun sendDummyImage(name: String) {
         Timber.d("isExternalStorageWritable :%s", isPermissionsGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE))
 
         val bitmap = BitmapFactory.decodeResource(resources, R.drawable.ph_bottle)
 
-        sendToServer("pH", bitmap)
+        sendToServer(name, bitmap)
 
-        val intent = Intent()
-        setResult(Activity.RESULT_OK, intent)
+        setResult(Activity.RESULT_OK, Intent())
         finish()
     }
 
@@ -393,6 +388,9 @@ class BarcodeCaptureActivity : AppCompatActivity(), BarcodeGraphicTracker.Barcod
             bitmap = Utilities.detectBarcode(bitmap, applicationContext)
 
             sendToServer(barcodeValue, bitmap)
+
+            setResult(Activity.RESULT_OK, Intent())
+            finish()
         })
     }
 
@@ -474,30 +472,25 @@ class BarcodeCaptureActivity : AppCompatActivity(), BarcodeGraphicTracker.Barcod
      * @return granted value
      */
     private fun isPermissionsGranted(permission: String): Boolean {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED) {
                 Timber.v("Permission is granted")
-                return true
+                true
             } else {
 
                 Timber.v("Permission is revoked")
                 ActivityCompat.requestPermissions(this, arrayOf(permission), 1)
-                return false
+                false
             }
         } else { //permission is automatically granted on sdk<23 upon installation
             Timber.v("Permission $permission is granted")
-            return true
+            true
         }
     }
 
-    /**
-     * Some actions when barcode is detected.
-     *
-     * @param barcode the bar code
-     */
     override fun onBarcodeDetected(barcode: Barcode) {
         //do something with barcode data returned
-        Timber.d("Captured barcode: " + barcode.displayValue + ", bounds :  " + barcode.boundingBox)
+        Timber.d("Captured barcode: %s, bounds :  %s", barcode.displayValue, barcode.boundingBox)
 
         if (Utilities.isValidAspectRatio(barcode)) {
             captureImage(barcode.displayValue, barcode.boundingBox)
@@ -564,15 +557,15 @@ class BarcodeCaptureActivity : AppCompatActivity(), BarcodeGraphicTracker.Barcod
 
     companion object {
         // constants used to pass extra data in the intent
-        val AutoFocus = "AutoFocus"
-        val UseFlash = "UseFlash"
-        val BarcodeObject = "Barcode"
+        const val AutoFocus = "AutoFocus"
+        const val UseFlash = "UseFlash"
+        //        val BarcodeObject = "Barcode"
         //    private static final String TAG = "Barcode-reader";
         // intent request code to handle updating play services if needed.
-        private val RC_HANDLE_GMS = 9001
+        private const val RC_HANDLE_GMS = 9001
         // permission request codes need to be < 256
-        private val RC_HANDLE_CAMERA_PERM = 2
-        private val API_URL = "http://ec2-52-66-17-109.ap-south-1.compute.amazonaws.com:5000"
+        private const val RC_HANDLE_CAMERA_PERM = 2
+        private const val API_URL = "http://ec2-52-66-17-109.ap-south-1.compute.amazonaws.com:5000"
     }
 
 }

@@ -9,6 +9,7 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import io.ffem.lite.R
 import io.ffem.lite.app.AppDatabase
+import io.ffem.lite.barcode.BarcodeCaptureActivity
 import io.ffem.lite.model.ResultResponse
 import io.ffem.lite.model.TestResult
 import io.ffem.lite.preference.SettingsActivity
@@ -70,7 +71,7 @@ class ResultListActivity : BaseActivity() {
 
     fun onStartClicked(@Suppress("UNUSED_PARAMETER") view: View) {
         if (NetUtil.isInternetConnected(this)) {
-            val intent: Intent? = Intent(baseContext, CaptureActivity::class.java)
+            val intent: Intent? = Intent(baseContext, BarcodeCaptureActivity::class.java)
             startActivityForResult(intent, 100)
         }
     }

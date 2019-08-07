@@ -37,7 +37,9 @@
         <activity
             android:name=".ui.AboutActivity"
             android:screenOrientation="nosensor" />
-        <activity android:name=".barcode.BarcodeCaptureActivity" />
+        <activity
+            android:name=".barcode.BarcodeCaptureActivity"
+            android:screenOrientation="nosensor" />
         <activity
             android:name=".ui.CaptureActivity"
             android:screenOrientation="nosensor" />

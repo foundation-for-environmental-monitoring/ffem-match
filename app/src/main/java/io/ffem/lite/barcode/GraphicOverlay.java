@@ -133,8 +133,8 @@ public class GraphicOverlay<T extends GraphicOverlay.Graphic> extends View {
 
         synchronized (mLock) {
             if ((mPreviewWidth != 0) && (mPreviewHeight != 0)) {
-                mWidthScaleFactor = (float) canvas.getWidth() / (float) mPreviewWidth;
-                mHeightScaleFactor = (float) canvas.getHeight() / (float) mPreviewHeight;
+                mWidthScaleFactor = (float) getWidth() / (float) mPreviewWidth;
+                mHeightScaleFactor = (float) getHeight() / (float) mPreviewHeight;
             }
 
             for (Graphic graphic : mGraphics) {

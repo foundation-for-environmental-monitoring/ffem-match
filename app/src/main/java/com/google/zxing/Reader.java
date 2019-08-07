@@ -20,10 +20,10 @@ import java.util.Map;
 
 /**
  * Implementations of this interface can decode an image of a barcode in some format into
- * <p>
+ * the String it encodes. For example, {@link com.google.zxing.qrcode.QRCodeReader} can
  * decode a QR code. The decoder may optionally receive hints from the caller which may help
  * it decode more quickly or accurately.
- * <p>
+ *
  * See {@link MultiFormatReader}, which attempts to determine what barcode
  * format is present within the image as well, and then decodes it accordingly.
  *
@@ -39,9 +39,9 @@ public interface Reader {
      * @return String which the barcode encodes
      * @throws NotFoundException if no potential barcode is found
      * @throws ChecksumException if a potential barcode is found but does not pass its checksum
-     * @throws FormatException   if a potential barcode is found but format is invalid
+     * @throws FormatException if a potential barcode is found but format is invalid
      */
-    ResultPoint[] decode(BinaryBitmap image) throws NotFoundException, ChecksumException, FormatException;
+    Result decode(BinaryBitmap image) throws NotFoundException, ChecksumException, FormatException;
 
     /**
      * Locates and decodes a barcode in some format within an image. This method also accepts
@@ -49,15 +49,15 @@ public interface Reader {
      *
      * @param image image of barcode to decode
      * @param hints passed as a {@link Map} from {@link DecodeHintType}
-     *              to arbitrary data. The
-     *              meaning of the data depends upon the hint type. The implementation may or may not do
-     *              anything with these hints.
+     * to arbitrary data. The
+     * meaning of the data depends upon the hint type. The implementation may or may not do
+     * anything with these hints.
      * @return String which the barcode encodes
      * @throws NotFoundException if no potential barcode is found
      * @throws ChecksumException if a potential barcode is found but does not pass its checksum
-     * @throws FormatException   if a potential barcode is found but format is invalid
+     * @throws FormatException if a potential barcode is found but format is invalid
      */
-    ResultPoint[] decode(BinaryBitmap image, Map<DecodeHintType, ?> hints)
+    Result decode(BinaryBitmap image, Map<DecodeHintType, ?> hints)
             throws NotFoundException, ChecksumException, FormatException;
 
     /**
