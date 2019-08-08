@@ -13,32 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.ffem.lite.barcode;
+package io.ffem.lite.barcode
 
-import android.content.Context;
-import com.google.android.gms.vision.MultiProcessor;
-import com.google.android.gms.vision.Tracker;
-import com.google.android.gms.vision.barcode.Barcode;
+import android.content.Context
+import com.google.android.gms.vision.MultiProcessor
+import com.google.android.gms.vision.Tracker
+import com.google.android.gms.vision.barcode.Barcode
 
 /**
  * Factory for creating a tracker and associated graphic to be associated with a new barcode.  The
  * multi-processor uses this factory to create barcode trackers as needed -- one for each barcode.
  */
-class BarcodeTrackerFactory implements MultiProcessor.Factory<Barcode> {
-    private GraphicOverlay<BarcodeGraphic> mGraphicOverlay;
-    private Context mContext;
+internal class BarcodeTrackerFactory(
+    private val mGraphicOverlay: GraphicOverlay<BarcodeGraphic>,
+    private val mContext: Context
+) : MultiProcessor.Factory<Barcode> {
 
-    public BarcodeTrackerFactory(GraphicOverlay<BarcodeGraphic> mGraphicOverlay,
-                                 Context mContext) {
-        this.mGraphicOverlay = mGraphicOverlay;
-        this.mContext = mContext;
-    }
-
-    @Override
-    public Tracker<Barcode> create(Barcode barcode) {
-        BarcodeGraphic graphic = new BarcodeGraphic(mGraphicOverlay);
-        return new BarcodeGraphicTracker(mGraphicOverlay, graphic, mContext);
+    override fun create(barcode: Barcode): Tracker<Barcode> {
+        val graphic = BarcodeGraphic(mGraphicOverlay)
+        return BarcodeGraphicTracker(mGraphicOverlay, graphic, mContext)
     }
 
 }
-

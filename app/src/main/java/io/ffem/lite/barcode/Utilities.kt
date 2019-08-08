@@ -8,7 +8,6 @@ import android.os.Environment.getExternalStorageDirectory
 import com.google.android.gms.vision.Frame
 import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
-import okhttp3.*
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -21,7 +20,7 @@ import java.util.*
 object Utilities {
 
     // API url where images will be posted for further processing.
-    private const val API_URL = "http://ec2-52-66-17-109.ap-south-1.compute.amazonaws.com:5000"
+//    private const val API_URL = "http://ec2-52-66-17-109.ap-south-1.compute.amazonaws.com:5000"
 
     /**
      * return the timestamp on yyMMdd_hhmmss format
@@ -59,44 +58,44 @@ object Utilities {
         return ""
     }
 
-    /**
-     * Uploads a file to server using multipart post.
-     */
-    @Throws(Exception::class)
-    fun uploadToServer(filePath: String) {
-        val file = File(filePath)
-        val contentType = file.toURL().openConnection().contentType
-
-        Timber.d("file: %s", file.path)
-        Timber.d("contentType: %s", contentType)
-
-        val fileBody = RequestBody.create(MediaType.parse(contentType), file)
-        val filename = file.name
-
-        val requestBody = MultipartBody.Builder()
-            .setType(MultipartBody.FORM)
-            .addFormDataPart("user_id", "1")
-            .addFormDataPart("group_id", "1")
-            .addFormDataPart("image", filename, fileBody)
-            .build()
-
-        val request = Request.Builder()
-            .url(API_URL)
-            .post(requestBody)
-            .build()
-
-        val okHttpClient = OkHttpClient()
-        okHttpClient.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                Timber.d(e, "Upload Failed!")
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                Timber.d("Upload completed!")
-                response.body()!!.close()
-            }
-        })
-    }
+//    /**
+//     * Uploads a file to server using multipart post.
+//     */
+//    @Throws(Exception::class)
+//    fun uploadToServer(filePath: String) {
+//        val file = File(filePath)
+//        val contentType = file.toURL().openConnection().contentType
+//
+//        Timber.d("file: %s", file.path)
+//        Timber.d("contentType: %s", contentType)
+//
+//        val fileBody = RequestBody.create(MediaType.parse(contentType), file)
+//        val filename = file.name
+//
+//        val requestBody = MultipartBody.Builder()
+//            .setType(MultipartBody.FORM)
+//            .addFormDataPart("user_id", "1")
+//            .addFormDataPart("group_id", "1")
+//            .addFormDataPart("image", filename, fileBody)
+//            .build()
+//
+//        val request = Request.Builder()
+//            .url(API_URL)
+//            .post(requestBody)
+//            .build()
+//
+//        val okHttpClient = OkHttpClient()
+//        okHttpClient.newCall(request).enqueue(object : Callback {
+//            override fun onFailure(call: Call, e: IOException) {
+//                Timber.d(e, "Upload Failed!")
+//            }
+//
+//            override fun onResponse(call: Call, response: Response) {
+//                Timber.d("Upload completed!")
+//                response.body()!!.close()
+//            }
+//        })
+//    }
 
     /**
      * Rotate an image by the specified degree.
@@ -133,7 +132,7 @@ object Utilities {
         val y1 = rect.top
 
         val x2 = rect.right
-        val y2 = rect.bottom
+//        val y2 = rect.bottom
 
         val detectedBarcodeType: String
         val outBitmap: Bitmap
@@ -143,7 +142,7 @@ object Utilities {
         } else if (x1 > 1920 / 2 && x2 > 1920 / 2) { // Right barcode is detected
             outBitmap = bitmap
             detectedBarcodeType = "RIGHT"
-        } else if (x1 < 1920 / 2 && x2 > 1920 / 2) { // both are detected
+        } else if (1920 / 2 in (x1 + 1) until x2) { // both are detected
             outBitmap = cropImage(bitmap, rect)
             detectedBarcodeType = "BOTH"
         } else { // could not detect!
@@ -206,10 +205,12 @@ object Utilities {
 
         if (sparseArray.size() > 0) {
             for (i in 0 until sparseArray.size()) {
-                Timber.d("Value: %s----%s", sparseArray.valueAt(i).rawValue,
-                    sparseArray.valueAt(i).displayValue)
+                Timber.d(
+                    "Value: %s----%s", sparseArray.valueAt(i).rawValue,
+                    sparseArray.valueAt(i).displayValue
+                )
             }
-            return Utilities.checkAndCrop(bitmap, sparseArray.valueAt(0).boundingBox)
+            return checkAndCrop(bitmap, sparseArray.valueAt(0).boundingBox)
 
         } else {
             Timber.e("SparseArray null or empty")

@@ -62,9 +62,9 @@ import java.util.*
  * size, and ID of each barcode.
  */
 class BarcodeCaptureActivity : AppCompatActivity(), BarcodeGraphicTracker.BarcodeUpdateListener {
-    private var mCameraSource: CameraSource? = null
+    private lateinit var mCameraSource: CameraSource
     private var mPreview: CameraSourcePreview? = null
-    private var mGraphicOverlay: GraphicOverlay<BarcodeGraphic>? = null
+    private lateinit var mGraphicOverlay: GraphicOverlay<BarcodeGraphic>
     // helper objects for detecting taps and pinches.
     private var scaleGestureDetector: ScaleGestureDetector? = null
     private var gestureDetector: GestureDetector? = null
@@ -133,7 +133,7 @@ class BarcodeCaptureActivity : AppCompatActivity(), BarcodeGraphicTracker.Barcod
 
         findViewById<View>(R.id.topLayout).setOnClickListener(listener)
         Snackbar.make(
-            mGraphicOverlay!!, R.string.camera_permission_required,
+            mGraphicOverlay, R.string.camera_permission_required,
             Snackbar.LENGTH_INDEFINITE
         )
             .setAction(R.string.ok, listener)
@@ -301,15 +301,11 @@ class BarcodeCaptureActivity : AppCompatActivity(), BarcodeGraphicTracker.Barcod
             dlg.show()
         }
 
-        if (mCameraSource != null) {
-            try {
-                mPreview!!.start(mCameraSource, mGraphicOverlay)
-            } catch (e: IOException) {
-                Timber.e(e, "Unable to start camera source.")
-                mCameraSource!!.release()
-                mCameraSource = null
-            }
-
+        try {
+            mPreview!!.start(mCameraSource, mGraphicOverlay)
+        } catch (e: IOException) {
+            Timber.e(e, "Unable to start camera source.")
+            mCameraSource.release()
         }
     }
 
@@ -323,15 +319,15 @@ class BarcodeCaptureActivity : AppCompatActivity(), BarcodeGraphicTracker.Barcod
     private fun onTap(rawX: Float, rawY: Float): Boolean {
         // Find tap point in preview frame coordinates.
         val location = IntArray(2)
-        mGraphicOverlay!!.getLocationOnScreen(location)
-        val x = (rawX - location[0]) / mGraphicOverlay!!.widthScaleFactor
-        val y = (rawY - location[1]) / mGraphicOverlay!!.heightScaleFactor
+        mGraphicOverlay.getLocationOnScreen(location)
+        val x = (rawX - location[0]) / mGraphicOverlay.widthScaleFactor
+        val y = (rawY - location[1]) / mGraphicOverlay.heightScaleFactor
 
         // Find the barcode whose center is closest to the tapped point.
         var best: Barcode? = null
         var bestDistance = java.lang.Float.MAX_VALUE
 
-        for (graphic in mGraphicOverlay!!.graphics) {
+        for (graphic in mGraphicOverlay.graphics) {
             val barcode = graphic.barcode
             if (barcode!!.boundingBox.contains(x.toInt(), y.toInt())) {
                 // Exact hit, no need to keep looking.
@@ -347,7 +343,7 @@ class BarcodeCaptureActivity : AppCompatActivity(), BarcodeGraphicTracker.Barcod
             }
         }
 
-//        sendDummyImage("pH")
+//        sendDummyImage("Fluoride")
 
         if (best != null) {
             captureImage(best.displayValue, best.boundingBox)
@@ -356,16 +352,16 @@ class BarcodeCaptureActivity : AppCompatActivity(), BarcodeGraphicTracker.Barcod
         return false
     }
 
-    private fun sendDummyImage(name: String) {
-        Timber.d("isExternalStorageWritable :%s", isPermissionsGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE))
-
-        val bitmap = BitmapFactory.decodeResource(resources, R.drawable.ph_bottle)
-
-        sendToServer(name, bitmap)
-
-        setResult(Activity.RESULT_OK, Intent())
-        finish()
-    }
+//    private fun sendDummyImage(name: String) {
+//        Timber.d("isExternalStorageWritable :%s", isPermissionsGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE))
+//
+//        val bitmap = BitmapFactory.decodeResource(resources, R.drawable.card_barcode)
+//
+//        sendToServer(name, bitmap)
+//
+//        setResult(Activity.RESULT_OK, Intent())
+//        finish()
+//    }
 
     /**
      * capture an image of the current view in camera
@@ -376,7 +372,7 @@ class BarcodeCaptureActivity : AppCompatActivity(), BarcodeGraphicTracker.Barcod
     private fun captureImage(barcodeValue: String, rect: Rect) {
         Timber.d("taking picture")
         // take picture
-        mCameraSource!!.takePicture(null, { bytes ->
+        mCameraSource.takePicture(null, { bytes ->
             Timber.d("isExternalStorageWritable :%s", isPermissionsGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE))
             Timber.d("isExternalStorageReadable :%s", isPermissionsGranted(Manifest.permission.READ_EXTERNAL_STORAGE))
             Timber.d("isCameraPermission :%s", isPermissionsGranted(Manifest.permission.CAMERA))
@@ -551,7 +547,7 @@ class BarcodeCaptureActivity : AppCompatActivity(), BarcodeGraphicTracker.Barcod
          * retrieve extended info about event state.
          */
         override fun onScaleEnd(detector: ScaleGestureDetector) {
-            mCameraSource!!.doZoom(detector.scaleFactor)
+            mCameraSource.doZoom(detector.scaleFactor)
         }
     }
 

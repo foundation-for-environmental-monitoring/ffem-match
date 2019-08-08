@@ -6,6 +6,7 @@ import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import io.ffem.lite.R
 import io.ffem.lite.app.AppDatabase
@@ -14,7 +15,6 @@ import io.ffem.lite.model.ResultResponse
 import io.ffem.lite.model.TestResult
 import io.ffem.lite.preference.SettingsActivity
 import io.ffem.lite.remote.ApiService
-import io.ffem.lite.util.NetUtil
 import io.ffem.lite.util.PreferencesUtil
 import retrofit2.Call
 import retrofit2.Callback
@@ -40,18 +40,13 @@ class ResultListActivity : BaseActivity() {
         setTitle(R.string.app_name)
 
         val db = AppDatabase.getDatabase(this)
-//        db.resultDao().insert(TestResult(1, "", "", ""))
 
         val resultList = db.resultDao().getResults()
-//        val listItems = arrayOfNulls<String>(resultList.size)
-//        for (i in 0 until resultList.size) {
-//            val result = resultList[i]
-//            listItems[i] = result.name
-//        }
 
         adapter.setTestList(resultList)
 
         listView = findViewById(R.id.list_results)
+        listView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 
         listView.adapter = adapter
 
@@ -70,10 +65,10 @@ class ResultListActivity : BaseActivity() {
     }
 
     fun onStartClicked(@Suppress("UNUSED_PARAMETER") view: View) {
-        if (NetUtil.isInternetConnected(this)) {
-            val intent: Intent? = Intent(baseContext, BarcodeCaptureActivity::class.java)
-            startActivityForResult(intent, 100)
-        }
+//        if (NetUtil.isInternetConnected(this)) {
+        val intent: Intent? = Intent(baseContext, BarcodeCaptureActivity::class.java)
+        startActivityForResult(intent, 100)
+//        }
     }
 
     private fun getResult() {
@@ -92,7 +87,6 @@ class ResultListActivity : BaseActivity() {
 
             override fun onResponse(call: Call<ResultResponse>?, response: Response<ResultResponse>?) {
                 val message = response?.body()
-//                progressDialog.dismiss()
 
                 val id = message?.id
                 val title = message?.title
@@ -111,12 +105,13 @@ class ResultListActivity : BaseActivity() {
 
                 val resultData = db.resultDao().getResult(id)
 
+//                if (resultData != null) {
                 db.resultDao().insert(TestResult(id.toString(), title.toString(), resultData.date, result))
 
                 val resultList = db.resultDao().getResults()
                 adapter.setTestList(resultList)
                 adapter.notifyDataSetChanged()
-
+//                }
             }
 
             override fun onFailure(call: Call<ResultResponse>?, t: Throwable?) {
@@ -126,8 +121,6 @@ class ResultListActivity : BaseActivity() {
                     Handler().postDelayed({
                         getResult()
                     }, 5000)
-                } else {
-//                    progressDialog.dismiss()
                 }
             }
         })
