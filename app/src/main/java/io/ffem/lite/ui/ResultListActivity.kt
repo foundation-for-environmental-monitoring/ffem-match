@@ -15,6 +15,7 @@ import io.ffem.lite.model.ResultResponse
 import io.ffem.lite.model.TestResult
 import io.ffem.lite.preference.SettingsActivity
 import io.ffem.lite.remote.ApiService
+import io.ffem.lite.util.NetUtil
 import io.ffem.lite.util.PreferencesUtil
 import retrofit2.Call
 import retrofit2.Callback
@@ -32,6 +33,7 @@ class ResultListActivity : BaseActivity() {
     private lateinit var listView: RecyclerView
     private var adapter: ResultAdapter = ResultAdapter()
     private var requestCount = 0
+    private lateinit var db: AppDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,8 +41,7 @@ class ResultListActivity : BaseActivity() {
 
         setTitle(R.string.app_name)
 
-        val db = AppDatabase.getDatabase(this)
-
+        db = AppDatabase.getDatabase(baseContext)
         val resultList = db.resultDao().getResults()
 
         adapter.setTestList(resultList)
@@ -65,10 +66,19 @@ class ResultListActivity : BaseActivity() {
     }
 
     fun onStartClicked(@Suppress("UNUSED_PARAMETER") view: View) {
-//        if (NetUtil.isInternetConnected(this)) {
-        val intent: Intent? = Intent(baseContext, BarcodeCaptureActivity::class.java)
-        startActivityForResult(intent, 100)
-//        }
+        if (NetUtil.isInternetConnected(this)) {
+            val intent: Intent? = Intent(baseContext, BarcodeCaptureActivity::class.java)
+            startActivityForResult(intent, 100)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        val resultList = db.resultDao().getResults()
+
+        adapter.setTestList(resultList)
+        adapter.notifyDataSetChanged()
     }
 
     private fun getResult() {
@@ -86,32 +96,33 @@ class ResultListActivity : BaseActivity() {
         call.enqueue(object : Callback<ResultResponse> {
 
             override fun onResponse(call: Call<ResultResponse>?, response: Response<ResultResponse>?) {
-                val message = response?.body()
+                val body = response?.body()
 
-                val id = message?.id
-                val title = message?.title
+                val id = body?.id
+                val title = body?.title
                 var result = ""
-                if (message?.result == null) {
+                var message = "-"
+                if (body?.result == null) {
                     if (requestCount < 15) {
                         Handler().postDelayed({
                             getResult()
                         }, 5000)
                     }
                 } else {
-                    result = message.result?.replace(title.toString(), "").toString()
+                    result = body.result?.replace(title.toString(), "").toString()
+                    message = body.message.toString()
                 }
-
-                val db = AppDatabase.getDatabase(baseContext)
 
                 val resultData = db.resultDao().getResult(id)
 
-//                if (resultData != null) {
-                db.resultDao().insert(TestResult(id.toString(), title.toString(), resultData.date, result))
+                if (resultData != null) {
 
-                val resultList = db.resultDao().getResults()
-                adapter.setTestList(resultList)
-                adapter.notifyDataSetChanged()
-//                }
+                    db.resultDao().insert(TestResult(id.toString(), title.toString(), resultData.date, result, message))
+
+                    val resultList = db.resultDao().getResults()
+                    adapter.setTestList(resultList)
+                    adapter.notifyDataSetChanged()
+                }
             }
 
             override fun onFailure(call: Call<ResultResponse>?, t: Throwable?) {

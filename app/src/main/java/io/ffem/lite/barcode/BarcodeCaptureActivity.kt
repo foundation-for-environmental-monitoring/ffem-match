@@ -53,7 +53,6 @@ import okhttp3.*
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
-import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -301,11 +300,13 @@ class BarcodeCaptureActivity : AppCompatActivity(), BarcodeGraphicTracker.Barcod
             dlg.show()
         }
 
-        try {
-            mPreview!!.start(mCameraSource, mGraphicOverlay)
-        } catch (e: IOException) {
-            Timber.e(e, "Unable to start camera source.")
-            mCameraSource.release()
+        if (this::mCameraSource.isInitialized) {
+            try {
+                mPreview!!.start(mCameraSource, mGraphicOverlay)
+            } catch (e: IOException) {
+                Timber.e(e, "Unable to start camera source.")
+                mCameraSource.release()
+            }
         }
     }
 
@@ -343,25 +344,25 @@ class BarcodeCaptureActivity : AppCompatActivity(), BarcodeGraphicTracker.Barcod
             }
         }
 
-//        sendDummyImage("Fluoride")
+        sendDummyImage("Fluoride")
 
-        if (best != null) {
-            captureImage(best.displayValue, best.boundingBox)
-        }
+//        if (best != null) {
+//            captureImage(best.displayValue, best.boundingBox)
+//        }
 
         return false
     }
 
-//    private fun sendDummyImage(name: String) {
-//        Timber.d("isExternalStorageWritable :%s", isPermissionsGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE))
-//
-//        val bitmap = BitmapFactory.decodeResource(resources, R.drawable.card_barcode)
-//
-//        sendToServer(name, bitmap)
-//
-//        setResult(Activity.RESULT_OK, Intent())
-//        finish()
-//    }
+    private fun sendDummyImage(name: String) {
+        Timber.d("isExternalStorageWritable :%s", isPermissionsGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE))
+
+        val bitmap = BitmapFactory.decodeResource(resources, R.drawable.card_barcode_2)
+
+        sendToServer(name, bitmap)
+
+        setResult(Activity.RESULT_OK, Intent())
+        finish()
+    }
 
     /**
      * capture an image of the current view in camera
@@ -446,9 +447,7 @@ class BarcodeCaptureActivity : AppCompatActivity(), BarcodeGraphicTracker.Barcod
                     val db = AppDatabase.getDatabase(baseContext)
 
                     val date = Date()
-                    val formatter = SimpleDateFormat("MMM dd yyyy HH:mma", Locale.US)
-
-                    db.resultDao().insert(TestResult(testId, barcodeValue, formatter.format(date), ""))
+                    db.resultDao().insert(TestResult(testId, barcodeValue, date.time, "", "Analysing"))
 
                     finish()
 
@@ -457,7 +456,6 @@ class BarcodeCaptureActivity : AppCompatActivity(), BarcodeGraphicTracker.Barcod
         } catch (e: Exception) {
             e.printStackTrace()
         }
-
     }
 
 

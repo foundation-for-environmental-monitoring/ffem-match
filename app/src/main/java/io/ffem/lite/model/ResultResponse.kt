@@ -9,4 +9,6 @@ class ResultResponse {
     var result: String? = null
     @SerializedName("title")
     var title: String? = null
+    @SerializedName("message")
+    var message: String? = null
 }

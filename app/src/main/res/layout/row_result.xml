@@ -7,6 +7,8 @@
 
         <import type="android.view.View" />
 
+        <import type="com.github.marlonlom.utilities.timeago.TimeAgo" />
+
         <variable
             name="result"
             type="io.ffem.lite.model.TestResult" />
@@ -45,6 +47,7 @@
                 android:text="@{String.valueOf(result.id)}"
                 android:textColor="#737373"
                 android:textSize="13sp"
+                android:visibility="gone"
                 tools:text="Test id" />
 
             <TextView
@@ -52,7 +55,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginBottom="7dp"
-                android:text="@{result.date}"
+                android:text="@{TimeAgo.using(result.date)}"
                 android:textColor="#737373"
                 android:textSize="14sp"
                 tools:text="date time" />
@@ -66,10 +69,10 @@
             android:clickable="false"
             android:focusable="false"
             android:gravity="center"
-            android:text="@{result.value }"
+            android:text="@{result.value}"
             android:textIsSelectable="false"
             android:textSize="30sp"
-            android:visibility="@{result.value.isEmpty() ? View.GONE : View.VISIBLE}"
+            android:visibility="@{result.value.equals(`-`) ? View.GONE : View.VISIBLE}"
             app:layout_constraintBottom_toBottomOf="@id/layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -83,10 +86,10 @@
             android:clickable="false"
             android:focusable="false"
             android:gravity="center"
-            android:text="@string/analyzing"
+            android:text="@{result.message}"
             android:textIsSelectable="false"
             android:textSize="14sp"
-            android:visibility="@{result.value.isEmpty() ? View.VISIBLE : View.GONE}"
+            android:visibility="@{result.message.equals(`-`) ? View.GONE : View.VISIBLE}"
             app:layout_constraintBottom_toBottomOf="@id/layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

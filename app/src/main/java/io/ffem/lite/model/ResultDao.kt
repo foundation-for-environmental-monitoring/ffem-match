@@ -12,7 +12,7 @@ abstract class ResultDao {
     abstract fun getResults(): List<TestResult>
 
     @Query("SELECT * FROM results WHERE id = :id")
-    abstract fun getResult(id: String?): TestResult
+    abstract fun getResult(id: String?): TestResult?
 
     @Insert(onConflict = REPLACE)
     abstract fun insert(result: TestResult)

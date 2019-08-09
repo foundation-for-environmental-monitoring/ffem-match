@@ -8,6 +8,7 @@ import androidx.room.PrimaryKey
 data class TestResult(
     @PrimaryKey val id: String = "",
     @ColumnInfo(name = "name") val name: String,
-    @ColumnInfo(name = "date") val date: String,
-    @ColumnInfo(name = "value") val value: String
+    @ColumnInfo(name = "date") val date: Long,
+    @ColumnInfo(name = "value") val value: String,
+    @ColumnInfo(name = "message") val message: String
 )

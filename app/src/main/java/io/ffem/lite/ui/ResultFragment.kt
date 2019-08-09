@@ -84,7 +84,7 @@ class ResultFragment : Fragment() {
 
                 val id = message?.id
                 val title = message?.title
-                val result = message?.result?.replace(title.toString(), "")
+                var result = message?.result?.replace(title.toString(), "")
                 textTitle.text = title
                 textResult.text = result
 
@@ -92,7 +92,17 @@ class ResultFragment : Fragment() {
 
                 val resultData = db.resultDao().getResult(id)
 
-                db.resultDao().insert(TestResult(id.toString(), title.toString(), resultData.date, result!!))
+                if (resultData != null) {
+                    db.resultDao().insert(
+                        TestResult(
+                            id.toString(),
+                            title.toString(),
+                            resultData.date,
+                            result!!,
+                            resultData.message
+                        )
+                    )
+                }
             }
 
             override fun onFailure(call: Call<ResultResponse>?, t: Throwable?) {
