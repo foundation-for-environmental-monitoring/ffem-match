@@ -22,7 +22,7 @@ class SettingsActivity : BaseActivity(), SharedPreferences.OnSharedPreferenceCha
     private var mScrollPosition: Int = 0
 
     private fun removeAllFragments() {
-        findViewById<View>(R.id.layoutDiagnostics).visibility = View.GONE
+        findViewById<View>(R.id.layoutTesting).visibility = View.GONE
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,6 +51,15 @@ class SettingsActivity : BaseActivity(), SharedPreferences.OnSharedPreferenceCha
         fragmentManager.beginTransaction()
             .replace(R.id.layoutOther, OtherPreferenceFragment())
             .commit()
+
+        if (AppPreferences.isDiagnosticMode()) {
+
+            fragmentManager.beginTransaction()
+                .add(R.id.layoutTesting, TestingPreferenceFragment())
+                .commit()
+
+            findViewById<View>(R.id.layoutTesting).visibility = View.VISIBLE
+        }
 
         mScrollView = findViewById(R.id.scrollViewSettings)
 

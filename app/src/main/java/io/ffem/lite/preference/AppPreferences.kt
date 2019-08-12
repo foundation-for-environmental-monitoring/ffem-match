@@ -22,9 +22,13 @@ object AppPreferences {
         PreferencesUtil.setBoolean(App.app, R.string.diagnosticModeKey, true)
     }
 
+    fun sendDummyImage(): Boolean {
+        return isDiagnosticMode() && PreferencesUtil.getBoolean(App.app, R.string.dummyImageKey, false)
+    }
+
     fun disableDiagnosticMode() {
         PreferencesUtil.setBoolean(App.app, R.string.diagnosticModeKey, false)
         PreferencesUtil.setBoolean(App.app, R.string.testModeOnKey, false)
-        PreferencesUtil.setBoolean(App.app, R.string.dummyResultKey, false)
+        PreferencesUtil.setBoolean(App.app, R.string.dummyImageKey, false)
     }
 }

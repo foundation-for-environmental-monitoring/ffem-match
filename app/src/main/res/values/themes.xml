@@ -19,6 +19,7 @@
         <item name="toolbarMargin">@dimen/toolbar_margin</item>
         <item name="progressTint">@color/yellow</item>
         <item name="progressTintInverse">@color/yellow</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
 
 </resources>

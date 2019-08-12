@@ -33,7 +33,6 @@ import android.os.Bundle
 import android.os.StrictMode
 import android.view.GestureDetector
 import android.view.MotionEvent
-import android.view.ScaleGestureDetector
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -48,6 +47,7 @@ import com.google.android.material.snackbar.Snackbar
 import io.ffem.lite.R
 import io.ffem.lite.app.AppDatabase
 import io.ffem.lite.model.TestResult
+import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.util.PreferencesUtil
 import okhttp3.*
 import timber.log.Timber
@@ -64,8 +64,6 @@ class BarcodeCaptureActivity : AppCompatActivity(), BarcodeGraphicTracker.Barcod
     private lateinit var mCameraSource: CameraSource
     private var mPreview: CameraSourcePreview? = null
     private lateinit var mGraphicOverlay: GraphicOverlay<BarcodeGraphic>
-    // helper objects for detecting taps and pinches.
-    private var scaleGestureDetector: ScaleGestureDetector? = null
     private var gestureDetector: GestureDetector? = null
 
     /**
@@ -84,22 +82,20 @@ class BarcodeCaptureActivity : AppCompatActivity(), BarcodeGraphicTracker.Barcod
         val autoFocus = intent.getBooleanExtra(AutoFocus, true)
         val useFlash = intent.getBooleanExtra(UseFlash, false)
 
-        // Check for the camera permission before accessing the camera.  If the
-        // permission is not granted yet, request permission.
-        val rc = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-        if (rc == PackageManager.PERMISSION_GRANTED) {
-            createCameraSource(autoFocus, useFlash)
+        if (AppPreferences.sendDummyImage()) {
+            sendDummyImage("pH", R.drawable.ph_bottle)
         } else {
-            requestCameraPermission()
+            // Check for the camera permission before accessing the camera.  If the
+            // permission is not granted yet, request permission.
+            val rc = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+            if (rc == PackageManager.PERMISSION_GRANTED) {
+                createCameraSource(autoFocus, useFlash)
+            } else {
+                requestCameraPermission()
+            }
+
+            gestureDetector = GestureDetector(this, CaptureGestureListener())
         }
-
-        gestureDetector = GestureDetector(this, CaptureGestureListener())
-        scaleGestureDetector = ScaleGestureDetector(this, ScaleListener())
-
-//        Snackbar.make(
-//            mGraphicOverlay!!, "Tap to capture. Pinch/Stretch to zoom",
-//            Snackbar.LENGTH_LONG
-//        ).show()
     }
 
     /**
@@ -140,11 +136,9 @@ class BarcodeCaptureActivity : AppCompatActivity(), BarcodeGraphicTracker.Barcod
     }
 
     override fun onTouchEvent(e: MotionEvent): Boolean {
-        val b = scaleGestureDetector!!.onTouchEvent(e)
-
         val c = gestureDetector!!.onTouchEvent(e)
 
-        return b || c || super.onTouchEvent(e)
+        return c || super.onTouchEvent(e)
     }
 
     /**
@@ -344,24 +338,24 @@ class BarcodeCaptureActivity : AppCompatActivity(), BarcodeGraphicTracker.Barcod
             }
         }
 
-        sendDummyImage("Fluoride")
-
-//        if (best != null) {
-//            captureImage(best.displayValue, best.boundingBox)
-//        }
+        if (!AppPreferences.sendDummyImage()) {
+            if (best != null) {
+                captureImage(best.displayValue, best.boundingBox)
+            }
+        }
 
         return false
     }
 
-    private fun sendDummyImage(name: String) {
-        Timber.d("isExternalStorageWritable :%s", isPermissionsGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE))
+    private fun sendDummyImage(name: String, image: Int) {
+        Timber.d(
+            "isExternalStorageWritable :%s",
+            isPermissionsGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        )
 
-        val bitmap = BitmapFactory.decodeResource(resources, R.drawable.card_barcode_2)
+        val bitmap = BitmapFactory.decodeResource(resources, image)
 
         sendToServer(name, bitmap)
-
-        setResult(Activity.RESULT_OK, Intent())
-        finish()
     }
 
     /**
@@ -494,58 +488,6 @@ class BarcodeCaptureActivity : AppCompatActivity(), BarcodeGraphicTracker.Barcod
     private inner class CaptureGestureListener : GestureDetector.SimpleOnGestureListener() {
         override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
             return onTap(e.rawX, e.rawY) || super.onSingleTapConfirmed(e)
-        }
-    }
-
-    private inner class ScaleListener : ScaleGestureDetector.OnScaleGestureListener {
-
-        /**
-         * Responds to scaling events for a gesture in progress.
-         * Reported by pointer motion.
-         *
-         * @param detector The detector reporting the event - use this to
-         * retrieve extended info about event state.
-         * @return Whether or not the detector should consider this event
-         * as handled. If an event was not handled, the detector
-         * will continue to accumulate movement until an event is
-         * handled. This can be useful if an application, for example,
-         * only wants to update scaling factors if the change is
-         * greater than 0.01.
-         */
-        override fun onScale(detector: ScaleGestureDetector): Boolean {
-            return false
-        }
-
-        /**
-         * Responds to the beginning of a scaling gesture. Reported by
-         * new pointers going down.
-         *
-         * @param detector The detector reporting the event - use this to
-         * retrieve extended info about event state.
-         * @return Whether or not the detector should continue recognizing
-         * this gesture. For example, if a gesture is beginning
-         * with a focal point outside of a region where it makes
-         * sense, onScaleBegin() may return false to ignore the
-         * rest of the gesture.
-         */
-        override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
-            return true
-        }
-
-        /**
-         * Responds to the end of a scale gesture. Reported by existing
-         * pointers going up.
-         *
-         *
-         * Once a scale has ended, [ScaleGestureDetector.getFocusX]
-         * and [ScaleGestureDetector.getFocusY] will return focal point
-         * of the pointers remaining on the screen.
-         *
-         * @param detector The detector reporting the event - use this to
-         * retrieve extended info about event state.
-         */
-        override fun onScaleEnd(detector: ScaleGestureDetector) {
-            mCameraSource.doZoom(detector.scaleFactor)
         }
     }
 

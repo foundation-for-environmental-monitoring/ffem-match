@@ -40,4 +40,6 @@
     <string name="no_Internet_connection">No data connection. Please connect to the internet and try again.</string>
     <string name="analyzing">Analyzing</string>
     <string name="camera_permission_required">Camera access is required.</string>
+    <string name="testing">Testing</string>
+    <string name="testModeOn">Demo / Test mode</string>
 </resources>

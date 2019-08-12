@@ -12,7 +12,7 @@
     <string name="diagnosticModeKey">diagnosticMode</string>
     <string name="refreshKey">refresh</string>
     <string name="testModeOnKey">testModeOn</string>
-    <string name="dummyResultKey">dummyResults</string>
+    <string name="dummyImageKey">dummyImage</string>
 
     <!--Diagnostic-->
     <string name="diagnostics">Diagnostics</string>
