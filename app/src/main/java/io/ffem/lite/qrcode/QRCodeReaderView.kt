@@ -306,28 +306,28 @@ class QRCodeReaderView @JvmOverloads constructor(context: Context, attrs: Attrib
             }
         }
 
-        /**
-         * Transform result to surfaceView coordinates
-         *
-         *
-         * This method is needed because coordinates are given in landscape camera coordinates when
-         * device is in portrait mode and different coordinates otherwise.
-         *
-         * @return a new PointF array with transformed points
-         */
-        private fun transformToViewCoordinates(
-            view: QRCodeReaderView,
-            resultPoints: Array<ResultPoint>
-        ): Array<PointF?> {
-            val viewSize = Point(view.width, view.height)
-            val cameraPreviewSize = view.mCameraManager!!.previewSize
-            val isMirrorCamera = view.mCameraManager!!.previewCameraId == Camera.CameraInfo.CAMERA_FACING_FRONT
-
-            return qrToViewPointTransformer.transform(
-                resultPoints, isMirrorCamera,
-                viewSize, cameraPreviewSize
-            )
-        }
+//        /**
+//         * Transform result to surfaceView coordinates
+//         *
+//         *
+//         * This method is needed because coordinates are given in landscape camera coordinates when
+//         * device is in portrait mode and different coordinates otherwise.
+//         *
+//         * @return a new PointF array with transformed points
+//         */
+//        private fun transformToViewCoordinates(
+//            view: QRCodeReaderView,
+//            resultPoints: Array<ResultPoint>
+//        ): Array<PointF?> {
+//            val viewSize = Point(view.width, view.height)
+//            val cameraPreviewSize = view.mCameraManager!!.previewSize
+//            val isMirrorCamera = view.mCameraManager!!.previewCameraId == Camera.CameraInfo.CAMERA_FACING_FRONT
+//
+//            return qrToViewPointTransformer.transform(
+//                resultPoints, isMirrorCamera,
+//                viewSize, cameraPreviewSize
+//            )
+//        }
     }
 
     companion object {
@@ -370,11 +370,11 @@ class QRCodeReaderView @JvmOverloads constructor(context: Context, attrs: Attrib
         }
 
 
-        fun bitmapToBinaryBitmap(bitmap: Bitmap): BinaryBitmap {
-            val intArray = IntArray(bitmap.width * bitmap.height)
-            bitmap.getPixels(intArray, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
-            val source = RGBLuminanceSource(bitmap.width, bitmap.height, intArray)
-            return BinaryBitmap(HybridBinarizer(source))
-        }
+//        fun bitmapToBinaryBitmap(bitmap: Bitmap): BinaryBitmap {
+//            val intArray = IntArray(bitmap.width * bitmap.height)
+//            bitmap.getPixels(intArray, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
+//            val source = RGBLuminanceSource(bitmap.width, bitmap.height, intArray)
+//            return BinaryBitmap(HybridBinarizer(source))
+//        }
     }
 }

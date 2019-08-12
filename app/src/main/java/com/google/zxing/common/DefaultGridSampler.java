@@ -77,7 +77,7 @@ public final class DefaultGridSampler extends GridSampler {
                 // whose endpoints are in bounds, but others are not. There is probably some mathematical
                 // way to detect this about the transformation that I don't know yet.
                 // This results in an ugly runtime exception despite our clever checks above -- can't have
-                // that. We could check each point's coordinates but that feels duplicative. We settle for
+                // that. We could check each point's coordinates but that feels duplicate. We settle for
                 // catching and wrapping ArrayIndexOutOfBoundsException.
                 throw NotFoundException.getNotFoundInstance();
             }

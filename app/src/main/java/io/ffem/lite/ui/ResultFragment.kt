@@ -84,7 +84,7 @@ class ResultFragment : Fragment() {
 
                 val id = message?.id
                 val title = message?.title
-                var result = message?.result?.replace(title.toString(), "")
+                val result = message?.result?.replace(title.toString(), "")
                 textTitle.text = title
                 textResult.text = result
 

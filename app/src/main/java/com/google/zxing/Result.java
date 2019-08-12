@@ -16,6 +16,8 @@
 
 package com.google.zxing;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -145,6 +147,7 @@ public final class Result {
         return timestamp;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return text;

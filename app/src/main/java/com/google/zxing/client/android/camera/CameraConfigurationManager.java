@@ -134,7 +134,7 @@ final class CameraConfigurationManager {
         // Still not 100% sure about this. But acts like we need to flip this:
         if (camera.getFacing() == CameraFacing.FRONT) {
             cwRotationFromNaturalToCamera = (360 - cwRotationFromNaturalToCamera) % 360;
-            Timber.i("Front camera overriden to: %s", cwRotationFromNaturalToCamera);
+            Timber.i("Front camera overridden to: %s", cwRotationFromNaturalToCamera);
         }
 
         cwRotationFromDisplayToCamera =

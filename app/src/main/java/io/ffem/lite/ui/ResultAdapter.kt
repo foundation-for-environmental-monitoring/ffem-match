@@ -35,9 +35,9 @@ class ResultAdapter : RecyclerView.Adapter<ResultAdapter.TestResultViewHolder>()
         return if (testList == null) 0 else testList!!.size
     }
 
-    internal fun getItemAt(i: Int): TestResult {
-        return testList!![i]
-    }
+//    internal fun getItemAt(i: Int): TestResult {
+//        return testList!![i]
+//    }
 
     class TestResultViewHolder(val binding: RowResultBinding) : RecyclerView.ViewHolder(binding.root)
 }
