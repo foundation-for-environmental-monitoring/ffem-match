@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/camera_ui_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/card_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha=".6"
+        android:src="@drawable/card_overlay_2" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/card_overlay_2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha=".2"
+        android:src="@drawable/card2"
+        android:visibility="gone" />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="75dp"
+        android:background="#4D000000"
+        app:layout_constraintEnd_toStartOf="@id/top_overlay"
+        app:layout_constraintStart_toEndOf="@id/bottom_overlay"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_weight="0.5" />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="75dp"
+        android:background="#4D000000"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/top_overlay"
+        app:layout_constraintStart_toEndOf="@id/bottom_overlay"
+        app:layout_constraintVertical_weight="0.5" />
+
+    <io.ffem.lite.widget.VerticalTextView
+        android:id="@+id/bottom_overlay"
+        android:layout_width="60dp"
+        android:layout_height="match_parent"
+        android:paddingTop="16dp"
+        android:text="@string/place_color_card"
+        android:textAlignment="center"
+        android:textColor="#ffffff"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <io.ffem.lite.widget.VerticalTextView
+        android:id="@+id/top_overlay"
+        android:layout_width="60dp"
+        android:layout_height="match_parent"
+        android:paddingStart="16dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="16dp"
+        android:text="@string/scanning"
+        android:textColor="#ffffff"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

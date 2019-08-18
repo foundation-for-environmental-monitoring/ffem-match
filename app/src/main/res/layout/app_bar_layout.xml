@@ -8,7 +8,7 @@
     android:layout_marginTop="?toolbarMargin"
     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
     app:titleTextColor="?colorPrimary"
-    tools:showIn="@layout/activity_main">
+    tools:showIn="@layout/activity_result_list">
 
     <TextView
         android:id="@+id/textToolbarTitle"

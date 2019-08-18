@@ -17,6 +17,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Main"
+        android:vmSafeMode="true"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name=".ui.ResultListActivity"
@@ -28,21 +29,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.ResultActivity"
-            android:screenOrientation="nosensor" />
-        <activity android:name=".ui.MainActivity" />
-        <activity
             android:name=".preference.SettingsActivity"
             android:screenOrientation="nosensor" />
         <activity
             android:name=".ui.AboutActivity"
             android:screenOrientation="nosensor" />
         <activity
-            android:name=".barcode.BarcodeCaptureActivity"
-            android:screenOrientation="nosensor" />
-        <activity
-            android:name=".ui.CaptureActivity"
-            android:screenOrientation="nosensor" />
+            android:name=".ui.BarcodeActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

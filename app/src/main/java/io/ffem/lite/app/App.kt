@@ -99,6 +99,8 @@ class App : BaseApplication() {
 
     companion object {
 
+        const val API_URL = "http://ec2-52-66-17-109.ap-south-1.compute.amazonaws.com:5000"
+
         /**
          * Gets the singleton app object.
          *

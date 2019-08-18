@@ -42,4 +42,6 @@
     <string name="camera_permission_required">Camera access is required.</string>
     <string name="testing">Testing</string>
     <string name="testModeOn">Demo / Test mode</string>
+    <string name="place_color_card">Place the color card within the view finder above</string>
+    <string name="scanning">Scanning…</string>
 </resources>

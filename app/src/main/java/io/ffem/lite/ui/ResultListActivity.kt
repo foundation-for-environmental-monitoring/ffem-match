@@ -9,14 +9,12 @@ import android.view.View
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import io.ffem.lite.R
+import io.ffem.lite.app.App.Companion.API_URL
 import io.ffem.lite.app.AppDatabase
-import io.ffem.lite.barcode.BarcodeCaptureActivity
 import io.ffem.lite.model.ResultResponse
 import io.ffem.lite.model.TestResult
 import io.ffem.lite.preference.SettingsActivity
 import io.ffem.lite.remote.ApiService
-import io.ffem.lite.util.NetUtil
-import io.ffem.lite.util.PreferencesUtil
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -26,18 +24,28 @@ import timber.log.Timber
 
 class ResultListActivity : BaseActivity() {
 
-    companion object {
-        private const val BASE_URL = "http://ec2-52-66-17-109.ap-south-1.compute.amazonaws.com:5000/"
-    }
-
+    private var callBackStarted: Boolean = false
     private lateinit var listView: RecyclerView
     private var adapter: ResultAdapter = ResultAdapter()
     private var requestCount = 0
     private lateinit var db: AppDatabase
+    private lateinit var resultRequestHandler: Handler
+    private lateinit var runnable: Runnable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_result_list)
+
+        resultRequestHandler = Handler()
+
+        runnable = Runnable {
+
+            getResult()
+
+            resultRequestHandler.postDelayed(
+                runnable, 30000
+            )
+        }
 
         setTitle(R.string.app_name)
 
@@ -60,16 +68,25 @@ class ResultListActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        Handler().postDelayed({
-            getResult()
-        }, 50)
+
+        if (!callBackStarted) {
+            resultRequestHandler.postDelayed(
+                runnable, 3000
+            )
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        callBackStarted = false
+        resultRequestHandler.removeCallbacks(runnable)
     }
 
     fun onStartClicked(@Suppress("UNUSED_PARAMETER") view: View) {
-        if (NetUtil.isInternetConnected(this)) {
-            val intent: Intent? = Intent(baseContext, BarcodeCaptureActivity::class.java)
-            startActivityForResult(intent, 100)
-        }
+//        if (NetUtil.isInternetConnected(this)) {
+        val intent: Intent? = Intent(baseContext, BarcodeActivity::class.java)
+        startActivityForResult(intent, 100)
+//    }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -79,62 +96,65 @@ class ResultListActivity : BaseActivity() {
 
         adapter.setTestList(resultList)
         adapter.notifyDataSetChanged()
+
+        callBackStarted = true
+        resultRequestHandler.removeCallbacks(runnable)
+        resultRequestHandler.postDelayed(
+            runnable, 30000
+        )
     }
 
     private fun getResult() {
 
         val retrofit: Retrofit = Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(API_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
         val api = retrofit.create(ApiService::class.java)
 
-        val testId = PreferencesUtil.getString(this, "testRunId", "")
+        val resultList = db.resultDao().getResults()
+        resultList.forEach {
+            if (it.message == "Analysing") {
+                val call = api.getResponse(it.id)
 
-        val call = api.getResponse(testId.toString())
-        call.enqueue(object : Callback<ResultResponse> {
+                Timber.e("Request result %s", it.id)
 
-            override fun onResponse(call: Call<ResultResponse>?, response: Response<ResultResponse>?) {
-                val body = response?.body()
+                call.enqueue(object : Callback<ResultResponse> {
 
-                val id = body?.id
-                val title = body?.title
-                var result = ""
-                var message = "-"
-                if (body?.result == null) {
-                    if (requestCount < 15) {
-                        Handler().postDelayed({
-                            getResult()
-                        }, 5000)
+                    override fun onResponse(call: Call<ResultResponse>?, response: Response<ResultResponse>?) {
+                        val body = response?.body()
+
+                        val id = body?.id
+                        val title = body?.title
+                        var result = ""
+                        var message = "-"
+                        if (body?.result != null) {
+                            result = body.result?.replace(title.toString(), "").toString()
+                            message = body.message.toString()
+                        }
+
+                        val resultData = db.resultDao().getResult(id)
+
+                        if (resultData != null) {
+
+                            db.resultDao()
+                                .insert(TestResult(id.toString(), title.toString(), resultData.date, result, message))
+
+                            adapter.setTestList(db.resultDao().getResults())
+                            adapter.notifyDataSetChanged()
+                        }
                     }
-                } else {
-                    result = body.result?.replace(title.toString(), "").toString()
-                    message = body.message.toString()
-                }
 
-                val resultData = db.resultDao().getResult(id)
-
-                if (resultData != null) {
-
-                    db.resultDao().insert(TestResult(id.toString(), title.toString(), resultData.date, result, message))
-
-                    val resultList = db.resultDao().getResults()
-                    adapter.setTestList(resultList)
-                    adapter.notifyDataSetChanged()
-                }
+                    override fun onFailure(call: Call<ResultResponse>?, t: Throwable?) {
+                        Timber.e(t.toString())
+                        requestCount++
+                    }
+                })
             }
+        }
 
-            override fun onFailure(call: Call<ResultResponse>?, t: Throwable?) {
-                Timber.e(t.toString())
-                requestCount++
-                if (requestCount < 15) {
-                    Handler().postDelayed({
-                        getResult()
-                    }, 5000)
-                }
-            }
-        })
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
