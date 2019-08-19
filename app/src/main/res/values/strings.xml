@@ -4,30 +4,20 @@
     <string name="copyrightMessage">Copyright © ffem</string>
     <string name="legalInformation">Legal Information</string>
 
-    <string name="ok">OK</string>
     <string name="navigate_up">Navigate up</string>
-    <string name="start_test">Start Test</string>
-    <string name="action_settings">Settings</string>
-    <string name="submitResult">Submit Result</string>
-    <string name="result">Result</string>
-
-    <string name="intro_msg_1">Quick colorimetric analysis to determine contaminants in water.</string>
-    <string name="intro_msg_2">To begin, launch ffem Collect and select a report question in a survey.</string>
-    <string name="go_to_external_app">Launch ffem Collect</string>
+    <string name="analyzing">Analyzing</string>
+    <string name="testing">Testing</string>
+    <string name="place_color_card">Place the color card within the view finder above</string>
+    <string name="scanning">Scanning…</string>
 
     <!-- Software notices -->
     <string name="software_notices">Software Notices</string>
     <string name="software_incorporates_material">This software incorporates material from the projects listed below</string>
 
-    <!--Alerts-->
-    <string name="app_not_found">App not found</string>
-    <string name="install_app">ffem Collect is not installed.\n\nPlease install ffem Collect app from Play store.</string>
-    <string name="go_to_play_store">Go to Play store</string>
 
     <!--Software notices-->
     <string name="apache_license_2">Apache License 2.0</string>
     <string name="mit_license">MIT License</string>
-    <string name="gnu_license">GNU GPL v2</string>
     <string name="cca_license">CC BY 4.0 International</string>
     <string name="eclipse_public_license">Eclipse Public License 1.0</string>
 
@@ -36,12 +26,6 @@
     <string name="settings">Settings</string>
 
     <string name="no_camera_permission">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
-    <string name="low_storage_error">Face detector dependencies cannot be downloaded due to low device storage</string>
-    <string name="no_Internet_connection">No data connection. Please connect to the internet and try again.</string>
-    <string name="analyzing">Analyzing</string>
     <string name="camera_permission_required">Camera access is required.</string>
-    <string name="testing">Testing</string>
-    <string name="testModeOn">Demo / Test mode</string>
-    <string name="place_color_card">Place the color card within the view finder above</string>
-    <string name="scanning">Scanning…</string>
+    <string name="no_Internet_connection">No data connection. Please connect to the internet and try again.</string>
 </resources>

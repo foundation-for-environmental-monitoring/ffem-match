@@ -131,7 +131,12 @@ class BarcodeActivity : BaseActivity() {
                     val db = AppDatabase.getDatabase(baseContext)
 
                     val date = Date()
-                    db.resultDao().insert(TestResult(testId, barcodeValue, date.time, "", "Analysing"))
+                    db.resultDao().insert(
+                        TestResult(
+                            testId, barcodeValue, date.time,
+                            "", getString(R.string.analyzing)
+                        )
+                    )
 
                     finish()
                 }

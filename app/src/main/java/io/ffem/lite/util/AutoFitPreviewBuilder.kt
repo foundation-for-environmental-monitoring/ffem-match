@@ -149,7 +149,7 @@ class AutoFitPreviewBuilder private constructor(
         textureView: TextureView?, rotation: Int?, newBufferDimens: Size,
         newViewFinderDimens: Size
     ) {
-        // This should not happen anyway, but now the linter knows
+        // This should not happen anyway...
         val textureView1 = textureView ?: return
 
         if (rotation == viewFinderRotation &&
