@@ -1,8 +1,9 @@
 package io.ffem.lite.camera
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Matrix
-import android.os.Environment.getExternalStorageDirectory
+import android.os.Environment.DIRECTORY_PICTURES
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -15,10 +16,12 @@ object Utilities {
     /**
      * Saves a specified picture on external disk.
      */
-    fun savePicture(folder: String, id: String, barcodeValue: String, bytes: ByteArray): String {
+    fun savePicture(
+        context: Context, id: String, barcodeValue: String, bytes: ByteArray
+    ): String {
         try {
-            val path = getExternalStorageDirectory().toString() +
-                    separator + folder + separator + "images" + separator
+            val path = context.getExternalFilesDir(DIRECTORY_PICTURES).toString() +
+                    separator + "captures" + separator
 
             val basePath = File(path)
             if (!basePath.exists())

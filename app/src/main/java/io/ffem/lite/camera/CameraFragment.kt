@@ -47,6 +47,7 @@ import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import io.ffem.lite.R
 import io.ffem.lite.app.App
+import io.ffem.lite.app.App.Companion.TEST_PARAMETER_NAME
 import io.ffem.lite.preference.sendDummyImage
 import io.ffem.lite.ui.BarcodeActivity.Companion.getOutputDirectory
 import io.ffem.lite.util.AutoFitPreviewBuilder
@@ -164,8 +165,7 @@ class CameraFragment : Fragment() {
 
             val testId = UUID.randomUUID().toString()
             val filePath = Utilities.savePicture(
-                getString(R.string.app_name), testId,
-                "Fluoride", Utilities.bitmapToBytes(bitmap)
+                requireContext(), testId, TEST_PARAMETER_NAME, Utilities.bitmapToBytes(bitmap)
             )
 
             val intent = Intent(CAPTURED_EVENT)

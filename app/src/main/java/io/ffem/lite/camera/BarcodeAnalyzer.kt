@@ -17,9 +17,9 @@ import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetector
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
-import io.ffem.lite.R
 import io.ffem.lite.app.App.Companion.FILE_PATH_KEY
 import io.ffem.lite.app.App.Companion.TEST_ID_KEY
+import io.ffem.lite.app.App.Companion.TEST_PARAMETER_NAME
 import io.ffem.lite.camera.CameraFragment.Companion.CAPTURED_EVENT
 import timber.log.Timber
 import java.util.*
@@ -147,8 +147,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer,
 
                 val testId = UUID.randomUUID().toString()
                 val filePath = Utilities.savePicture(
-                    context.getString(R.string.app_name), testId,
-                    "Fluoride", Utilities.bitmapToBytes(bitmapRotated)
+                    context, testId, TEST_PARAMETER_NAME, Utilities.bitmapToBytes(bitmapRotated)
                 )
 
                 bitmapRotated.recycle()

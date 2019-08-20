@@ -11,13 +11,13 @@ if (secretsFile.exists()) {
 }
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     defaultConfig {
         applicationId "io.ffem.lite"
         minSdkVersion 21
-        targetSdkVersion 28
-        versionCode 1
-        versionName "Alpha 0.1"
+        targetSdkVersion 29
+        versionCode 2
+        versionName "Test 2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 

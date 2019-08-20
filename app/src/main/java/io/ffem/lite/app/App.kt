@@ -1,6 +1,7 @@
 package io.ffem.lite.app
 
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Handler
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
@@ -34,7 +35,7 @@ class App : BaseApplication() {
         try {
             val locale: Locale
 
-            var code: String? = languageCode
+            var code: String = languageCode
 
             //the languages supported by the app
             val supportedLanguages = resources.getStringArray(R.array.language_codes)
@@ -43,7 +44,8 @@ class App : BaseApplication() {
             val currentSystemLanguage = Locale.getDefault().language.substring(0, 2)
 
             //the language the system was set to the last time the app was run
-            val previousSystemLanguage = PreferencesUtil.getString(this, R.string.systemLanguageKey, "")
+            val previousSystemLanguage =
+                PreferencesUtil.getString(this, R.string.systemLanguageKey, "")
 
             //if the system language was changed in the device settings then set that as the app language
             if (previousSystemLanguage != currentSystemLanguage && listOf(*supportedLanguages).contains(
@@ -78,8 +80,7 @@ class App : BaseApplication() {
 
             //if the app language is not already set to languageCode then set it now
             if (!config.locale.language.substring(0, 2).equals(
-                    code!!,
-                    ignoreCase = true
+                    code, ignoreCase = true
                 ) || !config.locale.country.equals(Locale.getDefault().country, ignoreCase = true)
             ) {
 
@@ -101,6 +102,7 @@ class App : BaseApplication() {
     companion object {
 
         const val SOUND_ON = true
+        const val TEST_PARAMETER_NAME = "Fluoride"
 
         // Keys
         const val FILE_PATH_KEY = "file_path"
@@ -128,8 +130,15 @@ class App : BaseApplication() {
                 val context = app
                 val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
 
+                @Suppress("DEPRECATION") val versionCode: Long =
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                        packageInfo.longVersionCode
+                    } else {
+                        packageInfo.versionCode.toLong()
+                    }
+
                 version = if (AppPreferences.isDiagnosticMode()) {
-                    String.format("%s (Build %s)", packageInfo.versionName, packageInfo.versionCode)
+                    String.format("%s (Build %s)", packageInfo.versionName, versionCode)
                 } else {
                     String.format(
                         "%s %s", context.getString(R.string.version),

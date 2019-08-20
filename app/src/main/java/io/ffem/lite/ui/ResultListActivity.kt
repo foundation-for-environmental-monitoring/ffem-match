@@ -1,14 +1,16 @@
 package io.ffem.lite.ui
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkRequest
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
+import android.os.Environment.DIRECTORY_PICTURES
 import android.os.Handler
 import android.view.Gravity
 import android.view.Menu
@@ -26,7 +28,9 @@ import io.ffem.lite.R
 import io.ffem.lite.app.App.Companion.API_URL
 import io.ffem.lite.app.App.Companion.TEST_ID_KEY
 import io.ffem.lite.app.App.Companion.TEST_NAME_KEY
+import io.ffem.lite.app.App.Companion.TEST_PARAMETER_NAME
 import io.ffem.lite.app.AppDatabase
+import io.ffem.lite.helper.ApkHelper.isNonStoreVersion
 import io.ffem.lite.model.ResultResponse
 import io.ffem.lite.model.TestResult
 import io.ffem.lite.preference.SettingsActivity
@@ -57,11 +61,11 @@ const val RESULT_CHECK_START_DELAY = 3000L
 
 class ResultListActivity : BaseActivity() {
 
-    private var callBackStarted: Boolean = false
+    private var appIsClosing: Boolean = false
+    private var resultPollingStarted: Boolean = false
     private lateinit var listView: RecyclerView
     private lateinit var connectivityManager: ConnectivityManager
     private lateinit var appUpdateManager: AppUpdateManager
-
 
     private fun onResultClick(position: Int) {
         resultRequestHandler.postDelayed(
@@ -88,8 +92,11 @@ class ResultListActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_result_list)
 
-        resultRequestHandler = Handler()
+        setTitle(R.string.app_name)
 
+        appUpdateManager = AppUpdateManagerFactory.create(this)
+
+        resultRequestHandler = Handler()
         runnable = Runnable {
 
             getResults()
@@ -99,24 +106,57 @@ class ResultListActivity : BaseActivity() {
             )
         }
 
-        setTitle(R.string.app_name)
+        val calendar = Calendar.getInstance()
+        if (calendar.get(Calendar.MONTH) > 7 && calendar.get(Calendar.YEAR) > 2018
+            && isNonStoreVersion(this)
+        ) {
+            appIsClosing = true
+            val marketUrl = Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
+            val message = String.format(
+                "%s%n%n%s", getString(R.string.thisVersionHasExpired),
+                getString(R.string.uninstallAndInstallFromStore)
+            )
 
-        db = AppDatabase.getDatabase(baseContext)
-        val resultList = db.resultDao().getResults()
+            val builder: AlertDialog.Builder = AlertDialog.Builder(this)
 
-        adapter.setTestList(resultList)
+            builder.setTitle(R.string.versionExpired)
+                .setMessage(message)
+                .setCancelable(false)
 
-        listView = findViewById(R.id.list_results)
-        listView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+            builder.setPositiveButton(R.string.ok) { dialogInterface, _ ->
+                dialogInterface.dismiss()
+                val intent = Intent(Intent.ACTION_VIEW)
+                intent.data = marketUrl
+                intent.setPackage("com.android.vending")
+                startActivity(intent)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    finishAndRemoveTask()
+                } else {
+                    finish()
+                }
+            }
 
-        listView.adapter = adapter
+            val alertDialog = builder.create()
+            alertDialog.show()
 
-        connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        monitorNetwork()
+        } else {
 
-        appUpdateManager = AppUpdateManagerFactory.create(this)
+            checkForUpdate()
 
-        checkForUpdate()
+            db = AppDatabase.getDatabase(baseContext)
+            val resultList = db.resultDao().getResults()
+
+            adapter.setTestList(resultList)
+
+            listView = findViewById(R.id.list_results)
+            listView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+
+            listView.adapter = adapter
+
+            connectivityManager =
+                getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            monitorNetwork()
+        }
     }
 
     private fun checkForUpdate() {
@@ -145,32 +185,40 @@ class ResultListActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
 
-        appUpdateManager
-            .appUpdateInfo
-            .addOnSuccessListener { appUpdateInfo ->
-                if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS
-                ) {
-                    appUpdateManager.startUpdateFlowForResult(
-                        appUpdateInfo,
-                        IMMEDIATE,
-                        this,
-                        APP_UPDATE_REQUEST
-                    )
+        if (!appIsClosing) {
+            appUpdateManager
+                .appUpdateInfo
+                .addOnSuccessListener { appUpdateInfo ->
+                    if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS
+                    ) {
+                        appUpdateManager.startUpdateFlowForResult(
+                            appUpdateInfo,
+                            IMMEDIATE,
+                            this,
+                            APP_UPDATE_REQUEST
+                        )
+                    }
                 }
+
+            if (!resultPollingStarted) {
+                resultRequestHandler.postDelayed(
+                    runnable, RESULT_CHECK_START_DELAY
+                )
             }
 
-        if (!callBackStarted) {
-            resultRequestHandler.postDelayed(
-                runnable, RESULT_CHECK_START_DELAY
-            )
+            if (db.resultDao().getUnsent().isNotEmpty()) {
+                if (!NetUtil.isInternetConnected(this)) {
+                    notifyNoInternet()
+                } else {
+                    sendImagesToServer()
+                }
+            }
         }
-
-        sendImagesToServer()
     }
 
     override fun onPause() {
         super.onPause()
-        callBackStarted = false
+        resultPollingStarted = false
         resultRequestHandler.removeCallbacks(runnable)
     }
 
@@ -180,7 +228,8 @@ class ResultListActivity : BaseActivity() {
     }
 
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
-        override fun onAvailable(network: Network?) {
+        override fun onAvailable(network: Network) {
+            super.onAvailable(network)
             sendImagesToServer()
             resultRequestHandler.removeCallbacks(runnable)
             resultRequestHandler.postDelayed(
@@ -188,7 +237,7 @@ class ResultListActivity : BaseActivity() {
             )
         }
 
-        override fun onLost(network: Network?) {
+        override fun onLost(network: Network) {
             super.onLost(network)
             resultRequestHandler.removeCallbacks(runnable)
         }
@@ -206,7 +255,7 @@ class ResultListActivity : BaseActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        callBackStarted = true
+        resultPollingStarted = true
         resultRequestHandler.removeCallbacks(runnable)
         resultRequestHandler.postDelayed(
             runnable, RESULT_CHECK_INTERVAL
@@ -215,12 +264,15 @@ class ResultListActivity : BaseActivity() {
         if (resultCode == Activity.RESULT_OK) {
             if (data != null) {
 
-                AppDatabase.getDatabase(baseContext).resultDao().insert(
-                    TestResult(
-                        data.getStringExtra(TEST_ID_KEY), 0, "Fluoride",
-                        Date().time, "", getString(R.string.outbox)
+                val id = data.getStringExtra(TEST_ID_KEY)
+                if (id != null) {
+                    AppDatabase.getDatabase(baseContext).resultDao().insert(
+                        TestResult(
+                            id, 0, TEST_PARAMETER_NAME,
+                            Date().time, "", getString(R.string.outbox)
+                        )
                     )
-                )
+                }
 
                 refreshList()
 
@@ -236,7 +288,6 @@ class ResultListActivity : BaseActivity() {
                 if (!NetUtil.isInternetConnected(this)) {
                     notifyNoInternet()
                 } else {
-
                     sendImagesToServer()
                 }
             }
@@ -283,18 +334,16 @@ class ResultListActivity : BaseActivity() {
 
     private fun sendToServer(id: String, name: String) {
 
-        val path = Environment.getExternalStorageDirectory().toString() +
-                File.separator + getString(R.string.app_name) + File.separator + "images" + File.separator
+        val path = getExternalFilesDir(DIRECTORY_PICTURES).toString() +
+                File.separator + "captures" + File.separator
         val filePath = "$path$id" + "_" + "$name.jpg"
 
         try {
-            // Add barcode value as exif metadata in the image.
             val imageDescription = "{\"test_type\" : $name}"
             val exif = ExifInterface(filePath)
             exif.setAttribute("ImageDescription", imageDescription)
             exif.saveAttributes()
-        } catch (e: IOException) {
-            // handle the error
+        } catch (ignore: IOException) {
         }
 
         try {
@@ -355,7 +404,10 @@ class ResultListActivity : BaseActivity() {
 
                 call.enqueue(object : Callback<ResultResponse> {
 
-                    override fun onResponse(call: Call<ResultResponse>?, response: Response<ResultResponse>?) {
+                    override fun onResponse(
+                        call: Call<ResultResponse>?,
+                        response: Response<ResultResponse>?
+                    ) {
                         val body = response?.body()
 
                         val id = body?.id
