@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "results")
 data class TestResult(
     @PrimaryKey val id: String = "",
+    @ColumnInfo(name = "status") val status: Int,
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "date") val date: Long,
     @ColumnInfo(name = "value") val value: String,

@@ -1,8 +1,14 @@
 package io.ffem.lite.ui
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkRequest
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.os.Handler
 import android.view.Gravity
 import android.view.Menu
@@ -12,8 +18,11 @@ import android.widget.Toast
 import androidx.exifinterface.media.ExifInterface
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.install.model.AppUpdateType.IMMEDIATE
+import com.google.android.play.core.install.model.UpdateAvailability
 import io.ffem.lite.R
-import io.ffem.lite.app.App
 import io.ffem.lite.app.App.Companion.API_URL
 import io.ffem.lite.app.App.Companion.TEST_ID_KEY
 import io.ffem.lite.app.App.Companion.TEST_NAME_KEY
@@ -41,10 +50,18 @@ import java.io.IOException
 import java.util.*
 
 
+const val APP_UPDATE_REQUEST = 101
+const val TOAST_Y_OFFSET = 280
+const val RESULT_CHECK_INTERVAL = 30000L
+const val RESULT_CHECK_START_DELAY = 3000L
+
 class ResultListActivity : BaseActivity() {
 
     private var callBackStarted: Boolean = false
     private lateinit var listView: RecyclerView
+    private lateinit var connectivityManager: ConnectivityManager
+    private lateinit var appUpdateManager: AppUpdateManager
+
 
     private fun onResultClick(position: Int) {
         resultRequestHandler.postDelayed(
@@ -75,10 +92,10 @@ class ResultListActivity : BaseActivity() {
 
         runnable = Runnable {
 
-            getResult()
+            getResults()
 
             resultRequestHandler.postDelayed(
-                runnable, 30000
+                runnable, RESULT_CHECK_INTERVAL
             )
         }
 
@@ -93,6 +110,31 @@ class ResultListActivity : BaseActivity() {
         listView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 
         listView.adapter = adapter
+
+        connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        monitorNetwork()
+
+        appUpdateManager = AppUpdateManagerFactory.create(this)
+
+        checkForUpdate()
+    }
+
+    private fun checkForUpdate() {
+
+        val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+
+        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+                && appUpdateInfo.isUpdateTypeAllowed(IMMEDIATE)
+            ) {
+                appUpdateManager.startUpdateFlowForResult(
+                    appUpdateInfo,
+                    IMMEDIATE,
+                    this,
+                    APP_UPDATE_REQUEST
+                )
+            }
+        }
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -103,11 +145,27 @@ class ResultListActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
 
+        appUpdateManager
+            .appUpdateInfo
+            .addOnSuccessListener { appUpdateInfo ->
+                if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS
+                ) {
+                    appUpdateManager.startUpdateFlowForResult(
+                        appUpdateInfo,
+                        IMMEDIATE,
+                        this,
+                        APP_UPDATE_REQUEST
+                    )
+                }
+            }
+
         if (!callBackStarted) {
             resultRequestHandler.postDelayed(
-                runnable, 3000
+                runnable, RESULT_CHECK_START_DELAY
             )
         }
+
+        sendImagesToServer()
     }
 
     override fun onPause() {
@@ -117,9 +175,31 @@ class ResultListActivity : BaseActivity() {
     }
 
     fun onStartClick(@Suppress("UNUSED_PARAMETER") view: View) {
-        if (NetUtil.isInternetConnected(this)) {
-            val intent: Intent? = Intent(baseContext, BarcodeActivity::class.java)
-            startActivityForResult(intent, 100)
+        val intent: Intent? = Intent(baseContext, BarcodeActivity::class.java)
+        startActivityForResult(intent, 100)
+    }
+
+    private val networkCallback = object : ConnectivityManager.NetworkCallback() {
+        override fun onAvailable(network: Network?) {
+            sendImagesToServer()
+            resultRequestHandler.removeCallbacks(runnable)
+            resultRequestHandler.postDelayed(
+                runnable, RESULT_CHECK_START_DELAY
+            )
+        }
+
+        override fun onLost(network: Network?) {
+            super.onLost(network)
+            resultRequestHandler.removeCallbacks(runnable)
+        }
+    }
+
+    private fun monitorNetwork() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            connectivityManager.registerDefaultNetworkCallback(networkCallback)
+        } else {
+            val builder = NetworkRequest.Builder()
+            connectivityManager.registerNetworkCallback(builder.build(), networkCallback)
         }
     }
 
@@ -129,48 +209,87 @@ class ResultListActivity : BaseActivity() {
         callBackStarted = true
         resultRequestHandler.removeCallbacks(runnable)
         resultRequestHandler.postDelayed(
-            runnable, 30000
+            runnable, RESULT_CHECK_INTERVAL
         )
 
         if (resultCode == Activity.RESULT_OK) {
             if (data != null) {
-                sendToServer(
-                    data.getStringExtra(TEST_ID_KEY),
-                    "Fluoride", data.getStringExtra(App.FILE_PATH_KEY)
+
+                AppDatabase.getDatabase(baseContext).resultDao().insert(
+                    TestResult(
+                        data.getStringExtra(TEST_ID_KEY), 0, "Fluoride",
+                        Date().time, "", getString(R.string.outbox)
+                    )
                 )
+
+                refreshList()
+
+                if (sendDummyImage()) {
+                    val toast = Toast.makeText(
+                        this, getString(R.string.sending_dummy_image),
+                        Toast.LENGTH_LONG
+                    )
+                    toast.setGravity(Gravity.BOTTOM, 0, TOAST_Y_OFFSET)
+                    toast.show()
+                }
+
+                if (!NetUtil.isInternetConnected(this)) {
+                    notifyNoInternet()
+                } else {
+
+                    sendImagesToServer()
+                }
             }
         }
     }
 
-    private fun notifyFileSent() {
-        adapter.setTestList(db.resultDao().getResults())
-        adapter.notifyDataSetChanged()
+    private fun notifyNoInternet() {
+        val toast = Toast.makeText(
+            this, getString(R.string.no_Internet_connection),
+            Toast.LENGTH_LONG
+        )
+        toast.setGravity(Gravity.BOTTOM, 0, TOAST_Y_OFFSET)
+        toast.show()
+    }
 
-        var message = getString(R.string.analyzing)
-        if (sendDummyImage()) {
-            message = getString(R.string.sending_dummy_image)
-        }
+    private fun notifyFileSent() {
+
+        refreshList()
 
         Handler().postDelayed({
             for (i in 0 until 2) {
                 val toast = Toast.makeText(
-                    this, message +
+                    this, getString(R.string.analyzing) +
                             "\n\n" +
                             getString(R.string.wait_few_minutes) +
                             "\n",
                     Toast.LENGTH_LONG
                 )
-                toast.setGravity(Gravity.BOTTOM, 0, 300)
+                toast.setGravity(Gravity.BOTTOM, 0, TOAST_Y_OFFSET)
                 toast.show()
             }
         }, 800)
+
+        sendImagesToServer()
     }
 
-    private fun sendToServer(testId: String, barcodeValue: String, filePath: String) {
+    private fun sendImagesToServer() {
+        if (NetUtil.isInternetConnected(this)) {
+            db.resultDao().getUnsent().forEach {
+                sendToServer(it.id, it.name)
+            }
+        }
+    }
+
+    private fun sendToServer(id: String, name: String) {
+
+        val path = Environment.getExternalStorageDirectory().toString() +
+                File.separator + getString(R.string.app_name) + File.separator + "images" + File.separator
+        val filePath = "$path$id" + "_" + "$name.jpg"
 
         try {
             // Add barcode value as exif metadata in the image.
-            val imageDescription = "{\"test_type\" : $barcodeValue}"
+            val imageDescription = "{\"test_type\" : $name}"
             val exif = ExifInterface(filePath)
             exif.setAttribute("ImageDescription", imageDescription)
             exif.saveAttributes()
@@ -188,7 +307,7 @@ class ResultListActivity : BaseActivity() {
             val requestBody = MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("user_id", "1")
-                .addFormDataPart("testId", testId)
+                .addFormDataPart("testId", id)
                 .addFormDataPart("image", filename, fileBody)
                 .build()
 
@@ -206,14 +325,7 @@ class ResultListActivity : BaseActivity() {
                 override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
                     response.body!!.close()
 
-                    val date = Date()
-                    val db = AppDatabase.getDatabase(baseContext)
-                    db.resultDao().insert(
-                        TestResult(
-                            testId, barcodeValue, date.time,
-                            "", getString(R.string.analyzing)
-                        )
-                    )
+                    db.resultDao().updateStatus(id, 1, getString(R.string.analyzing))
 
                     this@ResultListActivity.runOnUiThread {
                         notifyFileSent()
@@ -225,18 +337,18 @@ class ResultListActivity : BaseActivity() {
         }
     }
 
-    private fun getResult() {
+    private fun getResults() {
 
-        val retrofit: Retrofit = Retrofit.Builder()
-            .baseUrl(API_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
+        val resultList = db.resultDao().getResultPending()
 
-        val api = retrofit.create(ApiService::class.java)
+        if (resultList.isNotEmpty()) {
+            val retrofit: Retrofit = Retrofit.Builder()
+                .baseUrl(API_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
 
-        val resultList = db.resultDao().getResults()
-        resultList.forEach {
-            if (it.message == getString(R.string.analyzing)) {
+            val api = retrofit.create(ApiService::class.java)
+            resultList.forEach {
                 val call = api.getResponse(it.id)
 
                 Timber.e("Request result %s", it.id)
@@ -261,18 +373,16 @@ class ResultListActivity : BaseActivity() {
 
                             SoundUtil.playShortResource(applicationContext, R.raw.triangle)
 
-                            db.resultDao()
-                                .insert(TestResult(id.toString(), title.toString(), resultData.date, result, message))
+                            db.resultDao().updateResult(id.toString(), 2, message, result)
 
-                            adapter.setTestList(db.resultDao().getResults())
-                            adapter.notifyDataSetChanged()
+                            refreshList()
 
                             val toast = Toast.makeText(
                                 applicationContext,
                                 getString(R.string.result_received),
                                 Toast.LENGTH_LONG
                             )
-                            toast.setGravity(Gravity.BOTTOM, 0, 250)
+                            toast.setGravity(Gravity.BOTTOM, 0, TOAST_Y_OFFSET)
                             toast.show()
                         }
                     }
@@ -284,6 +394,11 @@ class ResultListActivity : BaseActivity() {
                 })
             }
         }
+    }
+
+    private fun refreshList() {
+        adapter.setTestList(db.resultDao().getResults())
+        adapter.notifyDataSetChanged()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

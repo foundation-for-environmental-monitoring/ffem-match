@@ -8,6 +8,12 @@ import androidx.room.Query
 @Dao
 abstract class ResultDao {
 
+    @Query("SELECT * FROM results WHERE status = 0 LIMIT 1")
+    abstract fun getUnsent(): List<TestResult>
+
+    @Query("SELECT * FROM results WHERE status = 1")
+    abstract fun getResultPending(): List<TestResult>
+
     @Query("SELECT * FROM results ORDER BY date DESC")
     abstract fun getResults(): List<TestResult>
 
@@ -16,5 +22,11 @@ abstract class ResultDao {
 
     @Insert(onConflict = REPLACE)
     abstract fun insert(result: TestResult)
+
+    @Query("UPDATE results SET status = :status, message = :message WHERE id = :id")
+    abstract fun updateStatus(id: String, status: Int, message: String)
+
+    @Query("UPDATE results SET status = :status, message = :message, value= :result WHERE id = :id")
+    abstract fun updateResult(id: String, status: Int, message: String, result: String)
 
 }
