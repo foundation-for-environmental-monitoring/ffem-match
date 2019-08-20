@@ -15,6 +15,7 @@ class App : BaseApplication() {
         super.onCreate()
         app = this
 
+        @Suppress("ConstantConditionIf")
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }

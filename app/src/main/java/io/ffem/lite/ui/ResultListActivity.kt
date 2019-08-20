@@ -122,7 +122,7 @@ class ResultListActivity : BaseActivity() {
         if (NetUtil.isInternetConnected(this)) {
             if (sendDummyImage()) {
 
-                for (i in 0 until 2) {
+                for (i in 0 until 1) {
                     val toast = Toast.makeText(
                         this, getString(R.string.sending_dummy_image) +
                                 "\n\n" +
@@ -130,7 +130,7 @@ class ResultListActivity : BaseActivity() {
                                 "\n",
                         Toast.LENGTH_LONG
                     )
-                    toast.setGravity(Gravity.CENTER, 0, 100)
+                    toast.setGravity(Gravity.BOTTOM, 0, 300)
                     toast.show()
                 }
 
@@ -172,7 +172,7 @@ class ResultListActivity : BaseActivity() {
                                 "\n",
                         Toast.LENGTH_LONG
                     )
-                    toast.setGravity(Gravity.CENTER, 0, 100)
+                    toast.setGravity(Gravity.BOTTOM, 0, 300)
                     toast.show()
                 }
             }, 1000)
