@@ -133,7 +133,6 @@ class SettingsActivity : BaseActivity(), SharedPreferences.OnSharedPreferenceCha
         mScrollView!!.post { mScrollView!!.scrollTo(0, mScrollPosition) }
     }
 
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
             onBackPressed()

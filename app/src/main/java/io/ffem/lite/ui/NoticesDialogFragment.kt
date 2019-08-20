@@ -37,7 +37,7 @@ class NoticesDialogFragment : DialogFragment() {
             } else if (vg.getChildAt(i) is TextView) {
                 val tv = vg.getChildAt(i) as TextView
                 @Suppress("DEPRECATION")
-                tv.setLinkTextColor(resources.getColor(R.color.accent))
+                tv.setLinkTextColor(resources.getColor(R.color.colorAccent))
                 tv.movementMethod = LinkMovementMethod.getInstance()
             }
         }
