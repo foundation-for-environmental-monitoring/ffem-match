@@ -12,6 +12,14 @@ fun isTestMode(): Boolean {
     )
 }
 
+fun isSoundOn(): Boolean {
+    return !AppPreferences.isDiagnosticMode() || PreferencesUtil.getBoolean(App.app, R.string.soundOnKey, true)
+}
+
+fun sendDummyImage(): Boolean {
+    return AppPreferences.isDiagnosticMode() && PreferencesUtil.getBoolean(App.app, R.string.dummyImageKey, false)
+}
+
 object AppPreferences {
 
     fun isDiagnosticMode(): Boolean {
@@ -20,10 +28,6 @@ object AppPreferences {
 
     fun enableDiagnosticMode() {
         PreferencesUtil.setBoolean(App.app, R.string.diagnosticModeKey, true)
-    }
-
-    fun sendDummyImage(): Boolean {
-        return isDiagnosticMode() && PreferencesUtil.getBoolean(App.app, R.string.dummyImageKey, false)
     }
 
     fun disableDiagnosticMode() {

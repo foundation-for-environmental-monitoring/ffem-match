@@ -4,6 +4,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.view.MenuItem
+import android.view.View
 import io.ffem.lite.R
 import io.ffem.lite.app.App.Companion.TEST_ID_KEY
 import io.ffem.lite.app.App.Companion.TEST_NAME_KEY
@@ -29,6 +30,10 @@ class ResultActivity : BaseActivity() {
         if (file.exists()) {
             image.setImageURI(Uri.fromFile(file))
         }
+    }
+
+    fun onHomeClick(@Suppress("UNUSED_PARAMETER") view: View) {
+        finish()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

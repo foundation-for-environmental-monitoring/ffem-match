@@ -100,6 +100,8 @@ class App : BaseApplication() {
 
     companion object {
 
+        const val SOUND_ON = true
+
         // Keys
         const val FILE_PATH_KEY = "file_path"
         const val TEST_ID_KEY = "test_id"

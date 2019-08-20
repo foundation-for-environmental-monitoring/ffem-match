@@ -7,6 +7,7 @@
     android:layout_height="?toolbarHeight"
     android:layout_marginTop="?toolbarMargin"
     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+    app:layout_constraintTop_toTopOf="parent"
     app:titleTextColor="?colorPrimary"
     tools:showIn="@layout/activity_result_list">
 

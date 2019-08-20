@@ -23,6 +23,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.drawable.BitmapDrawable
 import android.hardware.display.DisplayManager
 import android.os.Bundle
 import android.os.Handler
@@ -38,17 +39,21 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.camera.core.*
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.Navigation
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import io.ffem.lite.R
+import io.ffem.lite.app.App
+import io.ffem.lite.preference.sendDummyImage
 import io.ffem.lite.ui.BarcodeActivity.Companion.getOutputDirectory
 import io.ffem.lite.util.AutoFitPreviewBuilder
 import kotlinx.android.synthetic.main.preview_overlay.*
 import timber.log.Timber
 import java.io.File
+import java.util.*
 
 /** Helper type alias used for analysis use case callbacks */
 /**
@@ -153,12 +158,28 @@ class CameraFragment : Fragment() {
         // Determine the output directory
         outputDirectory = getOutputDirectory(requireContext())
 
-        viewFinder.post {
+        if (sendDummyImage()) {
+            val drawable = ContextCompat.getDrawable(requireContext(), R.drawable.dummy_card)
+            val bitmap = (drawable as BitmapDrawable).bitmap
 
-            displayId = viewFinder.display.displayId
+            val testId = UUID.randomUUID().toString()
+            val filePath = Utilities.savePicture(
+                getString(R.string.app_name), testId,
+                "Fluoride", Utilities.bitmapToBytes(bitmap)
+            )
 
-            updateCameraUi()
-            bindCameraUseCases()
+            val intent = Intent(CAPTURED_EVENT)
+            intent.putExtra(App.FILE_PATH_KEY, filePath)
+            intent.putExtra(App.TEST_ID_KEY, testId)
+            broadcastManager.sendBroadcast(intent)
+        } else {
+            viewFinder.post {
+
+                displayId = viewFinder.display.displayId
+
+                updateCameraUi()
+                bindCameraUseCases()
+            }
         }
     }
 
@@ -238,11 +259,5 @@ class CameraFragment : Fragment() {
 
     companion object {
         const val CAPTURED_EVENT = "captured_event"
-
-//        private fun createFile(baseFolder: File, format: String, extension: String) =
-//            File(
-//                baseFolder, SimpleDateFormat(format, Locale.US)
-//                    .format(System.currentTimeMillis()) + extension
-//            )
     }
 }

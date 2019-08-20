@@ -2,7 +2,6 @@ package io.ffem.lite.ui
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.view.Gravity
@@ -10,23 +9,22 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.exifinterface.media.ExifInterface
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import io.ffem.lite.R
+import io.ffem.lite.app.App
 import io.ffem.lite.app.App.Companion.API_URL
 import io.ffem.lite.app.App.Companion.TEST_ID_KEY
 import io.ffem.lite.app.App.Companion.TEST_NAME_KEY
 import io.ffem.lite.app.AppDatabase
-import io.ffem.lite.camera.Utilities
-import io.ffem.lite.camera.Utilities.bitmapToBytes
 import io.ffem.lite.model.ResultResponse
 import io.ffem.lite.model.TestResult
-import io.ffem.lite.preference.AppPreferences.sendDummyImage
 import io.ffem.lite.preference.SettingsActivity
+import io.ffem.lite.preference.sendDummyImage
 import io.ffem.lite.remote.ApiService
 import io.ffem.lite.util.NetUtil
+import io.ffem.lite.util.SoundUtil
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -56,7 +54,7 @@ class ResultListActivity : BaseActivity() {
                 intent.putExtra(TEST_ID_KEY, item.id)
                 intent.putExtra(TEST_NAME_KEY, item.name)
                 startActivity(intent)
-            }, 300
+            }, 350
         )
     }
 
@@ -120,33 +118,8 @@ class ResultListActivity : BaseActivity() {
 
     fun onStartClick(@Suppress("UNUSED_PARAMETER") view: View) {
         if (NetUtil.isInternetConnected(this)) {
-            if (sendDummyImage()) {
-
-                for (i in 0 until 1) {
-                    val toast = Toast.makeText(
-                        this, getString(R.string.sending_dummy_image) +
-                                "\n\n" +
-                                getString(R.string.wait_few_minutes) +
-                                "\n",
-                        Toast.LENGTH_LONG
-                    )
-                    toast.setGravity(Gravity.BOTTOM, 0, 300)
-                    toast.show()
-                }
-
-                val drawable = ContextCompat.getDrawable(this, R.drawable.dummy_card)
-                val bitmap = (drawable as BitmapDrawable).bitmap
-
-                val testId = UUID.randomUUID().toString()
-                val filePath = Utilities.savePicture(
-                    getString(R.string.app_name), testId,
-                    "Fluoride", bitmapToBytes(bitmap)
-                )
-                sendToServer(testId, "Fluoride", filePath)
-            } else {
-                val intent: Intent? = Intent(baseContext, BarcodeActivity::class.java)
-                startActivityForResult(intent, 100)
-            }
+            val intent: Intent? = Intent(baseContext, BarcodeActivity::class.java)
+            startActivityForResult(intent, 100)
         }
     }
 
@@ -160,23 +133,37 @@ class ResultListActivity : BaseActivity() {
         )
 
         if (resultCode == Activity.RESULT_OK) {
-            adapter.setTestList(db.resultDao().getResults())
-            adapter.notifyDataSetChanged()
-
-            Handler().postDelayed({
-                for (i in 0 until 2) {
-                    val toast = Toast.makeText(
-                        this, getString(R.string.analyzing) +
-                                "\n\n" +
-                                getString(R.string.wait_few_minutes) +
-                                "\n",
-                        Toast.LENGTH_LONG
-                    )
-                    toast.setGravity(Gravity.BOTTOM, 0, 300)
-                    toast.show()
-                }
-            }, 1000)
+            if (data != null) {
+                sendToServer(
+                    data.getStringExtra(TEST_ID_KEY),
+                    "Fluoride", data.getStringExtra(App.FILE_PATH_KEY)
+                )
+            }
         }
+    }
+
+    private fun notifyFileSent() {
+        adapter.setTestList(db.resultDao().getResults())
+        adapter.notifyDataSetChanged()
+
+        var message = getString(R.string.analyzing)
+        if (sendDummyImage()) {
+            message = getString(R.string.sending_dummy_image)
+        }
+
+        Handler().postDelayed({
+            for (i in 0 until 2) {
+                val toast = Toast.makeText(
+                    this, message +
+                            "\n\n" +
+                            getString(R.string.wait_few_minutes) +
+                            "\n",
+                    Toast.LENGTH_LONG
+                )
+                toast.setGravity(Gravity.BOTTOM, 0, 300)
+                toast.show()
+            }
+        }, 800)
     }
 
     private fun sendToServer(testId: String, barcodeValue: String, filePath: String) {
@@ -229,8 +216,7 @@ class ResultListActivity : BaseActivity() {
                     )
 
                     this@ResultListActivity.runOnUiThread {
-                        adapter.setTestList(db.resultDao().getResults())
-                        adapter.notifyDataSetChanged()
+                        notifyFileSent()
                     }
                 }
             })
@@ -272,6 +258,8 @@ class ResultListActivity : BaseActivity() {
                         val resultData = db.resultDao().getResult(id)
 
                         if (resultData != null) {
+
+                            SoundUtil.playShortResource(applicationContext, R.raw.triangle)
 
                             db.resultDao()
                                 .insert(TestResult(id.toString(), title.toString(), resultData.date, result, message))
