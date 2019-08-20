@@ -5,15 +5,19 @@ import android.content.Intent
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.os.Handler
+import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.exifinterface.media.ExifInterface
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import io.ffem.lite.R
 import io.ffem.lite.app.App.Companion.API_URL
+import io.ffem.lite.app.App.Companion.TEST_ID_KEY
+import io.ffem.lite.app.App.Companion.TEST_NAME_KEY
 import io.ffem.lite.app.AppDatabase
 import io.ffem.lite.camera.Utilities
 import io.ffem.lite.camera.Utilities.bitmapToBytes
@@ -23,7 +27,6 @@ import io.ffem.lite.preference.AppPreferences.sendDummyImage
 import io.ffem.lite.preference.SettingsActivity
 import io.ffem.lite.remote.ApiService
 import io.ffem.lite.util.NetUtil
-import io.ffem.lite.util.PreferencesUtil
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -44,7 +47,23 @@ class ResultListActivity : BaseActivity() {
 
     private var callBackStarted: Boolean = false
     private lateinit var listView: RecyclerView
-    private var adapter: ResultAdapter = ResultAdapter()
+
+    private fun onResultClick(position: Int) {
+        resultRequestHandler.postDelayed(
+            {
+                val item = adapter.getItemAt(position)
+                val intent = Intent(baseContext, ResultActivity::class.java)
+                intent.putExtra(TEST_ID_KEY, item.id)
+                intent.putExtra(TEST_NAME_KEY, item.name)
+                startActivity(intent)
+            }, 300
+        )
+    }
+
+    private var adapter: ResultAdapter = ResultAdapter(clickListener = {
+        onResultClick(it)
+    })
+
     private var requestCount = 0
     private lateinit var db: AppDatabase
     private lateinit var resultRequestHandler: Handler
@@ -102,14 +121,28 @@ class ResultListActivity : BaseActivity() {
     fun onStartClick(@Suppress("UNUSED_PARAMETER") view: View) {
         if (NetUtil.isInternetConnected(this)) {
             if (sendDummyImage()) {
-                Toast.makeText(
-                    this, "Sending dummy image",
-                    Toast.LENGTH_LONG
-                ).show()
-                val drawable = resources.getDrawable(R.drawable.dummy_card)
+
+                for (i in 0 until 2) {
+                    val toast = Toast.makeText(
+                        this, getString(R.string.sending_dummy_image) +
+                                "\n\n" +
+                                getString(R.string.wait_few_minutes) +
+                                "\n",
+                        Toast.LENGTH_LONG
+                    )
+                    toast.setGravity(Gravity.CENTER, 0, 100)
+                    toast.show()
+                }
+
+                val drawable = ContextCompat.getDrawable(this, R.drawable.dummy_card)
                 val bitmap = (drawable as BitmapDrawable).bitmap
-                val filePath = Utilities.savePicture("Fluoride", bitmapToBytes(bitmap))
-                sendToServer("Fluoride", filePath)
+
+                val testId = UUID.randomUUID().toString()
+                val filePath = Utilities.savePicture(
+                    getString(R.string.app_name), testId,
+                    "Fluoride", bitmapToBytes(bitmap)
+                )
+                sendToServer(testId, "Fluoride", filePath)
             } else {
                 val intent: Intent? = Intent(baseContext, BarcodeActivity::class.java)
                 startActivityForResult(intent, 100)
@@ -120,28 +153,33 @@ class ResultListActivity : BaseActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        adapter.setTestList(db.resultDao().getResults())
-        adapter.notifyDataSetChanged()
-
         callBackStarted = true
         resultRequestHandler.removeCallbacks(runnable)
         resultRequestHandler.postDelayed(
             runnable, 30000
         )
 
-        Handler().postDelayed({
-            for (i in 0 until 2) {
-                if (resultCode == Activity.RESULT_OK) {
-                    Toast.makeText(
-                        this, "Photo sent for analysis. Result will arrive in a few minutes.",
+        if (resultCode == Activity.RESULT_OK) {
+            adapter.setTestList(db.resultDao().getResults())
+            adapter.notifyDataSetChanged()
+
+            Handler().postDelayed({
+                for (i in 0 until 2) {
+                    val toast = Toast.makeText(
+                        this, getString(R.string.analyzing) +
+                                "\n\n" +
+                                getString(R.string.wait_few_minutes) +
+                                "\n",
                         Toast.LENGTH_LONG
-                    ).show()
+                    )
+                    toast.setGravity(Gravity.CENTER, 0, 100)
+                    toast.show()
                 }
-            }
-        }, 1500)
+            }, 1000)
+        }
     }
 
-    private fun sendToServer(barcodeValue: String, filePath: String) {
+    private fun sendToServer(testId: String, barcodeValue: String, filePath: String) {
 
         try {
             // Add barcode value as exif metadata in the image.
@@ -155,14 +193,10 @@ class ResultListActivity : BaseActivity() {
 
         try {
             val file = File(filePath)
-            val contentType = file.toURL().openConnection().contentType
+            val contentType = file.toURI().toURL().openConnection().contentType
 
             val fileBody = file.asRequestBody(contentType.toMediaTypeOrNull())
             val filename = file.name
-
-            val testId = UUID.randomUUID().toString()
-
-            PreferencesUtil.setString(this, "testRunId", testId)
 
             val requestBody = MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
@@ -244,6 +278,14 @@ class ResultListActivity : BaseActivity() {
 
                             adapter.setTestList(db.resultDao().getResults())
                             adapter.notifyDataSetChanged()
+
+                            val toast = Toast.makeText(
+                                applicationContext,
+                                getString(R.string.result_received),
+                                Toast.LENGTH_LONG
+                            )
+                            toast.setGravity(Gravity.BOTTOM, 0, 250)
+                            toast.show()
                         }
                     }
 

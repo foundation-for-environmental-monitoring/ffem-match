@@ -13,11 +13,12 @@ import androidx.exifinterface.media.ExifInterface
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import io.ffem.lite.R
 import io.ffem.lite.app.App.Companion.API_URL
+import io.ffem.lite.app.App.Companion.FILE_PATH_KEY
+import io.ffem.lite.app.App.Companion.TEST_ID_KEY
 import io.ffem.lite.app.AppDatabase
 import io.ffem.lite.camera.CameraFragment
 import io.ffem.lite.databinding.ActivityBarcodeBinding
 import io.ffem.lite.model.TestResult
-import io.ffem.lite.util.PreferencesUtil
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -48,7 +49,10 @@ class BarcodeActivity : BaseActivity() {
 
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            sendToServer("Fluoride", intent.getStringExtra("FilePath"))
+            sendToServer(
+                intent.getStringExtra(TEST_ID_KEY),
+                "Fluoride", intent.getStringExtra(FILE_PATH_KEY)
+            )
         }
     }
 
@@ -78,7 +82,7 @@ class BarcodeActivity : BaseActivity() {
         broadcastManager.unregisterReceiver(broadcastReceiver)
     }
 
-    private fun sendToServer(barcodeValue: String, filePath: String) {
+    private fun sendToServer(testId: String, barcodeValue: String, filePath: String) {
 
         try {
             // Add barcode value as exif metadata in the image.
@@ -92,17 +96,13 @@ class BarcodeActivity : BaseActivity() {
 
         try {
             val file = File(filePath)
-            val contentType = file.toURL().openConnection().contentType
+            val contentType = file.toURI().toURL().openConnection().contentType
 
             Timber.d("file: %s", file.path)
             Timber.d("contentType: %s", contentType)
 
             val fileBody = file.asRequestBody(contentType.toMediaTypeOrNull())
             val filename = file.name
-
-            val testId = UUID.randomUUID().toString()
-
-            PreferencesUtil.setString(this, "testRunId", testId)
 
             val requestBody = MultipartBody.Builder()
                 .setType(MultipartBody.FORM)

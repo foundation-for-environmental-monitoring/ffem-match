@@ -9,35 +9,26 @@ import java.io.File
 import java.io.File.separator
 import java.io.FileOutputStream
 import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.*
 
 object Utilities {
 
     /**
-     * return the timestamp on yyMMdd_hhmmss format
-     */
-    private val timestamp: String
-        get() {
-            val sdf = SimpleDateFormat("yyMMdd_hhmmss", Locale.US)
-            return sdf.format(Date())
-        }
-
-    /**
      * Saves a specified picture on external disk.
      */
-    fun savePicture(barcodeValue: String, bytes: ByteArray): String {
+    fun savePicture(folder: String, id: String, barcodeValue: String, bytes: ByteArray): String {
         try {
-            val mainPath =
-                getExternalStorageDirectory().toString() + separator + "ffem Lite" + separator + "images" + separator
-            val basePath = File(mainPath)
+            val path = getExternalStorageDirectory().toString() +
+                    separator + folder + separator + "images" + separator
+
+            val basePath = File(path)
             if (!basePath.exists())
                 Timber.d(if (basePath.mkdirs()) "Success" else "Failed")
 
-            val filePath = mainPath + "photo_" + timestamp + "_" + barcodeValue + ".jpg"
+            val filePath = "$path$id" + "_" + "$barcodeValue.jpg"
             val captureFile = File(filePath)
             if (!captureFile.exists())
                 Timber.d(if (captureFile.createNewFile()) "Success" else "Failed")
+
             val stream = FileOutputStream(captureFile)
             stream.write(bytes)
             stream.flush()

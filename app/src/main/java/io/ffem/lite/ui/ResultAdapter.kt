@@ -8,7 +8,8 @@ import io.ffem.lite.R
 import io.ffem.lite.databinding.RowResultBinding
 import io.ffem.lite.model.TestResult
 
-class ResultAdapter : RecyclerView.Adapter<ResultAdapter.TestResultViewHolder>() {
+class ResultAdapter(private val clickListener: (Int) -> Unit) :
+    RecyclerView.Adapter<ResultAdapter.TestResultViewHolder>() {
 
     private var testList: List<TestResult>? = null
 
@@ -29,15 +30,16 @@ class ResultAdapter : RecyclerView.Adapter<ResultAdapter.TestResultViewHolder>()
     override fun onBindViewHolder(holder: TestResultViewHolder, position: Int) {
         holder.binding.result = testList!![position]
         holder.binding.executePendingBindings()
+        holder.binding.layout.setOnClickListener { clickListener(position) }
     }
 
     override fun getItemCount(): Int {
         return if (testList == null) 0 else testList!!.size
     }
 
-//    internal fun getItemAt(i: Int): TestResult {
-//        return testList!![i]
-//    }
+    internal fun getItemAt(i: Int): TestResult {
+        return testList!![i]
+    }
 
     class TestResultViewHolder(val binding: RowResultBinding) : RecyclerView.ViewHolder(binding.root)
 }

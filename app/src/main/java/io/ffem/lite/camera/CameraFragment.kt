@@ -40,6 +40,7 @@ import androidx.camera.core.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.navigation.Navigation
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import io.ffem.lite.R
@@ -107,14 +108,27 @@ class CameraFragment : Fragment() {
         super.onResume()
         // Make sure that all permissions are still present, since user could have removed them
         //  while the app was on paused state
+        if (!PermissionsFragment.hasPermissions(requireContext())) {
+            Navigation.findNavController(requireActivity(), R.id.fragment_container).navigate(
+                CameraFragmentDirections.actionCameraToPermissions()
+            )
+        }
         broadcastManager.registerReceiver(broadcastReceiver, IntentFilter(CAPTURED_EVENT))
     }
 
     override fun onPause() {
         super.onPause()
         CameraX.unbindAll()
-        displayManager.unregisterDisplayListener(displayListener)
         broadcastManager.unregisterReceiver(broadcastReceiver)
+        displayManager.unregisterDisplayListener(displayListener)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        // Unregister the broadcast receivers and listeners
+        broadcastManager.unregisterReceiver(broadcastReceiver)
+        displayManager.unregisterDisplayListener(displayListener)
     }
 
     override fun onCreateView(
@@ -210,7 +224,7 @@ class CameraFragment : Fragment() {
 
         card_overlay.animate()
             .setStartDelay(1000)
-            .alpha(.2f)
+            .alpha(0.1f)
             .setDuration(4000)
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {

@@ -17,8 +17,12 @@ import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetector
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
+import io.ffem.lite.R
+import io.ffem.lite.app.App.Companion.FILE_PATH_KEY
+import io.ffem.lite.app.App.Companion.TEST_ID_KEY
 import io.ffem.lite.camera.CameraFragment.Companion.CAPTURED_EVENT
 import timber.log.Timber
+import java.util.*
 
 class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer,
     OnSuccessListener<List<FirebaseVisionBarcode>> {
@@ -114,8 +118,11 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer,
 
         for (barcode in result) {
             if (!barcode.rawValue.isNullOrEmpty()) {
-                left = barcode.boundingBox!!.left - 20
-                right = barcode.boundingBox!!.right + 20
+
+                val margin = 40
+
+                left = barcode.boundingBox!!.left - margin
+                right = barcode.boundingBox!!.right + margin
 
                 for (i in left until right - left) {
                     val pixel = rightBarcodeBitmap.getPixel(i, rightBarcodeBitmap.height - 5)
@@ -138,12 +145,17 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer,
 
                 croppedBitmap.recycle()
 
-                val filePath = Utilities.savePicture("Fluoride", Utilities.bitmapToBytes(bitmapRotated))
+                val testId = UUID.randomUUID().toString()
+                val filePath = Utilities.savePicture(
+                    context.getString(R.string.app_name), testId,
+                    "Fluoride", Utilities.bitmapToBytes(bitmapRotated)
+                )
 
                 bitmapRotated.recycle()
 
                 val intent = Intent(CAPTURED_EVENT)
-                intent.putExtra("FilePath", filePath)
+                intent.putExtra(FILE_PATH_KEY, filePath)
+                intent.putExtra(TEST_ID_KEY, testId)
                 localBroadcastManager.sendBroadcast(intent)
             }
         }

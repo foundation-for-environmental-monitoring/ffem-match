@@ -99,6 +99,11 @@ class App : BaseApplication() {
 
     companion object {
 
+        // Keys
+        const val FILE_PATH_KEY = "file_path"
+        const val TEST_ID_KEY = "test_id"
+        const val TEST_NAME_KEY = "test_name"
+
         const val API_URL = "http://ec2-52-66-17-109.ap-south-1.compute.amazonaws.com:5000"
 
         /**

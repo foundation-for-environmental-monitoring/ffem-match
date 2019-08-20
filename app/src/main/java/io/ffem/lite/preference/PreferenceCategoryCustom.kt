@@ -8,6 +8,7 @@ import io.ffem.lite.R
 /**
  * A custom category style for the preferences screen.
  */
+@Suppress("unused")
 class PreferenceCategoryCustom : PreferenceCategory {
 
     constructor(context: Context) : super(context) {

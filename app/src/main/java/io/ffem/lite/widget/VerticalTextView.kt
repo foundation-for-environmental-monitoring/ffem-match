@@ -16,7 +16,7 @@ class VerticalTextView(context: Context, attrs: AttributeSet) : AppCompatTextVie
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        canvas.drawColor(resources.getColor(R.color.primary_dark))
+        canvas.drawColor(resources.getColor(R.color.colorPrimaryDark))
         canvas.translate(width.toFloat(), 0f)
         canvas.rotate(90f)
         canvas.translate(compoundPaddingLeft.toFloat(), extendedPaddingTop.toFloat())
