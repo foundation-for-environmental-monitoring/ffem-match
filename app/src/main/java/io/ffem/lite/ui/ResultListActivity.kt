@@ -1,9 +1,11 @@
 package io.ffem.lite.ui
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkRequest
@@ -16,16 +18,20 @@ import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.exifinterface.media.ExifInterface
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.install.model.AppUpdateType.IMMEDIATE
 import com.google.android.play.core.install.model.UpdateAvailability
 import io.ffem.lite.R
+import io.ffem.lite.app.App
 import io.ffem.lite.app.App.Companion.API_URL
+import io.ffem.lite.app.App.Companion.PERMISSIONS_MISSING_KEY
 import io.ffem.lite.app.App.Companion.TEST_ID_KEY
 import io.ffem.lite.app.App.Companion.TEST_NAME_KEY
 import io.ffem.lite.app.App.Companion.TEST_PARAMETER_NAME
@@ -37,6 +43,7 @@ import io.ffem.lite.preference.SettingsActivity
 import io.ffem.lite.preference.sendDummyImage
 import io.ffem.lite.remote.ApiService
 import io.ffem.lite.util.NetUtil
+import io.ffem.lite.util.PreferencesUtil
 import io.ffem.lite.util.SoundUtil
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -51,13 +58,14 @@ import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
+import java.text.SimpleDateFormat
 import java.util.*
 
 
 const val APP_UPDATE_REQUEST = 101
-const val TOAST_Y_OFFSET = 280
-const val RESULT_CHECK_INTERVAL = 30000L
-const val RESULT_CHECK_START_DELAY = 3000L
+const val TOAST_Y_OFFSET = 240
+const val RESULT_CHECK_INTERVAL = 10000L
+const val SNACK_BAR_LINE_SPACING = 1.4f
 
 class ResultListActivity : BaseActivity() {
 
@@ -66,16 +74,17 @@ class ResultListActivity : BaseActivity() {
     private lateinit var listView: RecyclerView
     private lateinit var connectivityManager: ConnectivityManager
     private lateinit var appUpdateManager: AppUpdateManager
+    private lateinit var toast: Toast
 
     private fun onResultClick(position: Int) {
-        resultRequestHandler.postDelayed(
-            {
-                val item = adapter.getItemAt(position)
-                val intent = Intent(baseContext, ResultActivity::class.java)
-                intent.putExtra(TEST_ID_KEY, item.id)
-                intent.putExtra(TEST_NAME_KEY, item.name)
-                startActivity(intent)
-            }, 350
+        Handler().postDelayed(
+                {
+                    val item = adapter.getItemAt(position)
+                    val intent = Intent(baseContext, ResultActivity::class.java)
+                    intent.putExtra(TEST_ID_KEY, item.id)
+                    intent.putExtra(TEST_NAME_KEY, item.name)
+                    startActivity(intent)
+                }, 350
         )
     }
 
@@ -96,32 +105,39 @@ class ResultListActivity : BaseActivity() {
 
         appUpdateManager = AppUpdateManagerFactory.create(this)
 
+        @SuppressLint("ShowToast")
+        toast = Toast.makeText(
+                applicationContext,
+                "testing",
+                Toast.LENGTH_LONG
+        )
+
         resultRequestHandler = Handler()
         runnable = Runnable {
-
-            getResults()
-
-            resultRequestHandler.postDelayed(
-                runnable, RESULT_CHECK_INTERVAL
-            )
+            val calendar = Calendar.getInstance()
+            val formatter = SimpleDateFormat("mm:ss", Locale.US)
+            Timber.d("Runnable called %s", formatter.format(calendar.time))
+            if (NetUtil.isInternetConnected(this)) {
+                getResultsFromServer()
+            }
         }
 
         val calendar = Calendar.getInstance()
         if (calendar.get(Calendar.MONTH) > 7 && calendar.get(Calendar.YEAR) > 2018
-            && isNonStoreVersion(this)
+                && isNonStoreVersion(this)
         ) {
             appIsClosing = true
             val marketUrl = Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
             val message = String.format(
-                "%s%n%n%s", getString(R.string.thisVersionHasExpired),
-                getString(R.string.uninstallAndInstallFromStore)
+                    "%s%n%n%s", getString(R.string.thisVersionHasExpired),
+                    getString(R.string.uninstallAndInstallFromStore)
             )
 
             val builder: AlertDialog.Builder = AlertDialog.Builder(this)
 
             builder.setTitle(R.string.versionExpired)
-                .setMessage(message)
-                .setCancelable(false)
+                    .setMessage(message)
+                    .setCancelable(false)
 
             builder.setPositiveButton(R.string.ok) { dialogInterface, _ ->
                 dialogInterface.dismiss()
@@ -154,7 +170,7 @@ class ResultListActivity : BaseActivity() {
             listView.adapter = adapter
 
             connectivityManager =
-                getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+                    getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
             monitorNetwork()
         }
     }
@@ -165,13 +181,13 @@ class ResultListActivity : BaseActivity() {
 
         appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
             if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
-                && appUpdateInfo.isUpdateTypeAllowed(IMMEDIATE)
+                    && appUpdateInfo.isUpdateTypeAllowed(IMMEDIATE)
             ) {
                 appUpdateManager.startUpdateFlowForResult(
-                    appUpdateInfo,
-                    IMMEDIATE,
-                    this,
-                    APP_UPDATE_REQUEST
+                        appUpdateInfo,
+                        IMMEDIATE,
+                        this,
+                        APP_UPDATE_REQUEST
                 )
             }
         }
@@ -187,63 +203,67 @@ class ResultListActivity : BaseActivity() {
 
         if (!appIsClosing) {
             appUpdateManager
-                .appUpdateInfo
-                .addOnSuccessListener { appUpdateInfo ->
-                    if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS
-                    ) {
-                        appUpdateManager.startUpdateFlowForResult(
-                            appUpdateInfo,
-                            IMMEDIATE,
-                            this,
-                            APP_UPDATE_REQUEST
-                        )
+                    .appUpdateInfo
+                    .addOnSuccessListener { appUpdateInfo ->
+                        if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS
+                        ) {
+                            appUpdateManager.startUpdateFlowForResult(
+                                    appUpdateInfo,
+                                    IMMEDIATE,
+                                    this,
+                                    APP_UPDATE_REQUEST
+                            )
+                        }
                     }
-                }
 
             if (!resultPollingStarted) {
-                resultRequestHandler.postDelayed(
-                    runnable, RESULT_CHECK_START_DELAY
-                )
-            }
-
-            if (db.resultDao().getUnsent().isNotEmpty()) {
-                if (!NetUtil.isInternetConnected(this)) {
-                    notifyNoInternet()
-                } else {
-                    sendImagesToServer()
+                if (db.resultDao().getUnsent().isNotEmpty()) {
+                    if (!NetUtil.isInternetConnected(this)) {
+                        notifyNoInternet()
+                    } else {
+                        sendImagesToServer()
+                    }
                 }
             }
+
+            startResultCheckTimer()
         }
     }
 
     override fun onPause() {
         super.onPause()
+        connectivityManager.unregisterNetworkCallback(networkCallback)
         resultPollingStarted = false
-        resultRequestHandler.removeCallbacks(runnable)
+        resultRequestHandler.removeCallbacksAndMessages(null)
     }
 
     fun onStartClick(@Suppress("UNUSED_PARAMETER") view: View) {
+        resultPollingStarted = false
         val intent: Intent? = Intent(baseContext, BarcodeActivity::class.java)
         startActivityForResult(intent, 100)
     }
 
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
+
         override fun onAvailable(network: Network) {
             super.onAvailable(network)
             sendImagesToServer()
-            resultRequestHandler.removeCallbacks(runnable)
-            resultRequestHandler.postDelayed(
-                runnable, RESULT_CHECK_START_DELAY
-            )
+            getResultsFromServer()
         }
 
         override fun onLost(network: Network) {
             super.onLost(network)
-            resultRequestHandler.removeCallbacks(runnable)
+            resultRequestHandler.removeCallbacksAndMessages(null)
+            notifyNoInternet()
         }
     }
 
     private fun monitorNetwork() {
+        try {
+            connectivityManager.unregisterNetworkCallback(networkCallback)
+        } catch (ignore: Exception) {
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             connectivityManager.registerDefaultNetworkCallback(networkCallback)
         } else {
@@ -256,10 +276,6 @@ class ResultListActivity : BaseActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         resultPollingStarted = true
-        resultRequestHandler.removeCallbacks(runnable)
-        resultRequestHandler.postDelayed(
-            runnable, RESULT_CHECK_INTERVAL
-        )
 
         if (resultCode == Activity.RESULT_OK) {
             if (data != null) {
@@ -267,22 +283,17 @@ class ResultListActivity : BaseActivity() {
                 val id = data.getStringExtra(TEST_ID_KEY)
                 if (id != null) {
                     AppDatabase.getDatabase(baseContext).resultDao().insert(
-                        TestResult(
-                            id, 0, TEST_PARAMETER_NAME,
-                            Date().time, "", getString(R.string.outbox)
-                        )
+                            TestResult(
+                                    id, 0, TEST_PARAMETER_NAME,
+                                    Date().time, "", getString(R.string.outbox)
+                            )
                     )
                 }
 
                 refreshList()
 
                 if (sendDummyImage()) {
-                    val toast = Toast.makeText(
-                        this, getString(R.string.sending_dummy_image),
-                        Toast.LENGTH_LONG
-                    )
-                    toast.setGravity(Gravity.BOTTOM, 0, TOAST_Y_OFFSET)
-                    toast.show()
+                    showNewToast(getString(R.string.sending_dummy_image))
                 }
 
                 if (!NetUtil.isInternetConnected(this)) {
@@ -291,16 +302,35 @@ class ResultListActivity : BaseActivity() {
                     sendImagesToServer()
                 }
             }
+        } else {
+            if (data != null) {
+                if (data.getBooleanExtra(PERMISSIONS_MISSING_KEY, false)) {
+                    showSnackbar(getString(R.string.camera_storage_permission))
+                }
+            }
+        }
+
+        getResultsFromServer()
+    }
+
+    private fun startResultCheckTimer() {
+        if (db.resultDao().getPendingResults().isNotEmpty()) {
+            resultRequestHandler.removeCallbacksAndMessages(null)
+            resultRequestHandler.postDelayed(runnable, RESULT_CHECK_INTERVAL)
         }
     }
 
-    private fun notifyNoInternet() {
-        val toast = Toast.makeText(
-            this, getString(R.string.no_Internet_connection),
-            Toast.LENGTH_LONG
-        )
-        toast.setGravity(Gravity.BOTTOM, 0, TOAST_Y_OFFSET)
-        toast.show()
+    private fun showSnackbar(message: String) {
+        val rootView = window.decorView.rootView
+        val snackbar = Snackbar
+                .make(rootView, message.trim { it <= ' ' }, Snackbar.LENGTH_LONG)
+                .setAction("SETTINGS") { App.openAppPermissionSettings(this) }
+        val snackbarView = snackbar.view
+        val textView = snackbarView.findViewById<TextView>(R.id.snackbar_text)
+        textView.setTextColor(Color.WHITE)
+        textView.setLineSpacing(0f, SNACK_BAR_LINE_SPACING)
+        snackbar.setActionTextColor(Color.YELLOW)
+        snackbar.show()
     }
 
     private fun notifyFileSent() {
@@ -308,20 +338,11 @@ class ResultListActivity : BaseActivity() {
         refreshList()
 
         Handler().postDelayed({
-            for (i in 0 until 2) {
-                val toast = Toast.makeText(
-                    this, getString(R.string.analyzing) +
-                            "\n\n" +
-                            getString(R.string.wait_few_minutes) +
-                            "\n",
-                    Toast.LENGTH_LONG
-                )
-                toast.setGravity(Gravity.BOTTOM, 0, TOAST_Y_OFFSET)
-                toast.show()
-            }
+            showToast(getString(R.string.wait_few_minutes))
         }, 800)
 
         sendImagesToServer()
+        getResultsFromServer()
     }
 
     private fun sendImagesToServer() {
@@ -354,16 +375,16 @@ class ResultListActivity : BaseActivity() {
             val filename = file.name
 
             val requestBody = MultipartBody.Builder()
-                .setType(MultipartBody.FORM)
-                .addFormDataPart("user_id", "1")
-                .addFormDataPart("testId", id)
-                .addFormDataPart("image", filename, fileBody)
-                .build()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("user_id", "1")
+                    .addFormDataPart("testId", id)
+                    .addFormDataPart("image", filename, fileBody)
+                    .build()
 
             val request = Request.Builder()
-                .url(API_URL)
-                .post(requestBody)
-                .build()
+                    .url(API_URL)
+                    .post(requestBody)
+                    .build()
 
             val okHttpClient = OkHttpClient()
             okHttpClient.newCall(request).enqueue(object : okhttp3.Callback {
@@ -386,66 +407,109 @@ class ResultListActivity : BaseActivity() {
         }
     }
 
-    private fun getResults() {
+    private fun getResultsFromServer() {
 
-        val resultList = db.resultDao().getResultPending()
+        startResultCheckTimer()
 
+        if (!NetUtil.isInternetConnected(this)) {
+            notifyNoInternet()
+            return
+        }
+
+        val resultList = db.resultDao().getPendingResults()
         if (resultList.isNotEmpty()) {
             val retrofit: Retrofit = Retrofit.Builder()
-                .baseUrl(API_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
+                    .baseUrl(API_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build()
 
             val api = retrofit.create(ApiService::class.java)
             resultList.forEach {
-                val call = api.getResponse(it.id)
+                if (System.currentTimeMillis() - it.date > 70000) {
+                    val call = api.getResponse(it.id)
+                    Timber.d("Request result %s", it.id)
 
-                Timber.e("Request result %s", it.id)
+                    call.enqueue(object : Callback<ResultResponse> {
 
-                call.enqueue(object : Callback<ResultResponse> {
+                        override fun onResponse(
+                                call: Call<ResultResponse>?,
+                                response: Response<ResultResponse>?
+                        ) {
+                            val body = response?.body()
 
-                    override fun onResponse(
-                        call: Call<ResultResponse>?,
-                        response: Response<ResultResponse>?
-                    ) {
-                        val body = response?.body()
+                            val id = body?.id
+                            val title = body?.title
+                            var result = ""
+                            var message = "-"
+                            if (body?.result != null) {
+                                result = body.result?.replace(title.toString(), "").toString()
+                                message = body.message.toString()
+                            }
 
-                        val id = body?.id
-                        val title = body?.title
-                        var result = ""
-                        var message = "-"
-                        if (body?.result != null) {
-                            result = body.result?.replace(title.toString(), "").toString()
-                            message = body.message.toString()
+                            val resultData = db.resultDao().getResult(id)
+
+                            if (resultData != null) {
+                                db.resultDao().updateResult(id.toString(), 2, message, result)
+
+                                this@ResultListActivity.runOnUiThread {
+                                    SoundUtil.playShortResource(applicationContext, R.raw.triangle)
+                                    refreshList()
+                                    showToast(getString(R.string.result_received))
+                                }
+                            }
                         }
 
-                        val resultData = db.resultDao().getResult(id)
-
-                        if (resultData != null) {
-
-                            SoundUtil.playShortResource(applicationContext, R.raw.triangle)
-
-                            db.resultDao().updateResult(id.toString(), 2, message, result)
-
-                            refreshList()
-
-                            val toast = Toast.makeText(
-                                applicationContext,
-                                getString(R.string.result_received),
-                                Toast.LENGTH_LONG
-                            )
-                            toast.setGravity(Gravity.BOTTOM, 0, TOAST_Y_OFFSET)
-                            toast.show()
+                        override fun onFailure(call: Call<ResultResponse>?, t: Throwable?) {
+                            Timber.e(t.toString())
+                            requestCount++
                         }
-                    }
-
-                    override fun onFailure(call: Call<ResultResponse>?, t: Throwable?) {
-                        Timber.e(t.toString())
-                        requestCount++
-                    }
-                })
+                    })
+                }
             }
         }
+    }
+
+    private fun showToast(message: String) {
+        toast.cancel()
+        toast = Toast.makeText(
+                applicationContext,
+                message,
+                Toast.LENGTH_LONG
+        )
+        toast.setGravity(Gravity.BOTTOM, 0, TOAST_Y_OFFSET)
+        toast.show()
+
+        Timber.d(message)
+    }
+
+    private fun showNewToast(message: String) {
+        val toast = Toast.makeText(
+                applicationContext,
+                message,
+                Toast.LENGTH_LONG
+        )
+        toast.setGravity(Gravity.BOTTOM, 0, TOAST_Y_OFFSET + 130)
+        toast.show()
+    }
+
+    private fun notifyNoInternet() {
+        val lastNotified = PreferencesUtil.getLong(this, App.CONNECTION_ERROR_NOTIFIED_KEY)
+        if (System.currentTimeMillis() - lastNotified < 180000) {
+            return
+        }
+
+        Handler().postDelayed({
+            if (!isFinishing && !isDestroyed) {
+                PreferencesUtil.setLong(this, App.CONNECTION_ERROR_NOTIFIED_KEY, System.currentTimeMillis())
+                val toast = Toast.makeText(
+                        applicationContext,
+                        R.string.no_Internet_connection,
+                        Toast.LENGTH_LONG
+                )
+                toast.setGravity(Gravity.BOTTOM, 0, TOAST_Y_OFFSET)
+                toast.show()
+            }
+        }, 2000)
     }
 
     private fun refreshList() {

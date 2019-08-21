@@ -12,7 +12,7 @@ abstract class ResultDao {
     abstract fun getUnsent(): List<TestResult>
 
     @Query("SELECT * FROM results WHERE status = 1")
-    abstract fun getResultPending(): List<TestResult>
+    abstract fun getPendingResults(): List<TestResult>
 
     @Query("SELECT * FROM results ORDER BY date DESC")
     abstract fun getResults(): List<TestResult>
