@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.content.ContextCompat
 import io.ffem.lite.R
 
 class VerticalTextView(context: Context, attrs: AttributeSet) : AppCompatTextView(context, attrs) {
@@ -16,7 +17,7 @@ class VerticalTextView(context: Context, attrs: AttributeSet) : AppCompatTextVie
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        canvas.drawColor(resources.getColor(R.color.colorPrimaryDark))
+        canvas.drawColor(ContextCompat.getColor(context, R.color.colorAccent))
         canvas.translate(width.toFloat(), 0f)
         canvas.rotate(90f)
         canvas.translate(compoundPaddingLeft.toFloat(), extendedPaddingTop.toFloat())

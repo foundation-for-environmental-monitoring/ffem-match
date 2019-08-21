@@ -35,7 +35,6 @@ import android.view.LayoutInflater
 import android.view.TextureView
 import android.view.View
 import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.camera.core.*
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -73,30 +72,11 @@ class CameraFragment : Fragment() {
     private var displayId = -1
     private var lensFacing = CameraX.LensFacing.BACK
     private var preview: Preview? = null
-    private var imageCapture: ImageCapture? = null
     private var imageAnalyzer: ImageAnalysis? = null
 
     /** Internal reference of the [DisplayManager] */
     private lateinit var displayManager: DisplayManager
 
-
-    /**
-     * We need a display listener for orientation changes that do not trigger a configuration
-     * change, for example if we choose to override config change in manifest or for 180-degree
-     * orientation changes.
-     */
-    private val displayListener = object : DisplayManager.DisplayListener {
-        override fun onDisplayAdded(displayId: Int) = Unit
-        override fun onDisplayRemoved(displayId: Int) = Unit
-        override fun onDisplayChanged(displayId: Int) = view?.let { view ->
-            if (displayId == this@CameraFragment.displayId) {
-                Timber.d("Rotation changed: ${view.display.rotation}")
-                preview?.setTargetRotation(view.display.rotation)
-                imageCapture?.setTargetRotation(view.display.rotation)
-                imageAnalyzer?.setTargetRotation(view.display.rotation)
-            }
-        } ?: Unit
-    }
 
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -124,17 +104,15 @@ class CameraFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
+        imageAnalyzer?.removeAnalyzer()
+        preview?.removePreviewOutputListener()
         CameraX.unbindAll()
         broadcastManager.unregisterReceiver(broadcastReceiver)
-        displayManager.unregisterDisplayListener(displayListener)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-
-        // Unregister the broadcast receivers and listeners
         broadcastManager.unregisterReceiver(broadcastReceiver)
-        displayManager.unregisterDisplayListener(displayListener)
     }
 
     override fun onCreateView(
@@ -211,7 +189,7 @@ class CameraFragment : Fragment() {
             setTargetResolution(Size(1800, 1000))
 
             // Use a worker thread for image analysis to prevent preview glitches
-            val analyzerThread = HandlerThread("LuminosityAnalysis").apply { start() }
+            val analyzerThread = HandlerThread("BarcodeReader").apply { start() }
             setCallbackHandler(Handler(analyzerThread.looper))
 
             setImageReaderMode(ImageAnalysis.ImageReaderMode.ACQUIRE_LATEST_IMAGE)
@@ -245,13 +223,12 @@ class CameraFragment : Fragment() {
 
         card_overlay.animate()
             .setStartDelay(1000)
-            .alpha(0.1f)
+            .alpha(0.0f)
             .setDuration(4000)
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
                     if (card_overlay != null) {
                         card_overlay.visibility = GONE
-                        card_overlay_2.visibility = VISIBLE
                     }
                 }
             })

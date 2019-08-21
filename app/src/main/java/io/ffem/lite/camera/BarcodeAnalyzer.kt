@@ -21,7 +21,6 @@ import io.ffem.lite.app.App.Companion.FILE_PATH_KEY
 import io.ffem.lite.app.App.Companion.TEST_ID_KEY
 import io.ffem.lite.app.App.Companion.TEST_PARAMETER_NAME
 import io.ffem.lite.camera.CameraFragment.Companion.CAPTURED_EVENT
-import timber.log.Timber
 import java.util.*
 
 class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer,
@@ -66,7 +65,6 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer,
                 180 -> FirebaseVisionImageMetadata.ROTATION_180
                 270 -> FirebaseVisionImageMetadata.ROTATION_270
                 else -> {
-                    Timber.e("unexpected rotation: $rotationDegrees")
                     FirebaseVisionImageMetadata.ROTATION_0
                 }
             }
@@ -77,37 +75,41 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer,
             mediaImage.bitmap.width, (mediaImage.bitmap.height * 0.15).toInt()
         )
 
-        taskLeftBarcode = detector.detectInImage(FirebaseVisionImage.fromBitmap(leftBarcodeBitmap))
-            .addOnSuccessListener(
-                fun(result: List<FirebaseVisionBarcode>) {
-                    for (barcode in result) {
-                        if (!barcode.rawValue.isNullOrEmpty()) {
+        taskLeftBarcode =
+            detector.detectInImage(FirebaseVisionImage.fromBitmap(leftBarcodeBitmap))
+                .addOnSuccessListener(
+                    fun(result: List<FirebaseVisionBarcode>) {
+                        for (barcode in result) {
+                            if (!barcode.rawValue.isNullOrEmpty()) {
 
-                            left = barcode.boundingBox!!.left - 20
-                            right = barcode.boundingBox!!.right + 20
+                                left = barcode.boundingBox!!.left - 20
+                                right = barcode.boundingBox!!.right + 20
 
-                            for (i in left until right - left) {
-                                val pixel = leftBarcodeBitmap.getPixel(i, 5)
-                                if (pixel.red < 20 && pixel.green < 20 && pixel.blue < 20) {
-                                    return
+                                for (i in left until right - left) {
+                                    val pixel = leftBarcodeBitmap.getPixel(i, 5)
+                                    if (pixel.red < 20 && pixel.green < 20 && pixel.blue < 20) {
+                                        return
+                                    }
                                 }
+
+                                rightBarcodeBitmap = Bitmap.createBitmap(
+                                    mediaImage.bitmap,
+                                    0,
+                                    (mediaImage.bitmap.height * 0.85).toInt(),
+                                    mediaImage.bitmap.width,
+                                    (mediaImage.bitmap.height * 0.15).toInt()
+                                )
+
+                                taskRightBarcode = detector.detectInImage(
+                                    FirebaseVisionImage.fromBitmap(rightBarcodeBitmap)
+                                )
+                                    .also {
+                                        it.addOnSuccessListener(this)
+                                    }
                             }
-
-                            rightBarcodeBitmap = Bitmap.createBitmap(
-                                mediaImage.bitmap, 0, (mediaImage.bitmap.height * 0.85).toInt(),
-                                mediaImage.bitmap.width, (mediaImage.bitmap.height * 0.15).toInt()
-                            )
-
-                            taskRightBarcode = detector.detectInImage(
-                                FirebaseVisionImage.fromBitmap(rightBarcodeBitmap)
-                            )
-                                .also {
-                                    it.addOnSuccessListener(this)
-                                }
                         }
                     }
-                }
-            )
+                )
     }
 
     override fun onSuccess(result: List<FirebaseVisionBarcode>) {
