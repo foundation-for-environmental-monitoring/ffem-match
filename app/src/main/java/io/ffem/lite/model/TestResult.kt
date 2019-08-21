@@ -10,6 +10,7 @@ data class TestResult(
     @ColumnInfo(name = "status") val status: Int,
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "date") val date: Long,
+    @ColumnInfo(name = "sent") val sent: Long,
     @ColumnInfo(name = "value") val value: String,
     @ColumnInfo(name = "message") val message: String
 )

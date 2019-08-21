@@ -23,8 +23,8 @@ abstract class ResultDao {
     @Insert(onConflict = REPLACE)
     abstract fun insert(result: TestResult)
 
-    @Query("UPDATE results SET status = :status, message = :message WHERE id = :id")
-    abstract fun updateStatus(id: String, status: Int, message: String)
+    @Query("UPDATE results SET status = :status, sent = :sentDate, message = :message WHERE id = :id")
+    abstract fun updateStatus(id: String, status: Int, sentDate: Long, message: String)
 
     @Query("UPDATE results SET status = :status, message = :message, value= :result WHERE id = :id")
     abstract fun updateResult(id: String, status: Int, message: String, result: String)

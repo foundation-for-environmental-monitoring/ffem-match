@@ -58,19 +58,19 @@ import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
-import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.max
 
 
 const val APP_UPDATE_REQUEST = 101
 const val TOAST_Y_OFFSET = 240
-const val RESULT_CHECK_INTERVAL = 10000L
+const val RESULT_CHECK_INTERVAL = 15000L
+const val MIN_RESULT_WAIT_TIME = 80000L
 const val SNACK_BAR_LINE_SPACING = 1.4f
 
 class ResultListActivity : BaseActivity() {
 
     private var appIsClosing: Boolean = false
-    private var resultPollingStarted: Boolean = false
     private lateinit var listView: RecyclerView
     private lateinit var connectivityManager: ConnectivityManager
     private lateinit var appUpdateManager: AppUpdateManager
@@ -114,9 +114,6 @@ class ResultListActivity : BaseActivity() {
 
         resultRequestHandler = Handler()
         runnable = Runnable {
-            val calendar = Calendar.getInstance()
-            val formatter = SimpleDateFormat("mm:ss", Locale.US)
-            Timber.d("Runnable called %s", formatter.format(calendar.time))
             if (NetUtil.isInternetConnected(this)) {
                 getResultsFromServer()
             }
@@ -171,7 +168,6 @@ class ResultListActivity : BaseActivity() {
 
             connectivityManager =
                     getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-            monitorNetwork()
         }
     }
 
@@ -202,6 +198,9 @@ class ResultListActivity : BaseActivity() {
         super.onResume()
 
         if (!appIsClosing) {
+
+            monitorNetwork()
+
             appUpdateManager
                     .appUpdateInfo
                     .addOnSuccessListener { appUpdateInfo ->
@@ -216,29 +215,23 @@ class ResultListActivity : BaseActivity() {
                         }
                     }
 
-            if (!resultPollingStarted) {
-                if (db.resultDao().getUnsent().isNotEmpty()) {
-                    if (!NetUtil.isInternetConnected(this)) {
-                        notifyNoInternet()
-                    } else {
-                        sendImagesToServer()
-                    }
-                }
+            if (!NetUtil.isInternetConnected(this)) {
+                notifyNoInternet()
+            } else {
+                sendImagesToServer()
             }
 
-            startResultCheckTimer()
+            startResultCheckTimer(RESULT_CHECK_INTERVAL)
         }
     }
 
     override fun onPause() {
         super.onPause()
         connectivityManager.unregisterNetworkCallback(networkCallback)
-        resultPollingStarted = false
         resultRequestHandler.removeCallbacksAndMessages(null)
     }
 
     fun onStartClick(@Suppress("UNUSED_PARAMETER") view: View) {
-        resultPollingStarted = false
         val intent: Intent? = Intent(baseContext, BarcodeActivity::class.java)
         startActivityForResult(intent, 100)
     }
@@ -275,8 +268,6 @@ class ResultListActivity : BaseActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        resultPollingStarted = true
-
         if (resultCode == Activity.RESULT_OK) {
             if (data != null) {
 
@@ -285,7 +276,7 @@ class ResultListActivity : BaseActivity() {
                     AppDatabase.getDatabase(baseContext).resultDao().insert(
                             TestResult(
                                     id, 0, TEST_PARAMETER_NAME,
-                                    Date().time, "", getString(R.string.outbox)
+                                    Date().time, Date().time, "", getString(R.string.outbox)
                             )
                     )
                 }
@@ -313,10 +304,10 @@ class ResultListActivity : BaseActivity() {
         getResultsFromServer()
     }
 
-    private fun startResultCheckTimer() {
+    private fun startResultCheckTimer(delay: Long) {
         if (db.resultDao().getPendingResults().isNotEmpty()) {
             resultRequestHandler.removeCallbacksAndMessages(null)
-            resultRequestHandler.postDelayed(runnable, RESULT_CHECK_INTERVAL)
+            resultRequestHandler.postDelayed(runnable, max(delay, RESULT_CHECK_INTERVAL))
         }
     }
 
@@ -389,13 +380,13 @@ class ResultListActivity : BaseActivity() {
             val okHttpClient = OkHttpClient()
             okHttpClient.newCall(request).enqueue(object : okhttp3.Callback {
                 override fun onFailure(call: okhttp3.Call, e: IOException) {
-                    Timber.d(e, "Upload Failed!")
+                    Timber.d(e)
                 }
 
                 override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
                     response.body!!.close()
 
-                    db.resultDao().updateStatus(id, 1, getString(R.string.analyzing))
+                    db.resultDao().updateStatus(id, 1, Date().time, getString(R.string.analyzing))
 
                     this@ResultListActivity.runOnUiThread {
                         notifyFileSent()
@@ -409,7 +400,7 @@ class ResultListActivity : BaseActivity() {
 
     private fun getResultsFromServer() {
 
-        startResultCheckTimer()
+        startResultCheckTimer(RESULT_CHECK_INTERVAL)
 
         if (!NetUtil.isInternetConnected(this)) {
             notifyNoInternet()
@@ -423,11 +414,17 @@ class ResultListActivity : BaseActivity() {
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()
 
+            var maxWaitTime: Long = MIN_RESULT_WAIT_TIME
+
             val api = retrofit.create(ApiService::class.java)
             resultList.forEach {
-                if (System.currentTimeMillis() - it.date > 70000) {
+                val timeAgoSent = System.currentTimeMillis() - it.sent
+                val timeToWait = MIN_RESULT_WAIT_TIME - timeAgoSent
+                if (timeToWait < maxWaitTime) {
+                    maxWaitTime = timeToWait
+                }
+                if (timeAgoSent >= timeToWait) {
                     val call = api.getResponse(it.id)
-                    Timber.d("Request result %s", it.id)
 
                     call.enqueue(object : Callback<ResultResponse> {
 
@@ -466,6 +463,8 @@ class ResultListActivity : BaseActivity() {
                     })
                 }
             }
+
+            startResultCheckTimer(maxWaitTime)
         }
     }
 
@@ -478,8 +477,6 @@ class ResultListActivity : BaseActivity() {
         )
         toast.setGravity(Gravity.BOTTOM, 0, TOAST_Y_OFFSET)
         toast.show()
-
-        Timber.d(message)
     }
 
     private fun showNewToast(message: String) {
@@ -493,6 +490,11 @@ class ResultListActivity : BaseActivity() {
     }
 
     private fun notifyNoInternet() {
+
+        if (db.resultDao().getUnsent().isEmpty() && db.resultDao().getPendingResults().isEmpty()) {
+            return
+        }
+
         val lastNotified = PreferencesUtil.getLong(this, App.CONNECTION_ERROR_NOTIFIED_KEY)
         if (System.currentTimeMillis() - lastNotified < 180000) {
             return
