@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -20,13 +21,15 @@ class NoticesDialogFragment : DialogFragment() {
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_notices_dialog, container, false)
 
         val linearLayout = view.findViewById<LinearLayout>(R.id.about_container)
         makeEverythingClickable(linearLayout)
+
+        view.findViewById<ImageButton>(R.id.home_button).setOnClickListener { dismiss() }
 
         return view
     }
@@ -39,10 +42,10 @@ class NoticesDialogFragment : DialogFragment() {
                 val tv = vg.getChildAt(i) as TextView
                 if (tv.isClickable) {
                     tv.setLinkTextColor(
-                            ContextCompat.getColor(
-                                    requireContext(),
-                                    R.color.colorAccent
-                            )
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.colorAccent
+                        )
                     )
                     tv.movementMethod = LinkMovementMethod.getInstance()
                 }

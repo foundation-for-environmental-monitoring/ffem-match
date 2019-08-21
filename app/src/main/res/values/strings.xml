@@ -26,6 +26,7 @@
 
     <string name="no_Internet_connection">Connect to internet for results</string>
     <string name="wait_few_minutes">Test results will update in a few minutes</string>
+    <string name="camera_storage_permission">Camera &amp; storage permissions are required</string>
 
     <!--Diagnostics-->
     <string name="sending_dummy_image">Sending dummy image</string>

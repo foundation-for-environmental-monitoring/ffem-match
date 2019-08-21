@@ -94,13 +94,6 @@ class AboutActivity : BaseActivity() {
         }
     }
 
-    fun onHomeClick(@Suppress("UNUSED_PARAMETER") view: View) {
-        if (dialog != null) {
-            dialog!!.dismiss()
-        }
-    }
-
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
             onBackPressed()

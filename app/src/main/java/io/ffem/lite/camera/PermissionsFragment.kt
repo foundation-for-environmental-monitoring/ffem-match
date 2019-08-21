@@ -17,13 +17,16 @@
 package io.ffem.lite.camera
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import io.ffem.lite.R
+import io.ffem.lite.app.App
 
 private const val PERMISSIONS_REQUEST_CODE = 10
 private val PERMISSIONS_REQUIRED = arrayOf(
@@ -59,7 +62,11 @@ class PermissionsFragment : Fragment() {
                     PermissionsFragmentDirections.actionPermissionsToCamera()
                 )
             } else {
-                requireActivity().finish()
+                val activity = requireActivity()
+                val intent = Intent()
+                intent.putExtra(App.PERMISSIONS_MISSING_KEY, true)
+                activity.setResult(Activity.RESULT_CANCELED, intent)
+                activity.finish()
             }
         }
     }

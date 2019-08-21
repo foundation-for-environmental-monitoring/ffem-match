@@ -87,11 +87,6 @@ object PreferencesUtil {
         return sharedPreferences.getString(getKey(context, keyId), defaultValue)!!
     }
 
-//    fun getString(context: Context, key: String, defaultValue: String): String? {
-//        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-//        return sharedPreferences.getString(key, defaultValue)
-//    }
-
     /**
      * Sets a string value to preferences.
      *
@@ -105,11 +100,15 @@ object PreferencesUtil {
         editor.apply()
     }
 
-//    fun setString(context: Context, key: String, value: String) {
-//        val sharedPreferences = PreferenceManager
-//            .getDefaultSharedPreferences(context)
-//        val editor = sharedPreferences.edit()
-//        editor.putString(key, value)
-//        editor.apply()
-//    }
+    fun getLong(context: Context, key: String): Long {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        return sharedPreferences.getLong(key, -1L)
+    }
+
+    fun setLong(context: Context, key: String, value: Long) {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val editor = sharedPreferences.edit()
+        editor.putLong(key, value)
+        editor.apply()
+    }
 }

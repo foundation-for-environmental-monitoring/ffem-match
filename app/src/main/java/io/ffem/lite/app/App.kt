@@ -1,8 +1,12 @@
 package io.ffem.lite.app
 
+import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Handler
+import android.provider.Settings
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.preference.AppPreferences
@@ -104,6 +108,10 @@ class App : BaseApplication() {
         const val SOUND_ON = true
         const val TEST_PARAMETER_NAME = "Fluoride"
 
+        const val RESULT_SOUND_PLAYED_KEY = "result_sound_played"
+        const val CONNECTION_ERROR_NOTIFIED_KEY = "connection_error_notified"
+        const val PERMISSIONS_MISSING_KEY = "permissions_missing"
+
         // Keys
         const val FILE_PATH_KEY = "file_path"
         const val TEST_ID_KEY = "test_id"
@@ -150,6 +158,20 @@ class App : BaseApplication() {
             }
 
             return version
+        }
+
+        fun openAppPermissionSettings(context: Activity?) {
+            if (context == null) {
+                return
+            }
+            val i = Intent()
+            i.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+            i.addCategory(Intent.CATEGORY_DEFAULT)
+            i.data = Uri.parse("package:" + context.packageName)
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+            i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
+            context.startActivity(i)
         }
     }
 }
