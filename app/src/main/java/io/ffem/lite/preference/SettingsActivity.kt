@@ -4,13 +4,13 @@ import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ScrollView
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
+import androidx.preference.PreferenceManager
 import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.ui.BaseActivity
@@ -39,7 +39,7 @@ class SettingsActivity : BaseActivity(), SharedPreferences.OnSharedPreferenceCha
         super.onResume()
 
         PreferenceManager.getDefaultSharedPreferences(this.applicationContext)
-            .registerOnSharedPreferenceChangeListener(this)
+                .registerOnSharedPreferenceChangeListener(this)
     }
 
     private fun setupActivity() {
@@ -48,17 +48,19 @@ class SettingsActivity : BaseActivity(), SharedPreferences.OnSharedPreferenceCha
 
         setContentView(R.layout.activity_settings)
 
-        fragmentManager.beginTransaction()
-            .replace(R.id.layoutOther, OtherPreferenceFragment())
-            .commit()
+        supportFragmentManager.beginTransaction()
+                .replace(R.id.layoutOther, OtherPreferenceFragment())
+                .commit()
 
         if (AppPreferences.isDiagnosticMode()) {
 
-            fragmentManager.beginTransaction()
-                .add(R.id.layoutTesting, TestingPreferenceFragment())
-                .commit()
+            supportFragmentManager.beginTransaction()
+                    .add(R.id.layoutTesting, TestingPreferenceFragment())
+                    .commit()
 
             findViewById<View>(R.id.layoutTesting).visibility = View.VISIBLE
+        } else {
+            findViewById<View>(R.id.layoutTesting).visibility = View.GONE
         }
 
         mScrollView = findViewById(R.id.scrollViewSettings)
@@ -90,8 +92,8 @@ class SettingsActivity : BaseActivity(), SharedPreferences.OnSharedPreferenceCha
 
     fun onDisableDiagnostics(@Suppress("UNUSED_PARAMETER") item: MenuItem) {
         Toast.makeText(
-            baseContext, getString(R.string.diagnosticModeDisabled),
-            Toast.LENGTH_SHORT
+                baseContext, getString(R.string.diagnosticModeDisabled),
+                Toast.LENGTH_SHORT
         ).show()
 
         AppPreferences.disableDiagnosticMode()
@@ -122,7 +124,7 @@ class SettingsActivity : BaseActivity(), SharedPreferences.OnSharedPreferenceCha
         super.onPause()
 
         PreferenceManager.getDefaultSharedPreferences(this.applicationContext)
-            .unregisterOnSharedPreferenceChangeListener(this)
+                .unregisterOnSharedPreferenceChangeListener(this)
     }
 
     override fun onPostResume() {

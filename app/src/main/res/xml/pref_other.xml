@@ -1,5 +1,9 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-        <Preference
-            android:key="about"
-            android:title="@string/about" />
-</PreferenceScreen>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <Preference
+        android:key="@string/aboutKey"
+        android:summary="Testing this"
+        android:title="@string/about"
+        app:allowDividerBelow="true"
+        app:iconSpaceReserved="false" />
+</androidx.preference.PreferenceScreen>

@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import io.ffem.lite.R
 
@@ -19,8 +20,8 @@ class NoticesDialogFragment : DialogFragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_notices_dialog, container, false)
 
@@ -36,9 +37,15 @@ class NoticesDialogFragment : DialogFragment() {
                 makeEverythingClickable(vg.getChildAt(i) as ViewGroup)
             } else if (vg.getChildAt(i) is TextView) {
                 val tv = vg.getChildAt(i) as TextView
-                @Suppress("DEPRECATION")
-                tv.setLinkTextColor(resources.getColor(R.color.colorAccent))
-                tv.movementMethod = LinkMovementMethod.getInstance()
+                if (tv.isClickable) {
+                    tv.setLinkTextColor(
+                            ContextCompat.getColor(
+                                    requireContext(),
+                                    R.color.colorAccent
+                            )
+                    )
+                    tv.movementMethod = LinkMovementMethod.getInstance()
+                }
             }
         }
     }

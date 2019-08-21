@@ -13,6 +13,7 @@
     <string name="refreshKey">refresh</string>
     <string name="testModeOnKey">testModeOn</string>
     <string name="dummyImageKey">dummyImage</string>
+    <string name="aboutKey">aboutApp</string>
     <string name="soundOnKey">soundOn</string>
 
     <!--Diagnostic-->

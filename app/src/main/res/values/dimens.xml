@@ -5,5 +5,5 @@
     <dimen name="toolbar_height">56dp</dimen>
     <dimen name="toolbar_margin">0dp</dimen>
 
-    <dimen name="text_margin_bottom">15dp</dimen>
+    <dimen name="text_margin_bottom">10dp</dimen>
 </resources>

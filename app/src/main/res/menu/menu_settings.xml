@@ -5,12 +5,12 @@
     <item
         android:icon="@drawable/ic_revert_24dp"
         android:onClick="onDisableDiagnostics"
-        android:title=""
+        android:title="@string/disable_diagnostics"
         app:showAsAction="always"
         tools:ignore="AlwaysShowAction" />
     <item
         android:enabled="false"
         android:icon="@drawable/ic_settings_disabled_24dp"
-        android:title=""
+        android:title="@string/settings_not_clickable"
         app:showAsAction="always" />
 </menu>
