@@ -19,6 +19,7 @@ package io.ffem.lite.camera
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
+import android.app.ActivityManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -186,7 +187,15 @@ class CameraFragment : Fragment() {
         val analyzerConfig = ImageAnalysisConfig.Builder().apply {
             setLensFacing(lensFacing)
 
-            setTargetResolution(Size(1800, 1000))
+            val actManager = context?.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+            val memInfo = ActivityManager.MemoryInfo()
+            actManager.getMemoryInfo(memInfo)
+
+            if (memInfo.totalMem / 1048576 < 900) {
+                setTargetResolution(Size(800, 500))
+            } else {
+                setTargetResolution(Size(1800, 1000))
+            }
 
             // Use a worker thread for image analysis to prevent preview glitches
             val analyzerThread = HandlerThread("BarcodeReader").apply { start() }

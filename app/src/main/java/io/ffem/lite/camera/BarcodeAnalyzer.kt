@@ -82,30 +82,34 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer,
                         for (barcode in result) {
                             if (!barcode.rawValue.isNullOrEmpty()) {
 
-                                left = barcode.boundingBox!!.left - 20
-                                right = barcode.boundingBox!!.right + 20
+                                left = barcode.boundingBox!!.left
+                                right = barcode.boundingBox!!.right
 
-                                for (i in left until right - left) {
-                                    val pixel = leftBarcodeBitmap.getPixel(i, 5)
-                                    if (pixel.red < 20 && pixel.green < 20 && pixel.blue < 20) {
-                                        return
+                                if (right - left > 50) {
+                                    for (i in left until right - left) {
+                                        val pixel = leftBarcodeBitmap.getPixel(i, 5)
+                                        if (pixel.red < 20 && pixel.green < 20 && pixel.blue < 20) {
+                                            return
+                                        }
                                     }
+
+                                    rightBarcodeBitmap = Bitmap.createBitmap(
+                                        mediaImage.bitmap,
+                                        0,
+                                        (mediaImage.bitmap.height * 0.85).toInt(),
+                                        mediaImage.bitmap.width,
+                                        (mediaImage.bitmap.height * 0.15).toInt()
+                                    )
+
+                                    taskRightBarcode = detector.detectInImage(
+                                        FirebaseVisionImage.fromBitmap(rightBarcodeBitmap)
+                                    )
+                                        .also {
+                                            it.addOnSuccessListener(this)
+                                        }
                                 }
 
-                                rightBarcodeBitmap = Bitmap.createBitmap(
-                                    mediaImage.bitmap,
-                                    0,
-                                    (mediaImage.bitmap.height * 0.85).toInt(),
-                                    mediaImage.bitmap.width,
-                                    (mediaImage.bitmap.height * 0.15).toInt()
-                                )
-
-                                taskRightBarcode = detector.detectInImage(
-                                    FirebaseVisionImage.fromBitmap(rightBarcodeBitmap)
-                                )
-                                    .also {
-                                        it.addOnSuccessListener(this)
-                                    }
+                                leftBarcodeBitmap.recycle()
                             }
                         }
                     }
@@ -123,41 +127,45 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer,
 
                 val margin = 40
 
-                left = barcode.boundingBox!!.left - margin
-                right = barcode.boundingBox!!.right + margin
+                left = barcode.boundingBox!!.left
+                right = barcode.boundingBox!!.right
 
-                for (i in left until right - left) {
-                    val pixel = rightBarcodeBitmap.getPixel(i, rightBarcodeBitmap.height - 5)
-                    if (pixel.red < 20 && pixel.green < 20 && pixel.blue < 20) {
-                        return
+                if (right - left > 50) {
+
+                    for (i in left until right - left) {
+                        val pixel = rightBarcodeBitmap.getPixel(i, rightBarcodeBitmap.height - 5)
+                        if (pixel.red < 20 && pixel.green < 20 && pixel.blue < 20) {
+                            return
+                        }
                     }
+
+                    done = true
+
+                    left -= margin
+                    right += margin
+                    val croppedBitmap = Bitmap.createBitmap(
+                        mediaImage.bitmap, left, 0,
+                        right - left, mediaImage.bitmap.height
+                    )
+
+                    val bitmapRotated = Utilities.rotateImage(croppedBitmap, 270)
+
+                    croppedBitmap.recycle()
+
+                    val testId = UUID.randomUUID().toString()
+                    val filePath = Utilities.savePicture(
+                        context, testId, TEST_PARAMETER_NAME, Utilities.bitmapToBytes(bitmapRotated)
+                    )
+
+                    bitmapRotated.recycle()
+
+                    val intent = Intent(CAPTURED_EVENT)
+                    intent.putExtra(FILE_PATH_KEY, filePath)
+                    intent.putExtra(TEST_ID_KEY, testId)
+                    localBroadcastManager.sendBroadcast(intent)
                 }
 
-                leftBarcodeBitmap.recycle()
                 rightBarcodeBitmap.recycle()
-
-                done = true
-
-                val croppedBitmap = Bitmap.createBitmap(
-                    mediaImage.bitmap, left, 0,
-                    right - left, mediaImage.bitmap.height
-                )
-
-                val bitmapRotated = Utilities.rotateImage(croppedBitmap, 270)
-
-                croppedBitmap.recycle()
-
-                val testId = UUID.randomUUID().toString()
-                val filePath = Utilities.savePicture(
-                    context, testId, TEST_PARAMETER_NAME, Utilities.bitmapToBytes(bitmapRotated)
-                )
-
-                bitmapRotated.recycle()
-
-                val intent = Intent(CAPTURED_EVENT)
-                intent.putExtra(FILE_PATH_KEY, filePath)
-                intent.putExtra(TEST_ID_KEY, testId)
-                localBroadcastManager.sendBroadcast(intent)
             }
         }
     }

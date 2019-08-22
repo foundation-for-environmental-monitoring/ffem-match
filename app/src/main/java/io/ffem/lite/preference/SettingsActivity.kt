@@ -1,25 +1,15 @@
 package io.ffem.lite.preference
 
-import android.app.Activity
-import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.ScrollView
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
-import androidx.preference.PreferenceManager
 import io.ffem.lite.R
-import io.ffem.lite.app.App
 import io.ffem.lite.ui.BaseActivity
-import io.ffem.lite.util.PreferencesUtil
 
-class SettingsActivity : BaseActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
-
-    private var mScrollView: ScrollView? = null
-    private var mScrollPosition: Int = 0
+class SettingsActivity : BaseActivity() {
 
     private fun removeAllFragments() {
         findViewById<View>(R.id.layoutTesting).visibility = View.GONE
@@ -30,18 +20,6 @@ class SettingsActivity : BaseActivity(), SharedPreferences.OnSharedPreferenceCha
         setupActivity()
     }
 
-    public override fun onRestart() {
-        super.onRestart()
-        setupActivity()
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        PreferenceManager.getDefaultSharedPreferences(this.applicationContext)
-                .registerOnSharedPreferenceChangeListener(this)
-    }
-
     private fun setupActivity() {
 
         setTitle(R.string.settings)
@@ -49,27 +27,25 @@ class SettingsActivity : BaseActivity(), SharedPreferences.OnSharedPreferenceCha
         setContentView(R.layout.activity_settings)
 
         supportFragmentManager.beginTransaction()
-                .replace(R.id.layoutOther, OtherPreferenceFragment())
-                .commit()
+            .replace(R.id.layoutOther, OtherPreferenceFragment())
+            .commit()
 
         if (AppPreferences.isDiagnosticMode()) {
 
             supportFragmentManager.beginTransaction()
-                    .add(R.id.layoutTesting, TestingPreferenceFragment())
-                    .commit()
+                .add(R.id.layoutTesting, TestingPreferenceFragment())
+                .commit()
 
             findViewById<View>(R.id.layoutTesting).visibility = View.VISIBLE
         } else {
             findViewById<View>(R.id.layoutTesting).visibility = View.GONE
         }
 
-        mScrollView = findViewById(R.id.scrollViewSettings)
-
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         try {
             setSupportActionBar(toolbar)
         } catch (ignored: Exception) {
-            //Ignore crash in Samsung
+            //Ignore crash in some devices
         }
 
         if (supportActionBar != null) {
@@ -92,8 +68,8 @@ class SettingsActivity : BaseActivity(), SharedPreferences.OnSharedPreferenceCha
 
     fun onDisableDiagnostics(@Suppress("UNUSED_PARAMETER") item: MenuItem) {
         Toast.makeText(
-                baseContext, getString(R.string.diagnosticModeDisabled),
-                Toast.LENGTH_SHORT
+            baseContext, getString(R.string.diagnosticModeDisabled),
+            Toast.LENGTH_SHORT
         ).show()
 
         AppPreferences.disableDiagnosticMode()
@@ -103,36 +79,6 @@ class SettingsActivity : BaseActivity(), SharedPreferences.OnSharedPreferenceCha
         invalidateOptionsMenu()
 
         removeAllFragments()
-    }
-
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, s: String) {
-        if (getString(R.string.languageKey).equals(s, false)) {
-            App.app.setAppLanguage("", false, null)
-            val resultIntent = Intent(intent)
-            resultIntent.getBooleanExtra("refresh", true)
-            setResult(Activity.RESULT_OK, resultIntent)
-            PreferencesUtil.setBoolean(this, R.string.refreshKey, true)
-            recreate()
-        }
-    }
-
-    public override fun onPause() {
-        val scrollbarPosition = mScrollView!!.scrollY
-
-        PreferencesUtil.setInt(this, "settingsScrollPosition", scrollbarPosition)
-
-        super.onPause()
-
-        PreferenceManager.getDefaultSharedPreferences(this.applicationContext)
-                .unregisterOnSharedPreferenceChangeListener(this)
-    }
-
-    override fun onPostResume() {
-        super.onPostResume()
-
-        mScrollPosition = PreferencesUtil.getInt(this, "settingsScrollPosition", 0)
-
-        mScrollView!!.post { mScrollView!!.scrollTo(0, mScrollPosition) }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
