@@ -2,13 +2,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory
         android:key="preferenceCategoryDiagnostics"
-        android:title="@string/testing"
+        android:title="@string/data"
         app:allowDividerAbove="true"
         app:allowDividerBelow="true"
         app:iconSpaceReserved="false">
-        <CheckBoxPreference
-            android:key="@string/dummyImageKey"
-            android:title="Send dummy image"
+        <Preference
+            android:key="@string/data_delete_key"
+            android:summary="Permanently delete all test results and photos of samples"
+            android:title="@string/delete_data"
             app:allowDividerAbove="true"
             app:allowDividerBelow="true"
             app:iconSpaceReserved="false" />

@@ -29,4 +29,7 @@ abstract class ResultDao {
     @Query("UPDATE results SET status = :status, message = :message, value= :result WHERE id = :id")
     abstract fun updateResult(id: String, status: Int, message: String, result: String)
 
+    @Query("DELETE FROM results")
+    abstract fun deleteAll()
+
 }

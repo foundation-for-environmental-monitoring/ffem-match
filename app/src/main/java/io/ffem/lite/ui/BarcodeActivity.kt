@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.media.MediaActionSound
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
 import android.widget.FrameLayout
 import androidx.databinding.DataBindingUtil
@@ -42,7 +43,10 @@ class BarcodeActivity : BaseActivity() {
                 sound.play(MediaActionSound.SHUTTER_CLICK)
             }
             setResult(Activity.RESULT_OK, intent)
-            finish()
+
+            Handler().postDelayed({
+                finish()
+            }, 1500)
         }
     }
 

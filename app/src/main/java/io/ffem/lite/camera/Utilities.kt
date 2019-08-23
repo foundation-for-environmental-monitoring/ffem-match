@@ -28,13 +28,10 @@ object Utilities {
                 Timber.d(if (basePath.mkdirs()) "Success" else "Failed")
 
             val filePath = "$path$id" + "_" + "$barcodeValue.jpg"
-            val captureFile = File(filePath)
-            if (!captureFile.exists())
-                Timber.d(if (captureFile.createNewFile()) "Success" else "Failed")
-
-            val stream = FileOutputStream(captureFile)
+            val stream = FileOutputStream(filePath)
             stream.write(bytes)
             stream.flush()
+            stream.fd.sync()
             stream.close()
             return filePath
         } catch (e: IOException) {

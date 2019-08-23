@@ -58,6 +58,7 @@ import timber.log.Timber
 import java.io.File
 import java.io.IOException
 import java.util.*
+import kotlin.math.abs
 import kotlin.math.max
 
 
@@ -215,11 +216,7 @@ class ResultListActivity : BaseActivity() {
                     }
                 }
 
-            if (!isInternetConnected) {
-                notifyNoInternet()
-            } else {
-                sendImagesToServer()
-            }
+            sendImagesToServer()
 
             startResultCheckTimer(RESULT_CHECK_INTERVAL)
         }
@@ -240,6 +237,7 @@ class ResultListActivity : BaseActivity() {
 
         override fun onAvailable(network: Network) {
             super.onAvailable(network)
+            Timber.d("Connection Available")
             isInternetConnected = true
             sendImagesToServer()
             getResultsFromServer()
@@ -247,6 +245,7 @@ class ResultListActivity : BaseActivity() {
 
         override fun onLost(network: Network) {
             super.onLost(network)
+            Timber.d("Connection Lost")
             isInternetConnected = false
             resultRequestHandler.removeCallbacksAndMessages(null)
             notifyNoInternet()
@@ -308,8 +307,9 @@ class ResultListActivity : BaseActivity() {
 
     private fun startResultCheckTimer(delay: Long) {
         if (db.resultDao().getPendingResults().isNotEmpty()) {
+            Timber.d("Waiting for: %s", delay)
             resultRequestHandler.removeCallbacksAndMessages(null)
-            resultRequestHandler.postDelayed(runnable, max(delay, RESULT_CHECK_INTERVAL))
+            resultRequestHandler.postDelayed(runnable, delay)
         }
     }
 
@@ -421,11 +421,11 @@ class ResultListActivity : BaseActivity() {
             val api = retrofit.create(ApiService::class.java)
             resultList.forEach {
                 val timeAgoSent = System.currentTimeMillis() - it.sent
-                val timeToWait = MIN_RESULT_WAIT_TIME - timeAgoSent
+                val timeToWait = max(3, abs(timeAgoSent - MIN_RESULT_WAIT_TIME))
                 if (timeToWait < maxWaitTime) {
                     maxWaitTime = timeToWait
                 }
-                if (timeAgoSent >= timeToWait) {
+                if (timeAgoSent > MIN_RESULT_WAIT_TIME) {
                     val call = api.getResponse(it.id)
 
                     call.enqueue(object : Callback<ResultResponse> {
@@ -465,7 +465,6 @@ class ResultListActivity : BaseActivity() {
                     })
                 }
             }
-
             startResultCheckTimer(maxWaitTime)
         }
     }
@@ -485,7 +484,7 @@ class ResultListActivity : BaseActivity() {
         val toast = Toast.makeText(
             applicationContext,
             message,
-            Toast.LENGTH_LONG
+            Toast.LENGTH_SHORT
         )
         toast.setGravity(Gravity.BOTTOM, 0, TOAST_Y_OFFSET + 130)
         toast.show()

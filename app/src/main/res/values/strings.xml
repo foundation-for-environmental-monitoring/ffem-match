@@ -30,6 +30,9 @@
 
     <!--Diagnostics-->
     <string name="sending_dummy_image">Sending dummy image</string>
+    <string name="data">Data</string>
+    <string name="delete_data">Delete all data and photos</string>
+    <string name="delete">Delete</string>
 
     <string name="versionExpired">Version expired</string>
     <string name="thisVersionHasExpired">This version of the app has expired.</string>

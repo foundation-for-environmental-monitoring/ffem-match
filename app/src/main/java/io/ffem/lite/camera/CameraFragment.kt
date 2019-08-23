@@ -148,7 +148,10 @@ class CameraFragment : Fragment() {
 
             val testId = UUID.randomUUID().toString()
             val filePath = Utilities.savePicture(
-                requireContext(), testId, TEST_PARAMETER_NAME, Utilities.bitmapToBytes(bitmap)
+                requireContext().applicationContext,
+                testId,
+                TEST_PARAMETER_NAME,
+                Utilities.bitmapToBytes(bitmap)
             )
 
             val intent = Intent(CAPTURED_EVENT)

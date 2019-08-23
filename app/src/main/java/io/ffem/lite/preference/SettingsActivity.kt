@@ -3,16 +3,19 @@ package io.ffem.lite.preference
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.Toast
-import androidx.appcompat.widget.Toolbar
 import io.ffem.lite.R
 import io.ffem.lite.ui.BaseActivity
+import kotlinx.android.synthetic.main.activity_settings.*
+import kotlinx.android.synthetic.main.app_bar_layout.*
 
 class SettingsActivity : BaseActivity() {
 
     private fun removeAllFragments() {
-        findViewById<View>(R.id.layoutTesting).visibility = View.GONE
+        layoutTesting.visibility = GONE
+        layoutData.visibility = GONE
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,12 +44,17 @@ class SettingsActivity : BaseActivity() {
                 .add(R.id.layoutTesting, TestingPreferenceFragment())
                 .commit()
 
-            findViewById<View>(R.id.layoutTesting).visibility = View.VISIBLE
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.layoutData, DataPreferenceFragment())
+                .commit()
+
+            layoutTesting.visibility = VISIBLE
+            layoutData.visibility = VISIBLE
         } else {
-            findViewById<View>(R.id.layoutTesting).visibility = View.GONE
+            layoutTesting.visibility = GONE
+            layoutData.visibility = GONE
         }
 
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
         try {
             setSupportActionBar(toolbar)
         } catch (ignored: Exception) {
