@@ -50,7 +50,8 @@
                 android:onClick="switchToDiagnosticMode"
                 android:paddingTop="15dp"
                 android:paddingBottom="15dp"
-                android:textSize="14sp"
+                android:textColor="@color/colorAccent"
+                android:textSize="15sp"
                 android:textStyle="normal"
                 tools:text="Version 1.0" />
 

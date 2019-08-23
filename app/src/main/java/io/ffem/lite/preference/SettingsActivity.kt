@@ -17,14 +17,19 @@ class SettingsActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setTitle(R.string.settings)
+
+        setContentView(R.layout.activity_settings)
+
+        setupActivity()
+    }
+
+    override fun onResume() {
+        super.onResume()
         setupActivity()
     }
 
     private fun setupActivity() {
-
-        setTitle(R.string.settings)
-
-        setContentView(R.layout.activity_settings)
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.layoutOther, OtherPreferenceFragment())

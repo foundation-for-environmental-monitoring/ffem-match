@@ -54,7 +54,10 @@ class BarcodeActivity : BaseActivity() {
         b = DataBindingUtil.setContentView(this, R.layout.activity_barcode)
         container = findViewById(R.id.fragment_container)
 
-        broadcastManager.registerReceiver(broadcastReceiver, IntentFilter(CameraFragment.CAPTURED_EVENT))
+        broadcastManager.registerReceiver(
+            broadcastReceiver,
+            IntentFilter(CameraFragment.CAPTURED_EVENT)
+        )
     }
 
     override fun onResume() {

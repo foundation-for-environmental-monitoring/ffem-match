@@ -42,7 +42,6 @@ import io.ffem.lite.model.TestResult
 import io.ffem.lite.preference.SettingsActivity
 import io.ffem.lite.preference.sendDummyImage
 import io.ffem.lite.remote.ApiService
-import io.ffem.lite.util.NetUtil
 import io.ffem.lite.util.PreferencesUtil
 import io.ffem.lite.util.SoundUtil
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -75,16 +74,17 @@ class ResultListActivity : BaseActivity() {
     private lateinit var connectivityManager: ConnectivityManager
     private lateinit var appUpdateManager: AppUpdateManager
     private lateinit var toast: Toast
+    private var isInternetConnected = false
 
     private fun onResultClick(position: Int) {
         Handler().postDelayed(
-                {
-                    val item = adapter.getItemAt(position)
-                    val intent = Intent(baseContext, ResultActivity::class.java)
-                    intent.putExtra(TEST_ID_KEY, item.id)
-                    intent.putExtra(TEST_NAME_KEY, item.name)
-                    startActivity(intent)
-                }, 350
+            {
+                val item = adapter.getItemAt(position)
+                val intent = Intent(baseContext, ResultActivity::class.java)
+                intent.putExtra(TEST_ID_KEY, item.id)
+                intent.putExtra(TEST_NAME_KEY, item.name)
+                startActivity(intent)
+            }, 350
         )
     }
 
@@ -107,34 +107,34 @@ class ResultListActivity : BaseActivity() {
 
         @SuppressLint("ShowToast")
         toast = Toast.makeText(
-                applicationContext,
-                "testing",
-                Toast.LENGTH_LONG
+            applicationContext,
+            "",
+            Toast.LENGTH_LONG
         )
 
         resultRequestHandler = Handler()
         runnable = Runnable {
-            if (NetUtil.isInternetConnected(this)) {
+            if (isInternetConnected) {
                 getResultsFromServer()
             }
         }
 
         val calendar = Calendar.getInstance()
         if (calendar.get(Calendar.MONTH) > 7 && calendar.get(Calendar.YEAR) > 2018
-                && isNonStoreVersion(this)
+            && isNonStoreVersion(this)
         ) {
             appIsClosing = true
             val marketUrl = Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
             val message = String.format(
-                    "%s%n%n%s", getString(R.string.thisVersionHasExpired),
-                    getString(R.string.uninstallAndInstallFromStore)
+                "%s%n%n%s", getString(R.string.thisVersionHasExpired),
+                getString(R.string.uninstallAndInstallFromStore)
             )
 
             val builder: AlertDialog.Builder = AlertDialog.Builder(this)
 
             builder.setTitle(R.string.versionExpired)
-                    .setMessage(message)
-                    .setCancelable(false)
+                .setMessage(message)
+                .setCancelable(false)
 
             builder.setPositiveButton(R.string.ok) { dialogInterface, _ ->
                 dialogInterface.dismiss()
@@ -167,7 +167,7 @@ class ResultListActivity : BaseActivity() {
             listView.adapter = adapter
 
             connectivityManager =
-                    getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+                getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         }
     }
 
@@ -177,13 +177,13 @@ class ResultListActivity : BaseActivity() {
 
         appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
             if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
-                    && appUpdateInfo.isUpdateTypeAllowed(IMMEDIATE)
+                && appUpdateInfo.isUpdateTypeAllowed(IMMEDIATE)
             ) {
                 appUpdateManager.startUpdateFlowForResult(
-                        appUpdateInfo,
-                        IMMEDIATE,
-                        this,
-                        APP_UPDATE_REQUEST
+                    appUpdateInfo,
+                    IMMEDIATE,
+                    this,
+                    APP_UPDATE_REQUEST
                 )
             }
         }
@@ -202,20 +202,20 @@ class ResultListActivity : BaseActivity() {
             monitorNetwork()
 
             appUpdateManager
-                    .appUpdateInfo
-                    .addOnSuccessListener { appUpdateInfo ->
-                        if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS
-                        ) {
-                            appUpdateManager.startUpdateFlowForResult(
-                                    appUpdateInfo,
-                                    IMMEDIATE,
-                                    this,
-                                    APP_UPDATE_REQUEST
-                            )
-                        }
+                .appUpdateInfo
+                .addOnSuccessListener { appUpdateInfo ->
+                    if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS
+                    ) {
+                        appUpdateManager.startUpdateFlowForResult(
+                            appUpdateInfo,
+                            IMMEDIATE,
+                            this,
+                            APP_UPDATE_REQUEST
+                        )
                     }
+                }
 
-            if (!NetUtil.isInternetConnected(this)) {
+            if (!isInternetConnected) {
                 notifyNoInternet()
             } else {
                 sendImagesToServer()
@@ -240,12 +240,14 @@ class ResultListActivity : BaseActivity() {
 
         override fun onAvailable(network: Network) {
             super.onAvailable(network)
+            isInternetConnected = true
             sendImagesToServer()
             getResultsFromServer()
         }
 
         override fun onLost(network: Network) {
             super.onLost(network)
+            isInternetConnected = false
             resultRequestHandler.removeCallbacksAndMessages(null)
             notifyNoInternet()
         }
@@ -274,10 +276,10 @@ class ResultListActivity : BaseActivity() {
                 val id = data.getStringExtra(TEST_ID_KEY)
                 if (id != null) {
                     AppDatabase.getDatabase(baseContext).resultDao().insert(
-                            TestResult(
-                                    id, 0, TEST_PARAMETER_NAME,
-                                    Date().time, Date().time, "", getString(R.string.outbox)
-                            )
+                        TestResult(
+                            id, 0, TEST_PARAMETER_NAME,
+                            Date().time, Date().time, "", getString(R.string.outbox)
+                        )
                     )
                 }
 
@@ -287,7 +289,7 @@ class ResultListActivity : BaseActivity() {
                     showNewToast(getString(R.string.sending_dummy_image))
                 }
 
-                if (!NetUtil.isInternetConnected(this)) {
+                if (!isInternetConnected) {
                     notifyNoInternet()
                 } else {
                     sendImagesToServer()
@@ -314,8 +316,8 @@ class ResultListActivity : BaseActivity() {
     private fun showSnackbar(message: String) {
         val rootView = window.decorView.rootView
         val snackbar = Snackbar
-                .make(rootView, message.trim { it <= ' ' }, Snackbar.LENGTH_LONG)
-                .setAction("SETTINGS") { App.openAppPermissionSettings(this) }
+            .make(rootView, message.trim { it <= ' ' }, Snackbar.LENGTH_LONG)
+            .setAction("SETTINGS") { App.openAppPermissionSettings(this) }
         val snackbarView = snackbar.view
         val textView = snackbarView.findViewById<TextView>(R.id.snackbar_text)
         textView.setTextColor(Color.WHITE)
@@ -337,7 +339,7 @@ class ResultListActivity : BaseActivity() {
     }
 
     private fun sendImagesToServer() {
-        if (NetUtil.isInternetConnected(this)) {
+        if (isInternetConnected) {
             db.resultDao().getUnsent().forEach {
                 sendToServer(it.id, it.name)
             }
@@ -366,16 +368,16 @@ class ResultListActivity : BaseActivity() {
             val filename = file.name
 
             val requestBody = MultipartBody.Builder()
-                    .setType(MultipartBody.FORM)
-                    .addFormDataPart("user_id", "1")
-                    .addFormDataPart("testId", id)
-                    .addFormDataPart("image", filename, fileBody)
-                    .build()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("user_id", "1")
+                .addFormDataPart("testId", id)
+                .addFormDataPart("image", filename, fileBody)
+                .build()
 
             val request = Request.Builder()
-                    .url(API_URL)
-                    .post(requestBody)
-                    .build()
+                .url(API_URL)
+                .post(requestBody)
+                .build()
 
             val okHttpClient = OkHttpClient()
             okHttpClient.newCall(request).enqueue(object : okhttp3.Callback {
@@ -402,7 +404,7 @@ class ResultListActivity : BaseActivity() {
 
         startResultCheckTimer(RESULT_CHECK_INTERVAL)
 
-        if (!NetUtil.isInternetConnected(this)) {
+        if (!isInternetConnected) {
             notifyNoInternet()
             return
         }
@@ -410,9 +412,9 @@ class ResultListActivity : BaseActivity() {
         val resultList = db.resultDao().getPendingResults()
         if (resultList.isNotEmpty()) {
             val retrofit: Retrofit = Retrofit.Builder()
-                    .baseUrl(API_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build()
+                .baseUrl(API_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
 
             var maxWaitTime: Long = MIN_RESULT_WAIT_TIME
 
@@ -429,8 +431,8 @@ class ResultListActivity : BaseActivity() {
                     call.enqueue(object : Callback<ResultResponse> {
 
                         override fun onResponse(
-                                call: Call<ResultResponse>?,
-                                response: Response<ResultResponse>?
+                            call: Call<ResultResponse>?,
+                            response: Response<ResultResponse>?
                         ) {
                             val body = response?.body()
 
@@ -471,9 +473,9 @@ class ResultListActivity : BaseActivity() {
     private fun showToast(message: String) {
         toast.cancel()
         toast = Toast.makeText(
-                applicationContext,
-                message,
-                Toast.LENGTH_LONG
+            applicationContext,
+            message,
+            Toast.LENGTH_LONG
         )
         toast.setGravity(Gravity.BOTTOM, 0, TOAST_Y_OFFSET)
         toast.show()
@@ -481,9 +483,9 @@ class ResultListActivity : BaseActivity() {
 
     private fun showNewToast(message: String) {
         val toast = Toast.makeText(
-                applicationContext,
-                message,
-                Toast.LENGTH_LONG
+            applicationContext,
+            message,
+            Toast.LENGTH_LONG
         )
         toast.setGravity(Gravity.BOTTOM, 0, TOAST_Y_OFFSET + 130)
         toast.show()
@@ -502,11 +504,15 @@ class ResultListActivity : BaseActivity() {
 
         Handler().postDelayed({
             if (!isFinishing && !isDestroyed) {
-                PreferencesUtil.setLong(this, App.CONNECTION_ERROR_NOTIFIED_KEY, System.currentTimeMillis())
+                PreferencesUtil.setLong(
+                    this,
+                    App.CONNECTION_ERROR_NOTIFIED_KEY,
+                    System.currentTimeMillis()
+                )
                 val toast = Toast.makeText(
-                        applicationContext,
-                        R.string.no_Internet_connection,
-                        Toast.LENGTH_LONG
+                    applicationContext,
+                    R.string.no_Internet_connection,
+                    Toast.LENGTH_LONG
                 )
                 toast.setGravity(Gravity.BOTTOM, 0, TOAST_Y_OFFSET)
                 toast.show()

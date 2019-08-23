@@ -109,6 +109,10 @@ class CameraFragment : Fragment() {
         preview?.removePreviewOutputListener()
         CameraX.unbindAll()
         broadcastManager.unregisterReceiver(broadcastReceiver)
+
+        if (!activity!!.isFinishing) {
+            activity?.finish()
+        }
     }
 
     override fun onDestroyView() {
