@@ -28,6 +28,7 @@ import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.install.model.AppUpdateType.IMMEDIATE
 import com.google.android.play.core.install.model.UpdateAvailability
+import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.app.App.Companion.API_URL
@@ -74,7 +75,8 @@ class ResultListActivity : BaseActivity() {
     private lateinit var listView: RecyclerView
     private lateinit var connectivityManager: ConnectivityManager
     private lateinit var appUpdateManager: AppUpdateManager
-    private lateinit var toast: Toast
+    private lateinit var toastLong: Toast
+    private lateinit var toastShort: Toast
     private var isInternetConnected = false
 
     private fun onResultClick(position: Int) {
@@ -107,10 +109,17 @@ class ResultListActivity : BaseActivity() {
         appUpdateManager = AppUpdateManagerFactory.create(this)
 
         @SuppressLint("ShowToast")
-        toast = Toast.makeText(
+        toastLong = Toast.makeText(
             applicationContext,
             "",
             Toast.LENGTH_LONG
+        )
+
+        @SuppressLint("ShowToast")
+        toastShort = Toast.makeText(
+            applicationContext,
+            "",
+            Toast.LENGTH_SHORT
         )
 
         resultRequestHandler = Handler()
@@ -158,6 +167,9 @@ class ResultListActivity : BaseActivity() {
             checkForUpdate()
 
             db = AppDatabase.getDatabase(baseContext)
+
+//            db.resultDao().reset()
+
             val resultList = db.resultDao().getResults()
 
             adapter.setTestList(resultList)
@@ -243,6 +255,14 @@ class ResultListActivity : BaseActivity() {
             getResultsFromServer()
         }
 
+        override fun onUnavailable() {
+            super.onUnavailable()
+            Timber.d("Connection Not Available")
+            isInternetConnected = false
+            resultRequestHandler.removeCallbacksAndMessages(null)
+            notifyNoInternet()
+        }
+
         override fun onLost(network: Network) {
             super.onLost(network)
             Timber.d("Connection Lost")
@@ -264,6 +284,12 @@ class ResultListActivity : BaseActivity() {
             val builder = NetworkRequest.Builder()
             connectivityManager.registerNetworkCallback(builder.build(), networkCallback)
         }
+
+        Handler().postDelayed({
+            if (!isFinishing && !isDestroyed) {
+                notifyNoInternet()
+            }
+        }, 5000)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -287,12 +313,6 @@ class ResultListActivity : BaseActivity() {
                 if (sendDummyImage()) {
                     showNewToast(getString(R.string.sending_dummy_image))
                 }
-
-                if (!isInternetConnected) {
-                    notifyNoInternet()
-                } else {
-                    sendImagesToServer()
-                }
             }
         } else {
             if (data != null) {
@@ -301,8 +321,6 @@ class ResultListActivity : BaseActivity() {
                 }
             }
         }
-
-        getResultsFromServer()
     }
 
     private fun startResultCheckTimer(delay: Long) {
@@ -371,6 +389,9 @@ class ResultListActivity : BaseActivity() {
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("user_id", "1")
                 .addFormDataPart("testId", id)
+                .addFormDataPart("versionCode", BuildConfig.VERSION_CODE.toString())
+                .addFormDataPart("sdkVersion", Build.VERSION.SDK_INT.toString())
+                .addFormDataPart("deviceModel", Build.MODEL)
                 .addFormDataPart("image", filename, fileBody)
                 .build()
 
@@ -428,6 +449,8 @@ class ResultListActivity : BaseActivity() {
                 if (timeAgoSent > MIN_RESULT_WAIT_TIME) {
                     val call = api.getResponse(it.id)
 
+                    Timber.d("Requesting result %s", it.id)
+
                     call.enqueue(object : Callback<ResultResponse> {
 
                         override fun onResponse(
@@ -437,23 +460,27 @@ class ResultListActivity : BaseActivity() {
                             val body = response?.body()
 
                             val id = body?.id
-                            val title = body?.title
                             var result = ""
                             var message = "-"
                             if (body?.result != null) {
-                                result = body.result?.replace(title.toString(), "").toString()
+                                result = body.result.toString()
                                 message = body.message.toString()
                             }
 
-                            val resultData = db.resultDao().getResult(id)
+                            if (result.isNotEmpty()) {
+                                val resultData = db.resultDao().getResult(id)
 
-                            if (resultData != null) {
-                                db.resultDao().updateResult(id.toString(), 2, message, result)
+                                if (resultData != null) {
+                                    db.resultDao().updateResult(id.toString(), 2, message, result)
 
-                                this@ResultListActivity.runOnUiThread {
-                                    SoundUtil.playShortResource(applicationContext, R.raw.triangle)
-                                    refreshList()
-                                    showToast(getString(R.string.result_received))
+                                    this@ResultListActivity.runOnUiThread {
+                                        SoundUtil.playShortResource(
+                                            applicationContext,
+                                            R.raw.triangle
+                                        )
+                                        refreshList()
+                                        showToast(getString(R.string.result_received))
+                                    }
                                 }
                             }
                         }
@@ -470,27 +497,32 @@ class ResultListActivity : BaseActivity() {
     }
 
     private fun showToast(message: String) {
-        toast.cancel()
-        toast = Toast.makeText(
+        toastLong.cancel()
+        toastLong = Toast.makeText(
             applicationContext,
             message,
             Toast.LENGTH_LONG
         )
-        toast.setGravity(Gravity.BOTTOM, 0, TOAST_Y_OFFSET)
-        toast.show()
+        toastLong.setGravity(Gravity.BOTTOM, 0, TOAST_Y_OFFSET)
+        toastLong.show()
     }
 
     private fun showNewToast(message: String) {
-        val toast = Toast.makeText(
+        toastShort.cancel()
+        toastShort = Toast.makeText(
             applicationContext,
             message,
             Toast.LENGTH_SHORT
         )
-        toast.setGravity(Gravity.BOTTOM, 0, TOAST_Y_OFFSET + 130)
-        toast.show()
+        toastShort.setGravity(Gravity.BOTTOM, 0, TOAST_Y_OFFSET)
+        toastShort.show()
     }
 
     private fun notifyNoInternet() {
+
+        if (isInternetConnected) {
+            return
+        }
 
         if (db.resultDao().getUnsent().isEmpty() && db.resultDao().getPendingResults().isEmpty()) {
             return

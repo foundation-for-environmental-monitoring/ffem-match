@@ -9,6 +9,7 @@ import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.databinding.ActivityAboutBinding
 import io.ffem.lite.preference.AppPreferences
+import io.ffem.lite.preference.isDiagnosticMode
 
 /**
  * Activity to display info about the app.
@@ -57,7 +58,7 @@ class AboutActivity : BaseActivity() {
      * Turn on diagnostic mode if user clicks on version section CHANGE_MODE_MIN_CLICKS times.
      */
     fun switchToDiagnosticMode(@Suppress("UNUSED_PARAMETER") view: View) {
-        if (!AppPreferences.isDiagnosticMode()) {
+        if (!isDiagnosticMode()) {
             clickCount++
 
             if (clickCount >= CHANGE_MODE_MIN_CLICKS) {
@@ -85,7 +86,7 @@ class AboutActivity : BaseActivity() {
      * Show the diagnostic mode layout.
      */
     private fun switchLayoutForDiagnosticOrUserMode() {
-        if (AppPreferences.isDiagnosticMode()) {
+        if (isDiagnosticMode()) {
             findViewById<View>(R.id.layoutDiagnostics).visibility = View.VISIBLE
         } else {
             if (findViewById<View>(R.id.layoutDiagnostics).visibility == View.VISIBLE) {

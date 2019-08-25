@@ -27,8 +27,8 @@ class DataPreferenceFragment : PreferenceFragmentCompat() {
             ?.setOnPreferenceClickListener {
 
                 val builder = AlertDialog.Builder(requireContext())
-                builder.setTitle("Delete data")
-                builder.setMessage("Delete all photos and tests results?")
+                builder.setTitle(getString(R.string.delete))
+                builder.setMessage(getString(R.string.delete_all_data))
                 builder.setPositiveButton(R.string.delete) { _, _ ->
 
                     val folder = File(
@@ -47,7 +47,7 @@ class DataPreferenceFragment : PreferenceFragmentCompat() {
 
                     Toast.makeText(
                         requireContext(),
-                        "Data deleted", Toast.LENGTH_SHORT
+                        getString(R.string.data_deleted), Toast.LENGTH_SHORT
                     ).show()
                 }
 

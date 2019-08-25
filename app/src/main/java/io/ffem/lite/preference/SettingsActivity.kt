@@ -38,7 +38,7 @@ class SettingsActivity : BaseActivity() {
             .replace(R.id.layoutOther, OtherPreferenceFragment())
             .commit()
 
-        if (AppPreferences.isDiagnosticMode()) {
+        if (isDiagnosticMode()) {
 
             supportFragmentManager.beginTransaction()
                 .add(R.id.layoutTesting, TestingPreferenceFragment())
@@ -73,7 +73,7 @@ class SettingsActivity : BaseActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        if (AppPreferences.isDiagnosticMode()) {
+        if (isDiagnosticMode()) {
             menuInflater.inflate(R.menu.menu_settings, menu)
         }
         return true

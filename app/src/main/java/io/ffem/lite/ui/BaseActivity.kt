@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import io.ffem.lite.R
-import io.ffem.lite.preference.AppPreferences
+import io.ffem.lite.preference.isDiagnosticMode
 
 abstract class BaseActivity : AppCompatActivity() {
 
@@ -84,7 +84,7 @@ abstract class BaseActivity : AppCompatActivity() {
      * Switches action bar style between user mode or diagnostic mode
      */
     protected fun changeActionBarStyleBasedOnCurrentMode() {
-        if (AppPreferences.isDiagnosticMode()) {
+        if (isDiagnosticMode()) {
             if (supportActionBar != null) {
                 supportActionBar!!.setBackgroundDrawable(
                     ColorDrawable(

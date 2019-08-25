@@ -7,6 +7,8 @@
 
         <import type="android.view.View" />
 
+        <import type="io.ffem.lite.preference.AppPreferencesKt" />
+
         <import type="com.github.marlonlom.utilities.timeago.TimeAgo" />
 
         <variable
@@ -52,7 +54,7 @@
                 android:text="@{String.valueOf(result.id)}"
                 android:textColor="#737373"
                 android:textSize="13sp"
-                android:visibility="gone"
+                android:visibility="@{AppPreferencesKt.isDiagnosticMode() ? View.VISIBLE : View.GONE}"
                 tools:text="Test id" />
 
             <TextView
@@ -60,7 +62,6 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginBottom="7dp"
-
                 android:clickable="false"
                 android:focusable="false"
                 android:text="@{TimeAgo.using(result.date)}"

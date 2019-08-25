@@ -9,7 +9,7 @@ import android.os.Handler
 import android.provider.Settings
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
-import io.ffem.lite.preference.AppPreferences
+import io.ffem.lite.preference.isDiagnosticMode
 import io.ffem.lite.util.PreferencesUtil
 import timber.log.Timber
 import java.util.*
@@ -145,7 +145,7 @@ class App : BaseApplication() {
                         packageInfo.versionCode.toLong()
                     }
 
-                version = if (AppPreferences.isDiagnosticMode()) {
+                version = if (isDiagnosticMode()) {
                     String.format("%s (Build %s)", packageInfo.versionName, versionCode)
                 } else {
                     String.format(

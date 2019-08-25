@@ -7,24 +7,24 @@ import io.ffem.lite.util.PreferencesUtil
 const val IS_TEST_MODE = false
 
 fun isTestMode(): Boolean {
-    return IS_TEST_MODE || AppPreferences.isDiagnosticMode() && PreferencesUtil.getBoolean(
+    return IS_TEST_MODE || isDiagnosticMode() && PreferencesUtil.getBoolean(
         App.app, R.string.testModeOnKey, false
     )
 }
 
 fun isSoundOn(): Boolean {
-    return !AppPreferences.isDiagnosticMode() || PreferencesUtil.getBoolean(App.app, R.string.soundOnKey, true)
+    return !isDiagnosticMode() || PreferencesUtil.getBoolean(App.app, R.string.soundOnKey, true)
 }
 
 fun sendDummyImage(): Boolean {
-    return AppPreferences.isDiagnosticMode() && PreferencesUtil.getBoolean(App.app, R.string.dummyImageKey, false)
+    return isDiagnosticMode() && PreferencesUtil.getBoolean(App.app, R.string.dummyImageKey, false)
+}
+
+fun isDiagnosticMode(): Boolean {
+    return PreferencesUtil.getBoolean(App.app, R.string.diagnosticModeKey, false)
 }
 
 object AppPreferences {
-
-    fun isDiagnosticMode(): Boolean {
-        return PreferencesUtil.getBoolean(App.app, R.string.diagnosticModeKey, false)
-    }
 
     fun enableDiagnosticMode() {
         PreferencesUtil.setBoolean(App.app, R.string.diagnosticModeKey, true)

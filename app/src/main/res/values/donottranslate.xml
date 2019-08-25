@@ -19,10 +19,10 @@
 
     <!--Diagnostic-->
     <string name="diagnostics">Diagnostics</string>
-
-    <!--Diagnostic Mode: Messages -->
     <string name="diagnosticModeEnabled">Diagnostic mode enabled</string>
     <string name="diagnosticModeDisabled">Diagnostic mode disabled</string>
+    <string name="delete_all_data">Delete all photos and test results?</string>
+    <string name="data_deleted">Data deleted</string>
 
     <!--Diagnostic Mode: Save / Load Calibration-->
 
