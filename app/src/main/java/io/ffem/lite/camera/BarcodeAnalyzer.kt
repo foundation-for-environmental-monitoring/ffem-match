@@ -97,13 +97,15 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer,
                                 Timber.e("-----------------------")
                                 Timber.e("")
 
+                                val margin = 40
+
                                 if (height > mediaImage.bitmap.height * .065
                                     && width > mediaImage.bitmap.width * .38
                                 ) {
                                     try {
-                                        for (i in left until right - left) {
+                                        for (i in left + margin until right - left - (margin * 2)) {
                                             val pixel = leftBarcodeBitmap.getPixel(i, 5)
-                                            if (pixel.red < 20 && pixel.green < 20 && pixel.blue < 20) {
+                                            if (pixel.red < 50 && pixel.green < 50 && pixel.blue < 50) {
                                                 return
                                             }
                                         }
@@ -147,9 +149,10 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer,
                 if (barcode.boundingBox!!.height() > mediaImage.bitmap.height * .065
                     && barcode.boundingBox!!.width() > mediaImage.bitmap.width * .38
                 ) {
-                    for (i in barcode.boundingBox!!.left until barcode.boundingBox!!.width()) {
+                    for (i in barcode.boundingBox!!.left + margin until
+                            barcode.boundingBox!!.width() - (margin * 2)) {
                         val pixel = rightBarcodeBitmap.getPixel(i, rightBarcodeBitmap.height - 5)
-                        if (pixel.red < 20 && pixel.green < 20 && pixel.blue < 20) {
+                        if (pixel.red < 50 && pixel.green < 50 && pixel.blue < 50) {
                             return
                         }
                     }

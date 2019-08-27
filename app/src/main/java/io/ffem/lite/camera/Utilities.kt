@@ -58,7 +58,7 @@ object Utilities {
      */
     fun bitmapToBytes(bitmap: Bitmap): ByteArray {
         val bos = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, bos)
         return bos.toByteArray()
     }
 }

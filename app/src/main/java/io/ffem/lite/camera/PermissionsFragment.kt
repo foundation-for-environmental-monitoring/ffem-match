@@ -72,8 +72,8 @@ class PermissionsFragment : Fragment() {
     }
 
     private fun permissionsGranted(grantResults: IntArray): Boolean {
-        for (i in 0 until grantResults.size) {
-            if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+        for (element in grantResults) {
+            if (element != PackageManager.PERMISSION_GRANTED) {
                 return false
             }
         }

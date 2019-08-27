@@ -20,7 +20,6 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
-import androidx.exifinterface.media.ExifInterface
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
@@ -57,15 +56,16 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
 import java.io.File
+import java.io.FileInputStream
 import java.io.IOException
+import java.security.MessageDigest
 import java.util.*
 import kotlin.math.abs
 import kotlin.math.max
 
-
 const val APP_UPDATE_REQUEST = 101
 const val TOAST_Y_OFFSET = 240
-const val RESULT_CHECK_INTERVAL = 15000L
+const val RESULT_CHECK_INTERVAL = 5000L
 const val MIN_RESULT_WAIT_TIME = 80000L
 const val SNACK_BAR_LINE_SPACING = 1.4f
 
@@ -125,6 +125,7 @@ class ResultListActivity : BaseActivity() {
         resultRequestHandler = Handler()
         runnable = Runnable {
             if (isInternetConnected) {
+                sendImagesToServer()
                 getResultsFromServer()
             }
         }
@@ -178,9 +179,6 @@ class ResultListActivity : BaseActivity() {
             listView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 
             listView.adapter = adapter
-
-            connectivityManager =
-                getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         }
     }
 
@@ -228,16 +226,20 @@ class ResultListActivity : BaseActivity() {
                     }
                 }
 
-            sendImagesToServer()
-
             startResultCheckTimer(RESULT_CHECK_INTERVAL)
         }
+
+        listView.adapter = adapter
     }
 
     override fun onPause() {
         super.onPause()
-        connectivityManager.unregisterNetworkCallback(networkCallback)
         resultRequestHandler.removeCallbacksAndMessages(null)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        connectivityManager.unregisterNetworkCallback(networkCallback)
     }
 
     fun onStartClick(@Suppress("UNUSED_PARAMETER") view: View) {
@@ -251,8 +253,7 @@ class ResultListActivity : BaseActivity() {
             super.onAvailable(network)
             Timber.d("Connection Available")
             isInternetConnected = true
-            sendImagesToServer()
-            getResultsFromServer()
+            startResultCheckTimer(RESULT_CHECK_INTERVAL)
         }
 
         override fun onUnavailable() {
@@ -273,10 +274,8 @@ class ResultListActivity : BaseActivity() {
     }
 
     private fun monitorNetwork() {
-        try {
-            connectivityManager.unregisterNetworkCallback(networkCallback)
-        } catch (ignore: Exception) {
-        }
+        connectivityManager =
+            getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             connectivityManager.registerDefaultNetworkCallback(networkCallback)
@@ -324,7 +323,9 @@ class ResultListActivity : BaseActivity() {
     }
 
     private fun startResultCheckTimer(delay: Long) {
-        if (db.resultDao().getPendingResults().isNotEmpty()) {
+        if (db.resultDao().getPendingResults().isNotEmpty()
+            || db.resultDao().getUnsent().isNotEmpty()
+        ) {
             Timber.d("Waiting for: %s", delay)
             resultRequestHandler.removeCallbacksAndMessages(null)
             resultRequestHandler.postDelayed(runnable, delay)
@@ -352,8 +353,7 @@ class ResultListActivity : BaseActivity() {
             showToast(getString(R.string.wait_few_minutes))
         }, 800)
 
-        sendImagesToServer()
-        getResultsFromServer()
+        startResultCheckTimer(RESULT_CHECK_INTERVAL)
     }
 
     private fun sendImagesToServer() {
@@ -370,13 +370,13 @@ class ResultListActivity : BaseActivity() {
                 File.separator + "captures" + File.separator
         val filePath = "$path$id" + "_" + "$name.jpg"
 
-        try {
-            val imageDescription = "{\"test_type\" : $name}"
-            val exif = ExifInterface(filePath)
-            exif.setAttribute("ImageDescription", imageDescription)
-            exif.saveAttributes()
-        } catch (ignore: IOException) {
-        }
+//        try {
+//            val imageDescription = "{\"test_type\" : $name}"
+//            val exif = ExifInterface(filePath)
+//            exif.setAttribute("ImageDescription", imageDescription)
+//            exif.saveAttributes()
+//        } catch (ignore: IOException) {
+//        }
 
         try {
             val file = File(filePath)
@@ -392,6 +392,7 @@ class ResultListActivity : BaseActivity() {
                 .addFormDataPart("versionCode", BuildConfig.VERSION_CODE.toString())
                 .addFormDataPart("sdkVersion", Build.VERSION.SDK_INT.toString())
                 .addFormDataPart("deviceModel", Build.MODEL)
+                .addFormDataPart("md5", calculateMD5ofFile(filePath))
                 .addFormDataPart("image", filename, fileBody)
                 .build()
 
@@ -407,18 +408,49 @@ class ResultListActivity : BaseActivity() {
                 }
 
                 override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
-                    response.body!!.close()
+                    if (response.isSuccessful) {
+                        db.resultDao()
+                            .updateStatus(id, 1, Date().time, getString(R.string.analyzing))
 
-                    db.resultDao().updateStatus(id, 1, Date().time, getString(R.string.analyzing))
-
-                    this@ResultListActivity.runOnUiThread {
-                        notifyFileSent()
+                        this@ResultListActivity.runOnUiThread {
+                            notifyFileSent()
+                        }
+                    } else {
+                        Timber.d(response.message)
                     }
+                    response.body!!.close()
                 }
             })
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    private fun calculateMD5ofFile(location: String): String {
+        val bufferSize = 8192
+        val fs = FileInputStream(location)
+        val md = MessageDigest.getInstance("MD5")
+        val buffer = ByteArray(bufferSize)
+        var bytes: Int
+        do {
+            bytes = fs.read(buffer, 0, bufferSize)
+            if (bytes > 0)
+                md.update(buffer, 0, bytes)
+
+        } while (bytes > 0)
+
+        val hexString = StringBuilder()
+        val byteArray = md.digest()
+
+        for (element in byteArray) {
+            val hex = Integer.toHexString(element.toInt() and 0xFF)
+            if (hex.length == 1) {
+                hexString.append('0')
+            }
+            hexString.append(hex)
+
+        }
+        return hexString.toString()
     }
 
     private fun getResultsFromServer() {

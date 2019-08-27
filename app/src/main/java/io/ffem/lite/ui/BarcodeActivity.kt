@@ -46,7 +46,7 @@ class BarcodeActivity : BaseActivity() {
 
             Handler().postDelayed({
                 finish()
-            }, 1500)
+            }, 2000)
         }
     }
 
