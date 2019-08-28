@@ -77,7 +77,7 @@ class ResultListActivity : BaseActivity() {
     private lateinit var appUpdateManager: AppUpdateManager
     private lateinit var toastLong: Toast
     private lateinit var toastShort: Toast
-    private var isInternetConnected = false
+    private var isInternetConnected = true
 
     private fun onResultClick(position: Int) {
         Handler().postDelayed(
@@ -259,7 +259,7 @@ class ResultListActivity : BaseActivity() {
         override fun onUnavailable() {
             super.onUnavailable()
             Timber.d("Connection Not Available")
-            isInternetConnected = false
+//            isInternetConnected = false
             resultRequestHandler.removeCallbacksAndMessages(null)
             notifyNoInternet()
         }
@@ -267,7 +267,7 @@ class ResultListActivity : BaseActivity() {
         override fun onLost(network: Network) {
             super.onLost(network)
             Timber.d("Connection Lost")
-            isInternetConnected = false
+//            isInternetConnected = false
             resultRequestHandler.removeCallbacksAndMessages(null)
             notifyNoInternet()
         }
@@ -307,8 +307,6 @@ class ResultListActivity : BaseActivity() {
                     )
                 }
 
-                refreshList()
-
                 if (sendDummyImage()) {
                     showNewToast(getString(R.string.sending_dummy_image))
                 }
@@ -320,6 +318,8 @@ class ResultListActivity : BaseActivity() {
                 }
             }
         }
+
+        refreshList()
     }
 
     private fun startResultCheckTimer(delay: Long) {
@@ -595,6 +595,6 @@ class ResultListActivity : BaseActivity() {
 
     fun onSettingsClick(@Suppress("UNUSED_PARAMETER") item: MenuItem) {
         val intent = Intent(baseContext, SettingsActivity::class.java)
-        startActivity(intent)
+        startActivityForResult(intent, 102)
     }
 }
