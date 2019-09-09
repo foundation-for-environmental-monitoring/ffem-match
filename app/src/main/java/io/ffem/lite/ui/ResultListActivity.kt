@@ -21,7 +21,6 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
@@ -44,6 +43,7 @@ import io.ffem.lite.preference.sendDummyImage
 import io.ffem.lite.remote.ApiService
 import io.ffem.lite.util.PreferencesUtil
 import io.ffem.lite.util.SoundUtil
+import kotlinx.android.synthetic.main.activity_result_list.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -72,7 +72,6 @@ const val SNACK_BAR_LINE_SPACING = 1.4f
 class ResultListActivity : BaseActivity() {
 
     private var appIsClosing: Boolean = false
-    private lateinit var listView: RecyclerView
     private lateinit var connectivityManager: ConnectivityManager
     private lateinit var appUpdateManager: AppUpdateManager
     private lateinit var toastLong: Toast
@@ -131,7 +130,7 @@ class ResultListActivity : BaseActivity() {
         }
 
         val calendar = Calendar.getInstance()
-        if (calendar.get(Calendar.MONTH) > 7 && calendar.get(Calendar.YEAR) > 2018
+        if (calendar.get(Calendar.MONTH) > 8 && calendar.get(Calendar.YEAR) > 2018
             && isNonStoreVersion(this)
         ) {
             appIsClosing = true
@@ -175,10 +174,14 @@ class ResultListActivity : BaseActivity() {
 
             adapter.setTestList(resultList)
 
-            listView = findViewById(R.id.list_results)
-            listView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+            list_results.addItemDecoration(
+                DividerItemDecoration(
+                    this,
+                    DividerItemDecoration.VERTICAL
+                )
+            )
 
-            listView.adapter = adapter
+            list_results.adapter = adapter
         }
     }
 
@@ -229,7 +232,7 @@ class ResultListActivity : BaseActivity() {
             startResultCheckTimer(RESULT_CHECK_INTERVAL)
         }
 
-        listView.adapter = adapter
+        list_results.adapter = adapter
     }
 
     override fun onPause() {
@@ -370,21 +373,8 @@ class ResultListActivity : BaseActivity() {
                 File.separator + "captures" + File.separator
         val filePath = "$path$id" + "_" + "$name.jpg"
 
-//        try {
-//            val imageDescription = "{\"test_type\" : $name}"
-//            val exif = ExifInterface(filePath)
-//            exif.setAttribute("ImageDescription", imageDescription)
-//            exif.saveAttributes()
-//        } catch (ignore: IOException) {
-//        }
-
         try {
             val file = File(filePath)
-            val contentType = file.toURI().toURL().openConnection().contentType
-
-            val fileBody = file.asRequestBody(contentType.toMediaTypeOrNull())
-            val filename = file.name
-
             val requestBody = MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("user_id", "1")
@@ -393,7 +383,11 @@ class ResultListActivity : BaseActivity() {
                 .addFormDataPart("sdkVersion", Build.VERSION.SDK_INT.toString())
                 .addFormDataPart("deviceModel", Build.MODEL)
                 .addFormDataPart("md5", calculateMD5ofFile(filePath))
-                .addFormDataPart("image", filename, fileBody)
+                .addFormDataPart(
+                    "image",
+                    file.name,
+                    file.asRequestBody("image/jpeg".toMediaTypeOrNull())
+                )
                 .build()
 
             val request = Request.Builder()
