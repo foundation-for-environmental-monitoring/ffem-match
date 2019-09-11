@@ -16,6 +16,7 @@
     <string name="aboutKey">aboutApp</string>
     <string name="soundOnKey">soundOn</string>
     <string name="data_delete_key">data_delete</string>
+    <string name="colorDistanceToleranceKey">colorDistanceTolerance</string>
 
     <!--Diagnostic-->
     <string name="diagnostics">Diagnostics</string>
@@ -23,8 +24,6 @@
     <string name="diagnosticModeDisabled">Diagnostic mode disabled</string>
     <string name="delete_all_data">Delete all photos and test results?</string>
     <string name="data_deleted">Data deleted</string>
-
-    <!--Diagnostic Mode: Save / Load Calibration-->
 
     <!--Software Notices-->
     <string name="apache_software"><a href="https://source.android.com/setup/licenses">Android&#160;Open&#160;Source&#160;Project</a>&#160;&#160;&#8226;&#160;&#160;<a href="https://github.com/sriksun/salila">Salila</a>&#160;&#160;&#8226;&#160;&#160;&#32;<a href="https://github.com/joel-costigliola/assertj-core">AssertJ</a>&#160;&#160;&#8226;&#160;&#160;<a href="https://github.com/google/gson">Gson</a>&#160;&#160;&#8226;&#160;&#160;<a href="https://github.com/JakeWharton/timber">Timber</a></string>

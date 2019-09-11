@@ -4,6 +4,7 @@ import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.util.PreferencesUtil
 
+const val MAX_COLOR_DISTANCE_RGB = 50
 const val IS_TEST_MODE = false
 
 fun isTestMode(): Boolean {
@@ -22,6 +23,20 @@ fun sendDummyImage(): Boolean {
 
 fun isDiagnosticMode(): Boolean {
     return PreferencesUtil.getBoolean(App.app, R.string.diagnosticModeKey, false)
+}
+
+fun getColorDistanceTolerance(): Int {
+    return if (isDiagnosticMode()) {
+        Integer.parseInt(
+            PreferencesUtil.getString(
+                App.app,
+                R.string.colorDistanceToleranceKey,
+                MAX_COLOR_DISTANCE_RGB.toString()
+            )
+        )
+    } else {
+        MAX_COLOR_DISTANCE_RGB
+    }
 }
 
 object AppPreferences {

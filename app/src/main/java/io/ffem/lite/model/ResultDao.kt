@@ -14,6 +14,9 @@ abstract class ResultDao {
     @Query("SELECT * FROM results WHERE status = 1")
     abstract fun getPendingResults(): List<TestResult>
 
+    @Query("SELECT * FROM results WHERE localValue = ''")
+    abstract fun getPendingLocalResults(): List<TestResult>
+
     @Query("SELECT * FROM results ORDER BY date DESC")
     abstract fun getResults(): List<TestResult>
 
@@ -28,6 +31,9 @@ abstract class ResultDao {
 
     @Query("UPDATE results SET status = :status, message = :message, value = :result WHERE id = :id")
     abstract fun updateResult(id: String, status: Int, message: String, result: String)
+
+    @Query("UPDATE results SET localValue = :result WHERE id = :id")
+    abstract fun updateLocalResult(id: String, result: String)
 
     @Query("DELETE FROM results")
     abstract fun deleteAll()

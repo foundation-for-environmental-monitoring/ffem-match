@@ -56,13 +56,6 @@ import timber.log.Timber
 import java.io.File
 import java.util.*
 
-/** Helper type alias used for analysis use case callbacks */
-/**
- * Main fragment for this app. Implements all camera operations including:
- * - Viewfinder
- * - Photo taking
- * - Image analysis
- */
 class CameraFragment : Fragment() {
 
     private lateinit var container: ConstraintLayout
@@ -143,7 +136,10 @@ class CameraFragment : Fragment() {
         outputDirectory = getOutputDirectory(requireContext())
 
         if (sendDummyImage()) {
-            val drawable = ContextCompat.getDrawable(requireContext(), R.drawable.dummy_card)
+            val drawable = ContextCompat.getDrawable(
+                requireContext(),
+                R.drawable.dummy_card_5
+            )
             val bitmap = (drawable as BitmapDrawable).bitmap
 
             val testId = UUID.randomUUID().toString()

@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.Network
@@ -41,6 +42,7 @@ import io.ffem.lite.model.TestResult
 import io.ffem.lite.preference.SettingsActivity
 import io.ffem.lite.preference.sendDummyImage
 import io.ffem.lite.remote.ApiService
+import io.ffem.lite.util.ColorUtil
 import io.ffem.lite.util.PreferencesUtil
 import io.ffem.lite.util.SoundUtil
 import kotlinx.android.synthetic.main.activity_result_list.*
@@ -123,6 +125,7 @@ class ResultListActivity : BaseActivity() {
 
         resultRequestHandler = Handler()
         runnable = Runnable {
+            analyzeImage()
             if (isInternetConnected) {
                 sendImagesToServer()
                 getResultsFromServer()
@@ -299,13 +302,12 @@ class ResultListActivity : BaseActivity() {
 
         if (resultCode == Activity.RESULT_OK) {
             if (data != null) {
-
                 val id = data.getStringExtra(TEST_ID_KEY)
                 if (id != null) {
                     AppDatabase.getDatabase(baseContext).resultDao().insert(
                         TestResult(
                             id, 0, TEST_PARAMETER_NAME,
-                            Date().time, Date().time, "", getString(R.string.outbox)
+                            Date().time, Date().time, "", "", getString(R.string.outbox)
                         )
                     )
                 }
@@ -357,6 +359,24 @@ class ResultListActivity : BaseActivity() {
         }, 800)
 
         startResultCheckTimer(RESULT_CHECK_INTERVAL)
+    }
+
+    private fun analyzeImage() {
+        db.resultDao().getPendingLocalResults().forEach {
+            val path = getExternalFilesDir(DIRECTORY_PICTURES).toString() +
+                    File.separator + "captures" + File.separator
+            val filePath = "$path${it.id}" + "_" + "${it.name}.jpg"
+
+            val file = File(filePath)
+
+            val bitmap = BitmapFactory.decodeFile(file.path)
+
+            val calibration = ColorUtil.extractColors(this, bitmap)
+
+            db.resultDao().updateLocalResult(it.id, calibration.result.toString())
+
+            refreshList()
+        }
     }
 
     private fun sendImagesToServer() {
