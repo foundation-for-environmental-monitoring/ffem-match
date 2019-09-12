@@ -24,6 +24,128 @@ object ColorUtil {
     private var gson = Gson()
     private var swatches: ArrayList<Swatch> = ArrayList()
 
+//    // Grey scale matrix
+//    private fun createGreyMatrix(): ColorMatrix {
+//        return ColorMatrix(
+//            floatArrayOf(
+//                0.2989f,
+//                0.5870f,
+//                0.1140f,
+//                0f,
+//                0f,
+//                0.2989f,
+//                0.5870f,
+//                0.1140f,
+//                0f,
+//                0f,
+//                0.2989f,
+//                0.5870f,
+//                0.1140f,
+//                0f,
+//                0f,
+//                0f,
+//                0f,
+//                0f,
+//                1f,
+//                0f
+//            )
+//        )
+//    }
+//
+//    // Threshold matrix
+//    @Suppress("SameParameterValue")
+//    private fun createThresholdMatrix(threshold: Int): ColorMatrix {
+//        return ColorMatrix(
+//            floatArrayOf(
+//                85f,
+//                85f,
+//                85f,
+//                0f,
+//                -255f * threshold,
+//                85f,
+//                85f,
+//                85f,
+//                0f,
+//                -255f * threshold,
+//                85f,
+//                85f,
+//                85f,
+//                0f,
+//                -255f * threshold,
+//                0f,
+//                0f,
+//                0f,
+//                1f,
+//                0f
+//            )
+//        )
+//    }
+
+//    fun extractGrid(image: Bitmap): Bitmap? {
+//        val options = BitmapFactory.Options()
+//        options.inScaled = false
+//        val bitmapPaint = Paint()
+//
+//        //load source bitmap and prepare destination bitmap
+//        val result = Bitmap.createBitmap(image.width, image.height, Bitmap.Config.ARGB_8888)
+//        val c = Canvas(result)
+//
+//        //first convert bitmap to grey scale:
+//        bitmapPaint.colorFilter = ColorMatrixColorFilter(createGreyMatrix())
+//        c.drawBitmap(image, 0f, 0f, bitmapPaint)
+//
+//        //then convert the resulting bitmap to black and white using threshold matrix
+//        bitmapPaint.colorFilter = ColorMatrixColorFilter(createThresholdMatrix(120))
+//        c.drawBitmap(result, 0f, 0f, bitmapPaint)
+//
+//        var height = 0
+//        for (i in image.height - 1 downTo 0) {
+//            val pixel = result.getPixel(image.width / 4, i)
+//            if (Color.red(pixel) == 0) {
+//                height = i
+//                break
+//            }
+//        }
+//
+//        var left = 0
+//        for (i in image.width / 4 downTo 0) {
+//            val pixel = result.getPixel(i, height)
+//            if (Color.red(pixel) > 0) {
+//                left = i + 1
+//                break
+//            }
+//        }
+//
+//        var top = 0
+//        for (i in height downTo 0) {
+//            val pixel = result.getPixel(left, i)
+//            if (Color.red(pixel) > 0) {
+//                top = i
+//                break
+//            }
+//        }
+//
+//        var rightBottom = 0
+//        for (i in image.height - 1 downTo 0) {
+//            val pixel = result.getPixel((image.width / 4) * 3, i)
+//            if (Color.red(pixel) == 0) {
+//                rightBottom = i
+//                break
+//            }
+//        }
+//
+//        var right = 0
+//        for (i in (image.width / 4) * 3 until image.width) {
+//            val pixel = result.getPixel(i, rightBottom)
+//            if (Color.red(pixel) > 0) {
+//                right = i + 1
+//                break
+//            }
+//        }
+//
+//        return Bitmap.createBitmap(image, left, top, right - left, height - top)
+//    }
+
     fun extractColors(context: Context, image: Bitmap): ResultDetail {
         val input = context.resources.openRawResource(R.raw.calibration)
         try {
@@ -34,11 +156,11 @@ object ColorUtil {
                 i.color = image.getPixel(i.x, i.y)
             }
 
-            swatches.add(Swatch(0.0, getCalibrationColor(0f, calibration), 0))
-            swatches.add(Swatch(0.5, getCalibrationColor(.5f, calibration), 0))
-            swatches.add(Swatch(1.0, getCalibrationColor(1f, calibration), 0))
-            swatches.add(Swatch(1.5, getCalibrationColor(1.5f, calibration), 0))
-            swatches.add(Swatch(2.0, getCalibrationColor(2f, calibration), 0))
+            swatches.add(Swatch(0.0, getCalibrationColor(0f, calibration)))
+            swatches.add(Swatch(0.5, getCalibrationColor(.5f, calibration)))
+            swatches.add(Swatch(1.0, getCalibrationColor(1f, calibration)))
+            swatches.add(Swatch(1.5, getCalibrationColor(1.5f, calibration)))
+            swatches.add(Swatch(2.0, getCalibrationColor(2f, calibration)))
             swatches = generateGradient(swatches)
 
             val colorInfo = ColorInfo(image.getPixel(540, 200))
@@ -133,14 +255,14 @@ object ColorUtil {
 
             for (j in 0 until steps) {
                 val color = getGradientColor(startColor, endColor, steps, j)
-                list.add(Swatch(startValue + j * increment, color, Color.TRANSPARENT))
+                list.add(Swatch(startValue + j * increment, color))
             }
         }
 
         list.add(
             Swatch(
                 swatches[swatches.size - 1].value,
-                swatches[swatches.size - 1].color, Color.TRANSPARENT
+                swatches[swatches.size - 1].color
             )
         )
 
@@ -157,7 +279,7 @@ object ColorUtil {
         val g = getNextLinePoint(Color.green(color1), Color.green(color2))
         val b = getNextLinePoint(Color.blue(color1), Color.blue(color2))
 
-        return Swatch(swatch2.value + valueDiff, Color.rgb(r, g, b), Color.TRANSPARENT)
+        return Swatch(swatch2.value + valueDiff, Color.rgb(r, g, b))
     }
 
     private fun getNextLinePoint(y: Int, y2: Int): Int {

@@ -373,6 +373,8 @@ class ResultListActivity : BaseActivity() {
 
             val calibration = ColorUtil.extractColors(this, bitmap)
 
+//            val grid = ColorUtil.extractGrid(bitmap)
+
             db.resultDao().updateLocalResult(it.id, calibration.result.toString())
 
             refreshList()
