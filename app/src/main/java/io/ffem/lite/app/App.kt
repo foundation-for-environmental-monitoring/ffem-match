@@ -16,6 +16,8 @@ import java.util.*
 
 class App : BaseApplication() {
 
+    private val mOpenCvLibrary = "opencv_java3"
+
     override fun onCreate() {
         super.onCreate()
         app = this
@@ -24,6 +26,8 @@ class App : BaseApplication() {
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
+
+        System.loadLibrary(mOpenCvLibrary)
 
         app = this
     }
@@ -115,6 +119,7 @@ class App : BaseApplication() {
         // Keys
         const val FILE_PATH_KEY = "file_path"
         const val TEST_ID_KEY = "test_id"
+        const val TEST_RESULT = "test_result"
         const val TEST_NAME_KEY = "test_name"
 
         const val API_URL = "http://ec2-52-66-17-109.ap-south-1.compute.amazonaws.com:5000"

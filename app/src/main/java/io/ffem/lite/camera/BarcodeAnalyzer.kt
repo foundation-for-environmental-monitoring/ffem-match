@@ -3,6 +3,7 @@ package io.ffem.lite.camera
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Color
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.core.graphics.blue
@@ -19,7 +20,9 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
 import io.ffem.lite.app.App.Companion.FILE_PATH_KEY
 import io.ffem.lite.app.App.Companion.TEST_ID_KEY
 import io.ffem.lite.app.App.Companion.TEST_PARAMETER_NAME
+import io.ffem.lite.app.App.Companion.TEST_RESULT
 import io.ffem.lite.camera.CameraFragment.Companion.CAPTURED_EVENT
+import io.ffem.lite.util.ColorUtil
 import java.util.*
 import kotlin.math.max
 import kotlin.math.min
@@ -48,6 +51,11 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
     private var taskLeftBarcode: Task<out Any>? = null
     private lateinit var mediaImage: FirebaseVisionImage
+
+    private var cropLeft = 0
+    private var cropRight = 0
+    private var cropTop = 0
+    private var cropBottom = 0
 
     override fun analyze(image: ImageProxy, rotationDegrees: Int) {
         if (done) {
@@ -127,6 +135,10 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                             }
                                         }
 
+                                        cropLeft = barcode.boundingBox!!.left
+                                        cropRight = barcode.boundingBox!!.right
+                                        cropTop = barcode.boundingBox!!.bottom + 10
+
                                         leftBarcodeBitmap.recycle()
 
                                         rightBarcodeBitmap = Bitmap.createBitmap(
@@ -189,25 +201,67 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                     val left2 = max(0, barcode2.boundingBox!!.left - MARGIN)
                     val right2 = min(bitmap.width, barcode2.boundingBox!!.right + MARGIN)
 
-                    val croppedBitmap =
-                        Bitmap.createBitmap(bitmap, left2, 0, right2 - left2, bitmap.height)
+                    cropBottom =
+                        bitmap.height - cropTop - rightBarcodeBitmap.height + barcode2.boundingBox!!.top - 10
 
-                    val bitmapRotated = Utilities.rotateImage(croppedBitmap, 270)
+                    val croppedBitmap = Bitmap.createBitmap(
+                        bitmap, left2, cropTop,
+                        right2 - left2,
+                        cropBottom
+                    )
+
+                    var marginTop = 0
+                    for (i in 0..croppedBitmap.height) {
+                        val pixel = croppedBitmap.getPixel(
+                            croppedBitmap.width / 2, i
+                        )
+                        if (Color.red(pixel) < 100) {
+                            marginTop = i
+                            cropTop += i
+                            break
+                        }
+                    }
+
+                    for (i in croppedBitmap.height - 1 downTo 0) {
+                        val pixel = croppedBitmap.getPixel(
+                            croppedBitmap.width / 2, i
+                        )
+                        if (Color.red(pixel) < 100) {
+                            cropBottom -= croppedBitmap.height - i
+                            break
+                        }
+                    }
 
                     croppedBitmap.recycle()
 
+                    val croppedBitmap2 = Bitmap.createBitmap(
+                        bitmap, cropLeft, cropTop,
+                        cropRight - cropLeft,
+                        cropBottom - marginTop
+                    )
+
                     val testId = UUID.randomUUID().toString()
-                    val filePath =
-                        Utilities.savePicture(
-                            context.applicationContext, testId,
-                            TEST_PARAMETER_NAME, Utilities.bitmapToBytes(bitmapRotated)
-                        )
+                    val resultDetail = ColorUtil.extractColors(context, croppedBitmap2)
+
+//                    val croppedBitmap1 =
+//                        Bitmap.createBitmap(bitmap, left2, 0, right2 - left2, bitmap.height)
+
+                    val bitmapRotated = Utilities.rotateImage(croppedBitmap2, 270)
+
+//                    croppedBitmap1.recycle()
+                    croppedBitmap2.recycle()
+
+                    val filePath = Utilities.savePicture(
+                        context.applicationContext, testId,
+                        TEST_PARAMETER_NAME, Utilities.bitmapToBytes(bitmapRotated)
+                    )
 
                     bitmapRotated.recycle()
 
                     val intent = Intent(CAPTURED_EVENT)
                     intent.putExtra(FILE_PATH_KEY, filePath)
                     intent.putExtra(TEST_ID_KEY, testId)
+                    intent.putExtra(TEST_RESULT, resultDetail.result.toString())
                     localBroadcastManager.sendBroadcast(
                         intent
                     )

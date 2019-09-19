@@ -35,6 +35,7 @@ import io.ffem.lite.app.App.Companion.PERMISSIONS_MISSING_KEY
 import io.ffem.lite.app.App.Companion.TEST_ID_KEY
 import io.ffem.lite.app.App.Companion.TEST_NAME_KEY
 import io.ffem.lite.app.App.Companion.TEST_PARAMETER_NAME
+import io.ffem.lite.app.App.Companion.TEST_RESULT
 import io.ffem.lite.app.AppDatabase
 import io.ffem.lite.helper.ApkHelper.isNonStoreVersion
 import io.ffem.lite.model.ResultResponse
@@ -42,7 +43,6 @@ import io.ffem.lite.model.TestResult
 import io.ffem.lite.preference.SettingsActivity
 import io.ffem.lite.preference.sendDummyImage
 import io.ffem.lite.remote.ApiService
-import io.ffem.lite.util.ColorUtil
 import io.ffem.lite.util.PreferencesUtil
 import io.ffem.lite.util.SoundUtil
 import kotlinx.android.synthetic.main.activity_result_list.*
@@ -304,10 +304,15 @@ class ResultListActivity : BaseActivity() {
             if (data != null) {
                 val id = data.getStringExtra(TEST_ID_KEY)
                 if (id != null) {
-                    AppDatabase.getDatabase(baseContext).resultDao().insert(
+                    var result = data.getStringExtra(TEST_RESULT)
+                    if (result == null) {
+                        result = ""
+                    }
+
+                    db.resultDao().insert(
                         TestResult(
                             id, 0, TEST_PARAMETER_NAME,
-                            Date().time, Date().time, "", "", getString(R.string.outbox)
+                            Date().time, Date().time, "", result, getString(R.string.outbox)
                         )
                     )
                 }
@@ -371,11 +376,11 @@ class ResultListActivity : BaseActivity() {
 
             val bitmap = BitmapFactory.decodeFile(file.path)
 
-            val calibration = ColorUtil.extractColors(this, bitmap)
+//            val calibration = ColorUtil.extractColors(this, bitmap)
 
 //            val grid = ColorUtil.extractGrid(bitmap)
 
-            db.resultDao().updateLocalResult(it.id, calibration.result.toString())
+//            db.resultDao().updateLocalResult(it.id, calibration.result.toString())
 
             refreshList()
         }
