@@ -16,8 +16,6 @@ import java.util.*
 
 class App : BaseApplication() {
 
-    private val mOpenCvLibrary = "opencv_java3"
-
     override fun onCreate() {
         super.onCreate()
         app = this
@@ -26,8 +24,6 @@ class App : BaseApplication() {
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
-
-        System.loadLibrary(mOpenCvLibrary)
 
         app = this
     }
@@ -109,6 +105,7 @@ class App : BaseApplication() {
 
     companion object {
 
+        const val LOCAL_RESULT_EVENT = "result_event"
         const val SOUND_ON = true
         const val TEST_PARAMETER_NAME = "Fluoride"
 

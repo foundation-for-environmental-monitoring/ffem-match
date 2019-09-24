@@ -3,8 +3,10 @@ package io.ffem.lite.ui
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.net.ConnectivityManager
@@ -21,6 +23,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.appupdate.AppUpdateManager
@@ -31,18 +34,22 @@ import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.app.App.Companion.API_URL
+import io.ffem.lite.app.App.Companion.LOCAL_RESULT_EVENT
 import io.ffem.lite.app.App.Companion.PERMISSIONS_MISSING_KEY
 import io.ffem.lite.app.App.Companion.TEST_ID_KEY
 import io.ffem.lite.app.App.Companion.TEST_NAME_KEY
 import io.ffem.lite.app.App.Companion.TEST_PARAMETER_NAME
 import io.ffem.lite.app.App.Companion.TEST_RESULT
 import io.ffem.lite.app.AppDatabase
+import io.ffem.lite.camera.Utilities
 import io.ffem.lite.helper.ApkHelper.isNonStoreVersion
 import io.ffem.lite.model.ResultResponse
 import io.ffem.lite.model.TestResult
 import io.ffem.lite.preference.SettingsActivity
 import io.ffem.lite.preference.sendDummyImage
 import io.ffem.lite.remote.ApiService
+import io.ffem.lite.util.ColorUtil
+import io.ffem.lite.util.FileUtil
 import io.ffem.lite.util.PreferencesUtil
 import io.ffem.lite.util.SoundUtil
 import kotlinx.android.synthetic.main.activity_result_list.*
@@ -66,6 +73,7 @@ import kotlin.math.abs
 import kotlin.math.max
 
 const val APP_UPDATE_REQUEST = 101
+const val READ_REQUEST_CODE = 102
 const val TOAST_Y_OFFSET = 240
 const val RESULT_CHECK_INTERVAL = 5000L
 const val MIN_RESULT_WAIT_TIME = 80000L
@@ -79,6 +87,25 @@ class ResultListActivity : BaseActivity() {
     private lateinit var toastLong: Toast
     private lateinit var toastShort: Toast
     private var isInternetConnected = true
+    private lateinit var broadcastManager: LocalBroadcastManager
+
+    private val broadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val path = getExternalFilesDir(DIRECTORY_PICTURES).toString() +
+                    File.separator + "captures" + File.separator
+
+            val basePath = File(path)
+            if (!basePath.exists())
+                Timber.d(if (basePath.mkdirs()) "Success" else "Failed")
+
+            db.resultDao().updateLocalResult(
+                intent.getStringExtra(TEST_ID_KEY)!!,
+                intent.getStringExtra(TEST_RESULT)!!
+            )
+
+            refreshList()
+        }
+    }
 
     private fun onResultClick(position: Int) {
         Handler().postDelayed(
@@ -106,6 +133,8 @@ class ResultListActivity : BaseActivity() {
         setContentView(R.layout.activity_result_list)
 
         setTitle(R.string.app_name)
+
+        broadcastManager = LocalBroadcastManager.getInstance(this)
 
         appUpdateManager = AppUpdateManagerFactory.create(this)
 
@@ -214,6 +243,11 @@ class ResultListActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
 
+        broadcastManager.registerReceiver(
+            broadcastReceiver,
+            IntentFilter(LOCAL_RESULT_EVENT)
+        )
+
         if (!appIsClosing) {
 
             monitorNetwork()
@@ -221,7 +255,8 @@ class ResultListActivity : BaseActivity() {
             appUpdateManager
                 .appUpdateInfo
                 .addOnSuccessListener { appUpdateInfo ->
-                    if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS
+                    if (appUpdateInfo.updateAvailability() ==
+                        UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS
                     ) {
                         appUpdateManager.startUpdateFlowForResult(
                             appUpdateInfo,
@@ -249,8 +284,12 @@ class ResultListActivity : BaseActivity() {
     }
 
     fun onStartClick(@Suppress("UNUSED_PARAMETER") view: View) {
-        val intent: Intent? = Intent(baseContext, BarcodeActivity::class.java)
-        startActivityForResult(intent, 100)
+        if (sendDummyImage()) {
+            performFileSearch()
+        } else {
+            val intent: Intent? = Intent(baseContext, BarcodeActivity::class.java)
+            startActivityForResult(intent, 100)
+        }
     }
 
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
@@ -301,18 +340,54 @@ class ResultListActivity : BaseActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (resultCode == Activity.RESULT_OK) {
-            if (data != null) {
-                val id = data.getStringExtra(TEST_ID_KEY)
-                if (id != null) {
-                    var result = data.getStringExtra(TEST_RESULT)
-                    if (result == null) {
-                        result = ""
-                    }
+
+            if (requestCode == READ_REQUEST_CODE) {
+                data?.data?.also { uri ->
+
+                    //                    var bitmapFromFile: Bitmap
+//                    val drawable = ContextCompat.getDrawable(
+//                        this,
+//                        R.drawable.dummy_card_5
+//                    )
+//                    bitmapFromFile = (drawable as BitmapDrawable).bitmap
+
+                    val id = UUID.randomUUID().toString()
+
+                    val bitmapFromFile =
+                        BitmapFactory.decodeFile(FileUtil.getPath(this, uri))
+
+                    Utilities.savePicture(
+                        applicationContext,
+                        id,
+                        TEST_PARAMETER_NAME,
+                        Utilities.bitmapToBytes(bitmapFromFile)
+                    )
+
+                    val bitmap = Utilities.rotateImage(
+                        bitmapFromFile, 90
+                    )
 
                     db.resultDao().insert(
                         TestResult(
                             id, 0, TEST_PARAMETER_NAME,
-                            Date().time, Date().time, "", result, getString(R.string.outbox)
+                            Date().time, Date().time, "", "", getString(R.string.outbox)
+                        )
+                    )
+
+                    ColorUtil.extractImage(this, id, bitmap)
+
+                    if (sendDummyImage()) {
+                        showNewToast(getString(R.string.sending_dummy_image))
+                    }
+
+                }
+            } else if (data != null) {
+                val id = data.getStringExtra(TEST_ID_KEY)
+                if (id != null) {
+                    db.resultDao().insert(
+                        TestResult(
+                            id, 0, TEST_PARAMETER_NAME,
+                            Date().time, Date().time, "", "", getString(R.string.outbox)
                         )
                     )
                 }
@@ -374,13 +449,11 @@ class ResultListActivity : BaseActivity() {
 
             val file = File(filePath)
 
-            val bitmap = BitmapFactory.decodeFile(file.path)
+            val bitmap = Utilities.rotateImage(
+                BitmapFactory.decodeFile(file.path), 90
+            )
 
-//            val calibration = ColorUtil.extractColors(this, bitmap)
-
-//            val grid = ColorUtil.extractGrid(bitmap)
-
-//            db.resultDao().updateLocalResult(it.id, calibration.result.toString())
+            ColorUtil.extractImage(this, it.id, bitmap)
 
             refreshList()
         }
@@ -617,5 +690,13 @@ class ResultListActivity : BaseActivity() {
     fun onSettingsClick(@Suppress("UNUSED_PARAMETER") item: MenuItem) {
         val intent = Intent(baseContext, SettingsActivity::class.java)
         startActivityForResult(intent, 102)
+    }
+
+    private fun performFileSearch() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "image/*"
+        }
+        startActivityForResult(intent, READ_REQUEST_CODE)
     }
 }

@@ -1,20 +1,30 @@
 package io.ffem.lite.util
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
+import androidx.core.graphics.blue
+import androidx.core.graphics.green
+import androidx.core.graphics.red
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.google.firebase.ml.vision.FirebaseVision
+import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
+import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetector
+import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions
+import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.gson.Gson
 import io.ffem.lite.R
+import io.ffem.lite.app.App
+import io.ffem.lite.camera.MARGIN
+import io.ffem.lite.camera.Utilities
 import io.ffem.lite.model.*
 import io.ffem.lite.preference.MAX_COLOR_DISTANCE_RGB
 import io.ffem.lite.preference.getColorDistanceTolerance
 import timber.log.Timber
 import java.io.IOException
 import java.util.*
-import kotlin.math.max
-import kotlin.math.min
-import kotlin.math.pow
-import kotlin.math.sqrt
+import kotlin.math.*
 
 const val INTERPOLATION_COUNT = 250.0
 const val MAX_DISTANCE = 999
@@ -24,362 +34,223 @@ object ColorUtil {
     private var gson = Gson()
     private var swatches: ArrayList<Swatch> = ArrayList()
 
-//    // Grey scale matrix
-//    private fun createGreyMatrix(): ColorMatrix {
-//        return ColorMatrix(
-//            floatArrayOf(
-//                0.2989f,
-//                0.5870f,
-//                0.1140f,
-//                0f,
-//                0f,
-//                0.2989f,
-//                0.5870f,
-//                0.1140f,
-//                0f,
-//                0f,
-//                0.2989f,
-//                0.5870f,
-//                0.1140f,
-//                0f,
-//                0f,
-//                0f,
-//                0f,
-//                0f,
-//                1f,
-//                0f
-//            )
-//        )
-//    }
-//
-//    // Threshold matrix
-//    @Suppress("SameParameterValue")
-//    private fun createThresholdMatrix(threshold: Int): ColorMatrix {
-//        return ColorMatrix(
-//            floatArrayOf(
-//                85f,
-//                85f,
-//                85f,
-//                0f,
-//                -255f * threshold,
-//                85f,
-//                85f,
-//                85f,
-//                0f,
-//                -255f * threshold,
-//                85f,
-//                85f,
-//                85f,
-//                0f,
-//                -255f * threshold,
-//                0f,
-//                0f,
-//                0f,
-//                1f,
-//                0f
-//            )
-//        )
-//    }
+    private lateinit var leftBarcodeBitmap: Bitmap
+    private lateinit var rightBarcodeBitmap: Bitmap
+    private var processing = false
 
-//    fun extractGrid(image: Bitmap): Bitmap? {
-//        val options = BitmapFactory.Options()
-//        options.inScaled = false
-//        val bitmapPaint = Paint()
-//
-//        //load source bitmap and prepare destination bitmap
-//        val result = Bitmap.createBitmap(image.width, image.height, Bitmap.Config.ARGB_8888)
-//        val c = Canvas(result)
-//
-//        //first convert bitmap to grey scale:
-//        bitmapPaint.colorFilter = ColorMatrixColorFilter(createGreyMatrix())
-//        c.drawBitmap(image, 0f, 0f, bitmapPaint)
-//
-//        //then convert the resulting bitmap to black and white using threshold matrix
-//        bitmapPaint.colorFilter = ColorMatrixColorFilter(createThresholdMatrix(120))
-//        c.drawBitmap(result, 0f, 0f, bitmapPaint)
-//
-//        var height = 0
-//        for (i in image.height - 1 downTo 0) {
-//            val pixel = result.getPixel(image.width / 4, i)
-//            if (Color.red(pixel) == 0) {
-//                height = i
-//                break
-//            }
-//        }
-//
-//        var left = 0
-//        for (i in image.width / 4 downTo 0) {
-//            val pixel = result.getPixel(i, height)
-//            if (Color.red(pixel) > 0) {
-//                left = i + 1
-//                break
-//            }
-//        }
-//
-//        var top = 0
-//        for (i in height downTo 0) {
-//            val pixel = result.getPixel(left, i)
-//            if (Color.red(pixel) > 0) {
-//                top = i
-//                break
-//            }
-//        }
-//
-//        var rightBottom = 0
-//        for (i in image.height - 1 downTo 0) {
-//            val pixel = result.getPixel((image.width / 4) * 3, i)
-//            if (Color.red(pixel) == 0) {
-//                rightBottom = i
-//                break
-//            }
-//        }
-//
-//        var right = 0
-//        for (i in (image.width / 4) * 3 until image.width) {
-//            val pixel = result.getPixel(i, rightBottom)
-//            if (Color.red(pixel) > 0) {
-//                right = i + 1
-//                break
-//            }
-//        }
-//
-//        return Bitmap.createBitmap(image, left, top, right - left, height - top)
-//    }
+    private var done: Boolean = false
+    private lateinit var localBroadcastManager: LocalBroadcastManager
 
-//    fun extractGrid(image: Bitmap): Bitmap? {
-//        val originalMat = Mat()
-//        Utils.bitmapToMat(image, originalMat)
-//        val destMat = Mat()
-//        Imgproc.cvtColor(originalMat, destMat, Imgproc.COLOR_BGR2GRAY)
-//
-//        val height = destMat.height()
-//        val width = destMat.width()
-//
-//        Imgproc.medianBlur(destMat, destMat, 1)
-//
-//        val threshold = Mat()
-//        Imgproc.adaptiveThreshold(
-//            destMat, threshold, 255.0, Imgproc.ADAPTIVE_THRESH_MEAN_C,
-//            Imgproc.THRESH_BINARY, 11, 2.0
-//        )
-//        val contours: List<MatOfPoint> = ArrayList()
-//        Imgproc.findContours(
-//            threshold,
-//            contours,
-//            Mat(),
-//            Imgproc.RETR_LIST,
-//            Imgproc.CHAIN_APPROX_SIMPLE
-//        )
-//
-//        var i = 0
-//        val bottle_enclosure_area = 100000000
-//        var inner_approx = null
-//
-//        // Find large squares
-//        for (contour in contours) {
-//
-//            val contour2f = MatOfPoint2f()
-//            contour.convertTo(contour2f, CvType.CV_32F)
-//
-//            if (Imgproc.arcLength(contour2f, true) < width / 2 ||
-//                Imgproc.arcLength(contour2f, true) > 5000
-//            ) {
-//                continue
-//            }
-//            val approx = MatOfPoint2f()
-//            Imgproc.approxPolyDP(
-//                contour2f, approx,
-//                0.08 * Imgproc.arcLength(contour2f, true), true
-//            )
-//
-//            val rect = Imgproc.boundingRect(approx)
-//            val x = rect.x
-//            val y = rect.y
-//            val w = rect.width
-//            val h = rect.height
-//
-//            val ar = w / h
-//
-//            // Drop the contours that are not squares, not four-sided and crisscrossed
-//            // This should roughly be the left and right outer contours.
-//            if (w > originalMat.cols() / 4 && approx.toArray().size == 4 && ar >= 0.8 && ar <= 1.2
-//                && Imgproc.pointPolygonTest(
-//                    contour2f,
-//                    Point(
-//                        (x + w / 2).toDouble(),
-//                        (y + h / 2).toDouble()
-//                    ), false
-//                ) > 0
-//                && Imgproc.pointPolygonTest(
-//                    contour2f,
-//                    Point(
-//                        (x + w / 3).toDouble(),
-//                        (y + h * 2 / 3).toDouble()
-//                    ), false
-//                ) > 0
-//            ) {
-//
-//                val pts = MatOfPoint2f()
-//                pts.alloc(4)
-//                for (idx in 0..3) {
-//                    pts.toArray()[idx] = approx.toArray()[idx]
-//                }
-//                val warped = getWarpedImage(originalMat, pts)
-//
-//                val bitmap =
-//                    Bitmap.createBitmap(warped!!.cols(), warped.rows(), Bitmap.Config.ARGB_8888)
-////                Core.normalize(warped, mResult8u, 0.0, 255.0, Core.NORM_MINMAX, CvType.CV_8U)
-//                Utils.matToBitmap(warped, bitmap)
-//
-//                return bitmap
-//            }
-//        }
-//        return null
-//    }
-//
-//
-//    private fun getWarpedImage2(image: Mat, pts: MatOfPoint2f): Mat {
-//
-//        val rect = reOrderPoints(pts)
-//        val tl = rect.toArray()[0]
-//        val br = rect.toArray()[1]
-//        val tr = Point(br.x, tl.y)
-//        val bl = Point(tl.x, br.y)
-//
-//        val wA = sqrt((br.x - bl.x).pow(2) + ((br.y - bl.y).pow(2)))
-//        val wB = sqrt((tr.x - tl.x).pow(2) + ((tr.y - tl.y).pow(2)))
-//        val maxWidth = max(wA, wB)
-//
-//        val hA = sqrt((tr.x - br.x).pow(2) + ((tr.y - br.y).pow(2)))
-//        val hB = sqrt((tl.x - bl.x).pow(2) + ((tl.y - bl.y).pow(2)))
-//        val maxHeight = max(hA, hB)
-//
-//        val dst = MatOfPoint2f(
-//            Point(0.0, 0.0),
-//            Point(maxWidth - 1, 0.0),
-//            Point(maxWidth - 1, maxHeight - 1),
-//            Point(0.0, maxHeight - 1)
-//        )
-//
-////        val dst = MatOfPoint2f(
-////            Point(0.0, 0.0),
-////            Point((450 - 1).toDouble(), 0.0),
-////            Point(0.0, (450 - 1).toDouble()),
-////            Point((450 - 1).toDouble(), (450 - 1).toDouble())
-////        )
-//
-//        val warpMat = Imgproc.getPerspectiveTransform(MatOfRect(rect), (dst))
-////        val warped = Imgproc.warpPerspective(image, warpMat, (maxWidth.toDouble(), maxHeight.toDouble()))
-//
-//        val destImage = Mat()
-//        Imgproc.warpPerspective(
-//            image,
-//            destImage,
-//            warpMat,
-//            image.size()
-//        )
-//
-//        return destImage
-//    }
+    private var cropLeft = 0
+    private var cropRight = 0
+    private var cropTop = 0
+    private var cropBottom = 0
 
-//    private fun reOrderPoints(approx: MatOfPoint2f): MatOfPoint2f {
-//        val sortedPoints = arrayOfNulls<Point?>(4)
-//
-//        //calculate the center of mass of our contour image using moments
-//        val moment: Moments = Imgproc.moments(approx)
-//        val x = (moment._m10 / moment._m00).toInt()
-//        val y = (moment._m01 / moment._m00).toInt()
-//
-//        var data: DoubleArray
-//        var count = 0
-//        for (i in 0 until approx.rows()) {
-//            data = approx.get(i, 0)
-//            val datax = data[0]
-//            val datay = data[1]
-//            if (datax < x && datay < y) {
-//                sortedPoints[0] = Point(datax, datay)
-//                count++
-//            } else if (datax > x && datay < y) {
-//                sortedPoints[1] = Point(datax, datay)
-//                count++
-//            } else if (datax < x && datay > y) {
-//                sortedPoints[2] = Point(datax, datay)
-//                count++
-//            } else if (datax > x && datay > y) {
-//                sortedPoints[3] = Point(datax, datay)
-//                count++
-//            }
-//        }
-//        val src = MatOfPoint2f(
-//            sortedPoints[0],
-//            sortedPoints[1],
-//            sortedPoints[2],
-//            sortedPoints[3]
-//        )
-//
-//        return src
-//    }
-//
-//    //    https://stackoverflow.com/questions/47407438/how-to-compute-coordinates-of-rectange-and-then-do-perspective-transformation-us
-//    private fun getWarpedImage(
-//        image: Mat,
-//        approx: MatOfPoint2f
-//    ): Mat? {
-//        //calculate the center of mass of our contour image using moments
-//        val moment: Moments = Imgproc.moments(approx)
-//        val x = (moment._m10 / moment._m00).toInt()
-//        val y = (moment._m01 / moment._m00).toInt()
-//
-//        val sortedPoints = arrayOfNulls<Point?>(4)
-//
-//        var data: DoubleArray
-//        var count = 0
-//        for (i in 0 until approx.rows()) {
-//            data = approx.get(i, 0)
-//            val datax = data[0]
-//            val datay = data[1]
-//            if (datax < x && datay < y) {
-//                sortedPoints[0] = Point(datax, datay)
-//                count++
-//            } else if (datax > x && datay < y) {
-//                sortedPoints[1] = Point(datax, datay)
-//                count++
-//            } else if (datax < x && datay > y) {
-//                sortedPoints[2] = Point(datax, datay)
-//                count++
-//            } else if (datax > x && datay > y) {
-//                sortedPoints[3] = Point(datax, datay)
-//                count++
-//            }
-//        }
-//
-//        val src = MatOfPoint2f(
-//            sortedPoints[0],
-//            sortedPoints[1],
-//            sortedPoints[2],
-//            sortedPoints[3]
-//        )
-//
-//        val dst = MatOfPoint2f(
-//            Point(0.0, 0.0),
-//            Point((450 - 1).toDouble(), 0.0),
-//            Point(0.0, (450 - 1).toDouble()),
-//            Point((450 - 1).toDouble(), (450 - 1).toDouble())
-//        )
-//
-//        val warpMat: Mat? = Imgproc.getPerspectiveTransform(src, dst)
-//
-//        val destImage = Mat()
-//        Imgproc.warpPerspective(
-//            image,
-//            destImage,
-//            warpMat,
-//            image.size()
-//        )
-//        return destImage
-//    }
+    fun extractImage(context: Context, id: String, bitmap: Bitmap) {
 
-    fun extractColors(context: Context, image: Bitmap): ResultDetail {
+        val detector: FirebaseVisionBarcodeDetector by lazy {
+            localBroadcastManager = LocalBroadcastManager.getInstance(context)
+            val options = FirebaseVisionBarcodeDetectorOptions.Builder()
+                .setBarcodeFormats(
+                    FirebaseVisionBarcode.FORMAT_CODE_128
+                )
+                .build()
+            FirebaseVision.getInstance().getVisionBarcodeDetector(options)
+        }
+
+        val leftBarcodeBitmap = Bitmap.createBitmap(
+            bitmap, 0, 0,
+            bitmap.width, (bitmap.height * 0.15).toInt()
+        )
+
+        detector.detectInImage(FirebaseVisionImage.fromBitmap(leftBarcodeBitmap))
+            .addOnFailureListener(
+                fun(_: Exception) {
+                    processing = false
+                }
+            )
+            .addOnSuccessListener(
+                fun(result: List<FirebaseVisionBarcode>) {
+                    if (result.isEmpty()) {
+                        processing = false
+                    }
+                    for (barcode in result) {
+                        if (!barcode.rawValue.isNullOrEmpty()) {
+
+                            val left = barcode.boundingBox!!.left
+                            val right = barcode.boundingBox!!.right
+                            val width = barcode.boundingBox!!.width()
+                            val height = barcode.boundingBox!!.height()
+
+//                                Timber.e("Width %s", width)
+//                                Timber.e("Height %s", height)
+//                                Timber.e("Image Width %s", bitmap.width)
+//                                Timber.e("Image Height %s", bitmap.height)
+//                                Timber.e("-----------------------")
+//                                Timber.e("")
+
+                            if (height > bitmap.height * .065
+                                && width > bitmap.width * .38
+                            ) {
+                                try {
+                                    for (i in left + MARGIN until right - MARGIN) {
+                                        val pixel = leftBarcodeBitmap.getPixel(i, 5)
+                                        if (pixel.red < 50 && pixel.green < 50 && pixel.blue < 50) {
+                                            processing = false
+                                            return
+                                        }
+                                    }
+
+                                    cropLeft = barcode.boundingBox!!.left
+                                    cropRight = barcode.boundingBox!!.right
+                                    cropTop = barcode.boundingBox!!.bottom + 10
+
+                                    leftBarcodeBitmap.recycle()
+
+                                    rightBarcodeBitmap = Bitmap.createBitmap(
+                                        bitmap,
+                                        0,
+                                        (bitmap.height * 0.85).toInt(),
+                                        bitmap.width,
+                                        (bitmap.height * 0.15).toInt()
+                                    )
+
+                                    detector.detectInImage(
+                                        FirebaseVisionImage.fromBitmap(rightBarcodeBitmap)
+                                    )
+                                        .addOnFailureListener(fun(_: Exception) {
+                                            processing = false
+                                        })
+                                        .addOnSuccessListener(
+                                            fun(result: List<FirebaseVisionBarcode>) {
+                                                analyzeBarcode(context, id, bitmap, result)
+                                            }
+                                        )
+                                } catch (ignored: Exception) {
+                                    processing = false
+                                }
+                            } else {
+                                processing = false
+                            }
+                        } else {
+                            processing = false
+                        }
+                    }
+                }
+            )
+    }
+
+    private fun analyzeBarcode(
+        context: Context,
+        id: String,
+        bitmap: Bitmap,
+        result: List<FirebaseVisionBarcode>
+    ) {
+        if (result.isEmpty()) {
+            processing = false
+        }
+        for (barcode2 in result) {
+            if (!barcode2.rawValue.isNullOrEmpty()) {
+                if (barcode2.boundingBox!!.height() > bitmap.height * .065
+                    && barcode2.boundingBox!!.width() > bitmap.width * .38
+                ) {
+                    for (i in barcode2.boundingBox!!.left + MARGIN until
+                            barcode2.boundingBox!!.right - MARGIN) {
+                        val pixel =
+                            rightBarcodeBitmap.getPixel(
+                                i,
+                                rightBarcodeBitmap.height - 5
+                            )
+                        if (pixel.red < 50 && pixel.green < 50 && pixel.blue < 50) {
+                            processing = false
+                            return
+                        }
+                    }
+
+                    done = true
+
+                    val left2 = max(0, barcode2.boundingBox!!.left - MARGIN)
+                    val right2 = min(bitmap.width, barcode2.boundingBox!!.right + MARGIN)
+
+                    cropBottom =
+                        bitmap.height - cropTop - rightBarcodeBitmap.height + barcode2.boundingBox!!.top - 10
+
+                    val croppedBitmap = Bitmap.createBitmap(
+                        bitmap, left2, cropTop,
+                        right2 - left2,
+                        cropBottom
+                    )
+
+                    var marginTop = 0
+                    for (i in 0..croppedBitmap.height) {
+                        val pixel = croppedBitmap.getPixel(
+                            croppedBitmap.width / 2, i
+                        )
+                        if (Color.red(pixel) < 100) {
+                            marginTop = i
+                            cropTop += i
+                            break
+                        }
+                    }
+
+                    for (i in croppedBitmap.height - 1 downTo 0) {
+                        val pixel = croppedBitmap.getPixel(
+                            croppedBitmap.width / 2, i
+                        )
+                        if (Color.red(pixel) < 100) {
+                            cropBottom -= croppedBitmap.height - i
+                            break
+                        }
+                    }
+
+                    croppedBitmap.recycle()
+
+                    val croppedBitmap2 = Bitmap.createBitmap(
+                        bitmap, cropLeft, cropTop,
+                        cropRight - cropLeft,
+                        cropBottom - marginTop
+                    )
+
+                    val resultDetail = extractColors(context, croppedBitmap2)
+
+//                    val croppedBitmap1 =
+//                        Bitmap.createBitmap(bitmap, left2, 0, right2 - left2, bitmap.height)
+
+                    val bitmapRotated = Utilities.rotateImage(croppedBitmap2, 270)
+
+//                    croppedBitmap1.recycle()
+                    croppedBitmap2.recycle()
+
+                    val filePath = Utilities.savePicture(
+                        context.applicationContext, id,
+                        "", Utilities.bitmapToBytes(bitmapRotated)
+                    )
+
+                    bitmapRotated.recycle()
+
+                    val intent = Intent(App.LOCAL_RESULT_EVENT)
+//                    intent.putExtra(App.FILE_PATH_KEY, filePath)
+                    intent.putExtra(App.TEST_ID_KEY, id)
+                    intent.putExtra(
+                        App.TEST_RESULT,
+                        (round(resultDetail.result * 100) / 100.0).toString()
+                    )
+                    localBroadcastManager.sendBroadcast(
+                        intent
+                    )
+                } else {
+                    processing = false
+                }
+
+//                rightBarcodeBitmap.recycle()
+            } else {
+                processing = false
+            }
+        }
+        processing = false
+    }
+
+    private fun extractColors(context: Context, image: Bitmap): ResultDetail {
 
         val input = context.resources.openRawResource(R.raw.calibration2)
         try {
@@ -392,7 +263,9 @@ object ColorUtil {
             val calibration = gson.fromJson(content, Calibration::class.java)
 
             for (i in calibration.values) {
-                i.color = image.getPixel(i.x, i.y)
+                val x = (i.x * image.width) / calibration.width
+                val y = (i.y * image.height) / calibration.height
+                i.color = image.getPixel(x, y)
             }
 
             swatches.add(Swatch(0.0, getCalibrationColor(0f, calibration)))
@@ -402,7 +275,11 @@ object ColorUtil {
             swatches.add(Swatch(2.0, getCalibrationColor(2f, calibration)))
             swatches = generateGradient(swatches)
 
-            val colorInfo = ColorInfo(image.getPixel(190, 620))
+
+            val x1 = (190 * image.width) / calibration.width
+            val y1 = (620 * image.height) / calibration.height
+
+            val colorInfo = ColorInfo(image.getPixel(x1, y1))
             return analyzeColor(5, colorInfo, swatches)
 
         } catch (e: IOException) {
