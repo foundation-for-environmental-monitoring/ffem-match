@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:clickable="false"
                 android:focusable="false"
-                android:text="@{result.name}"
+                android:text="@{result.expectedValue.isEmpty() ? result.name : result.name +` (` + result.expectedValue + `)`}"
                 android:textIsSelectable="false"
                 android:textSize="18sp"
                 tools:text="Contaminant" />

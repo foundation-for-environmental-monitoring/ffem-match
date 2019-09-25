@@ -1,6 +1,8 @@
 package io.ffem.lite.util
 
 import android.content.Context
+import android.content.SharedPreferences
+import android.content.SharedPreferences.Editor
 import androidx.annotation.StringRes
 import androidx.preference.PreferenceManager
 
@@ -109,6 +111,27 @@ object PreferencesUtil {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         val editor = sharedPreferences.edit()
         editor.putLong(key, value)
+        editor.apply()
+    }
+
+    fun removeKey(context: Context, @StringRes keyId: Int) {
+        removeKey(
+            context,
+            getKey(context, keyId)
+        )
+    }
+
+    /**
+     * Removes the key from the preferences.
+     *
+     * @param context the context
+     * @param key     the key id
+     */
+    private fun removeKey(context: Context, key: String?) {
+        val sharedPreferences: SharedPreferences =
+            PreferenceManager.getDefaultSharedPreferences(context)
+        val editor: Editor = sharedPreferences.edit()
+        editor.remove(key)
         editor.apply()
     }
 }

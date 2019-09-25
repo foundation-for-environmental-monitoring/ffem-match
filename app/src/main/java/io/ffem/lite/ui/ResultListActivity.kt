@@ -21,6 +21,8 @@ import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -154,7 +156,7 @@ class ResultListActivity : BaseActivity() {
 
         resultRequestHandler = Handler()
         runnable = Runnable {
-            analyzeImage()
+            //            analyzeImage()
             if (isInternetConnected) {
                 sendImagesToServer()
                 getResultsFromServer()
@@ -287,8 +289,64 @@ class ResultListActivity : BaseActivity() {
         if (sendDummyImage()) {
             performFileSearch()
         } else {
-            val intent: Intent? = Intent(baseContext, BarcodeActivity::class.java)
-            startActivityForResult(intent, 100)
+            PreferencesUtil.removeKey(this, R.string.expectedValueKey)
+            showInputDialog()
+        }
+    }
+
+    private fun showInputDialog() {
+        @SuppressLint("InflateParams")
+        val view = layoutInflater.inflate(R.layout.value_input_dialog, null)
+        val inputValue = view.findViewById(R.id.editExpectedValue) as EditText
+
+        val builder = AlertDialog.Builder(this)
+            .setTitle("Expected result")
+            .setMessage("Enter the expected result value for this sample")
+            .setPositiveButton(android.R.string.ok) { dialog, _ ->
+                closeKeyboard(this, inputValue)
+
+                PreferencesUtil.setString(
+                    this,
+                    R.string.expectedValueKey,
+                    inputValue.text.toString()
+                )
+
+                dialog.dismiss()
+
+                val intent = Intent(baseContext, BarcodeActivity::class.java)
+                startActivityForResult(intent, 100)
+            }
+            .setNegativeButton(android.R.string.cancel) { dialog, _ ->
+                closeKeyboard(this, inputValue)
+                dialog.dismiss()
+            }
+
+        builder.setView(view)
+        builder.show()
+
+        inputValue.requestFocus()
+        showKeyboard(this)
+    }
+
+    private fun showKeyboard(context: Context) {
+        val imm = context.getSystemService(
+            Context.INPUT_METHOD_SERVICE
+        ) as InputMethodManager
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+    }
+
+    private fun closeKeyboard(context: Context, input: EditText) {
+        try {
+            val imm = context.getSystemService(
+                Context.INPUT_METHOD_SERVICE
+            ) as InputMethodManager
+            imm.hideSoftInputFromWindow(input.windowToken, 0)
+            if (currentFocus != null) {
+                val view: View = currentFocus!!
+                imm.hideSoftInputFromWindow(view.windowToken, 0)
+            }
+        } catch (e: java.lang.Exception) {
+            Timber.e(e)
         }
     }
 
@@ -356,6 +414,10 @@ class ResultListActivity : BaseActivity() {
                     val bitmapFromFile =
                         BitmapFactory.decodeFile(FileUtil.getPath(this, uri))
 
+                    val expectedValue = uri.pathSegments[uri.pathSegments.size - 1]
+                        .substringAfterLast("_", "")
+                        .substringBeforeLast(".")
+
                     Utilities.savePicture(
                         applicationContext,
                         id,
@@ -363,18 +425,17 @@ class ResultListActivity : BaseActivity() {
                         Utilities.bitmapToBytes(bitmapFromFile)
                     )
 
-                    val bitmap = Utilities.rotateImage(
-                        bitmapFromFile, 90
-                    )
-
                     db.resultDao().insert(
                         TestResult(
                             id, 0, TEST_PARAMETER_NAME,
-                            Date().time, Date().time, "", "", getString(R.string.outbox)
+                            Date().time, Date().time, "", "",
+                            expectedValue, getString(R.string.outbox)
                         )
                     )
 
-                    ColorUtil.extractImage(this, id, bitmap)
+//                    analyzeImage()
+
+                    ColorUtil.extractImage(this, id, bitmapFromFile)
 
                     if (sendDummyImage()) {
                         showNewToast(getString(R.string.sending_dummy_image))
@@ -384,16 +445,16 @@ class ResultListActivity : BaseActivity() {
             } else if (data != null) {
                 val id = data.getStringExtra(TEST_ID_KEY)
                 if (id != null) {
+
+                    val expectedValue = PreferencesUtil
+                        .getString(this, R.string.expectedValueKey, "")
+
                     db.resultDao().insert(
                         TestResult(
-                            id, 0, TEST_PARAMETER_NAME,
-                            Date().time, Date().time, "", "", getString(R.string.outbox)
+                            id, 0, TEST_PARAMETER_NAME, Date().time,
+                            Date().time, "", "", expectedValue, getString(R.string.outbox)
                         )
                     )
-                }
-
-                if (sendDummyImage()) {
-                    showNewToast(getString(R.string.sending_dummy_image))
                 }
             }
         } else {
@@ -449,9 +510,7 @@ class ResultListActivity : BaseActivity() {
 
             val file = File(filePath)
 
-            val bitmap = Utilities.rotateImage(
-                BitmapFactory.decodeFile(file.path), 90
-            )
+            val bitmap = BitmapFactory.decodeFile(file.path)
 
             ColorUtil.extractImage(this, it.id, bitmap)
 

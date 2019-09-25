@@ -15,7 +15,13 @@ private val MIGRATION_1_2 = object : Migration(1, 2) {
     }
 }
 
-@Database(entities = [TestResult::class], version = 2)
+private val MIGRATION_2_3 = object : Migration(2, 3) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("ALTER TABLE results" + " ADD COLUMN expectedValue TEXT NULL")
+    }
+}
+
+@Database(entities = [TestResult::class], version = 3)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun resultDao(): ResultDao
 
@@ -27,7 +33,7 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java, "result.db"
                 ).allowMainThreadQueries()
-                    .addMigrations(MIGRATION_1_2)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                     .build()
             }
             return INSTANCE

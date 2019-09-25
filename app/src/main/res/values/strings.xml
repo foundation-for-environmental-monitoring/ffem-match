@@ -44,4 +44,5 @@
     <string name="analyzed_image">Analyzed image</string>
     <string name="disable_diagnostics">Disable diagnostics</string>
     <string name="settings_not_clickable">Settings not clickable</string>
+    <string name="expectedValue">Expected result value</string>
 </resources>

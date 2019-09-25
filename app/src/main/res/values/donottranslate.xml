@@ -30,5 +30,6 @@
     <string name="mit_software"><a href="http://robolectric.org/">Robolectric</a></string>
     <string name="cca_software"><a href="https://design.google.com/icons/">Material Icons</a></string>
     <string name="eclipse_software"><a href="https://github.com/junit-team/junit4">Junit 4</a></string>
+    <string name="expectedValueKey">expected_value</string>
 
 </resources>
