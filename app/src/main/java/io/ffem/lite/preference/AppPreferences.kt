@@ -2,9 +2,9 @@ package io.ffem.lite.preference
 
 import io.ffem.lite.R
 import io.ffem.lite.app.App
+import io.ffem.lite.util.MAX_COLOR_DISTANCE_RGB
 import io.ffem.lite.util.PreferencesUtil
 
-const val MAX_COLOR_DISTANCE_RGB = 250
 const val IS_TEST_MODE = false
 
 fun isTestMode(): Boolean {

@@ -8,7 +8,7 @@
         app:iconSpaceReserved="false">
         <CheckBoxPreference
             android:key="@string/dummyImageKey"
-            android:title="Send dummy image"
+            android:title="Select existing image for analysis"
             app:allowDividerAbove="true"
             app:allowDividerBelow="true"
             app:iconSpaceReserved="false" />

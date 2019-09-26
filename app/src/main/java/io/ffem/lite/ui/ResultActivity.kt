@@ -25,7 +25,7 @@ class ResultActivity : BaseActivity() {
         val path = getExternalFilesDir(DIRECTORY_PICTURES).toString() +
                 File.separator + "captures" + File.separator
 
-        val file = File(path + id + "_" + name + ".jpg")
+        val file = File(path + id + "_" + ".jpg")
         if (file.exists()) {
             image.setImageURI(Uri.fromFile(file))
         }

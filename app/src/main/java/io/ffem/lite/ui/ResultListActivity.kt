@@ -21,6 +21,7 @@ import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
@@ -78,7 +79,7 @@ const val APP_UPDATE_REQUEST = 101
 const val READ_REQUEST_CODE = 102
 const val TOAST_Y_OFFSET = 240
 const val RESULT_CHECK_INTERVAL = 5000L
-const val MIN_RESULT_WAIT_TIME = 80000L
+const val MIN_RESULT_WAIT_TIME = 70000L
 const val SNACK_BAR_LINE_SPACING = 1.4f
 
 class ResultListActivity : BaseActivity() {
@@ -156,7 +157,7 @@ class ResultListActivity : BaseActivity() {
 
         resultRequestHandler = Handler()
         runnable = Runnable {
-            //            analyzeImage()
+            analyzeImage()
             if (isInternetConnected) {
                 sendImagesToServer()
                 getResultsFromServer()
@@ -301,7 +302,7 @@ class ResultListActivity : BaseActivity() {
 
         val builder = AlertDialog.Builder(this)
             .setTitle("Expected result")
-            .setMessage("Enter the expected result value for this sample")
+            .setMessage("Enter expected result value for this sample. Leave blank if not known")
             .setPositiveButton(android.R.string.ok) { dialog, _ ->
                 closeKeyboard(this, inputValue)
 
@@ -321,8 +322,16 @@ class ResultListActivity : BaseActivity() {
                 dialog.dismiss()
             }
 
-        builder.setView(view)
-        builder.show()
+        val dialog = builder.setView(view).show()
+
+        inputValue.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).performClick()
+                true
+            } else {
+                false
+            }
+        }
 
         inputValue.requestFocus()
         showKeyboard(this)
@@ -433,14 +442,11 @@ class ResultListActivity : BaseActivity() {
                         )
                     )
 
-//                    analyzeImage()
-
                     ColorUtil.extractImage(this, id, bitmapFromFile)
 
-                    if (sendDummyImage()) {
-                        showNewToast(getString(R.string.sending_dummy_image))
-                    }
-
+//                    if (sendDummyImage()) {
+//                        showNewToast(getString(R.string.sending_dummy_image))
+//                    }
                 }
             } else if (data != null) {
                 val id = data.getStringExtra(TEST_ID_KEY)
@@ -455,6 +461,7 @@ class ResultListActivity : BaseActivity() {
                             Date().time, "", "", expectedValue, getString(R.string.outbox)
                         )
                     )
+                    analyzeImage()
                 }
             }
         } else {
@@ -692,16 +699,16 @@ class ResultListActivity : BaseActivity() {
         toastLong.show()
     }
 
-    private fun showNewToast(message: String) {
-        toastShort.cancel()
-        toastShort = Toast.makeText(
-            applicationContext,
-            message,
-            Toast.LENGTH_SHORT
-        )
-        toastShort.setGravity(Gravity.BOTTOM, 0, TOAST_Y_OFFSET)
-        toastShort.show()
-    }
+//    private fun showNewToast(message: String) {
+//        toastShort.cancel()
+//        toastShort = Toast.makeText(
+//            applicationContext,
+//            message,
+//            Toast.LENGTH_SHORT
+//        )
+//        toastShort.setGravity(Gravity.BOTTOM, 0, TOAST_Y_OFFSET)
+//        toastShort.show()
+//    }
 
     private fun notifyNoInternet() {
 

@@ -7,23 +7,18 @@
 
     <EditText
         android:id="@+id/editExpectedValue"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
         android:layout_marginBottom="16dp"
         android:importantForAutofill="no"
         android:inputType="numberDecimal"
         android:maxLength="5"
+        android:minWidth="150dp"
+        android:textAlignment="center"
         android:textColor="?android:textColor"
         android:textSize="30sp" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:text="Leave blank if not known"
-        android:textSize="17sp" />
 
 </LinearLayout>
