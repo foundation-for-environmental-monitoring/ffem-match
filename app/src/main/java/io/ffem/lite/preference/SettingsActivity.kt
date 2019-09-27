@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.app_bar_layout.*
 class SettingsActivity : BaseActivity() {
 
     private fun removeAllFragments() {
+        layoutDiagnostics.visibility = GONE
         layoutTesting.visibility = GONE
         layoutData.visibility = GONE
     }
@@ -41,6 +42,10 @@ class SettingsActivity : BaseActivity() {
         if (isDiagnosticMode()) {
 
             supportFragmentManager.beginTransaction()
+                .add(R.id.layoutDiagnostics, DiagnosticPreferenceFragment())
+                .commit()
+
+            supportFragmentManager.beginTransaction()
                 .add(R.id.layoutTesting, TestingPreferenceFragment())
                 .commit()
 
@@ -48,9 +53,11 @@ class SettingsActivity : BaseActivity() {
                 .replace(R.id.layoutData, DataPreferenceFragment())
                 .commit()
 
+            layoutDiagnostics.visibility = VISIBLE
             layoutTesting.visibility = VISIBLE
             layoutData.visibility = VISIBLE
         } else {
+            layoutDiagnostics.visibility = GONE
             layoutTesting.visibility = GONE
             layoutData.visibility = GONE
         }
@@ -92,6 +99,8 @@ class SettingsActivity : BaseActivity() {
         invalidateOptionsMenu()
 
         removeAllFragments()
+
+        finish()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

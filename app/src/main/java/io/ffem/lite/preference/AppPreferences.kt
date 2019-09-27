@@ -2,6 +2,7 @@ package io.ffem.lite.preference
 
 import io.ffem.lite.R
 import io.ffem.lite.app.App
+import io.ffem.lite.util.MAX_COLOR_DISTANCE_CALIBRATION
 import io.ffem.lite.util.MAX_COLOR_DISTANCE_RGB
 import io.ffem.lite.util.PreferencesUtil
 
@@ -36,6 +37,20 @@ fun getColorDistanceTolerance(): Int {
         )
     } else {
         MAX_COLOR_DISTANCE_RGB
+    }
+}
+
+fun getCalibrationColorDistanceTolerance(): Int {
+    return if (isDiagnosticMode()) {
+        Integer.parseInt(
+            PreferencesUtil.getString(
+                App.app,
+                R.string.maxCardColorDistancesAllowedKey,
+                MAX_COLOR_DISTANCE_CALIBRATION.toString()
+            )
+        )
+    } else {
+        MAX_COLOR_DISTANCE_CALIBRATION
     }
 }
 

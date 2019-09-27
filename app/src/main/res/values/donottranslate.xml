@@ -17,6 +17,7 @@
     <string name="soundOnKey">soundOn</string>
     <string name="data_delete_key">data_delete</string>
     <string name="colorDistanceToleranceKey">colorDistanceTolerance</string>
+    <string name="maxCardColorDistancesAllowedKey">maxCardColorDistancesAllowed</string>
 
     <!--Diagnostic-->
     <string name="diagnostics">Diagnostics</string>

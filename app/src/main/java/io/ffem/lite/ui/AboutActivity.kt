@@ -52,6 +52,8 @@ class AboutActivity : BaseActivity() {
         switchLayoutForDiagnosticOrUserMode()
 
         changeActionBarStyleBasedOnCurrentMode()
+
+        finish()
     }
 
     /**
