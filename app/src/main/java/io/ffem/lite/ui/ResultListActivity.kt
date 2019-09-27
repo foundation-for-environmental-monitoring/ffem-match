@@ -303,26 +303,37 @@ class ResultListActivity : BaseActivity() {
         val builder = AlertDialog.Builder(this)
             .setTitle("Expected result")
             .setMessage("Enter expected result value for this sample. Leave blank if not known")
-            .setPositiveButton(android.R.string.ok) { dialog, _ ->
-                closeKeyboard(this, inputValue)
-
-                PreferencesUtil.setString(
-                    this,
-                    R.string.expectedValueKey,
-                    inputValue.text.toString()
-                )
-
-                dialog.dismiss()
-
-                val intent = Intent(baseContext, BarcodeActivity::class.java)
-                startActivityForResult(intent, 100)
-            }
+            .setPositiveButton(android.R.string.ok, null)
             .setNegativeButton(android.R.string.cancel) { dialog, _ ->
                 closeKeyboard(this, inputValue)
                 dialog.dismiss()
             }
 
-        val dialog = builder.setView(view).show()
+        val dialog = builder.setView(view).create()
+
+        dialog.setOnShowListener { d ->
+            val button = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            button.setOnClickListener {
+                var value = inputValue.text.toString()
+
+                if (value.toFloat() < 0 || value.toFloat() > 2) {
+                    inputValue.error = "Should be between 0 and 2"
+                } else {
+                    closeKeyboard(this, inputValue)
+
+                    if (value.isNotEmpty() && !value.contains(".")) {
+                        value += ".0"
+                    }
+
+                    PreferencesUtil.setString(this, R.string.expectedValueKey, value)
+
+                    d.dismiss()
+
+                    val intent = Intent(baseContext, BarcodeActivity::class.java)
+                    startActivityForResult(intent, 100)
+                }
+            }
+        }
 
         inputValue.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -333,6 +344,7 @@ class ResultListActivity : BaseActivity() {
             }
         }
 
+        dialog.show()
         inputValue.requestFocus()
         showKeyboard(this)
     }
@@ -423,9 +435,13 @@ class ResultListActivity : BaseActivity() {
                     val bitmapFromFile =
                         BitmapFactory.decodeFile(FileUtil.getPath(this, uri))
 
-                    val expectedValue = uri.pathSegments[uri.pathSegments.size - 1]
+                    var expectedValue = uri.pathSegments[uri.pathSegments.size - 1]
                         .substringAfterLast("_", "")
                         .substringBeforeLast(".")
+
+                    if (expectedValue.isNotEmpty() && !expectedValue.contains(".")) {
+                        expectedValue += ".0"
+                    }
 
                     Utilities.savePicture(
                         applicationContext,
@@ -444,9 +460,6 @@ class ResultListActivity : BaseActivity() {
 
                     ColorUtil.extractImage(this, id, bitmapFromFile)
 
-//                    if (sendDummyImage()) {
-//                        showNewToast(getString(R.string.sending_dummy_image))
-//                    }
                 }
             } else if (data != null) {
                 val id = data.getStringExtra(TEST_ID_KEY)
