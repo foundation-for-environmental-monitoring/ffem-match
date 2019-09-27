@@ -1,5 +1,6 @@
 package io.ffem.lite.ui
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
@@ -7,6 +8,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.net.ConnectivityManager
@@ -26,6 +28,8 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.IntRange
+import androidx.core.app.ActivityCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.google.android.material.snackbar.Snackbar
@@ -77,6 +81,8 @@ import kotlin.math.max
 
 const val APP_UPDATE_REQUEST = 101
 const val READ_REQUEST_CODE = 102
+const val PERMISSION_REQUEST = 103
+
 const val TOAST_Y_OFFSET = 240
 const val RESULT_CHECK_INTERVAL = 5000L
 const val MIN_RESULT_WAIT_TIME = 70000L
@@ -288,7 +294,17 @@ class ResultListActivity : BaseActivity() {
 
     fun onStartClick(@Suppress("UNUSED_PARAMETER") view: View) {
         if (sendDummyImage()) {
-            performFileSearch()
+
+            val permissions = arrayOf(
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+
+            if (!isHasPermission(*permissions))
+                askPermission(permissions = *permissions, requestCode = PERMISSION_REQUEST)
+            else
+                performFileSearch()
+
         } else {
             PreferencesUtil.removeKey(this, R.string.expectedValueKey)
             showInputDialog()
@@ -316,8 +332,8 @@ class ResultListActivity : BaseActivity() {
             button.setOnClickListener {
                 var value = inputValue.text.toString()
 
-                if (value.toFloat() < 0 || value.toFloat() > 2) {
-                    inputValue.error = "Should be between 0 and 2"
+                if (value.toFloat() < 0 || value.toFloat() > 3) {
+                    inputValue.error = "Should be between 0 and 3"
                 } else {
                     closeKeyboard(this, inputValue)
 
@@ -423,13 +439,6 @@ class ResultListActivity : BaseActivity() {
             if (requestCode == READ_REQUEST_CODE) {
                 data?.data?.also { uri ->
 
-                    //                    var bitmapFromFile: Bitmap
-//                    val drawable = ContextCompat.getDrawable(
-//                        this,
-//                        R.drawable.dummy_card_5
-//                    )
-//                    bitmapFromFile = (drawable as BitmapDrawable).bitmap
-
                     val id = UUID.randomUUID().toString()
 
                     val bitmapFromFile =
@@ -438,6 +447,15 @@ class ResultListActivity : BaseActivity() {
                     var expectedValue = uri.pathSegments[uri.pathSegments.size - 1]
                         .substringAfterLast("_", "")
                         .substringBeforeLast(".")
+
+                    try {
+                        val value = expectedValue.toFloat()
+                        if (value < 0 || value > 3) {
+                            expectedValue = ""
+                        }
+                    } catch (ignored: Exception) {
+                        expectedValue = ""
+                    }
 
                     if (expectedValue.isNotEmpty() && !expectedValue.contains(".")) {
                         expectedValue += ".0"
@@ -777,5 +795,43 @@ class ResultListActivity : BaseActivity() {
             type = "image/*"
         }
         startActivityForResult(intent, READ_REQUEST_CODE)
+    }
+
+    private fun Activity.isHasPermission(vararg permissions: String): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            permissions.all { singlePermission ->
+                applicationContext.checkSelfPermission(singlePermission) ==
+                        PackageManager.PERMISSION_GRANTED
+            }
+        else true
+    }
+
+    private fun Activity.askPermission(vararg permissions: String, @IntRange(from = 0) requestCode: Int) =
+        ActivityCompat.requestPermissions(this, permissions, requestCode)
+
+    private fun permissionsGranted(grantResults: IntArray): Boolean {
+        for (element in grantResults) {
+            if (element != PackageManager.PERMISSION_GRANTED) {
+                return false
+            }
+        }
+
+        return true
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        when (requestCode) {
+            PERMISSION_REQUEST -> {
+                if (permissionsGranted(grantResults)) {
+                    performFileSearch()
+                } else {
+                    showSnackbar(getString(R.string.storage_permission))
+                }
+                return
+            }
+        }
     }
 }

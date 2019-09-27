@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Environment.DIRECTORY_PICTURES
 import android.view.MenuItem
 import android.view.View
+import android.view.View.GONE
 import io.ffem.lite.R
 import io.ffem.lite.app.App.Companion.TEST_ID_KEY
 import io.ffem.lite.app.App.Companion.TEST_NAME_KEY
@@ -45,10 +46,14 @@ class ResultActivity : BaseActivity() {
 
     private fun showLocalImage() {
         val file = File(localPath)
+        imageModeButton.text = getString(R.string.show_server_image)
         if (file.exists()) {
             image.setImageURI(Uri.fromFile(file))
+        } else {
+            imageModeButton.visibility = GONE
+            showServerImage()
+            return
         }
-        imageModeButton.text = "Show server image"
         localMode = true
     }
 
@@ -57,7 +62,7 @@ class ResultActivity : BaseActivity() {
         if (file.exists()) {
             image.setImageURI(Uri.fromFile(file))
         }
-        imageModeButton.text = "Show local image"
+        imageModeButton.text = getString(R.string.show_local_image)
         localMode = false
     }
 
