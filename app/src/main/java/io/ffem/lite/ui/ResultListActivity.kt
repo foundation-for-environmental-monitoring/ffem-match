@@ -332,7 +332,7 @@ class ResultListActivity : BaseActivity() {
             button.setOnClickListener {
                 var value = inputValue.text.toString()
 
-                if (value.toFloat() < 0 || value.toFloat() > 3) {
+                if (value.isNotEmpty() && (value.toFloat() < 0 || value.toFloat() > 3)) {
                     inputValue.error = "Should be between 0 and 3"
                 } else {
                     closeKeyboard(this, inputValue)
