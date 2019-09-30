@@ -17,6 +17,8 @@
     <string name="ok">OK</string>
     <string name="show_server_image">Show server image</string>
     <string name="show_local_image">Show local image</string>
+    <string name="camera">Camera</string>
+    <string name="expectedValue">Expected result value</string>
 
     <!--Software notices-->
     <string name="software_notices">Software Notices</string>
@@ -47,5 +49,4 @@
     <string name="analyzed_image">Analyzed image</string>
     <string name="disable_diagnostics">Disable diagnostics</string>
     <string name="settings_not_clickable">Settings not clickable</string>
-    <string name="expectedValue">Expected result value</string>
 </resources>

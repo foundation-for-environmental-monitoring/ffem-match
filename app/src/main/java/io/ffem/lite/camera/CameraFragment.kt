@@ -44,6 +44,7 @@ import androidx.navigation.Navigation
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import io.ffem.lite.R
+import io.ffem.lite.preference.useFlashMode
 import io.ffem.lite.ui.BarcodeActivity.Companion.getOutputDirectory
 import io.ffem.lite.util.AutoFitPreviewBuilder
 import kotlinx.android.synthetic.main.preview_overlay.*
@@ -197,6 +198,8 @@ class CameraFragment : Fragment() {
         CameraX.bindToLifecycle(
             viewLifecycleOwner, preview, imageAnalyzer
         )
+
+        preview!!.enableTorch(useFlashMode())
     }
 
     private fun updateCameraUi() {

@@ -11,13 +11,13 @@ import io.ffem.lite.model.TestResult
 
 private val MIGRATION_1_2 = object : Migration(1, 2) {
     override fun migrate(database: SupportSQLiteDatabase) {
-        database.execSQL("ALTER TABLE results" + " ADD COLUMN localValue TEXT")
+        database.execSQL("ALTER TABLE results" + " ADD COLUMN localValue TEXT NOT NULL DEFAULT ''")
     }
 }
 
 private val MIGRATION_2_3 = object : Migration(2, 3) {
     override fun migrate(database: SupportSQLiteDatabase) {
-        database.execSQL("ALTER TABLE results" + " ADD COLUMN expectedValue TEXT")
+        database.execSQL("ALTER TABLE results" + " ADD COLUMN expectedValue TEXT NOT NULL DEFAULT ''")
     }
 }
 

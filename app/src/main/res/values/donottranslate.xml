@@ -18,6 +18,8 @@
     <string name="data_delete_key">data_delete</string>
     <string name="colorDistanceToleranceKey">colorDistanceTolerance</string>
     <string name="maxCardColorDistancesAllowedKey">maxCardColorDistancesAllowed</string>
+    <string name="expectedValueKey">expectedValue</string>
+    <string name="useFlashModeKey">userFlashMode</string>
 
     <!--Diagnostic-->
     <string name="diagnostics">Diagnostics</string>
@@ -31,6 +33,5 @@
     <string name="mit_software"><a href="http://robolectric.org/">Robolectric</a></string>
     <string name="cca_software"><a href="https://design.google.com/icons/">Material Icons</a></string>
     <string name="eclipse_software"><a href="https://github.com/junit-team/junit4">Junit 4</a></string>
-    <string name="expectedValueKey">expected_value</string>
 
 </resources>

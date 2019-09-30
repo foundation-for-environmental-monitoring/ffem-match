@@ -39,14 +39,17 @@ class SettingsActivity : BaseActivity() {
             .replace(R.id.layoutOther, OtherPreferenceFragment())
             .commit()
 
-        if (isDiagnosticMode()) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.layoutCamera, CameraPreferenceFragment())
+            .commit()
 
+        if (isDiagnosticMode()) {
             supportFragmentManager.beginTransaction()
-                .add(R.id.layoutDiagnostics, DiagnosticPreferenceFragment())
+                .replace(R.id.layoutDiagnostics, DiagnosticPreferenceFragment())
                 .commit()
 
             supportFragmentManager.beginTransaction()
-                .add(R.id.layoutTesting, TestingPreferenceFragment())
+                .replace(R.id.layoutTesting, TestingPreferenceFragment())
                 .commit()
 
             supportFragmentManager.beginTransaction()

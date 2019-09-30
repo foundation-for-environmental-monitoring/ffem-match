@@ -26,6 +26,10 @@ fun isDiagnosticMode(): Boolean {
     return PreferencesUtil.getBoolean(App.app, R.string.diagnosticModeKey, false)
 }
 
+fun useFlashMode(): Boolean {
+    return PreferencesUtil.getBoolean(App.app, R.string.useFlashModeKey, false)
+}
+
 fun getColorDistanceTolerance(): Int {
     return if (isDiagnosticMode()) {
         Integer.parseInt(
