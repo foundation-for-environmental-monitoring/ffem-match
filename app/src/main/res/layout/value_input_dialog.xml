@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginLeft="4dp"
+        android:hint="Value (0 - 3)"
         android:layout_marginRight="4dp"
         android:layout_marginBottom="16dp"
         android:importantForAutofill="no"

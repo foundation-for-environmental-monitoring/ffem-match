@@ -22,7 +22,6 @@
 
     <!--Software notices-->
     <string name="software_notices">Software Notices</string>
-    <string name="software_incorporates_material">This software incorporates material from the projects listed below</string>
     <string name="apache_license_2">Apache License 2.0</string>
     <string name="mit_license">MIT License</string>
     <string name="cca_license">CC BY 4.0 International</string>

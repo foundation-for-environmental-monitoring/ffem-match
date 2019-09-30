@@ -46,21 +46,12 @@
                 style="?android:textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:clickable="false"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:text="@string/software_incorporates_material" />
-
-            <TextView
-                style="?android:textAppearanceSmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:clickable="false"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:text="@string/apache_license_2"
+                android:textColor="#222"
                 android:textStyle="bold" />
 
             <TextView
@@ -84,6 +75,7 @@
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:text="@string/cca_license"
+                android:textColor="#222"
                 android:textStyle="bold" />
 
             <TextView
@@ -107,6 +99,7 @@
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:text="@string/eclipse_public_license"
+                android:textColor="#222"
                 android:textStyle="bold" />
 
             <TextView
@@ -130,6 +123,7 @@
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:text="@string/mit_license"
+                android:textColor="#222"
                 android:textStyle="bold" />
 
             <TextView

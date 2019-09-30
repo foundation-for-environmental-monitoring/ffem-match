@@ -16,12 +16,10 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.gson.Gson
 import io.ffem.lite.R
 import io.ffem.lite.app.App
-import io.ffem.lite.camera.MIN_BRIGHTNESS
 import io.ffem.lite.camera.Utilities
 import io.ffem.lite.model.*
 import io.ffem.lite.preference.getCalibrationColorDistanceTolerance
 import io.ffem.lite.preference.getColorDistanceTolerance
-import timber.log.Timber
 import java.util.*
 import kotlin.math.*
 
@@ -29,6 +27,8 @@ const val MAX_COLOR_DISTANCE_RGB = 80
 const val MAX_COLOR_DISTANCE_CALIBRATION = 40
 const val INTERPOLATION_COUNT = 100.0
 const val MAX_DISTANCE = 999
+const val MIN_BRIGHTNESS = 20
+const val MIN_LINE_BRIGHTNESS = 100
 
 fun getBitmapPixels(bitmap: Bitmap, rect: Rect): IntArray {
     val pixels = IntArray(bitmap.width * bitmap.height)
@@ -67,11 +67,58 @@ fun getAverageColor(pixels: IntArray): Int {
     return Color.argb(255, r, g, b)
 }
 
+fun hasBlackPixelsOnBottomEdge(bitmap: Bitmap, left: Int, width: Int): Boolean {
+    var total = 0
+
+    val pixels = getBitmapPixels(
+        bitmap,
+        Rect(
+            left, bitmap.height - 5,
+            width, bitmap.height
+        )
+    )
+
+    for (element in pixels) {
+        if (element.red < MIN_BRIGHTNESS &&
+            element.green < MIN_BRIGHTNESS &&
+            element.blue < MIN_BRIGHTNESS
+        ) {
+            total++
+            if (total > 50) {
+                return true
+            }
+        }
+    }
+
+    return false
+}
+
+fun hasBlackPixelsOnTopEdge(bitmap: Bitmap, left: Int, width: Int): Boolean {
+    var total = 0
+
+    val pixels = getBitmapPixels(
+        bitmap,
+        Rect(left, 0, width, 5)
+    )
+
+    for (element in pixels) {
+        if (element.red < MIN_BRIGHTNESS &&
+            element.green < MIN_BRIGHTNESS &&
+            element.blue < MIN_BRIGHTNESS
+        ) {
+            total++
+            if (total > 50) {
+                return true
+            }
+        }
+    }
+
+    return false
+}
+
 object ColorUtil {
 
     private var gson = Gson()
-
-    private lateinit var localBroadcastManager: LocalBroadcastManager
 
     private var cropLeft = 0
     private var cropRight = 0
@@ -81,7 +128,7 @@ object ColorUtil {
     fun extractImage(context: Context, id: String, bitmap: Bitmap) {
 
         val detector: FirebaseVisionBarcodeDetector by lazy {
-            localBroadcastManager = LocalBroadcastManager.getInstance(context)
+
             val options = FirebaseVisionBarcodeDetectorOptions.Builder()
                 .setBarcodeFormats(
                     FirebaseVisionBarcode.FORMAT_CODE_128
@@ -100,13 +147,13 @@ object ColorUtil {
         detector.detectInImage(FirebaseVisionImage.fromBitmap(leftBarcodeBitmap))
             .addOnFailureListener(
                 fun(_: Exception) {
-                    returnResult(id)
+                    returnResult(context, id)
                 }
             )
             .addOnSuccessListener(
                 fun(result: List<FirebaseVisionBarcode>) {
                     if (result.isEmpty()) {
-                        returnResult(id)
+                        returnResult(context, id)
                     }
                     for (barcode in result) {
                         if (!barcode.rawValue.isNullOrEmpty()) {
@@ -114,8 +161,8 @@ object ColorUtil {
                             val width = barcode.boundingBox!!.width()
                             val height = barcode.boundingBox!!.height()
 
-                            if (height > bitmap.width * .065
-                                && width > bitmap.height * .38
+                            if (height > bitmap.width * .050
+                                && width > bitmap.height * .70
                             ) {
                                 try {
                                     cropTop = barcode.boundingBox!!.left
@@ -127,9 +174,9 @@ object ColorUtil {
                                         val pixel = leftBarcodeBitmap.getPixel(
                                             leftBarcodeBitmap.width / 2, i
                                         )
-                                        if (pixel.red < MIN_BRIGHTNESS &&
-                                            pixel.green < MIN_BRIGHTNESS &&
-                                            pixel.blue < MIN_BRIGHTNESS
+                                        if (pixel.red < MIN_LINE_BRIGHTNESS &&
+                                            pixel.green < MIN_LINE_BRIGHTNESS &&
+                                            pixel.blue < MIN_LINE_BRIGHTNESS
                                         ) {
                                             cropLeft = i
                                             break
@@ -152,7 +199,7 @@ object ColorUtil {
                                         FirebaseVisionImage.fromBitmap(rightBarcodeBitmap)
                                     )
                                         .addOnFailureListener(fun(_: Exception) {
-                                            returnResult(id)
+                                            returnResult(context, id)
                                         })
                                         .addOnSuccessListener(
                                             fun(result: List<FirebaseVisionBarcode>) {
@@ -164,9 +211,9 @@ object ColorUtil {
                                                         val pixel = rightBarcodeBitmap.getPixel(
                                                             rightBarcodeBitmap.width / 2, i
                                                         )
-                                                        if (pixel.red < MIN_BRIGHTNESS &&
-                                                            pixel.green < MIN_BRIGHTNESS &&
-                                                            pixel.blue < MIN_BRIGHTNESS
+                                                        if (pixel.red < MIN_LINE_BRIGHTNESS &&
+                                                            pixel.green < MIN_LINE_BRIGHTNESS &&
+                                                            pixel.blue < MIN_LINE_BRIGHTNESS
                                                         ) {
                                                             cropRight = bitmap.width - i
                                                             break
@@ -179,13 +226,13 @@ object ColorUtil {
                                             }
                                         )
                                 } catch (ignored: Exception) {
-                                    returnResult(id)
+                                    returnResult(context, id)
                                 }
                             } else {
-                                returnResult(id)
+                                returnResult(context, id)
                             }
                         } else {
-                            returnResult(id)
+                            returnResult(context, id)
                         }
                     }
                 }
@@ -197,12 +244,12 @@ object ColorUtil {
         bitmap: Bitmap, result: List<FirebaseVisionBarcode>
     ) {
         if (result.isEmpty()) {
-            returnResult(id)
+            returnResult(context, id)
         }
         for (barcode2 in result) {
             if (!barcode2.rawValue.isNullOrEmpty()) {
-                if (barcode2.boundingBox!!.height() > bitmap.width * .065
-                    && barcode2.boundingBox!!.width() > bitmap.height * .38
+                if (barcode2.boundingBox!!.height() > bitmap.width * .050
+                    && barcode2.boundingBox!!.width() > bitmap.height * .70
                 ) {
                     cropTop = min(barcode2.boundingBox!!.left, cropTop)
                     cropBottom = max(barcode2.boundingBox!!.right, cropBottom)
@@ -223,19 +270,19 @@ object ColorUtil {
                     )
                     croppedBitmap.recycle()
 
-                    returnResult(id, resultDetail)
+                    returnResult(context, id, resultDetail)
                 } else {
-                    returnResult(id)
+                    returnResult(context, id)
                 }
 
             } else {
-                returnResult(id)
+                returnResult(context, id)
             }
         }
     }
 
     private fun returnResult(
-        id: String,
+        context: Context, id: String,
         resultDetail: ResultDetail = ResultDetail((-1).toDouble(), 0)
     ) {
         val intent = Intent(App.LOCAL_RESULT_EVENT)
@@ -248,6 +295,7 @@ object ColorUtil {
 
         intent.putExtra(App.TEST_RESULT, result)
 
+        val localBroadcastManager = LocalBroadcastManager.getInstance(context)
         localBroadcastManager.sendBroadcast(intent)
     }
 
@@ -278,11 +326,6 @@ object ColorUtil {
 
                 if (i.value != -1.0f) {
                     i.color = getAverageColor(pixels)
-
-                    Timber.e(
-                        "%s: %s %s %s", i.value, i.color.red, i.color.green, i.color.blue
-                    )
-
                     canvas.drawRect(rectangle, paint)
                 }
             }
@@ -292,10 +335,6 @@ object ColorUtil {
             val rectangle = Rect(x1 - 20, y1 - 27, x1 + 20, y1 + 27)
             val pixels = getBitmapPixels(image, rectangle)
             val colorInfo = ColorInfo(getAverageColor(pixels))
-
-            Timber.e(
-                "%s %s %s", colorInfo.color.red, colorInfo.color.green, colorInfo.color.blue
-            )
 
             canvas.drawRect(rectangle, paint)
 
@@ -332,7 +371,6 @@ object ColorUtil {
         for (i in filteredCalibrations) {
             for (j in filteredCalibrations) {
                 if (getColorDistance(i.color, j.color) > maxAllowedDistance) {
-                    Timber.e("distance: %s", getColorDistance(i.color, j.color))
                     throw Exception()
                 }
             }

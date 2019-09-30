@@ -116,6 +116,12 @@ class ResultListActivity : BaseActivity() {
         }
     }
 
+//    private val broadcastReceiver2 = object : BroadcastReceiver() {
+//        override fun onReceive(context: Context, intent: Intent) {
+//            saveImageData(intent)
+//        }
+//    }
+
     private fun onResultClick(position: Int) {
         Handler().postDelayed(
             {
@@ -257,6 +263,11 @@ class ResultListActivity : BaseActivity() {
             IntentFilter(LOCAL_RESULT_EVENT)
         )
 
+//        broadcastManager.registerReceiver(
+//            broadcastReceiver2,
+//            IntentFilter(CameraFragment.CAPTURED_EVENT)
+//        )
+
         if (!appIsClosing) {
 
             monitorNetwork()
@@ -285,6 +296,7 @@ class ResultListActivity : BaseActivity() {
     override fun onPause() {
         super.onPause()
         resultRequestHandler.removeCallbacksAndMessages(null)
+        broadcastManager.unregisterReceiver(broadcastReceiver)
     }
 
     override fun onDestroy() {
@@ -435,7 +447,6 @@ class ResultListActivity : BaseActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (resultCode == Activity.RESULT_OK) {
-
             if (requestCode == READ_REQUEST_CODE) {
                 data?.data?.also { uri ->
 
@@ -480,20 +491,7 @@ class ResultListActivity : BaseActivity() {
 
                 }
             } else if (data != null) {
-                val id = data.getStringExtra(TEST_ID_KEY)
-                if (id != null) {
-
-                    val expectedValue = PreferencesUtil
-                        .getString(this, R.string.expectedValueKey, "")
-
-                    db.resultDao().insert(
-                        TestResult(
-                            id, 0, TEST_PARAMETER_NAME, Date().time,
-                            Date().time, "", "", expectedValue, getString(R.string.outbox)
-                        )
-                    )
-                    analyzeImage()
-                }
+                saveImageData(data)
             }
         } else {
             if (data != null) {
@@ -504,6 +502,23 @@ class ResultListActivity : BaseActivity() {
         }
 
         refreshList()
+    }
+
+    private fun saveImageData(data: Intent) {
+        val id = data.getStringExtra(TEST_ID_KEY)
+        if (id != null) {
+
+            val expectedValue = PreferencesUtil
+                .getString(this, R.string.expectedValueKey, "")
+
+            db.resultDao().insert(
+                TestResult(
+                    id, 0, TEST_PARAMETER_NAME, Date().time,
+                    Date().time, "", "", expectedValue, getString(R.string.outbox)
+                )
+            )
+            analyzeImage()
+        }
     }
 
     private fun startResultCheckTimer(delay: Long) {
@@ -795,6 +810,11 @@ class ResultListActivity : BaseActivity() {
             type = "image/*"
         }
         startActivityForResult(intent, READ_REQUEST_CODE)
+
+        //        val drawable = ContextCompat.getDrawable(
+//            this, R.drawable.testing3
+//        )
+//        ColorUtil.extractImage(this, "test", (drawable as BitmapDrawable).bitmap)
     }
 
     private fun Activity.isHasPermission(vararg permissions: String): Boolean {

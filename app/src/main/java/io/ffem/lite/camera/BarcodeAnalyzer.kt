@@ -3,12 +3,8 @@ package io.ffem.lite.camera
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.Rect
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
-import androidx.core.graphics.blue
-import androidx.core.graphics.green
-import androidx.core.graphics.red
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.tasks.Task
 import com.google.firebase.ml.vision.FirebaseVision
@@ -21,16 +17,17 @@ import io.ffem.lite.app.App.Companion.FILE_PATH_KEY
 import io.ffem.lite.app.App.Companion.TEST_ID_KEY
 import io.ffem.lite.app.App.Companion.TEST_PARAMETER_NAME
 import io.ffem.lite.camera.CameraFragment.Companion.CAPTURED_EVENT
-import io.ffem.lite.util.getAverageColor
-import io.ffem.lite.util.getBitmapPixels
-import timber.log.Timber
+import io.ffem.lite.util.hasBlackPixelsOnBottomEdge
+import io.ffem.lite.util.hasBlackPixelsOnTopEdge
 import java.util.*
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
-const val MARGIN = 40
-const val MIN_BRIGHTNESS = 50
+const val MAX_SIDE_MARGIN = 50
+const val MAX_LONG_SIDE_MARGIN = 40
+const val MAX_ANGLE = 15
+const val BARCODE_SIZE_PERCENT = 0.15
 
 class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
@@ -89,12 +86,9 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
         bitmap = mediaImage.bitmap
 
-//        val drawable = ContextCompat.getDrawable(context, R.drawable.test2)
-//        bitmap = (drawable as BitmapDrawable).bitmap
-
         leftBarcodeBitmap = Bitmap.createBitmap(
             bitmap, 0, 0,
-            bitmap.width, (bitmap.height * 0.15).toInt()
+            bitmap.width, (bitmap.height * BARCODE_SIZE_PERCENT).toInt()
         )
 
         taskLeftBarcode =
@@ -108,6 +102,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                     fun(result: List<FirebaseVisionBarcode>) {
                         if (result.isEmpty()) {
                             processing = false
+                            return
                         }
                         for (leftBarcode in result) {
                             if (!leftBarcode.rawValue.isNullOrEmpty()) {
@@ -121,39 +116,31 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                     && width > bitmap.width * .38
                                 ) {
                                     try {
-                                        val pixels = getBitmapPixels(
-                                            leftBarcodeBitmap,
-                                            Rect(0, 0, leftBarcodeBitmap.width, 6)
-                                        )
 
-                                        leftBarcodeBitmap.recycle()
-
-                                        val averageColor = getAverageColor(pixels)
-                                        if (averageColor.red < MIN_BRIGHTNESS &&
-                                            averageColor.green < MIN_BRIGHTNESS &&
-                                            averageColor.blue < MIN_BRIGHTNESS
-                                        ) {
-
-//                                            Timber.e(
-//                                                "Left: %s %s %s", averageColor.red,
-//                                                averageColor.green, averageColor.blue
-//                                            )
-
+                                        // Ensure barcode is not too far from the edge
+                                        if (leftBarcode.boundingBox!!.top > MAX_SIDE_MARGIN) {
                                             processing = false
                                             return
                                         }
 
-//                                        Timber.e(
-//                                            "Left: %s %s %s", averageColor.red,
-//                                            averageColor.green, averageColor.blue
-//                                        )
+                                        if (hasBlackPixelsOnTopEdge(
+                                                leftBarcodeBitmap, cropLeft,
+                                                leftBarcode.boundingBox!!.width()
+                                            )
+                                        ) {
+                                            processing = false
+                                            leftBarcodeBitmap.recycle()
+                                            return
+                                        }
+
+                                        leftBarcodeBitmap.recycle()
 
                                         rightBarcodeBitmap = Bitmap.createBitmap(
                                             bitmap,
                                             0,
                                             (bitmap.height * 0.85).toInt(),
                                             bitmap.width,
-                                            (bitmap.height * 0.15).toInt()
+                                            (bitmap.height * BARCODE_SIZE_PERCENT).toInt()
                                         )
 
                                         detector.detectInImage(
@@ -184,55 +171,45 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
     private fun analyzeBarcode(result: List<FirebaseVisionBarcode>) {
         if (result.isEmpty()) {
             processing = false
+            return
         }
         for (rightBarcode in result) {
+
+            // Ensure barcode is not too far from the edge
+            if (rightBarcodeBitmap.height - rightBarcode.boundingBox!!.bottom > MAX_SIDE_MARGIN) {
+                processing = false
+                return
+            }
+
             if (!rightBarcode.rawValue.isNullOrEmpty()) {
                 if (rightBarcode.boundingBox!!.height() > bitmap.height * .065
                     && rightBarcode.boundingBox!!.width() > bitmap.width * .38
                 ) {
-
-                    if (abs(cropLeft - rightBarcode.boundingBox!!.left) > 10 ||
-                        abs(cropRight - rightBarcode.boundingBox!!.right) > 10
+                    // Check if image angle is ok
+                    if (abs(cropLeft - rightBarcode.boundingBox!!.left) > MAX_ANGLE ||
+                        abs(cropRight - rightBarcode.boundingBox!!.right) > MAX_ANGLE
                     ) {
                         processing = false
-
-                        Timber.e("Angled. Cancelling")
-
                         return
                     }
 
-                    val pixels = getBitmapPixels(
-                        rightBarcodeBitmap,
-                        Rect(
-                            0, rightBarcodeBitmap.height - 6,
-                            rightBarcodeBitmap.width, rightBarcodeBitmap.height
+                    if (hasBlackPixelsOnBottomEdge(
+                            rightBarcodeBitmap, cropLeft,
+                            rightBarcode.boundingBox!!.width()
                         )
-                    )
+                    ) {
+                        processing = false
+                        rightBarcodeBitmap.recycle()
+                        return
+                    }
 
                     rightBarcodeBitmap.recycle()
 
-                    val averageColor = getAverageColor(pixels)
-                    if (averageColor.red < MIN_BRIGHTNESS && averageColor.green < MIN_BRIGHTNESS &&
-                        averageColor.blue < MIN_BRIGHTNESS
-                    ) {
-//                        Timber.e(
-//                            "Right: %s %s %s", averageColor.red,
-//                            averageColor.green, averageColor.blue
-//                        )
-
-                        processing = false
-                        return
-                    }
-
-//                    Timber.e(
-//                        "Right: %s %s %s", averageColor.red,
-//                        averageColor.green, averageColor.blue
-//                    )
-
                     done = true
 
-                    val left = max(0, rightBarcode.boundingBox!!.left - MARGIN)
-                    val right = min(bitmap.width, rightBarcode.boundingBox!!.right + MARGIN)
+                    val left = max(0, rightBarcode.boundingBox!!.left - MAX_LONG_SIDE_MARGIN)
+                    val right =
+                        min(bitmap.width, rightBarcode.boundingBox!!.right + MAX_LONG_SIDE_MARGIN)
 
                     val croppedBitmap =
                         Bitmap.createBitmap(bitmap, left, 0, right - left, bitmap.height)
