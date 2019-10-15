@@ -87,25 +87,26 @@ class AutoFitPreviewBuilder private constructor(
         useCase = Preview(config)
 
         // Every time the view finder is updated, recompute layout
-        useCase.onPreviewOutputUpdateListener = Preview.OnPreviewOutputUpdateListener {
+        useCase.setOnPreviewOutputUpdateListener {
+            val viewFinder1 = viewFinderRef.get()
+            if (viewFinder1 != null) {
+                Timber.d(
+                    "Preview output changed. Size: ${it.textureSize}. Rotation: ${it.rotationDegrees}"
+                )
 
-            val viewFinder1 = viewFinderRef.get() ?: return@OnPreviewOutputUpdateListener
-            Timber.d(
-                "Preview output changed. Size: ${it.textureSize}. Rotation: ${it.rotationDegrees}"
-            )
+                // To update the SurfaceTexture, we have to remove it and re-add it
+                val parent = viewFinder1.parent as ViewGroup
+                parent.removeView(viewFinder1)
+                parent.addView(viewFinder1, 0)
 
-            // To update the SurfaceTexture, we have to remove it and re-add it
-            val parent = viewFinder1.parent as ViewGroup
-            parent.removeView(viewFinder1)
-            parent.addView(viewFinder1, 0)
+                // Update internal texture
+                viewFinder1.surfaceTexture = it.surfaceTexture
 
-            // Update internal texture
-            viewFinder1.surfaceTexture = it.surfaceTexture
-
-            // Apply relevant transformations
-            bufferRotation = it.rotationDegrees
-            val rotation = getDisplaySurfaceRotation(viewFinder1.display)
-            updateTransform(viewFinder1, rotation, it.textureSize, viewFinderDimens)
+                // Apply relevant transformations
+                bufferRotation = it.rotationDegrees
+                val rotation = getDisplaySurfaceRotation(viewFinder1.display)
+                updateTransform(viewFinder1, rotation, it.textureSize, viewFinderDimens)
+            }
         }
 
         // Every time the provided texture view changes, recompute layout

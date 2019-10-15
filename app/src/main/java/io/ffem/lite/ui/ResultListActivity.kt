@@ -177,7 +177,7 @@ class ResultListActivity : BaseActivity() {
         }
 
         val calendar = Calendar.getInstance()
-        if (calendar.get(Calendar.MONTH) > 8 && calendar.get(Calendar.YEAR) > 2018
+        if (calendar.get(Calendar.MONTH) > 9 && calendar.get(Calendar.YEAR) > 2018
             && isNonStoreVersion(this)
         ) {
             appIsClosing = true
@@ -330,7 +330,6 @@ class ResultListActivity : BaseActivity() {
 
         val builder = AlertDialog.Builder(this)
             .setTitle("Expected result")
-            .setMessage("Enter expected result value for this sample. Leave blank if not known")
             .setPositiveButton(android.R.string.ok, null)
             .setNegativeButton(android.R.string.cancel) { dialog, _ ->
                 closeKeyboard(this, inputValue)

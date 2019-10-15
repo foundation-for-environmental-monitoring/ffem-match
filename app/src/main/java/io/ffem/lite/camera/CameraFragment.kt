@@ -26,10 +26,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.hardware.display.DisplayManager
 import android.os.Bundle
-import android.os.Handler
-import android.os.HandlerThread
 import android.util.DisplayMetrics
-import android.util.Rational
 import android.util.Size
 import android.view.LayoutInflater
 import android.view.TextureView
@@ -50,6 +47,7 @@ import io.ffem.lite.util.AutoFitPreviewBuilder
 import kotlinx.android.synthetic.main.preview_overlay.*
 import timber.log.Timber
 import java.io.File
+import java.util.concurrent.Executors
 
 class CameraFragment : Fragment() {
 
@@ -144,14 +142,14 @@ class CameraFragment : Fragment() {
 
         // Get screen metrics used to setup camera for full screen resolution
         val metrics = DisplayMetrics().also { viewFinder.display.getRealMetrics(it) }
-        val screenAspectRatio = Rational(metrics.widthPixels, metrics.heightPixels)
+//        val screenAspectRatio = Rational(metrics.widthPixels, metrics.heightPixels)
         Timber.d("Screen metrics: ${metrics.widthPixels} x ${metrics.heightPixels}")
 
         // Set up the view finder use case to display camera preview
         val viewFinderConfig = PreviewConfig.Builder().apply {
             setLensFacing(lensFacing)
             // We request aspect ratio but no resolution to let CameraX optimize our use cases
-            setTargetAspectRatio(screenAspectRatio)
+            setTargetAspectRatio(AspectRatio.RATIO_16_9)
             // Set initial target rotation, we will have to call this again if rotation changes
             // during the lifecycle of this use case
             setTargetRotation(viewFinder.display.rotation)
@@ -175,8 +173,8 @@ class CameraFragment : Fragment() {
             }
 
             // Use a worker thread for image analysis to prevent preview glitches
-            val analyzerThread = HandlerThread("BarcodeReader").apply { start() }
-            setCallbackHandler(Handler(analyzerThread.looper))
+//            val analyzerThread = HandlerThread("BarcodeReader").apply { start() }
+//            setCallbackHandler(Handler(analyzerThread.looper))
 
             setImageReaderMode(ImageAnalysis.ImageReaderMode.ACQUIRE_LATEST_IMAGE)
 
@@ -188,7 +186,7 @@ class CameraFragment : Fragment() {
             val googlePlayServicesAvailable = GoogleApiAvailability.getInstance()
                 .isGooglePlayServicesAvailable(context)
             if (googlePlayServicesAvailable == ConnectionResult.SUCCESS) {
-                analyzer = BarcodeAnalyzer(context!!)
+                setAnalyzer(Executors.newSingleThreadExecutor(), BarcodeAnalyzer(context!!))
             } else {
                 activity?.finish()
             }
