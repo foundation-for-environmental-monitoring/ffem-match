@@ -4,10 +4,12 @@ import android.content.ContentUris
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import java.io.BufferedReader
+import java.io.File
 import java.io.InputStream
 import java.io.InputStreamReader
 
@@ -36,8 +38,11 @@ object FileUtil {
      * @author paulburke
      */
     fun getPath(context: Context, uri: Uri): String? {
-        // DocumentProvider
-        if (DocumentsContract.isDocumentUri(context, uri)) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val file = File(uri.path!!)
+            return file.path.split(":")[1]
+        } else if (DocumentsContract.isDocumentUri(context, uri)) {
             // ExternalStorageProvider
 
             if (isExternalStorageDocument(uri)) {
