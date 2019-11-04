@@ -16,8 +16,8 @@ android {
         applicationId "io.ffem.lite"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 17
-        versionName "Alpha 0.10"
+        versionCode 18
+        versionName "Alpha 0.11"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -68,16 +68,16 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.preference:preference:1.1.0'
 
-    implementation 'com.google.android.play:core:1.6.3'
+    implementation 'com.google.android.play:core:1.6.4'
 
     implementation 'androidx.core:core-ktx:1.1.0'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.2.0-beta01'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.2.0-rc01'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
-    implementation 'com.google.android.gms:play-services-vision:18.0.0'
+    implementation 'com.google.android.gms:play-services-vision:19.0.0'
 
-    implementation 'androidx.room:room-runtime:2.2.0'
-    kapt 'androidx.room:room-compiler:2.2.0'
+    implementation 'androidx.room:room-runtime:2.2.1'
+    kapt 'androidx.room:room-compiler:2.2.1'
 
     implementation 'com.squareup.okhttp3:okhttp:4.2.0'
     implementation 'com.squareup.retrofit2:retrofit:2.6.1'
@@ -86,7 +86,7 @@ dependencies {
     // Gson
     implementation 'com.google.code.gson:gson:2.8.5'
 
-    implementation 'com.google.firebase:firebase-ml-vision:23.0.0'
+    implementation 'com.google.firebase:firebase-ml-vision:24.0.0'
 
     // Navigation library
     def nav_version = "2.1.0"

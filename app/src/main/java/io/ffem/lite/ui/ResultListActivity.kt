@@ -177,7 +177,7 @@ class ResultListActivity : BaseActivity() {
         }
 
         val calendar = Calendar.getInstance()
-        if (calendar.get(Calendar.MONTH) > 9 && calendar.get(Calendar.YEAR) > 2018
+        if (calendar.get(Calendar.MONTH) > 10 && calendar.get(Calendar.YEAR) > 2018
             && isNonStoreVersion(this)
         ) {
             appIsClosing = true
@@ -301,7 +301,9 @@ class ResultListActivity : BaseActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        connectivityManager.unregisterNetworkCallback(networkCallback)
+        if (::connectivityManager.isInitialized) {
+            connectivityManager.unregisterNetworkCallback(networkCallback)
+        }
     }
 
     fun onStartClick(@Suppress("UNUSED_PARAMETER") view: View) {
