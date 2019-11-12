@@ -24,7 +24,12 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
-class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
+const val MAX_SIDE_MARGIN = 50
+const val MAX_LONG_SIDE_MARGIN = 40
+const val MAX_ANGLE = 15
+const val BARCODE_SIZE_PERCENT = 0.15
+
+class BarcodeLargeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
     private lateinit var bitmap: Bitmap
     private lateinit var leftBarcodeBitmap: Bitmap

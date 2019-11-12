@@ -22,6 +22,14 @@ fun sendDummyImage(): Boolean {
     return isDiagnosticMode() && PreferencesUtil.getBoolean(App.app, R.string.dummyImageKey, false)
 }
 
+fun useLargeColorcard(): Boolean {
+    return isDiagnosticMode() && PreferencesUtil.getBoolean(
+        App.app,
+        R.string.largeColorCardKey,
+        false
+    )
+}
+
 fun isDiagnosticMode(): Boolean {
     return PreferencesUtil.getBoolean(App.app, R.string.diagnosticModeKey, false)
 }

@@ -13,6 +13,7 @@
     <string name="refreshKey">refresh</string>
     <string name="testModeOnKey">testModeOn</string>
     <string name="dummyImageKey">dummyImage</string>
+    <string name="largeColorCardKey">largeColorCard</string>
     <string name="aboutKey">aboutApp</string>
     <string name="soundOnKey">soundOn</string>
     <string name="data_delete_key">data_delete</string>
