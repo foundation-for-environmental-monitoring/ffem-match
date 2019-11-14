@@ -140,7 +140,7 @@ object ColorUtil {
         val leftBarcodeBitmap = Utilities.rotateImage(
             Bitmap.createBitmap(
                 bitmap, 0, 0,
-                (bitmap.width * 0.15).toInt(), bitmap.height
+                bitmap.width / 2, bitmap.height
             ), 90
         )
 
@@ -162,37 +162,36 @@ object ColorUtil {
                             val height = barcode.boundingBox!!.height()
 
                             if (height > bitmap.width * .050
-                                && width > bitmap.height * .70
                             ) {
                                 try {
                                     cropTop = barcode.boundingBox!!.left
                                     cropBottom = barcode.boundingBox!!.right
                                     cropLeft = barcode.boundingBox!!.bottom + 10
 
-                                    for (i in barcode.boundingBox!!.bottom + 10
-                                            until leftBarcodeBitmap.height) {
-                                        val pixel = leftBarcodeBitmap.getPixel(
-                                            leftBarcodeBitmap.width / 2, i
-                                        )
-                                        if (pixel.red < MIN_LINE_BRIGHTNESS &&
-                                            pixel.green < MIN_LINE_BRIGHTNESS &&
-                                            pixel.blue < MIN_LINE_BRIGHTNESS
-                                        ) {
-                                            cropLeft = i
-                                            break
-                                        }
-                                    }
+//                                    for (i in barcode.boundingBox!!.bottom + 10
+//                                            until leftBarcodeBitmap.height) {
+//                                        val pixel = leftBarcodeBitmap.getPixel(
+//                                            leftBarcodeBitmap.width / 2, i
+//                                        )
+//                                        if (pixel.red < MIN_LINE_BRIGHTNESS &&
+//                                            pixel.green < MIN_LINE_BRIGHTNESS &&
+//                                            pixel.blue < MIN_LINE_BRIGHTNESS
+//                                        ) {
+//                                            cropLeft = i
+//                                            break
+//                                        }
+//                                    }
 
                                     leftBarcodeBitmap.recycle()
 
                                     val rightBarcodeBitmap = Utilities.rotateImage(
                                         Bitmap.createBitmap(
                                             bitmap,
-                                            (bitmap.width * 0.85).toInt(),
+                                            bitmap.width / 2,
                                             0,
-                                            (bitmap.width * 0.15).toInt(),
+                                            bitmap.width / 2,
                                             bitmap.height
-                                        ), 270
+                                        ), 90
                                     )
 
                                     detector.detectInImage(
@@ -204,22 +203,22 @@ object ColorUtil {
                                         .addOnSuccessListener(
                                             fun(result: List<FirebaseVisionBarcode>) {
 
-                                                for (barcode2 in result) {
-                                                    cropRight = barcode2.boundingBox!!.bottom + 10
-                                                    for (i in barcode2.boundingBox!!.bottom + 10
-                                                            until rightBarcodeBitmap.height) {
-                                                        val pixel = rightBarcodeBitmap.getPixel(
-                                                            rightBarcodeBitmap.width / 2, i
-                                                        )
-                                                        if (pixel.red < MIN_LINE_BRIGHTNESS &&
-                                                            pixel.green < MIN_LINE_BRIGHTNESS &&
-                                                            pixel.blue < MIN_LINE_BRIGHTNESS
-                                                        ) {
-                                                            cropRight = bitmap.width - i
-                                                            break
-                                                        }
-                                                    }
-                                                }
+//                                                for (barcode2 in result) {
+//                                                    cropRight = barcode2.boundingBox!!.bottom + 10
+//                                                    for (i in barcode2.boundingBox!!.bottom + 10
+//                                                            until rightBarcodeBitmap.height) {
+//                                                        val pixel = rightBarcodeBitmap.getPixel(
+//                                                            rightBarcodeBitmap.width / 2, i
+//                                                        )
+//                                                        if (pixel.red < MIN_LINE_BRIGHTNESS &&
+//                                                            pixel.green < MIN_LINE_BRIGHTNESS &&
+//                                                            pixel.blue < MIN_LINE_BRIGHTNESS
+//                                                        ) {
+//                                                            cropRight = bitmap.width - i
+//                                                            break
+//                                                        }
+//                                                    }
+//                                                }
 
                                                 rightBarcodeBitmap.recycle()
                                                 analyzeBarcode(context, id, bitmap, result)
@@ -249,14 +248,14 @@ object ColorUtil {
         for (barcode2 in result) {
             if (!barcode2.rawValue.isNullOrEmpty()) {
                 if (barcode2.boundingBox!!.height() > bitmap.width * .050
-                    && barcode2.boundingBox!!.width() > bitmap.height * .70
                 ) {
+                    cropRight = barcode2.boundingBox!!.top - 10
                     cropTop = min(barcode2.boundingBox!!.left, cropTop)
                     cropBottom = max(barcode2.boundingBox!!.right, cropBottom)
 
                     val croppedBitmap = Bitmap.createBitmap(
                         bitmap, cropLeft, cropTop,
-                        max(1, cropRight - cropLeft),
+                        max(1, cropRight + ((bitmap.width / 2) - cropLeft)),
                         max(1, cropBottom - cropTop)
                     )
 

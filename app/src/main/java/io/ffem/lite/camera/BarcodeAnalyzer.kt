@@ -83,7 +83,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
         leftBarcodeBitmap = Bitmap.createBitmap(
             bitmap, 0, 0,
-            bitmap.width, (bitmap.height * BARCODE_SIZE_PERCENT).toInt()
+            bitmap.width, bitmap.height / 2
         )
 
         taskLeftBarcode =
@@ -133,9 +133,9 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                         rightBarcodeBitmap = Bitmap.createBitmap(
                                             bitmap,
                                             0,
-                                            (bitmap.height * 0.85).toInt(),
+                                            bitmap.height / 2,
                                             bitmap.width,
-                                            (bitmap.height * BARCODE_SIZE_PERCENT).toInt()
+                                            bitmap.height
                                         )
 
                                         detector.detectInImage(
