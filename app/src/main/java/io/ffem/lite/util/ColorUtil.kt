@@ -158,7 +158,6 @@ object ColorUtil {
                     for (barcode in result) {
                         if (!barcode.rawValue.isNullOrEmpty()) {
 
-                            val width = barcode.boundingBox!!.width()
                             val height = barcode.boundingBox!!.height()
 
                             if (height > bitmap.width * .050
@@ -217,10 +216,11 @@ object ColorUtil {
                                                             break
                                                         }
                                                     }
+
+                                                    rightBarcodeBitmap.recycle()
+                                                    analyzeBarcode(context, id, bitmap, result)
                                                 }
 
-                                                rightBarcodeBitmap.recycle()
-                                                analyzeBarcode(context, id, bitmap, result)
                                             }
                                         )
                                 } catch (ignored: Exception) {
