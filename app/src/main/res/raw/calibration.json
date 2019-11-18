@@ -1,34 +1,96 @@
 {
-  "values": [
+  "tests": [
     {
-      "value": 0
+      "name": "Fluoride",
+      "type": "water",
+      "uuid": "3006cf",
+      "values": [
+        {
+          "value": -1
+        },
+        {
+          "value": 0
+        },
+        {
+          "value": 0.5
+        },
+        {
+          "value": 1.0
+        },
+        {
+          "value": 1.5
+        },
+        {
+          "value": 2
+        },
+        {
+          "value": -1
+        },
+        {
+          "value": 0
+        },
+        {
+          "value": 0.5
+        },
+        {
+          "value": 1.0
+        },
+        {
+          "value": 1.5
+        },
+        {
+          "value": 2
+        }
+      ]
     },
     {
-      "value": 0.5
-    },
-    {
-      "value": 1.0
-    },
-    {
-      "value": 1.5
-    },
-    {
-      "value": 2
-    },
-    {
-      "value": 0
-    },
-    {
-      "value": 0.5
-    },
-    {
-      "value": 1.0
-    },
-    {
-      "value": 1.5
-    },
-    {
-      "value": 2
+      "name": "pH",
+      "type": "water",
+      "uuid": "40df93",
+      "values": [
+        {
+          "value": 4
+        },
+        {
+          "value": 5
+        },
+        {
+          "value": 6
+        },
+        {
+          "value": 7
+        },
+        {
+          "value": 8
+        },
+        {
+          "value": 9
+        },
+        {
+          "value": 10
+        },
+        {
+          "value": 4
+        },
+        {
+          "value": 5
+        },
+        {
+          "value": 6
+        },
+        {
+          "value": 7
+        },
+        {
+          "value": 8
+        },
+        {
+          "value": 9
+        },
+        {
+          "value": 10
+        }
+      ]
     }
   ]
 }

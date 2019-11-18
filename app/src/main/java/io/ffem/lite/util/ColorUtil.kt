@@ -20,6 +20,7 @@ import io.ffem.lite.camera.Utilities
 import io.ffem.lite.model.*
 import io.ffem.lite.preference.getCalibrationColorDistanceTolerance
 import io.ffem.lite.preference.getColorDistanceTolerance
+import timber.log.Timber
 import java.util.*
 import kotlin.math.*
 
@@ -28,7 +29,6 @@ const val MAX_COLOR_DISTANCE_CALIBRATION = 40
 const val INTERPOLATION_COUNT = 100.0
 const val MAX_DISTANCE = 999
 const val MIN_BRIGHTNESS = 20
-const val MIN_LINE_BRIGHTNESS = 100
 
 fun getBitmapPixels(bitmap: Bitmap, rect: Rect): IntArray {
     val pixels = IntArray(bitmap.width * bitmap.height)
@@ -125,6 +125,8 @@ object ColorUtil {
     private var cropTop = 0
     private var cropBottom = 0
 
+    private var interval = 0
+
     fun extractImage(context: Context, id: String, bitmap: Bitmap) {
 
         val detector: FirebaseVisionBarcodeDetector by lazy {
@@ -158,28 +160,12 @@ object ColorUtil {
                     for (barcode in result) {
                         if (!barcode.rawValue.isNullOrEmpty()) {
 
-                            val height = barcode.boundingBox!!.height()
-
-                            if (height > bitmap.width * .050
+                            if (barcode.boundingBox!!.width() > bitmap.height * .44
                             ) {
                                 try {
-                                    cropTop = barcode.boundingBox!!.left
-                                    cropBottom = barcode.boundingBox!!.right
-                                    cropLeft = barcode.boundingBox!!.bottom + 10
-
-                                    for (i in barcode.boundingBox!!.bottom + 10
-                                            until leftBarcodeBitmap.height) {
-                                        val pixel = leftBarcodeBitmap.getPixel(
-                                            leftBarcodeBitmap.width / 2, i
-                                        )
-                                        if (pixel.red < MIN_LINE_BRIGHTNESS &&
-                                            pixel.green < MIN_LINE_BRIGHTNESS &&
-                                            pixel.blue < MIN_LINE_BRIGHTNESS
-                                        ) {
-                                            cropLeft = i
-                                            break
-                                        }
-                                    }
+                                    cropTop = (bitmap.height - barcode.boundingBox!!.right) - 5
+                                    cropBottom = (bitmap.height - barcode.boundingBox!!.left) + 5
+                                    cropLeft = barcode.boundingBox!!.bottom + 5
 
                                     leftBarcodeBitmap.recycle()
 
@@ -203,19 +189,6 @@ object ColorUtil {
                                             fun(result: List<FirebaseVisionBarcode>) {
                                                 for (barcode2 in result) {
                                                     cropRight = barcode2.boundingBox!!.top - 10
-                                                    for (i in barcode2.boundingBox!!.top - 10
-                                                            downTo 0) {
-                                                        val pixel = rightBarcodeBitmap.getPixel(
-                                                            rightBarcodeBitmap.width / 2, i
-                                                        )
-                                                        if (pixel.red < MIN_LINE_BRIGHTNESS &&
-                                                            pixel.green < MIN_LINE_BRIGHTNESS &&
-                                                            pixel.blue < MIN_LINE_BRIGHTNESS
-                                                        ) {
-                                                            cropRight = i
-                                                            break
-                                                        }
-                                                    }
 
                                                     rightBarcodeBitmap.recycle()
                                                     analyzeBarcode(context, id, bitmap, result)
@@ -246,7 +219,7 @@ object ColorUtil {
         }
         for (barcode2 in result) {
             if (!barcode2.rawValue.isNullOrEmpty()) {
-                if (barcode2.boundingBox!!.height() > bitmap.width * .050
+                if (barcode2.boundingBox!!.width() > bitmap.height * .44
                 ) {
                     val croppedBitmap = Bitmap.createBitmap(
                         bitmap, cropLeft, cropTop,
@@ -256,7 +229,10 @@ object ColorUtil {
 
                     bitmap.recycle()
 
-                    val resultDetail = extractColors(context, croppedBitmap)
+                    val resultDetail = extractColors(
+                        context,
+                        croppedBitmap, result[0].displayValue!!
+                    )
 
                     Utilities.savePicture(
                         context.applicationContext, id,
@@ -293,7 +269,11 @@ object ColorUtil {
         localBroadcastManager.sendBroadcast(intent)
     }
 
-    private fun extractColors(context: Context, image: Bitmap): ResultDetail {
+    private fun extractColors(
+        context: Context,
+        image: Bitmap,
+        id: String
+    ): ResultDetail {
         try {
             val input = context.resources.openRawResource(R.raw.calibration)
             val paint = Paint()
@@ -303,99 +283,71 @@ object ColorUtil {
             paint.isAntiAlias = true
 
             val content = FileUtil.readTextFile(input)
-            val calibration = gson.fromJson(content, Calibration::class.java)
+            val testConfig = gson.fromJson(content, TestConfig::class.java)
+
+            var calibration: List<CalibrationValue> = testConfig.tests[0].values
+            for (test in testConfig.tests) {
+                if (test.uuid == id) {
+                    calibration = test.values
+                    break
+                }
+            }
 
             val canvas = Canvas(image)
-            val padding = 8.0
 
+            val tempInterval = image.height / (calibration.size / 2)
 
-            var top = 50
-            var bottom = 50
-            var left = 50
-            var right = 50
+            val centerPointLeft = getSquareCenter(image, 70, tempInterval)
 
-            for (y in top downTo 0) {
-                val pixel = image.getPixel(50, y)
-
-                if (pixel.red < 50 && pixel.green < 50 && pixel.blue < 50) {
-                    top = y
-                    break
-                }
+            interval += if (calibration.size == 14) {
+                6
+            } else {
+                9
             }
 
-            for (y in bottom until 100) {
-                val pixel = image.getPixel(50, y)
+            val padding = interval / 10
 
-                if (pixel.red < 50 && pixel.green < 50 && pixel.blue < 50) {
-                    bottom = y
-                    break
-                }
-            }
+            for (i in 0 until (calibration.size / 2)) {
 
-            var centerY = (bottom - top) / 2
-
-            for (x in right until 100) {
-                val pixel = image.getPixel(x, centerY)
-
-                if (pixel.red < 50 && pixel.green < 50 && pixel.blue < 50) {
-                    right = x
-                    break
-                }
-            }
-
-            for (x in left downTo 0) {
-                val pixel = image.getPixel(x, centerY)
-
-                if (pixel.red < 50 && pixel.green < 50 && pixel.blue < 50) {
-                    left = x
-                    break
-                }
-            }
-
-            var centerX = (right - left) / 2
-            val interval = (centerY * 2) + 4
-
-            for (i in 0..4) {
-
-                val cal = calibration.values[i]
+                val cal = calibration[i]
                 val rectangle = Rect(
-                    (centerX - padding).toInt(), (centerY - padding).toInt(),
-                    (centerX + padding).toInt(), (centerY + padding).toInt()
+                    centerPointLeft.x - padding, centerPointLeft.y - padding,
+                    centerPointLeft.x + padding, centerPointLeft.y + padding
                 )
 
-                centerY += interval
+                centerPointLeft.y += interval
 
                 val pixels = getBitmapPixels(image, rectangle)
 
-                if (cal.value != -1.0f) {
-                    cal.color = getAverageColor(pixels)
-                    canvas.drawRect(rectangle, paint)
-                }
+                cal.color = getAverageColor(pixels)
+                canvas.drawRect(rectangle, paint)
             }
 
-            centerY = (bottom - top) / 2
-            centerX = image.width - centerX
+            val centerPointRight = getSquareCenter(image, image.width - 70, tempInterval)
+            interval += if (calibration.size == 14) {
+                6
+            } else {
+                9
+            }
 
-            for (i in 5..9) {
+            for (i in calibration.size / 2 until calibration.size) {
 
-                val cal = calibration.values[i]
+                val cal = calibration[i]
                 val rectangle = Rect(
-                    (centerX - padding).toInt(), (centerY - padding).toInt(),
-                    (centerX + padding).toInt(), (centerY + padding).toInt()
+                    centerPointRight.x - padding, centerPointRight.y - padding,
+                    centerPointRight.x + padding, centerPointRight.y + padding
                 )
 
-                centerY += interval
+                centerPointRight.y += interval
 
                 val pixels = getBitmapPixels(image, rectangle)
 
-                if (cal.value != -1.0f) {
-                    cal.color = getAverageColor(pixels)
-                    canvas.drawRect(rectangle, paint)
-                }
+                cal.color = getAverageColor(pixels)
+                canvas.drawRect(rectangle, paint)
             }
 
-            val x1 = (image.width) / 2
-            val y1 = ((image.height) / 2) + 40
+            val x1 = ((centerPointRight.x - centerPointLeft.x) / 2) + centerPointLeft.x
+            val y1 = ((image.height) / 2) + 80
             val rectangle = Rect(x1 - 20, y1 - 27, x1 + 20, y1 + 27)
             val pixels = getBitmapPixels(image, rectangle)
             val colorInfo = ColorInfo(getAverageColor(pixels))
@@ -403,20 +355,93 @@ object ColorUtil {
             canvas.drawRect(rectangle, paint)
 
             val swatches: ArrayList<Swatch> = ArrayList()
-            swatches.add(Swatch(0.0, getCalibrationColor(0f, calibration)))
-            swatches.add(Swatch(0.5, getCalibrationColor(.5f, calibration)))
-            swatches.add(Swatch(1.0, getCalibrationColor(1f, calibration)))
-            swatches.add(Swatch(1.5, getCalibrationColor(1.5f, calibration)))
-            swatches.add(Swatch(2.0, getCalibrationColor(2f, calibration)))
 
-            return analyzeColor(5, colorInfo, generateGradient(swatches))
+            for (cal in calibration) {
+                if (swatches.size >= calibration.size / 2) {
+                    break
+                }
+
+                swatches.add(
+                    Swatch(
+                        cal.value.toDouble(),
+                        getCalibrationColor(cal.value, calibration)
+                    )
+                )
+            }
+
+            return analyzeColor(swatches.size, colorInfo, generateGradient(swatches))
 
         } catch (e: Exception) {
+            Timber.e(e)
         }
         return ResultDetail((-1).toDouble(), 0)
     }
 
-    private fun getCalibrationColor(pointValue: Float, calibration: Calibration): Int {
+    private fun getSquareCenter(image: Bitmap, initX: Int, tempInterval: Int): Point {
+        var top = 70
+        var bottom = 70
+        var left = initX
+        var right = initX
+
+        val refPixel = image.getPixel(left, top)
+        for (y in top downTo 0) {
+            val pixel = image.getPixel(left, y)
+
+            if ((refPixel.red - pixel.red) > 40 ||
+                (refPixel.green - pixel.green) > 40 ||
+                (refPixel.blue - pixel.blue) > 40
+            ) {
+                top = y
+                break
+            }
+        }
+
+        for (y in bottom until tempInterval + 30) {
+            val pixel = image.getPixel(left, y)
+
+            if ((refPixel.red - pixel.red) > 40 ||
+                (refPixel.green - pixel.green) > 40 ||
+                (refPixel.blue - pixel.blue) > 40
+            ) {
+                bottom = y
+                break
+            }
+        }
+
+        val centerY = ((bottom - top) / 2) + top
+
+        for (x in left downTo 0) {
+            val pixel = image.getPixel(x, centerY)
+
+            if ((refPixel.red - pixel.red) > 40 ||
+                (refPixel.green - pixel.green) > 40 ||
+                (refPixel.blue - pixel.blue) > 40
+            ) {
+                left = x
+                break
+            }
+        }
+
+        for (x in right until left + tempInterval + 30) {
+            val pixel = image.getPixel(x, centerY)
+
+            if ((refPixel.red - pixel.red) > 40 ||
+                (refPixel.green - pixel.green) > 40 ||
+                (refPixel.blue - pixel.blue) > 40
+            ) {
+                right = x
+                break
+            }
+        }
+
+        val centerX = ((right - left) / 2) + left
+
+        interval = (bottom - top)
+
+        return Point(centerX, centerY)
+    }
+
+    private fun getCalibrationColor(pointValue: Float, calibration: List<CalibrationValue>): Int {
         var red = 0
         var green = 0
         var blue = 0
@@ -425,7 +450,7 @@ object ColorUtil {
 
         val filteredCalibrations = ArrayList<CalibrationValue>()
 
-        for (i in calibration.values) {
+        for (i in calibration) {
             if (i.value == pointValue) {
                 filteredCalibrations.add(i)
             }
