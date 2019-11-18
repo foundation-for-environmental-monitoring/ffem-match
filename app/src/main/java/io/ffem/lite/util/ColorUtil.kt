@@ -305,14 +305,20 @@ object ColorUtil {
                 9
             }
 
+            interval = min(
+                interval, image.height / (calibration.size / 2)
+            )
+
             val padding = interval / 10
 
             for (i in 0 until (calibration.size / 2)) {
 
                 val cal = calibration[i]
                 val rectangle = Rect(
-                    centerPointLeft.x - padding, centerPointLeft.y - padding,
-                    centerPointLeft.x + padding, centerPointLeft.y + padding
+                    max(1, centerPointLeft.x - padding),
+                    max(1, centerPointLeft.y - padding),
+                    min(image.width, centerPointLeft.x + padding),
+                    min(image.height, centerPointLeft.y + padding)
                 )
 
                 centerPointLeft.y += interval
@@ -329,6 +335,10 @@ object ColorUtil {
             } else {
                 9
             }
+
+            interval = min(
+                interval, image.height / (calibration.size / 2)
+            )
 
             for (i in calibration.size / 2 until calibration.size) {
 
@@ -361,12 +371,14 @@ object ColorUtil {
                     break
                 }
 
-                swatches.add(
-                    Swatch(
-                        cal.value.toDouble(),
-                        getCalibrationColor(cal.value, calibration)
+                if (cal.value >= 0) {
+                    swatches.add(
+                        Swatch(
+                            cal.value.toDouble(),
+                            getCalibrationColor(cal.value, calibration)
+                        )
                     )
-                )
+                }
             }
 
             return analyzeColor(swatches.size, colorInfo, generateGradient(swatches))
@@ -396,7 +408,7 @@ object ColorUtil {
             }
         }
 
-        for (y in bottom until tempInterval + 30) {
+        for (y in bottom until bottom + tempInterval) {
             val pixel = image.getPixel(left, y)
 
             if ((refPixel.red - pixel.red) > 40 ||
