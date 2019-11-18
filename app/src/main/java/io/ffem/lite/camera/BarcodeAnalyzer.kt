@@ -76,7 +76,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
         bitmap = mediaImage.bitmap
 
-//        val drawable = ContextCompat.getDrawable(context, R.drawable.newtest)
+//        val drawable = ContextCompat.getDrawable(context, R.drawable.test3)
 //        bitmap = (drawable as BitmapDrawable).bitmap
 
         leftBarcodeBitmap = Bitmap.createBitmap(
@@ -187,12 +187,18 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
                     done = true
 
-                    val bitmapRotated = Utilities.rotateImage(bitmap, 270)
+                    var bitmapRotated = Utilities.rotateImage(bitmap, 270)
+
+                    bitmapRotated = Bitmap.createBitmap(
+                        bitmapRotated, 0, max(1, cropTop - 15),
+                        bitmapRotated.width,
+                        max(1, cropBottom - cropTop + 30)
+                    )
 
                     val croppedBitmap = Bitmap.createBitmap(
-                        bitmapRotated, max(1, cropLeft), max(1, cropTop),
+                        bitmapRotated, max(1, cropLeft), 0,
                         max(1, cropRight + ((bitmapRotated.width / 2) - cropLeft)),
-                        max(1, cropBottom - cropTop)
+                        bitmapRotated.height
                     )
 
                     bitmap.recycle()

@@ -67,6 +67,30 @@ fun getAverageColor(pixels: IntArray): Int {
     return Color.argb(255, r, g, b)
 }
 
+fun hasBlackPixelsOnLine(bitmap: Bitmap, row: Int): Boolean {
+    var total = 0
+
+    val pixels = getBitmapPixels(
+        bitmap,
+        Rect(0, row, bitmap.width, row + 1)
+    )
+
+    for (element in pixels) {
+        if (element.red < MIN_BRIGHTNESS &&
+            element.green < MIN_BRIGHTNESS &&
+            element.blue < MIN_BRIGHTNESS
+        ) {
+            total++
+            if (total > 50) {
+                return true
+            }
+        }
+    }
+
+    return false
+}
+
+
 fun hasBlackPixelsOnBottomEdge(bitmap: Bitmap, left: Int, width: Int): Boolean {
     var total = 0
 
@@ -163,9 +187,17 @@ object ColorUtil {
                             if (barcode.boundingBox!!.width() > bitmap.height * .44
                             ) {
                                 try {
-                                    cropTop = (bitmap.height - barcode.boundingBox!!.right) - 5
+                                    cropTop =
+                                        max(0, (bitmap.height - barcode.boundingBox!!.right) - 5)
                                     cropBottom = (bitmap.height - barcode.boundingBox!!.left) + 5
                                     cropLeft = barcode.boundingBox!!.bottom + 5
+
+                                    for (i in cropLeft..barcode.boundingBox!!.bottom + 50) {
+                                        if (!hasBlackPixelsOnLine(leftBarcodeBitmap, i)) {
+                                            cropLeft = i + 5
+                                            break
+                                        }
+                                    }
 
                                     leftBarcodeBitmap.recycle()
 
@@ -188,7 +220,18 @@ object ColorUtil {
                                         .addOnSuccessListener(
                                             fun(result: List<FirebaseVisionBarcode>) {
                                                 for (barcode2 in result) {
-                                                    cropRight = barcode2.boundingBox!!.top - 10
+                                                    cropRight = barcode2.boundingBox!!.top - 5
+
+                                                    for (i in cropRight downTo cropRight - 50) {
+                                                        if (!hasBlackPixelsOnLine(
+                                                                rightBarcodeBitmap,
+                                                                i
+                                                            )
+                                                        ) {
+                                                            cropRight = i - 5
+                                                            break
+                                                        }
+                                                    }
 
                                                     rightBarcodeBitmap.recycle()
                                                     analyzeBarcode(context, id, bitmap, result)
@@ -358,7 +401,7 @@ object ColorUtil {
 
             val x1 = ((centerPointRight.x - centerPointLeft.x) / 2) + centerPointLeft.x
             val y1 = ((image.height) / 2) + 80
-            val rectangle = Rect(x1 - 20, y1 - 27, x1 + 20, y1 + 27)
+            val rectangle = Rect(x1 - 20, y1 - 27, x1 + 20, y1 + 35)
             val pixels = getBitmapPixels(image, rectangle)
             val colorInfo = ColorInfo(getAverageColor(pixels))
 
