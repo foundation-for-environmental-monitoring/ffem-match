@@ -170,8 +170,8 @@ class ResultListActivity : BaseActivity() {
         runnable = Runnable {
             analyzeImage()
             if (isInternetConnected) {
-                sendImagesToServer()
-                getResultsFromServer()
+//                sendImagesToServer()
+//                getResultsFromServer()
             }
         }
 
@@ -344,8 +344,8 @@ class ResultListActivity : BaseActivity() {
             button.setOnClickListener {
                 var value = inputValue.text.toString()
 
-                if (value.isNotEmpty() && (value.toFloat() < 0 || value.toFloat() > 3)) {
-                    inputValue.error = "Should be between 0 and 3"
+                if (value.isNotEmpty() && (value.toFloat() < 0 || value.toFloat() > 10)) {
+                    inputValue.error = "Should be between 0 and 10"
                 } else {
                     closeKeyboard(this, inputValue)
 

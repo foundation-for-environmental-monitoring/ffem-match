@@ -81,7 +81,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
         bitmap = mediaImage.bitmap
 
-//        val drawable = ContextCompat.getDrawable(context, R.drawable.test3)
+//        val drawable = ContextCompat.getDrawable(context, R.drawable.test6)
 //        bitmap = (drawable as BitmapDrawable).bitmap
 
         leftBarcodeBitmap = Bitmap.createBitmap(
@@ -105,8 +105,8 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                         for (barcode in result) {
                             if (!barcode.rawValue.isNullOrEmpty()) {
 
-                                if (barcode.boundingBox!!.width() > bitmap.width * .44 &&
-                                    barcode.boundingBox!!.width() < bitmap.width * .48
+                                if (barcode.boundingBox!!.width() > bitmap.width * .44
+//                                    && barcode.boundingBox!!.width() < bitmap.width * .48
                                 ) {
                                     try {
                                         cropTop = (bitmap.width - barcode.boundingBox!!.right) - 5
@@ -184,8 +184,8 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         }
         for (barcode2 in result) {
             if (!barcode2.rawValue.isNullOrEmpty()) {
-                if (barcode2.boundingBox!!.width() > bitmap.width * .44 &&
-                    barcode2.boundingBox!!.width() < bitmap.width * .48
+                if (barcode2.boundingBox!!.width() > bitmap.width * .44
+//                    && barcode2.boundingBox!!.width() < bitmap.width * .48
                 ) {
 
                     val input = context.resources.openRawResource(R.raw.calibration)
@@ -209,29 +209,31 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
                     var bitmapRotated = Utilities.rotateImage(bitmap, 270)
 
-                    bitmapRotated = Bitmap.createBitmap(
-                        bitmapRotated, 0, max(1, cropTop - 15),
-                        bitmapRotated.width,
-                        min(
-                            max(1, cropBottom - cropTop + 30),
-                            bitmapRotated.height - cropTop - 15
-                        )
+                    cropTop = max(0, cropTop - 15)
+                    val height = min(
+                        max(1, cropBottom - cropTop + 15),
+                        bitmapRotated.height - cropTop
                     )
 
-                    val croppedBitmap = Bitmap.createBitmap(
-                        bitmapRotated, max(1, cropLeft), 0,
-                        max(1, cropRight + ((bitmapRotated.width / 2) - cropLeft)),
-                        bitmapRotated.height
+                    bitmapRotated = Bitmap.createBitmap(
+                        bitmapRotated, 0, cropTop,
+                        bitmapRotated.width, height
                     )
+
+//                    val croppedBitmap = Bitmap.createBitmap(
+//                        bitmapRotated, max(1, cropLeft), 0,
+//                        max(1, cropRight + ((bitmapRotated.width / 2) - cropLeft)),
+//                        bitmapRotated.height
+//                    )
 
                     bitmap.recycle()
 
-                    Utilities.savePicture(
-                        context.applicationContext, id,
-                        testName, Utilities.bitmapToBytes(croppedBitmap)
-                    )
-
-                    croppedBitmap.recycle()
+//                    Utilities.savePicture(
+//                        context.applicationContext, id,
+//                        testName, Utilities.bitmapToBytes(croppedBitmap)
+//                    )
+//
+//                    croppedBitmap.recycle()
 
                     val testId = UUID.randomUUID().toString()
                     val filePath =

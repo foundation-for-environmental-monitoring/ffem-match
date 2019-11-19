@@ -189,11 +189,12 @@ object ColorUtil {
 //                                barcode.boundingBox!!.width() < bitmap.width * .48
 //                            ) {
                             try {
-                                cropTop = (bitmap.width - barcode.boundingBox!!.right) - 5
-                                cropBottom = (bitmap.width - barcode.boundingBox!!.left) + 5
+                                cropTop =
+                                    (bitmap.width - barcode.boundingBox!!.right - barcode.boundingBox!!.left)
+                                cropBottom = (bitmap.width - cropTop)
                                 cropLeft = barcode.boundingBox!!.bottom + 5
 
-                                for (i in cropLeft..barcode.boundingBox!!.bottom + 50) {
+                                for (i in cropLeft..barcode.boundingBox!!.bottom + 100) {
                                     if (!hasBlackPixelsOnLine(leftBarcodeBitmap, i)) {
                                         cropLeft = i + 5
                                         break
@@ -236,7 +237,7 @@ object ColorUtil {
 
                                                 cropRight = barcode2.boundingBox!!.top - 5
 
-                                                for (i in cropRight downTo cropRight - 50) {
+                                                for (i in cropRight downTo cropRight - 100) {
                                                     if (!hasBlackPixelsOnLine(
                                                             rightBarcodeBitmap,
                                                             i
@@ -298,13 +299,15 @@ object ColorUtil {
 
                 var bitmapRotated = Utilities.rotateImage(bitmap, 270)
 
+                cropTop = max(0, cropTop - 10)
+                val height = min(
+                    max(1, cropBottom - cropTop + 10),
+                    bitmapRotated.height - cropTop
+                )
+
                 bitmapRotated = Bitmap.createBitmap(
-                    bitmapRotated, 0, max(1, cropTop - 15),
-                    bitmapRotated.width,
-                    min(
-                        max(1, cropBottom - cropTop + 30),
-                        bitmapRotated.height - cropTop - 15
-                    )
+                    bitmapRotated, 0, cropTop,
+                    bitmapRotated.width, height
                 )
 
                 val croppedBitmap = Bitmap.createBitmap(
@@ -322,7 +325,7 @@ object ColorUtil {
 
                 Utilities.savePicture(
                     context.applicationContext, id,
-                    testName, Utilities.bitmapToBytes(croppedBitmap)
+                    "", Utilities.bitmapToBytes(croppedBitmap)
                 )
                 croppedBitmap.recycle()
 
@@ -384,15 +387,12 @@ object ColorUtil {
 
             val canvas = Canvas(image)
 
-            val tempInterval = image.height / (calibration.size / 2)
+            val centerPointLeft = getSquareCenter(
+                image,
+                calibration.size / 2, (image.width * 0.12).toInt()
+            )
 
-            val centerPointLeft = getSquareCenter(image, 70, tempInterval)
-
-            interval += if (calibration.size == 14) {
-                6
-            } else {
-                9
-            }
+            interval += (image.height * 0.01).toInt()
 
             interval = min(
                 interval, image.height / (calibration.size / 2)
@@ -418,12 +418,11 @@ object ColorUtil {
                 canvas.drawRect(rectangle, paint)
             }
 
-            val centerPointRight = getSquareCenter(image, image.width - 70, tempInterval)
-            interval += if (calibration.size == 14) {
-                6
-            } else {
-                9
-            }
+            val centerPointRight = getSquareCenter(
+                image, calibration.size / 2, (image.width * 0.88).toInt()
+            )
+
+            interval += (image.height * 0.01).toInt()
 
             interval = min(
                 interval, image.height / (calibration.size / 2)
@@ -478,31 +477,34 @@ object ColorUtil {
         return ResultDetail((-1).toDouble(), 0)
     }
 
-    private fun getSquareCenter(image: Bitmap, initX: Int, tempInterval: Int): Point {
-        var top = 70
-        var bottom = 70
-        var left = initX
-        var right = initX
+    private fun getSquareCenter(image: Bitmap, intervals: Int, tempLeft: Int): Point {
+        val tempInterval = image.height / intervals
+        var top = image.height / intervals
+        var bottom = top
+        var left = tempLeft
+        var right = left
+
+        val colorDifference = 60
 
         val refPixel = image.getPixel(left, top)
         for (y in top downTo 0) {
             val pixel = image.getPixel(left, y)
 
-            if ((refPixel.red - pixel.red) > 40 ||
-                (refPixel.green - pixel.green) > 40 ||
-                (refPixel.blue - pixel.blue) > 40
+            if ((refPixel.red - pixel.red) > colorDifference ||
+                (refPixel.green - pixel.green) > colorDifference ||
+                (refPixel.blue - pixel.blue) > colorDifference
             ) {
                 top = y
                 break
             }
         }
 
-        for (y in bottom until bottom + tempInterval) {
+        for (y in bottom until bottom + tempInterval + 10) {
             val pixel = image.getPixel(left, y)
 
-            if ((refPixel.red - pixel.red) > 40 ||
-                (refPixel.green - pixel.green) > 40 ||
-                (refPixel.blue - pixel.blue) > 40
+            if ((refPixel.red - pixel.red) > colorDifference ||
+                (refPixel.green - pixel.green) > colorDifference ||
+                (refPixel.blue - pixel.blue) > colorDifference
             ) {
                 bottom = y
                 break
@@ -514,21 +516,21 @@ object ColorUtil {
         for (x in left downTo 0) {
             val pixel = image.getPixel(x, centerY)
 
-            if ((refPixel.red - pixel.red) > 40 ||
-                (refPixel.green - pixel.green) > 40 ||
-                (refPixel.blue - pixel.blue) > 40
+            if ((refPixel.red - pixel.red) > colorDifference ||
+                (refPixel.green - pixel.green) > colorDifference ||
+                (refPixel.blue - pixel.blue) > colorDifference
             ) {
                 left = x
                 break
             }
         }
 
-        for (x in right until left + tempInterval + 30) {
+        for (x in right until right + tempInterval + 10) {
             val pixel = image.getPixel(x, centerY)
 
-            if ((refPixel.red - pixel.red) > 40 ||
-                (refPixel.green - pixel.green) > 40 ||
-                (refPixel.blue - pixel.blue) > 40
+            if ((refPixel.red - pixel.red) > colorDifference ||
+                (refPixel.green - pixel.green) > colorDifference ||
+                (refPixel.blue - pixel.blue) > colorDifference
             ) {
                 right = x
                 break
