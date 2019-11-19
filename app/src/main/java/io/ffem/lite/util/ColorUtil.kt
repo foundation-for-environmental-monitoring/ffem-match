@@ -151,6 +151,7 @@ object ColorUtil {
     private var cropBottom = 0
 
     private var interval = 0
+    private var prevInterval = -1
 
     fun extractImage(context: Context, id: String, bitmapImage: Bitmap) {
 
@@ -371,7 +372,7 @@ object ColorUtil {
             val paint = Paint()
             paint.style = Style.STROKE
             paint.color = Color.WHITE
-            paint.strokeWidth = 4f
+            paint.strokeWidth = 2f
             paint.isAntiAlias = true
 
             val content = FileUtil.readTextFile(input)
@@ -387,62 +388,34 @@ object ColorUtil {
 
             val canvas = Canvas(image)
 
-            val centerPointLeft = getSquareCenter(
-                image,
-                calibration.size / 2, (image.width * 0.12).toInt()
-            )
+            val intervals = calibration.size / 2
+            var x = (image.width * 0.12).toInt()
+            var y = image.height / intervals
 
-            interval += (image.height * 0.01).toInt()
+            for (i in 0 until intervals) {
 
-            interval = min(
-                interval, image.height / (calibration.size / 2)
-            )
-
-            val padding = interval / 10
-
-            for (i in 0 until (calibration.size / 2)) {
-
-                val cal = calibration[i]
-                val rectangle = Rect(
-                    max(1, centerPointLeft.x - padding),
-                    max(1, centerPointLeft.y - padding),
-                    min(image.width, centerPointLeft.x + padding),
-                    min(image.height, centerPointLeft.y + padding)
+                val centerPoint = getSquareCenter(
+                    i, image, x, y, calibration, paint
                 )
 
-                centerPointLeft.y += interval
-
-                val pixels = getBitmapPixels(image, rectangle)
-
-                cal.color = getAverageColor(pixels)
-                canvas.drawRect(rectangle, paint)
+                x = centerPoint.x
+                y = centerPoint.y + interval
             }
+            val centerPointLeft = Point(x, y - interval)
 
-            val centerPointRight = getSquareCenter(
-                image, calibration.size / 2, (image.width * 0.88).toInt()
-            )
-
-            interval += (image.height * 0.01).toInt()
-
-            interval = min(
-                interval, image.height / (calibration.size / 2)
-            )
+            x = (image.width * 0.88).toInt()
+            y = image.height / intervals
 
             for (i in calibration.size / 2 until calibration.size) {
 
-                val cal = calibration[i]
-                val rectangle = Rect(
-                    centerPointRight.x - padding, centerPointRight.y - padding,
-                    centerPointRight.x + padding, centerPointRight.y + padding
+                val centerPoint = getSquareCenter(
+                    i, image, x, y, calibration, paint
                 )
 
-                centerPointRight.y += interval
-
-                val pixels = getBitmapPixels(image, rectangle)
-
-                cal.color = getAverageColor(pixels)
-                canvas.drawRect(rectangle, paint)
+                x = centerPoint.x
+                y = centerPoint.y + interval
             }
+            val centerPointRight = Point(x, y - interval)
 
             val x1 = ((centerPointRight.x - centerPointLeft.x) / 2) + centerPointLeft.x
             val y1 = ((image.height) / 2) + 80
@@ -477,49 +450,42 @@ object ColorUtil {
         return ResultDetail((-1).toDouble(), 0)
     }
 
-    private fun getSquareCenter(image: Bitmap, intervals: Int, tempLeft: Int): Point {
+    private fun getSquareCenter(
+        index: Int,
+        image: Bitmap, leftX: Int, topY: Int, calibration: List<CalibrationValue>, paint: Paint
+    ): Point {
+        val intervals = calibration.size / 2
         val tempInterval = image.height / intervals
-        var top = image.height / intervals
-        var bottom = top
-        var left = tempLeft
+        var left = leftX
         var right = left
-
-        val colorDifference = 60
+        var top = topY
+        var bottom = top
 
         val refPixel = image.getPixel(left, top)
         for (y in top downTo 0) {
             val pixel = image.getPixel(left, y)
 
-            if ((refPixel.red - pixel.red) > colorDifference ||
-                (refPixel.green - pixel.green) > colorDifference ||
-                (refPixel.blue - pixel.blue) > colorDifference
-            ) {
+            if (isDarkPixel(refPixel, pixel)) {
                 top = y
                 break
             }
         }
 
-        for (y in bottom until bottom + tempInterval + 10) {
-            val pixel = image.getPixel(left, y)
+        for (y in bottom until bottom + tempInterval) {
+            val pixel = image.getPixel(left, min(y, image.height))
 
-            if ((refPixel.red - pixel.red) > colorDifference ||
-                (refPixel.green - pixel.green) > colorDifference ||
-                (refPixel.blue - pixel.blue) > colorDifference
-            ) {
+            if (isDarkPixel(refPixel, pixel)) {
                 bottom = y
                 break
             }
         }
 
-        val centerY = ((bottom - top) / 2) + top
+        var centerY = ((bottom - top) / 2) + top
 
         for (x in left downTo 0) {
             val pixel = image.getPixel(x, centerY)
 
-            if ((refPixel.red - pixel.red) > colorDifference ||
-                (refPixel.green - pixel.green) > colorDifference ||
-                (refPixel.blue - pixel.blue) > colorDifference
-            ) {
+            if (isDarkPixel(refPixel, pixel)) {
                 left = x
                 break
             }
@@ -528,10 +494,7 @@ object ColorUtil {
         for (x in right until right + tempInterval + 10) {
             val pixel = image.getPixel(x, centerY)
 
-            if ((refPixel.red - pixel.red) > colorDifference ||
-                (refPixel.green - pixel.green) > colorDifference ||
-                (refPixel.blue - pixel.blue) > colorDifference
-            ) {
+            if (isDarkPixel(refPixel, pixel)) {
                 right = x
                 break
             }
@@ -540,8 +503,58 @@ object ColorUtil {
         val centerX = ((right - left) / 2) + left
 
         interval = (bottom - top)
+        if (prevInterval != -1 && abs(prevInterval - interval) > 15) {
+            interval = prevInterval
+            centerY = (interval / 2) + top
+        }
+        prevInterval = interval
+
+        val padding = interval / 7
+
+        val rectangle = Rect(
+            max(1, centerX - padding),
+            max(1, centerY - padding),
+            min(image.width, centerX + padding),
+            min(image.height, centerY + padding)
+        )
+
+        val pixels = getBitmapPixels(image, rectangle)
+
+        val cal = calibration[index]
+        cal.color = getAverageColor(pixels)
+        val canvas = Canvas(image)
+        canvas.drawRect(rectangle, paint)
 
         return Point(centerX, centerY)
+    }
+
+    private fun isDarkPixel(refPixel: Int, pixel: Int): Boolean {
+        val colorDifference = 40
+        var count = 0
+        var blackCount = 0
+
+        if (pixel.red < 22) {
+            blackCount += 1
+        }
+        if (pixel.green < 22) {
+            blackCount += 1
+        }
+        if (pixel.blue < 22) {
+            blackCount += 1
+        }
+
+        if (blackCount > 1) {
+            if (abs(refPixel.red - pixel.red) > colorDifference) {
+                count += 1
+            }
+            if (abs(refPixel.green - pixel.green) > colorDifference) {
+                count += 1
+            }
+            if (abs(refPixel.blue - pixel.blue) > colorDifference) {
+                count += 1
+            }
+        }
+        return count > 0
     }
 
     private fun getCalibrationColor(pointValue: Float, calibration: List<CalibrationValue>): Int {

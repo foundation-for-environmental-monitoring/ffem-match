@@ -213,16 +213,16 @@ class CameraFragment : Fragment() {
             container.removeView(it)
         }
 
-        if (useLargeColorCard()) {
-            View.inflate(requireContext(), R.layout.preview_large_overlay, container)
-        } else {
+//        if (useLargeColorCard()) {
+//            View.inflate(requireContext(), R.layout.preview_large_overlay, container)
+//        } else {
             View.inflate(requireContext(), R.layout.preview_overlay, container)
-        }
+//        }
 
         card_overlay.animate()
             .setStartDelay(1000)
             .alpha(0.0f)
-            .setDuration(4000)
+            .setDuration(6000)
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
                     if (card_overlay != null) {

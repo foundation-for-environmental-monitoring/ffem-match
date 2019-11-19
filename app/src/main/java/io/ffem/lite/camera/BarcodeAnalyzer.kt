@@ -81,7 +81,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
         bitmap = mediaImage.bitmap
 
-//        val drawable = ContextCompat.getDrawable(context, R.drawable.test6)
+//        val drawable = ContextCompat.getDrawable(context, R.drawable.test8)
 //        bitmap = (drawable as BitmapDrawable).bitmap
 
         leftBarcodeBitmap = Bitmap.createBitmap(
@@ -151,10 +151,8 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                                         cropRight = barcode2.boundingBox!!.top - 10
 
                                                         rightBarcodeBitmap.recycle()
-                                                        val testId = UUID.randomUUID().toString()
                                                         analyzeBarcode(
                                                             context,
-                                                            testId,
                                                             bitmap,
                                                             result
                                                         )
@@ -176,7 +174,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
     }
 
     private fun analyzeBarcode(
-        context: Context, id: String, bitmap: Bitmap, result: List<FirebaseVisionBarcode>
+        context: Context, bitmap: Bitmap, result: List<FirebaseVisionBarcode>
     ) {
         if (result.isEmpty()) {
             processing = false
