@@ -107,7 +107,6 @@ class App : BaseApplication() {
 
         const val LOCAL_RESULT_EVENT = "result_event"
         const val SOUND_ON = true
-        const val TEST_PARAMETER_NAME = "Fluoride"
 
         const val RESULT_SOUND_PLAYED_KEY = "result_sound_played"
         const val CONNECTION_ERROR_NOTIFIED_KEY = "connection_error_notified"

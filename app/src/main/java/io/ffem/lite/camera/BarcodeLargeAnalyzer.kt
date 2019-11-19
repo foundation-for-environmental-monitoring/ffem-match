@@ -15,7 +15,6 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
 import io.ffem.lite.app.App.Companion.FILE_PATH_KEY
 import io.ffem.lite.app.App.Companion.TEST_ID_KEY
-import io.ffem.lite.app.App.Companion.TEST_PARAMETER_NAME
 import io.ffem.lite.camera.CameraFragment.Companion.CAPTURED_EVENT
 import io.ffem.lite.util.hasBlackPixelsOnBottomEdge
 import io.ffem.lite.util.hasBlackPixelsOnTopEdge
@@ -222,7 +221,7 @@ class BarcodeLargeAnalyzer(private val context: Context) : ImageAnalysis.Analyze
                     val filePath =
                         Utilities.savePicture(
                             context.applicationContext, testId,
-                            TEST_PARAMETER_NAME, Utilities.bitmapToBytes(bitmapRotated)
+                            "", Utilities.bitmapToBytes(bitmapRotated)
                         )
 
                     bitmapRotated.recycle()

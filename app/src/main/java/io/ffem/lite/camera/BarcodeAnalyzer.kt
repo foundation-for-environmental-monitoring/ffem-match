@@ -13,10 +13,15 @@ import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetector
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
+import com.google.gson.Gson
+import io.ffem.lite.R
 import io.ffem.lite.app.App
+import io.ffem.lite.model.TestConfig
+import io.ffem.lite.util.FileUtil
 import java.util.*
 import kotlin.math.abs
 import kotlin.math.max
+import kotlin.math.min
 
 class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
@@ -119,7 +124,6 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                                 bitmap.height / 2
                                             )
 
-
                                         detector.detectInImage(
                                             FirebaseVisionImage.fromBitmap(rightBarcodeBitmap)
                                         )
@@ -172,8 +176,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
     }
 
     private fun analyzeBarcode(
-        context: Context, id: String,
-        bitmap: Bitmap, result: List<FirebaseVisionBarcode>
+        context: Context, id: String, bitmap: Bitmap, result: List<FirebaseVisionBarcode>
     ) {
         if (result.isEmpty()) {
             processing = false
@@ -185,6 +188,23 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                     barcode2.boundingBox!!.width() < bitmap.width * .48
                 ) {
 
+                    val input = context.resources.openRawResource(R.raw.calibration)
+                    val content = FileUtil.readTextFile(input)
+                    val testConfig = Gson().fromJson(content, TestConfig::class.java)
+
+                    var testName = ""
+                    for (test in testConfig.tests) {
+                        if (test.uuid == result[0].displayValue!!) {
+                            testName = test.name!!
+                            break
+                        }
+                    }
+
+                    if (testName.isEmpty()) {
+                        processing = false
+                        return
+                    }
+
                     done = true
 
                     var bitmapRotated = Utilities.rotateImage(bitmap, 270)
@@ -192,7 +212,10 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                     bitmapRotated = Bitmap.createBitmap(
                         bitmapRotated, 0, max(1, cropTop - 15),
                         bitmapRotated.width,
-                        max(1, cropBottom - cropTop + 30)
+                        min(
+                            max(1, cropBottom - cropTop + 30),
+                            bitmapRotated.height - cropTop - 15
+                        )
                     )
 
                     val croppedBitmap = Bitmap.createBitmap(
@@ -205,7 +228,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
                     Utilities.savePicture(
                         context.applicationContext, id,
-                        App.TEST_PARAMETER_NAME, Utilities.bitmapToBytes(croppedBitmap)
+                        testName, Utilities.bitmapToBytes(croppedBitmap)
                     )
 
                     croppedBitmap.recycle()
@@ -214,7 +237,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                     val filePath =
                         Utilities.savePicture(
                             context.applicationContext, testId,
-                            App.TEST_PARAMETER_NAME, Utilities.bitmapToBytes(bitmapRotated)
+                            testName, Utilities.bitmapToBytes(bitmapRotated)
                         )
 
                     bitmapRotated.recycle()
@@ -222,6 +245,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                     val intent = Intent(CameraFragment.CAPTURED_EVENT)
                     intent.putExtra(App.FILE_PATH_KEY, filePath)
                     intent.putExtra(App.TEST_ID_KEY, testId)
+                    intent.putExtra(App.TEST_NAME_KEY, testName)
                     localBroadcastManager.sendBroadcast(
                         intent
                     )

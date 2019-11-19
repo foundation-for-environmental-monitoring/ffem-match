@@ -6,17 +6,5 @@
         app:allowDividerAbove="true"
         app:allowDividerBelow="true"
         app:iconSpaceReserved="false">
-        <CheckBoxPreference
-            android:key="@string/largeColorCardKey"
-            android:title="Use big color card"
-            app:allowDividerAbove="true"
-            app:allowDividerBelow="true"
-            app:iconSpaceReserved="false" />
-        <CheckBoxPreference
-            android:key="@string/dummyImageKey"
-            android:title="Select existing image for analysis"
-            app:allowDividerAbove="true"
-            app:allowDividerBelow="true"
-            app:iconSpaceReserved="false" />
     </PreferenceCategory>
 </androidx.preference.PreferenceScreen>

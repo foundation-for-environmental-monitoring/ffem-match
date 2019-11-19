@@ -45,7 +45,6 @@ import io.ffem.lite.app.App.Companion.LOCAL_RESULT_EVENT
 import io.ffem.lite.app.App.Companion.PERMISSIONS_MISSING_KEY
 import io.ffem.lite.app.App.Companion.TEST_ID_KEY
 import io.ffem.lite.app.App.Companion.TEST_NAME_KEY
-import io.ffem.lite.app.App.Companion.TEST_PARAMETER_NAME
 import io.ffem.lite.app.App.Companion.TEST_RESULT
 import io.ffem.lite.app.AppDatabase
 import io.ffem.lite.camera.Utilities
@@ -452,6 +451,11 @@ class ResultListActivity : BaseActivity() {
                 data?.data?.also { uri ->
 
                     val id = UUID.randomUUID().toString()
+//                    val testName = data.getStringExtra(TEST_NAME_KEY)
+//
+//                    if (testName.isNullOrEmpty()) {
+//                        return
+//                    }
 
                     val bitmapFromFile =
                         BitmapFactory.decodeFile(FileUtil.getPath(this, uri))
@@ -476,20 +480,19 @@ class ResultListActivity : BaseActivity() {
                     Utilities.savePicture(
                         applicationContext,
                         id,
-                        TEST_PARAMETER_NAME,
+                        "Dummy",
                         Utilities.bitmapToBytes(bitmapFromFile)
                     )
 
                     db.resultDao().insert(
                         TestResult(
-                            id, 0, TEST_PARAMETER_NAME,
+                            id, 0, "Dummy",
                             Date().time, Date().time, "", "",
                             expectedValue, getString(R.string.outbox)
                         )
                     )
 
                     ColorUtil.extractImage(this, id, bitmapFromFile)
-
                 }
             } else if (data != null) {
                 saveImageData(data)
@@ -507,6 +510,13 @@ class ResultListActivity : BaseActivity() {
 
     private fun saveImageData(data: Intent) {
         val id = data.getStringExtra(TEST_ID_KEY)
+
+        val testName = data.getStringExtra(TEST_NAME_KEY)
+
+        if (testName.isNullOrEmpty()) {
+            return
+        }
+
         if (id != null) {
 
             val expectedValue = PreferencesUtil
@@ -514,7 +524,7 @@ class ResultListActivity : BaseActivity() {
 
             db.resultDao().insert(
                 TestResult(
-                    id, 0, TEST_PARAMETER_NAME, Date().time,
+                    id, 0, testName, Date().time,
                     Date().time, "", "", expectedValue, getString(R.string.outbox)
                 )
             )
@@ -566,7 +576,9 @@ class ResultListActivity : BaseActivity() {
 
             val bitmap = BitmapFactory.decodeFile(file.path)
 
-            ColorUtil.extractImage(this, it.id, bitmap)
+            if (bitmap != null) {
+                ColorUtil.extractImage(this, it.id, bitmap)
+            }
 
             refreshList()
         }
