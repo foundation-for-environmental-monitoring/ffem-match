@@ -7,6 +7,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.View.GONE
 import io.ffem.lite.R
+import io.ffem.lite.app.App
 import io.ffem.lite.app.App.Companion.TEST_ID_KEY
 import io.ffem.lite.app.App.Companion.TEST_NAME_KEY
 import kotlinx.android.synthetic.main.activity_result.*
@@ -22,8 +23,6 @@ class ResultActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_result)
 
-        setTitle(R.string.app_name)
-
         val id = intent.getStringExtra(TEST_ID_KEY)!!
         val name = intent.getStringExtra(TEST_NAME_KEY)!!
 
@@ -32,6 +31,8 @@ class ResultActivity : BaseActivity() {
 
         localPath = path + id + "_" + ".jpg"
         serverPath = path + id + "_" + name + ".jpg"
+
+        textResultTitle.text = App.getVersionName()
 
         showLocalImage()
     }

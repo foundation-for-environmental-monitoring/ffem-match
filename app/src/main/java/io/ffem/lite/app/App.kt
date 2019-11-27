@@ -133,6 +133,21 @@ class App : BaseApplication() {
          *
          * @return The version name and number
          */
+        fun getVersionName(): String {
+            try {
+                val packageInfo = app.packageManager.getPackageInfo(app.packageName, 0)
+                return packageInfo.versionName
+            } catch (ignored: PackageManager.NameNotFoundException) {
+                // do nothing
+            }
+            return ""
+        }
+
+        /**
+         * Gets the app version.
+         *
+         * @return The version name and number
+         */
         fun getAppVersion(): String {
             var version = ""
             try {

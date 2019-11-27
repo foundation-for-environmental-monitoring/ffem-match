@@ -46,6 +46,7 @@ import io.ffem.lite.app.App.Companion.PERMISSIONS_MISSING_KEY
 import io.ffem.lite.app.App.Companion.TEST_ID_KEY
 import io.ffem.lite.app.App.Companion.TEST_NAME_KEY
 import io.ffem.lite.app.App.Companion.TEST_RESULT
+import io.ffem.lite.app.App.Companion.getVersionName
 import io.ffem.lite.app.AppDatabase
 import io.ffem.lite.camera.Utilities
 import io.ffem.lite.helper.ApkHelper.isNonStoreVersion
@@ -146,7 +147,7 @@ class ResultListActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_result_list)
 
-        setTitle(R.string.app_name)
+        title = getString(R.string.app_name) + " - " + getVersionName()
 
         broadcastManager = LocalBroadcastManager.getInstance(this)
 
@@ -170,8 +171,8 @@ class ResultListActivity : BaseActivity() {
         runnable = Runnable {
             analyzeImage()
             if (isInternetConnected) {
-//                sendImagesToServer()
-//                getResultsFromServer()
+                sendImagesToServer()
+                getResultsFromServer()
             }
         }
 

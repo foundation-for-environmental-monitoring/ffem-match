@@ -4,12 +4,11 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import androidx.databinding.DataBindingUtil
 import io.ffem.lite.R
 import io.ffem.lite.app.App
-import io.ffem.lite.databinding.ActivityAboutBinding
 import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.preference.isDiagnosticMode
+import kotlinx.android.synthetic.main.activity_about.*
 
 /**
  * Activity to display info about the app.
@@ -22,10 +21,9 @@ class AboutActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_about)
 
-        val b = DataBindingUtil.setContentView<ActivityAboutBinding>(this, R.layout.activity_about)
-
-        b.textVersion.text = App.getAppVersion()
+        textVersion.text = App.getAppVersion()
 
         setTitle(R.string.about)
     }

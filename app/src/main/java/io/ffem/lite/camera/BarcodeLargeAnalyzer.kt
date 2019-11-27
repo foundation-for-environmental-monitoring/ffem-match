@@ -25,7 +25,7 @@ import kotlin.math.min
 
 const val MAX_SIDE_MARGIN = 50
 const val MAX_LONG_SIDE_MARGIN = 40
-const val MAX_ANGLE = 15
+const val MAX_ANGLE = 12
 const val BARCODE_SIZE_PERCENT = 0.15
 
 class BarcodeLargeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {

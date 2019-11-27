@@ -81,7 +81,15 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
         bitmap = mediaImage.bitmap
 
-//        val drawable = ContextCompat.getDrawable(context, R.drawable.test8)
+//        val expectedValue = (PreferencesUtil
+//            .getString(context, R.string.expectedValueKey, "").toFloat().toInt())
+//
+//        val drawable = ContextCompat.getDrawable(
+//            context, context.resources.getIdentifier(
+//                "test$expectedValue",
+//                "drawable", context.packageName
+//            )
+//        )
 //        bitmap = (drawable as BitmapDrawable).bitmap
 
         leftBarcodeBitmap = Bitmap.createBitmap(
