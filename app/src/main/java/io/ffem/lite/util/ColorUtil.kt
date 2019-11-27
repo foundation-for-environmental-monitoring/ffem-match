@@ -51,6 +51,10 @@ fun isDarkLine(pixels: IntArray): Boolean {
     var r = 0
     var total = 0
 
+    if (pixels.isEmpty()) {
+        return false
+    }
+
     for (element in pixels) {
         r += element.red
         total++
@@ -473,7 +477,11 @@ object ColorUtil {
             }
 
             var calibrationIndex = 0
-            val commonTop = mostCommon(topY)
+            var commonTop = mostCommon(topY)
+
+            if (abs(bitmap.height / intervals - commonTop) > 15) {
+                commonTop = bitmap.height / intervals
+            }
 
             val padding = interval / 7
             val commonLeft = mostCommon(leftX)
@@ -621,7 +629,8 @@ object ColorUtil {
         var centerY = ((bottom - top) / 2) + top
 
         for (x in left downTo 0) {
-            val rectangle = Rect(x, centerY - 5, x + 1, centerY + 5)
+            val rectangle =
+                Rect(x, min(bitmap.height, centerY - 5), x + 1, min(bitmap.height, centerY + 5))
             val pixels = getBitmapPixels(bitmap, rectangle)
             if (isDarkLine(pixels)) {
                 left = x
@@ -632,7 +641,8 @@ object ColorUtil {
         right = left + (tempInterval / 2)
 
         for (x in right until min(image.width - 1, right + tempInterval)) {
-            val rectangle = Rect(x - 1, centerY - 5, x, centerY + 5)
+            val rectangle =
+                Rect(x - 1, min(bitmap.height, centerY - 5), x, min(bitmap.height, centerY + 5))
             val pixels = getBitmapPixels(bitmap, rectangle)
             if (isDarkLine(pixels)) {
                 right = x

@@ -121,6 +121,14 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                         cropBottom = (bitmap.width - barcode.boundingBox!!.left) + 5
                                         cropLeft = barcode.boundingBox!!.bottom + 5
 
+                                        // Check if image is centered
+                                        if (cropLeft > leftBarcodeBitmap.height * 0.8 ||
+                                            cropLeft < leftBarcodeBitmap.height * 0.2
+                                        ) {
+                                            processing = false
+                                            return
+                                        }
+
                                         leftBarcodeBitmap.recycle()
 
                                         val rightBarcodeBitmap =
@@ -157,6 +165,14 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                                         }
 
                                                         cropRight = barcode2.boundingBox!!.top - 10
+
+                                                        // Check if image is centered
+                                                        if (cropRight > leftBarcodeBitmap.height * 0.8 ||
+                                                            cropRight < leftBarcodeBitmap.height * 0.2
+                                                        ) {
+                                                            processing = false
+                                                            return
+                                                        }
 
                                                         rightBarcodeBitmap.recycle()
                                                         analyzeBarcode(
