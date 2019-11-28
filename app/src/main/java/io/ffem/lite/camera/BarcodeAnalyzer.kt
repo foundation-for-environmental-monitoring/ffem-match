@@ -18,10 +18,13 @@ import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.model.TestConfig
 import io.ffem.lite.util.FileUtil
+import io.ffem.lite.util.hasBlackPixelsInArea
 import java.util.*
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
+
+const val MAX_ANGLE = 12
 
 class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
@@ -79,7 +82,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
             }
         )
 
-        bitmap = mediaImage.bitmap
+        val fullBitmap = mediaImage.bitmap
 
 //        val expectedValue = (PreferencesUtil
 //            .getString(context, R.string.expectedValueKey, "").toFloat().toInt())
@@ -90,7 +93,29 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 //                "drawable", context.packageName
 //            )
 //        )
-//        bitmap = (drawable as BitmapDrawable).bitmap
+
+//        val fullBitmap = (drawable as BitmapDrawable).bitmap
+
+        bitmap = Bitmap.createBitmap(
+            fullBitmap, 0, (fullBitmap.height * 0.18).toInt(),
+            fullBitmap.width,
+            fullBitmap.height - (fullBitmap.height * 0.36).toInt()
+        )
+
+        if (hasBlackPixelsInArea(bitmap, 0, 0, bitmap.width, 5)) {
+            processing = false
+            return
+        }
+
+        if (hasBlackPixelsInArea(
+                bitmap, 0, bitmap.height - 5, bitmap.width, bitmap.height
+            )
+        ) {
+            processing = false
+            return
+        }
+
+        fullBitmap.recycle()
 
         leftBarcodeBitmap = Bitmap.createBitmap(
             bitmap, 0, 0,
@@ -120,14 +145,6 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                         cropTop = (bitmap.width - barcode.boundingBox!!.right) - 5
                                         cropBottom = (bitmap.width - barcode.boundingBox!!.left) + 5
                                         cropLeft = barcode.boundingBox!!.bottom + 5
-
-                                        // Check if image is centered
-                                        if (cropLeft > leftBarcodeBitmap.height * 0.8 ||
-                                            cropLeft < leftBarcodeBitmap.height * 0.2
-                                        ) {
-                                            processing = false
-                                            return
-                                        }
 
                                         leftBarcodeBitmap.recycle()
 
@@ -165,14 +182,6 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                                         }
 
                                                         cropRight = barcode2.boundingBox!!.top - 10
-
-                                                        // Check if image is centered
-                                                        if (cropRight > leftBarcodeBitmap.height * 0.8 ||
-                                                            cropRight < leftBarcodeBitmap.height * 0.2
-                                                        ) {
-                                                            processing = false
-                                                            return
-                                                        }
 
                                                         rightBarcodeBitmap.recycle()
                                                         analyzeBarcode(

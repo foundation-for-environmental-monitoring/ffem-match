@@ -107,39 +107,14 @@ fun hasBlackPixelsOnLine(bitmap: Bitmap, row: Int): Boolean {
     return false
 }
 
-
-fun hasBlackPixelsOnBottomEdge(bitmap: Bitmap, left: Int, width: Int): Boolean {
+fun hasBlackPixelsInArea(
+    bitmap: Bitmap, left: Int, top: Int, right: Int, bottom: Int
+): Boolean {
     var total = 0
 
     val pixels = getBitmapPixels(
         bitmap,
-        Rect(
-            left, bitmap.height - 5,
-            width, bitmap.height
-        )
-    )
-
-    for (element in pixels) {
-        if (element.red < MIN_BRIGHTNESS &&
-            element.green < MIN_BRIGHTNESS &&
-            element.blue < MIN_BRIGHTNESS
-        ) {
-            total++
-            if (total > 50) {
-                return true
-            }
-        }
-    }
-
-    return false
-}
-
-fun hasBlackPixelsOnTopEdge(bitmap: Bitmap, left: Int, width: Int): Boolean {
-    var total = 0
-
-    val pixels = getBitmapPixels(
-        bitmap,
-        Rect(left, 0, width, 5)
+        Rect(left, top, right, bottom)
     )
 
     for (element in pixels) {
@@ -423,7 +398,7 @@ object ColorUtil {
     ): ResultDetail {
         try {
 
-            val bitmap = ImageUtil.getGrayscale(image)
+            val bitmap = ImageUtil.toBlackAndWhite(image, 50)
 
             val input = context.resources.openRawResource(R.raw.calibration)
             val paint = Paint()
@@ -477,11 +452,13 @@ object ColorUtil {
             }
 
             var calibrationIndex = 0
-            var commonTop = mostCommon(topY)
+//            var commonTop = mostCommon(topY)
 
-            if (abs(bitmap.height / intervals - commonTop) > 15) {
-                commonTop = bitmap.height / intervals
-            }
+//            if (abs(bitmap.height / intervals - commonTop) > 15) {
+//                commonTop = bitmap.height / intervals
+//            }
+
+            val commonTop = bitmap.height / intervals
 
             val padding = interval / 7
             val commonLeft = mostCommon(leftX)

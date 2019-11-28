@@ -42,7 +42,6 @@ import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import io.ffem.lite.R
 import io.ffem.lite.preference.useFlashMode
-import io.ffem.lite.preference.useLargeColorCard
 import io.ffem.lite.ui.BarcodeActivity.Companion.getOutputDirectory
 import io.ffem.lite.util.AutoFitPreviewBuilder
 import kotlinx.android.synthetic.main.preview_overlay.*
@@ -187,14 +186,7 @@ class CameraFragment : Fragment() {
             val googlePlayServicesAvailable = GoogleApiAvailability.getInstance()
                 .isGooglePlayServicesAvailable(context)
             if (googlePlayServicesAvailable == ConnectionResult.SUCCESS) {
-                if (useLargeColorCard()) {
-                    setAnalyzer(
-                        Executors.newSingleThreadExecutor(),
-                        BarcodeLargeAnalyzer(context!!)
-                    )
-                } else {
-                    setAnalyzer(Executors.newSingleThreadExecutor(), BarcodeAnalyzer(context!!))
-                }
+                setAnalyzer(Executors.newSingleThreadExecutor(), BarcodeAnalyzer(context!!))
             } else {
                 activity?.finish()
             }
@@ -213,11 +205,7 @@ class CameraFragment : Fragment() {
             container.removeView(it)
         }
 
-//        if (useLargeColorCard()) {
-//            View.inflate(requireContext(), R.layout.preview_large_overlay, container)
-//        } else {
-            View.inflate(requireContext(), R.layout.preview_overlay, container)
-//        }
+        View.inflate(requireContext(), R.layout.preview_overlay, container)
 
         card_overlay.animate()
             .setStartDelay(1000)
