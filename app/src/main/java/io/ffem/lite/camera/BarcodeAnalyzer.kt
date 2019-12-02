@@ -102,13 +102,13 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
             fullBitmap.height - (fullBitmap.height * 0.36).toInt()
         )
 
-        if (hasBlackPixelsInArea(bitmap, 0, 0, bitmap.width, 5)) {
+        if (hasBlackPixelsInArea(bitmap, 100, 0, bitmap.width, 5)) {
             processing = false
             return
         }
 
         if (hasBlackPixelsInArea(
-                bitmap, 0, bitmap.height - 5, bitmap.width, bitmap.height
+                bitmap, 100, bitmap.height - 5, bitmap.width, bitmap.height
             )
         ) {
             processing = false
@@ -251,20 +251,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                         bitmapRotated.width, height
                     )
 
-//                    val croppedBitmap = Bitmap.createBitmap(
-//                        bitmapRotated, max(1, cropLeft), 0,
-//                        max(1, cropRight + ((bitmapRotated.width / 2) - cropLeft)),
-//                        bitmapRotated.height
-//                    )
-
                     bitmap.recycle()
-
-//                    Utilities.savePicture(
-//                        context.applicationContext, id,
-//                        testName, Utilities.bitmapToBytes(croppedBitmap)
-//                    )
-//
-//                    croppedBitmap.recycle()
 
                     val testId = UUID.randomUUID().toString()
                     val filePath =

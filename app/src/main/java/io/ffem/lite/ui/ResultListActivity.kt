@@ -48,7 +48,6 @@ import io.ffem.lite.app.App.Companion.TEST_NAME_KEY
 import io.ffem.lite.app.App.Companion.TEST_RESULT
 import io.ffem.lite.app.App.Companion.getVersionName
 import io.ffem.lite.app.AppDatabase
-import io.ffem.lite.camera.Utilities
 import io.ffem.lite.helper.ApkHelper.isNonStoreVersion
 import io.ffem.lite.model.ResultResponse
 import io.ffem.lite.model.TestResult
@@ -84,7 +83,7 @@ const val READ_REQUEST_CODE = 102
 const val PERMISSION_REQUEST = 103
 
 const val TOAST_Y_OFFSET = 240
-const val RESULT_CHECK_INTERVAL = 5000L
+const val RESULT_CHECK_INTERVAL = 10000L
 const val MIN_RESULT_WAIT_TIME = 70000L
 const val SNACK_BAR_LINE_SPACING = 1.4f
 
@@ -177,7 +176,7 @@ class ResultListActivity : BaseActivity() {
         }
 
         val calendar = Calendar.getInstance()
-        if (calendar.get(Calendar.MONTH) > 10 && calendar.get(Calendar.YEAR) > 2018
+        if (calendar.get(Calendar.MONTH) > 11 && calendar.get(Calendar.YEAR) > 2018
             && isNonStoreVersion(this)
         ) {
             appIsClosing = true
@@ -214,8 +213,6 @@ class ResultListActivity : BaseActivity() {
             checkForUpdate()
 
             db = AppDatabase.getDatabase(baseContext)
-
-//            db.resultDao().reset()
 
             val resultList = db.resultDao().getResults()
 
@@ -451,8 +448,7 @@ class ResultListActivity : BaseActivity() {
             if (requestCode == READ_REQUEST_CODE) {
                 data?.data?.also { uri ->
 
-                    val id = UUID.randomUUID().toString()
-//                    val testName = data.getStringExtra(TEST_NAME_KEY)
+                    //                    val testName = data.getStringExtra(TEST_NAME_KEY)
 //
 //                    if (testName.isNullOrEmpty()) {
 //                        return
@@ -478,21 +474,9 @@ class ResultListActivity : BaseActivity() {
                         expectedValue += ".0"
                     }
 
-                    Utilities.savePicture(
-                        applicationContext,
-                        id,
-                        "Dummy",
-                        Utilities.bitmapToBytes(bitmapFromFile)
-                    )
+                    val id = UUID.randomUUID().toString()
 
-                    db.resultDao().insert(
-                        TestResult(
-                            id, 0, "Dummy",
-                            Date().time, Date().time, "", "",
-                            expectedValue, getString(R.string.outbox)
-                        )
-                    )
-
+//                    startResultCheckTimer(RESULT_CHECK_INTERVAL)
                     ColorUtil.extractImage(this, id, bitmapFromFile)
                 }
             } else if (data != null) {

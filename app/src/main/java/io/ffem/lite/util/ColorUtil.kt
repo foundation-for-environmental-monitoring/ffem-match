@@ -16,6 +16,7 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.gson.Gson
 import io.ffem.lite.R
 import io.ffem.lite.app.App
+import io.ffem.lite.app.AppDatabase
 import io.ffem.lite.camera.MAX_ANGLE
 import io.ffem.lite.camera.Utilities
 import io.ffem.lite.model.*
@@ -47,8 +48,9 @@ fun getBitmapPixels(bitmap: Bitmap, rect: Rect): IntArray {
     return subsetPixels
 }
 
-fun isDarkLine(pixels: IntArray): Boolean {
+fun isDarkLine(pixels: IntArray, refPixel: IntArray): Boolean {
     var r = 0
+    var rf = 0
     var total = 0
 
     if (pixels.isEmpty()) {
@@ -57,10 +59,14 @@ fun isDarkLine(pixels: IntArray): Boolean {
 
     for (element in pixels) {
         r += element.red
+    }
+
+    for (element in refPixel) {
+        rf += element.red
         total++
     }
 
-    return (r / total) < 15
+    return (r / total) < 15 || abs((rf / total) - (r / total)) > 60
 }
 
 fun getAverageColor(pixels: IntArray): Int {
@@ -310,7 +316,7 @@ object ColorUtil {
 
                 var top = 0
                 for (y in 1 until 100) {
-                    val pixel = croppedBitmap1.getPixel(60, y)
+                    val pixel = croppedBitmap1.getPixel((croppedBitmap1.width * 0.15).toInt(), y)
                     if (isDarkPixel(pixel)) {
                         top = y
                         break
@@ -318,8 +324,8 @@ object ColorUtil {
                 }
 
                 var bottom = 0
-                for (y in croppedBitmap1.height - 1 downTo 0) {
-                    val pixel = croppedBitmap1.getPixel(60, y)
+                for (y in croppedBitmap1.height - 3 downTo 0) {
+                    val pixel = croppedBitmap1.getPixel((croppedBitmap1.width * 0.15).toInt(), y)
                     if (isDarkPixel(pixel)) {
                         bottom = y
                         break
@@ -328,7 +334,7 @@ object ColorUtil {
                 val croppedBitmap = Bitmap.createBitmap(
                     croppedBitmap1, 0, top,
                     croppedBitmap1.width,
-                    bottom - top
+                    max(1, bottom - top)
                 )
 
                 croppedBitmap1.recycle()
@@ -344,6 +350,24 @@ object ColorUtil {
                     "", Utilities.bitmapToBytes(croppedBitmap)
                 )
                 croppedBitmap.recycle()
+
+                val db = AppDatabase.getDatabase(context)
+                if (db.resultDao().getResult(id) == null) {
+                    Utilities.savePicture(
+                        context,
+                        id,
+                        testName,
+                        Utilities.bitmapToBytes(bitmapRotated)
+                    )
+
+                    db.resultDao().insert(
+                        TestResult(
+                            id, 0, testName,
+                            Date().time, Date().time, "", "",
+                            "", context.getString(R.string.outbox)
+                        )
+                    )
+                }
 
                 bitmapRotated.recycle()
 
@@ -378,17 +402,46 @@ object ColorUtil {
     }
 
     // https://stackoverflow.com/questions/19031213/java-get-most-common-element-in-a-list
-    private fun <T> mostCommon(list: List<T>): T {
-        val map: MutableMap<T, Int> = HashMap()
+    private fun mostCommon(list1: List<Int>): Int {
+
+        val list = excludeOutliers(list1)
+        val map: MutableMap<Int, Int> = HashMap()
+
         for (t in list) {
             val `val` = map[t]
             map[t] = if (`val` == null) 1 else `val` + 1
         }
-        var max: Map.Entry<T, Int>? = null
+        var max: Map.Entry<Int, Int>? = null
         for (e in map.entries) {
             if (max == null || e.value > max.value) max = e
         }
         return max!!.key
+    }
+
+    private fun excludeOutliers(allNumbers: List<Int>): List<Int> {
+        if (allNumbers.isEmpty()) {
+            return allNumbers
+        }
+        val normalNumbers: MutableList<Int> = ArrayList()
+        val outlierNumbers: MutableList<Int> = ArrayList()
+        var sum = 0.0
+        for (number in allNumbers) {
+            sum += number
+        }
+        val avg = sum / allNumbers.size
+        sum = 0.0
+        for (number in allNumbers) {
+            sum += (number - avg).pow(2.0)
+        }
+        val standardDeviation = sqrt(sum / allNumbers.size)
+        for (number in allNumbers) {
+            if (abs(number - avg) > 1.5 * standardDeviation) {
+                outlierNumbers.add(number)
+            } else {
+                normalNumbers.add(number)
+            }
+        }
+        return normalNumbers
     }
 
     private fun extractColors(
@@ -452,15 +505,10 @@ object ColorUtil {
             }
 
             var calibrationIndex = 0
-//            var commonTop = mostCommon(topY)
-
-//            if (abs(bitmap.height / intervals - commonTop) > 15) {
-//                commonTop = bitmap.height / intervals
-//            }
 
             val commonTop = bitmap.height / intervals
 
-            val padding = interval / 7
+            val padding = commonTop / 7
             val commonLeft = mostCommon(leftX)
             for (i in 0 until leftPoints.size) {
                 val rectangle = Rect(
@@ -479,8 +527,6 @@ object ColorUtil {
                 val canvas = Canvas(image)
                 canvas.drawRect(rectangle, paint)
             }
-
-            val centerPointLeft = Point(x, y - interval)
 
             x = (bitmap.width * 0.88).toInt()
             y = (bitmap.height / intervals) / 2
@@ -502,18 +548,6 @@ object ColorUtil {
                 rightX.add(rightPoints[i].x)
             }
 
-//            val topY = ArrayList<Int>()
-//            for (i in 0 until leftPoints.size - 1) {
-//                var value = leftPoints[i + 1].y - leftPoints[i].y
-//                for (j in 0 until topY.size) {
-//                    if (abs(value - topY[j]) < 10) {
-//                        value = topY[j]
-//                        break
-//                    }
-//                }
-//                topY.add(value)
-//            }
-
             val commonRight = mostCommon(rightX)
             for (i in 0 until rightPoints.size) {
                 val rectangle = Rect(
@@ -533,9 +567,7 @@ object ColorUtil {
                 canvas.drawRect(rectangle, paint)
             }
 
-            val centerPointRight = Point(x, y - interval)
-
-            val x1 = ((centerPointRight.x - centerPointLeft.x) / 2) + centerPointLeft.x
+            val x1 = ((commonRight - commonLeft) / 2) + commonLeft
             val y1 = ((bitmap.height) / 2) + (bitmap.height * 0.1).toInt()
             val rectangle = Rect(x1 - 20, y1 - 27, x1 + 20, y1 + 35)
             val pixels = getBitmapPixels(image, rectangle)
@@ -583,10 +615,14 @@ object ColorUtil {
         var bottom: Int
         var right: Int
 
+        var refPixels: IntArray? = null
         for (y in min(bitmap.height - 1, top) downTo 0) {
             val rectangle = Rect(left - 5, y, left + 5, y + 1)
             val pixels = getBitmapPixels(bitmap, rectangle)
-            if (isDarkLine(pixels)) {
+            if (refPixels == null) {
+                refPixels = pixels
+            }
+            if (isDarkLine(pixels, refPixels)) {
                 top = y
                 break
             }
@@ -594,10 +630,14 @@ object ColorUtil {
 
         bottom = top + tempInterval / 2
 
+        refPixels = null
         for (y in bottom until min(bitmap.height, bottom + tempInterval)) {
             val rectangle = Rect(left - 5, y - 1, left + 5, y)
             val pixels = getBitmapPixels(bitmap, rectangle)
-            if (isDarkLine(pixels)) {
+            if (refPixels == null) {
+                refPixels = pixels
+            }
+            if (isDarkLine(pixels, refPixels)) {
                 bottom = y
                 break
             }
@@ -605,11 +645,15 @@ object ColorUtil {
 
         var centerY = ((bottom - top) / 2) + top
 
+        refPixels = null
         for (x in left downTo 0) {
             val rectangle =
                 Rect(x, min(bitmap.height, centerY - 5), x + 1, min(bitmap.height, centerY + 5))
             val pixels = getBitmapPixels(bitmap, rectangle)
-            if (isDarkLine(pixels)) {
+            if (refPixels == null) {
+                refPixels = pixels
+            }
+            if (isDarkLine(pixels, refPixels)) {
                 left = x
                 break
             }
@@ -617,11 +661,15 @@ object ColorUtil {
 
         right = left + (tempInterval / 2)
 
+        refPixels = null
         for (x in right until min(image.width - 1, right + tempInterval)) {
             val rectangle =
                 Rect(x - 1, min(bitmap.height, centerY - 5), x, min(bitmap.height, centerY + 5))
             val pixels = getBitmapPixels(bitmap, rectangle)
-            if (isDarkLine(pixels)) {
+            if (refPixels == null) {
+                refPixels = pixels
+            }
+            if (isDarkLine(pixels, refPixels)) {
                 right = x
                 break
             }
@@ -640,7 +688,7 @@ object ColorUtil {
     }
 
     private fun isDarkPixel(pixel: Int): Boolean {
-        return pixel.red < 20 || pixel.green < 20
+        return pixel.red < 40 || pixel.green < 40
     }
 
     private fun getCalibrationColor(pointValue: Float, calibration: List<CalibrationValue>): Int {
