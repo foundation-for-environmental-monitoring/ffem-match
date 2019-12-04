@@ -805,7 +805,7 @@ class ResultListActivity : BaseActivity() {
     private fun performFileSearch() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
-            type = "image/*"
+            type = "image/jpeg"
         }
         startActivityForResult(intent, READ_REQUEST_CODE)
 
