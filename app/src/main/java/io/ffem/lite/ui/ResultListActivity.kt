@@ -30,6 +30,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.IntRange
 import androidx.core.app.ActivityCompat
+import androidx.databinding.BindingAdapter
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.google.android.material.snackbar.Snackbar
@@ -87,6 +88,19 @@ const val RESULT_CHECK_INTERVAL = 10000L
 const val MIN_RESULT_WAIT_TIME = 70000L
 const val SNACK_BAR_LINE_SPACING = 1.4f
 
+@BindingAdapter("android:resultSize")
+fun TextView.bindTextSize(result: String) {
+    if (result.toDoubleOrNull() == null) {
+        textSize = 14f
+        setPadding(0, 20, 0, 20)
+        setTextColor(Color.rgb(200, 50, 50))
+    } else {
+        textSize = 30f
+        setPadding(0, 0, 0, 0)
+        setTextColor(Color.rgb(20, 20, 20))
+    }
+}
+
 class ResultListActivity : BaseActivity() {
 
     private var appIsClosing: Boolean = false
@@ -114,12 +128,6 @@ class ResultListActivity : BaseActivity() {
             refreshList()
         }
     }
-
-//    private val broadcastReceiver2 = object : BroadcastReceiver() {
-//        override fun onReceive(context: Context, intent: Intent) {
-//            saveImageData(intent)
-//        }
-//    }
 
     private fun onResultClick(position: Int) {
         Handler().postDelayed(
@@ -259,11 +267,6 @@ class ResultListActivity : BaseActivity() {
             broadcastReceiver,
             IntentFilter(LOCAL_RESULT_EVENT)
         )
-
-//        broadcastManager.registerReceiver(
-//            broadcastReceiver2,
-//            IntentFilter(CameraFragment.CAPTURED_EVENT)
-//        )
 
         if (!appIsClosing) {
 
@@ -444,6 +447,12 @@ class ResultListActivity : BaseActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
+        broadcastManager.unregisterReceiver(broadcastReceiver)
+        broadcastManager.registerReceiver(
+            broadcastReceiver,
+            IntentFilter(LOCAL_RESULT_EVENT)
+        )
+
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == READ_REQUEST_CODE) {
                 data?.data?.also { uri ->
@@ -462,21 +471,17 @@ class ResultListActivity : BaseActivity() {
                         .substringBeforeLast(".")
 
                     try {
-                        val value = expectedValue.toFloat()
-                        if (value < 0 || value > 3) {
-                            expectedValue = ""
+                        expectedValue.toFloat()
+                        if (expectedValue.isNotEmpty() && !expectedValue.contains(".")) {
+                            expectedValue += ".0"
                         }
                     } catch (ignored: Exception) {
-                        expectedValue = ""
                     }
 
-                    if (expectedValue.isNotEmpty() && !expectedValue.contains(".")) {
-                        expectedValue += ".0"
-                    }
+                    PreferencesUtil.setString(this, R.string.expectedValueKey, expectedValue)
 
                     val id = UUID.randomUUID().toString()
 
-//                    startResultCheckTimer(RESULT_CHECK_INTERVAL)
                     ColorUtil.extractImage(this, id, bitmapFromFile)
                 }
             } else if (data != null) {
@@ -743,17 +748,6 @@ class ResultListActivity : BaseActivity() {
         toastLong.show()
     }
 
-//    private fun showNewToast(message: String) {
-//        toastShort.cancel()
-//        toastShort = Toast.makeText(
-//            applicationContext,
-//            message,
-//            Toast.LENGTH_SHORT
-//        )
-//        toastShort.setGravity(Gravity.BOTTOM, 0, TOAST_Y_OFFSET)
-//        toastShort.show()
-//    }
-
     private fun notifyNoInternet() {
 
         if (isInternetConnected) {
@@ -807,12 +801,8 @@ class ResultListActivity : BaseActivity() {
             addCategory(Intent.CATEGORY_OPENABLE)
             type = "image/jpeg"
         }
-        startActivityForResult(intent, READ_REQUEST_CODE)
 
-        //        val drawable = ContextCompat.getDrawable(
-//            this, R.drawable.testing3
-//        )
-//        ColorUtil.extractImage(this, "test", (drawable as BitmapDrawable).bitmap)
+        startActivityForResult(intent, READ_REQUEST_CODE)
     }
 
     private fun Activity.isHasPermission(vararg permissions: String): Boolean {

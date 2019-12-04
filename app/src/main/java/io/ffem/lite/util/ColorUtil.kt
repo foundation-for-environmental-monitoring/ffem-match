@@ -30,7 +30,7 @@ const val MAX_COLOR_DISTANCE_RGB = 80
 const val MAX_COLOR_DISTANCE_CALIBRATION = 40
 const val INTERPOLATION_COUNT = 100.0
 const val MAX_DISTANCE = 999
-const val MIN_BRIGHTNESS = 20
+const val MIN_BRIGHTNESS = 30
 
 fun getBitmapPixels(bitmap: Bitmap, rect: Rect): IntArray {
     val pixels = IntArray(bitmap.width * bitmap.height)
@@ -48,10 +48,8 @@ fun getBitmapPixels(bitmap: Bitmap, rect: Rect): IntArray {
     return subsetPixels
 }
 
-fun isDarkLine(pixels: IntArray, refPixel: IntArray): Boolean {
+fun isDark(pixels: IntArray): Boolean {
     var r = 0
-    var rf = 0
-    var total = 0
 
     if (pixels.isEmpty()) {
         return false
@@ -61,13 +59,43 @@ fun isDarkLine(pixels: IntArray, refPixel: IntArray): Boolean {
         r += element.red
     }
 
-    for (element in refPixel) {
-        rf += element.red
-        total++
+    return (r / pixels.size) < 180
+}
+
+private fun isNotDark(pixels: IntArray): Boolean {
+    var r = 0
+
+    if (pixels.isEmpty()) {
+        return false
     }
 
-    return (r / total) < 15 || abs((rf / total) - (r / total)) > 60
+    for (element in pixels) {
+        r += element.red
+    }
+
+    return (r / pixels.size) > 220
 }
+
+//fun isDarkLine(pixels: IntArray, refPixel: IntArray): Boolean {
+//    var r = 0
+//    var rf = 0
+//    var total = 0
+//
+//    if (pixels.isEmpty()) {
+//        return false
+//    }
+//
+//    for (element in pixels) {
+//        r += element.red
+//    }
+//
+//    for (element in refPixel) {
+//        rf += element.red
+//        total++
+//    }
+//
+//    return (r / total) < 15 || abs((rf / total) - (r / total)) > 60
+//}
 
 fun getAverageColor(pixels: IntArray): Int {
 
@@ -147,9 +175,6 @@ object ColorUtil {
     private var cropTop = 0
     private var cropBottom = 0
 
-    private var interval = 0
-    private var prevInterval = -1
-
     fun extractImage(context: Context, id: String, bitmapImage: Bitmap) {
 
         val detector: FirebaseVisionBarcodeDetector by lazy {
@@ -163,6 +188,52 @@ object ColorUtil {
         }
 
         val bitmap = Utilities.rotateImage(bitmapImage, 90)
+        val bwBitmap = ImageUtil.toBlackAndWhite(bitmap, 80)
+
+        val rect = Rect(100, 0, bitmap.width, 5)
+        val pixels = getBitmapPixels(bwBitmap, rect)
+        if (isDark(pixels)) {
+            bwBitmap.recycle()
+
+            val db = AppDatabase.getDatabase(context)
+            if (db.resultDao().getResult(id) == null) {
+
+                val bitmapRotated = Utilities.rotateImage(bitmap, 270)
+
+                Utilities.savePicture(
+                    context,
+                    id,
+                    "Unknown",
+                    Utilities.bitmapToBytes(bitmapRotated)
+                )
+
+                val expectedValue = PreferencesUtil
+                    .getString(context, R.string.expectedValueKey, "")
+
+                db.resultDao().insert(
+                    TestResult(
+                        id, 0, "Unknown",
+                        Date().time, Date().time, "", "",
+                        expectedValue, ""
+                    )
+                )
+
+                bitmapRotated.recycle()
+            }
+            bitmap.recycle()
+            returnResult(context, id, "Bad lighting")
+
+            return
+        }
+
+//        val rect1 = Rect(100, 0, bitmap.width, 5)
+//        val pixels1 = getBitmapPixels(bwBitmap, rect1)
+//        if (isDark(pixels1)) {
+//            returnResult(context, id, "Bad lighting")
+//            bitmap.recycle()
+//            bwBitmap.recycle()
+//            return
+//        }
 
         val leftBarcodeBitmap = Bitmap.createBitmap(
             bitmap, 0, 0,
@@ -231,6 +302,7 @@ object ColorUtil {
                                                     ) > MAX_ANGLE
                                                 ) {
                                                     returnResult(context, id)
+                                                    return
                                                 }
 
                                                 cropRight = barcode2.boundingBox!!.top - 5
@@ -260,6 +332,7 @@ object ColorUtil {
 //                            }
                         } else {
                             returnResult(context, id)
+                            return
                         }
                     }
                 }
@@ -293,6 +366,7 @@ object ColorUtil {
 
                 if (testName.isEmpty()) {
                     returnResult(context, id)
+                    return
                 }
 
                 var bitmapRotated = Utilities.rotateImage(bitmap, 270)
@@ -360,30 +434,34 @@ object ColorUtil {
                         Utilities.bitmapToBytes(bitmapRotated)
                     )
 
+                    val expectedValue = PreferencesUtil
+                        .getString(context, R.string.expectedValueKey, "")
+
                     db.resultDao().insert(
                         TestResult(
                             id, 0, testName,
                             Date().time, Date().time, "", "",
-                            "", context.getString(R.string.outbox)
+                            expectedValue, context.getString(R.string.outbox)
                         )
                     )
                 }
 
                 bitmapRotated.recycle()
 
-                returnResult(context, id, testName, resultDetail)
+                returnResult(context, id, "", testName, resultDetail)
 //                } else {
 //                    returnResult(context, id)
 //                }
 
             } else {
                 returnResult(context, id)
+                return
             }
         }
     }
 
     private fun returnResult(
-        context: Context, id: String, testName: String = "",
+        context: Context, id: String, error: String = "Error", testName: String = "",
         resultDetail: ResultDetail = ResultDetail((-1).toDouble(), 0)
     ) {
         val intent = Intent(App.LOCAL_RESULT_EVENT)
@@ -391,57 +469,18 @@ object ColorUtil {
         intent.putExtra(App.TEST_NAME_KEY, testName)
 
         var result = (round(resultDetail.result * 100) / 100.0).toString()
-        if (resultDetail.result == -1.0) {
-            result = "Error"
+        if (resultDetail.result < 0) {
+            if (error.isEmpty()) {
+                result = "No match"
+            } else {
+                result = error
+            }
         }
 
         intent.putExtra(App.TEST_RESULT, result)
 
         val localBroadcastManager = LocalBroadcastManager.getInstance(context)
         localBroadcastManager.sendBroadcast(intent)
-    }
-
-    // https://stackoverflow.com/questions/19031213/java-get-most-common-element-in-a-list
-    private fun mostCommon(list1: List<Int>): Int {
-
-        val list = excludeOutliers(list1)
-        val map: MutableMap<Int, Int> = HashMap()
-
-        for (t in list) {
-            val `val` = map[t]
-            map[t] = if (`val` == null) 1 else `val` + 1
-        }
-        var max: Map.Entry<Int, Int>? = null
-        for (e in map.entries) {
-            if (max == null || e.value > max.value) max = e
-        }
-        return max!!.key
-    }
-
-    private fun excludeOutliers(allNumbers: List<Int>): List<Int> {
-        if (allNumbers.isEmpty()) {
-            return allNumbers
-        }
-        val normalNumbers: MutableList<Int> = ArrayList()
-        val outlierNumbers: MutableList<Int> = ArrayList()
-        var sum = 0.0
-        for (number in allNumbers) {
-            sum += number
-        }
-        val avg = sum / allNumbers.size
-        sum = 0.0
-        for (number in allNumbers) {
-            sum += (number - avg).pow(2.0)
-        }
-        val standardDeviation = sqrt(sum / allNumbers.size)
-        for (number in allNumbers) {
-            if (abs(number - avg) > 1.5 * standardDeviation) {
-                outlierNumbers.add(number)
-            } else {
-                normalNumbers.add(number)
-            }
-        }
-        return normalNumbers
     }
 
     private fun extractColors(
@@ -451,7 +490,7 @@ object ColorUtil {
     ): ResultDetail {
         try {
 
-            val bitmap = ImageUtil.toBlackAndWhite(image, 50)
+            val bitmap = ImageUtil.toBlackAndWhite(image, 100)
 
             val input = context.resources.openRawResource(R.raw.calibration)
             val paint = Paint()
@@ -472,50 +511,19 @@ object ColorUtil {
             }
 
             val intervals = calibration.size / 2
-            var x = (bitmap.width * 0.12).toInt()
-            var y = (bitmap.height / intervals) / 2
-
-            val leftPoints = ArrayList<Point>()
-
-            for (i in 0 until intervals) {
-
-                val centerPoint = getSquareCenter(bitmap, image, x, y, calibration)
-
-                x = centerPoint.x
-                y = centerPoint.y + interval
-
-                leftPoints.add(centerPoint)
-            }
-
-            val leftX = ArrayList<Int>()
-            for (i in 0 until leftPoints.size) {
-                leftX.add(leftPoints[i].x)
-            }
-
-            val topY = ArrayList<Int>()
-            for (i in 0 until leftPoints.size - 1) {
-                var value = leftPoints[i + 1].y - leftPoints[i].y
-                for (j in 0 until topY.size) {
-                    if (abs(value - topY[j]) < 10) {
-                        value = topY[j]
-                        break
-                    }
-                }
-                topY.add(value)
-            }
-
+            val commonTop = bitmap.height / intervals
+            val padding = commonTop / 7
             var calibrationIndex = 0
 
-            val commonTop = bitmap.height / intervals
+            val points = getMarkers(bitmap)
 
-            val padding = commonTop / 7
-            val commonLeft = mostCommon(leftX)
-            for (i in 0 until leftPoints.size) {
+            val commonLeft = points.x
+            for (i in 0 until intervals) {
                 val rectangle = Rect(
                     max(1, commonLeft - padding),
-                    max(1, (commonTop * i) + leftPoints[0].y - padding),
+                    max(1, (commonTop * i) + (commonTop / 2) - padding),
                     min(bitmap.width, commonLeft + padding),
-                    min(bitmap.height, (commonTop * i) + leftPoints[0].y + padding)
+                    min(bitmap.height, (commonTop * i) + (commonTop / 2) + padding)
                 )
 
                 val pixels = getBitmapPixels(image, rectangle)
@@ -528,33 +536,13 @@ object ColorUtil {
                 canvas.drawRect(rectangle, paint)
             }
 
-            x = (bitmap.width * 0.88).toInt()
-            y = (bitmap.height / intervals) / 2
-
-            val rightPoints = ArrayList<Point>()
-
-            for (i in calibration.size / 2 until calibration.size) {
-
-                val centerPoint = getSquareCenter(bitmap, image, x, y, calibration)
-
-                x = centerPoint.x
-                y = centerPoint.y + interval
-
-                rightPoints.add(centerPoint)
-            }
-
-            val rightX = ArrayList<Int>()
-            for (i in 0 until rightPoints.size) {
-                rightX.add(rightPoints[i].x)
-            }
-
-            val commonRight = mostCommon(rightX)
-            for (i in 0 until rightPoints.size) {
+            val commonRight = points.y
+            for (i in 0 until intervals) {
                 val rectangle = Rect(
                     max(1, commonRight - padding),
-                    max(1, (commonTop * i) + rightPoints[0].y - padding),
+                    max(1, (commonTop * i) + (commonTop / 2) - padding),
                     min(bitmap.width, commonRight + padding),
-                    min(bitmap.height, (commonTop * i) + rightPoints[0].y + padding)
+                    min(bitmap.height, (commonTop * i) + (commonTop / 2) + padding)
                 )
 
                 val pixels = getBitmapPixels(image, rectangle)
@@ -583,112 +571,111 @@ object ColorUtil {
                     break
                 }
 
-                if (cal.value >= 0) {
+//                if (cal.value >= 0) {
                     swatches.add(
                         Swatch(
                             cal.value.toDouble(),
                             getCalibrationColor(cal.value, calibration)
                         )
                     )
-                }
+//                }
             }
 
             return analyzeColor(swatches.size, colorInfo, generateGradient(swatches))
 
         } catch (e: Exception) {
+            returnResult(context, id, "No match")
             Timber.e(e)
         }
         return ResultDetail((-1).toDouble(), 0)
     }
 
-    private fun getSquareCenter(
-        bitmap: Bitmap,
-        image: Bitmap,
-        leftX: Int,
-        topY: Int,
-        calibration: List<CalibrationValue>
+    private fun getMarkers(
+        bitmap: Bitmap
     ): Point {
-        val intervals = calibration.size / 2
-        val tempInterval = bitmap.height / intervals
-        var left = leftX
-        var top = topY
-        var bottom: Int
-        var right: Int
+        var leftSquareLeft: Int = -1
+        var leftSquareRight: Int = -1
 
-        var refPixels: IntArray? = null
-        for (y in min(bitmap.height - 1, top) downTo 0) {
-            val rectangle = Rect(left - 5, y, left + 5, y + 1)
+//        var bottleLeft: Int = -1
+//        var bottleRight: Int = -1
+
+        var rightSquareLeft: Int = -1
+        var rightSquareRight: Int = -1
+
+        for (x in 1 until bitmap.width - 7) {
+            val rectangle = Rect(x, 0, x + 6, 1)
             val pixels = getBitmapPixels(bitmap, rectangle)
-            if (refPixels == null) {
-                refPixels = pixels
+            if (isDark(pixels)) {
+                leftSquareLeft = x
+                break
             }
-            if (isDarkLine(pixels, refPixels)) {
+        }
+
+        for (x in leftSquareLeft + 1 until bitmap.width - 7) {
+            val rectangle = Rect(x, 0, x + 6, 1)
+            val pixels = getBitmapPixels(bitmap, rectangle)
+            if (isNotDark(pixels)) {
+                leftSquareRight = x
+                break
+            }
+        }
+
+//        for (x in leftSquareRight + 1 until bitmap.width - 1) {
+//            val rectangle = Rect(x, 1, x + 1, 20)
+//            val pixels = getBitmapPixels(bitmap, rectangle)
+//            if (isDark(pixels)) {
+//                bottleLeft = x
+//                break
+//            }
+//        }
+
+        var top = 0
+        for (y in 1 until 40) {
+            val right = bitmap.width - (bitmap.width * 0.15).toInt()
+            val rectangle = Rect(right, y, right + 10, y + 1)
+            val pixels = getBitmapPixels(bitmap, rectangle)
+            if (isDark(pixels)) {
                 top = y
                 break
             }
         }
 
-        bottom = top + tempInterval / 2
-
-        refPixels = null
-        for (y in bottom until min(bitmap.height, bottom + tempInterval)) {
-            val rectangle = Rect(left - 5, y - 1, left + 5, y)
+        for (x in bitmap.width - 7 downTo 0) {
+            val rectangle = Rect(x, top, x + 6, top + 2)
             val pixels = getBitmapPixels(bitmap, rectangle)
-            if (refPixels == null) {
-                refPixels = pixels
-            }
-            if (isDarkLine(pixels, refPixels)) {
-                bottom = y
+            if (isDark(pixels)) {
+                rightSquareRight = x
                 break
             }
         }
 
-        var centerY = ((bottom - top) / 2) + top
-
-        refPixels = null
-        for (x in left downTo 0) {
-            val rectangle =
-                Rect(x, min(bitmap.height, centerY - 5), x + 1, min(bitmap.height, centerY + 5))
+        for (x in rightSquareRight - 7 downTo 0) {
+            val rectangle = Rect(x, top, x + 6, top + 2)
             val pixels = getBitmapPixels(bitmap, rectangle)
-            if (refPixels == null) {
-                refPixels = pixels
-            }
-            if (isDarkLine(pixels, refPixels)) {
-                left = x
+            if (isNotDark(pixels)) {
+                rightSquareLeft = x
                 break
             }
         }
 
-        right = left + (tempInterval / 2)
+//        for (x in rightSquareLeft - 1 downTo 0) {
+//            val rectangle = Rect(x, 1, x + 1, 20)
+//            val pixels = getBitmapPixels(bitmap, rectangle)
+//            if (isDark(pixels)) {
+//                bottleRight = x
+//                break
+//            }
+//        }
 
-        refPixels = null
-        for (x in right until min(image.width - 1, right + tempInterval)) {
-            val rectangle =
-                Rect(x - 1, min(bitmap.height, centerY - 5), x, min(bitmap.height, centerY + 5))
-            val pixels = getBitmapPixels(bitmap, rectangle)
-            if (refPixels == null) {
-                refPixels = pixels
-            }
-            if (isDarkLine(pixels, refPixels)) {
-                right = x
-                break
-            }
-        }
+        val leftSquareCenter = ((leftSquareRight - leftSquareLeft) / 2) + leftSquareLeft
+        val rightSquareCenter = ((rightSquareRight - rightSquareLeft) / 2) + rightSquareLeft
+//        val bottleCenter = ((bottleRight - bottleLeft) / 2) + bottleLeft
 
-        val centerX = ((right - left) / 2) + left
-
-        interval = (bottom - top)
-        if (prevInterval != -1 && abs(prevInterval - interval) > 15) {
-            interval = prevInterval
-            centerY = (interval / 2) + top
-        }
-        prevInterval = interval
-
-        return Point(centerX, centerY)
+        return Point(leftSquareCenter, rightSquareCenter)
     }
 
     private fun isDarkPixel(pixel: Int): Boolean {
-        return pixel.red < 40 || pixel.green < 40
+        return pixel.red < 90 || pixel.green < 90
     }
 
     private fun getCalibrationColor(pointValue: Float, calibration: List<CalibrationValue>): Int {

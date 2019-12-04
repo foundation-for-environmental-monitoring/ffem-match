@@ -77,9 +77,9 @@
             android:layout_marginEnd="@dimen/activity_horizontal_margin"
             android:clickable="false"
             android:focusable="false"
+            android:resultSize="@{result.localValue}"
             android:text="@{result.localValue}"
             android:textIsSelectable="false"
-            android:textSize="30sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="2.5" />

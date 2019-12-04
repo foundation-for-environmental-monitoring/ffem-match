@@ -3,6 +3,7 @@ package io.ffem.lite.camera
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Rect
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -17,8 +18,7 @@ import com.google.gson.Gson
 import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.model.TestConfig
-import io.ffem.lite.util.FileUtil
-import io.ffem.lite.util.hasBlackPixelsInArea
+import io.ffem.lite.util.*
 import java.util.*
 import kotlin.math.abs
 import kotlin.math.max
@@ -101,26 +101,35 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
             fullBitmap.width,
             fullBitmap.height - (fullBitmap.height * 0.36).toInt()
         )
+        fullBitmap.recycle()
 
-        if (hasBlackPixelsInArea(bitmap, 100, 0, bitmap.width, 5)) {
+        if (hasBlackPixelsInArea(bitmap, 200, 0, bitmap.width - 100, 5)) {
             processing = false
+            bitmap.recycle()
             return
         }
 
-        if (hasBlackPixelsInArea(
-                bitmap, 100, bitmap.height - 5, bitmap.width, bitmap.height
-            )
+        if (hasBlackPixelsInArea(bitmap, 200, bitmap.height - 5, bitmap.width - 100, bitmap.height)
         ) {
             processing = false
+            bitmap.recycle()
             return
         }
-
-        fullBitmap.recycle()
 
         leftBarcodeBitmap = Bitmap.createBitmap(
             bitmap, 0, 0,
             bitmap.width, bitmap.height / 2
         )
+
+        val bwBitmap = ImageUtil.toBlackAndWhite(leftBarcodeBitmap, 90)
+        val rect = Rect(200, 0, bitmap.width - 100, 5)
+        val pixels = getBitmapPixels(bwBitmap, rect)
+        if (isDark(pixels)) {
+            processing = false
+            bwBitmap.recycle()
+            bitmap.recycle()
+            return
+        }
 
         taskLeftBarcode =
             detector.detectInImage(FirebaseVisionImage.fromBitmap(leftBarcodeBitmap))
