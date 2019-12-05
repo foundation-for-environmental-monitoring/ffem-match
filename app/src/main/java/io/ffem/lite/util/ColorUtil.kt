@@ -59,22 +59,22 @@ fun isDark(pixels: IntArray): Boolean {
         r += element.red
     }
 
-    return (r / pixels.size) < 180
+    return (r / pixels.size) < 210
 }
 
-private fun isNotDark(pixels: IntArray): Boolean {
-    var r = 0
-
-    if (pixels.isEmpty()) {
-        return false
-    }
-
-    for (element in pixels) {
-        r += element.red
-    }
-
-    return (r / pixels.size) > 220
-}
+//private fun isNotDark(pixels: IntArray): Boolean {
+//    var r = 0
+//
+//    if (pixels.isEmpty()) {
+//        return false
+//    }
+//
+//    for (element in pixels) {
+//        r += element.red
+//    }
+//
+//    return (r / pixels.size) > 220
+//}
 
 //fun isDarkLine(pixels: IntArray, refPixel: IntArray): Boolean {
 //    var r = 0
@@ -236,7 +236,7 @@ object ColorUtil {
                                 cropTop =
                                     (bitmap.width - barcode.boundingBox!!.right - barcode.boundingBox!!.left)
                                 cropBottom = (bitmap.width - cropTop)
-                                cropLeft = barcode.boundingBox!!.bottom + 5
+                                cropLeft = barcode.boundingBox!!.bottom + 1
 
                                 for (i in cropLeft..barcode.boundingBox!!.bottom + 100) {
                                     if (!hasBlackPixelsOnLine(leftBarcodeBitmap, i)) {
@@ -279,14 +279,14 @@ object ColorUtil {
                                                     returnResult(
                                                         context,
                                                         id,
-                                                        context.getString(R.string.image_angled),
+                                                        context.getString(R.string.image_tilted),
                                                         bitmap,
                                                         testName
                                                     )
                                                     return
                                                 }
 
-                                                cropRight = barcode2.boundingBox!!.top - 5
+                                                cropRight = barcode2.boundingBox!!.top - 1
 
                                                 for (i in cropRight downTo cropRight - 100) {
                                                     if (!hasBlackPixelsOnLine(
@@ -294,7 +294,7 @@ object ColorUtil {
                                                             i
                                                         )
                                                     ) {
-                                                        cropRight = i - 5
+                                                        cropRight = i - 1
                                                         break
                                                     }
                                                 }
@@ -354,9 +354,9 @@ object ColorUtil {
 
                 var bitmapRotated = Utilities.rotateImage(bitmap, 270)
 
-                cropTop = max(0, cropTop - 10)
+                cropTop = max(0, cropTop - 1)
                 val height = min(
-                    max(1, cropBottom - cropTop + 10),
+                    max(1, cropBottom - cropTop + 1),
                     bitmapRotated.height - cropTop
                 )
 
@@ -371,26 +371,65 @@ object ColorUtil {
                     bitmapRotated.height
                 )
 
+                val bwCroppedBitmap1 = ImageUtil.toBlackAndWhite(croppedBitmap1, 100)
                 var top = 0
+                var bottom = 0
+
+                var left = 0
+                for (x in 1 until 100) {
+                    val rectangle = Rect(x, 10, x + 1, croppedBitmap1.height - 10)
+                    val pixels = getBitmapPixels(bwCroppedBitmap1, rectangle)
+                    if (isDark(pixels)) {
+                        left = x
+                        break
+                    }
+                }
+
+                var right = 0
+                for (x in croppedBitmap1.width - 1 downTo croppedBitmap1.width - 100) {
+                    val rectangle = Rect(x - 1, 10, x, croppedBitmap1.height - 10)
+                    val pixels = getBitmapPixels(bwCroppedBitmap1, rectangle)
+                    if (isDark(pixels)) {
+                        right = x
+                        break
+                    }
+                }
+
+                val croppedBitmap2 = Bitmap.createBitmap(
+                    croppedBitmap1, left, 0,
+                    right - left,
+                    croppedBitmap1.height
+                )
+                croppedBitmap1.recycle()
+                val bwCroppedBitmap2 = ImageUtil.toBlackAndWhite(croppedBitmap2, 100)
+                bwCroppedBitmap1.recycle()
+
                 for (y in 1 until 100) {
-                    val pixel = croppedBitmap1.getPixel((croppedBitmap1.width * 0.15).toInt(), y)
-                    if (isDarkPixel(pixel)) {
+                    val rectangle = Rect(3, y, 70, y + 3)
+                    val rectangleRight =
+                        Rect(bwCroppedBitmap2.width - 70, y, bwCroppedBitmap2.width - 1, y + 3)
+                    val pixels = getBitmapPixels(bwCroppedBitmap2, rectangle)
+                    val pixelsRight = getBitmapPixels(bwCroppedBitmap2, rectangleRight)
+                    if (isDark(pixels) && isDark(pixelsRight)) {
                         top = y
                         break
                     }
                 }
 
-                var bottom = 0
-                for (y in croppedBitmap1.height - 3 downTo 0) {
-                    val pixel = croppedBitmap1.getPixel((croppedBitmap1.width * 0.15).toInt(), y)
+                for (y in bwCroppedBitmap2.height - 3 downTo 0) {
+                    val pixel =
+                        bwCroppedBitmap2.getPixel((bwCroppedBitmap2.width * 0.15).toInt(), y)
                     if (isDarkPixel(pixel)) {
                         bottom = y
                         break
                     }
                 }
+
+                bwCroppedBitmap2.recycle()
+
                 val croppedBitmap = Bitmap.createBitmap(
-                    croppedBitmap1, 0, top,
-                    croppedBitmap1.width,
+                    croppedBitmap2, 0, top,
+                    croppedBitmap2.width,
                     max(1, bottom - top)
                 )
 
@@ -608,32 +647,32 @@ object ColorUtil {
     private fun getMarkers(
         bitmap: Bitmap
     ): Point {
-        var leftSquareLeft: Int = -1
-        var leftSquareRight: Int = -1
+//        var leftSquareLeft = 0
+//        var leftSquareRight: Int = bitmap.width -1
 
 //        var bottleLeft: Int = -1
 //        var bottleRight: Int = -1
 
-        var rightSquareLeft: Int = -1
-        var rightSquareRight: Int = -1
+//        var rightSquareLeft: Int = -1
+//        var rightSquareRight: Int = -1
 
-        for (x in 1 until bitmap.width - 7) {
-            val rectangle = Rect(x, 0, x + 6, 1)
-            val pixels = getBitmapPixels(bitmap, rectangle)
-            if (isDark(pixels)) {
-                leftSquareLeft = x
-                break
-            }
-        }
+//        for (x in 1 until bitmap.width - 7) {
+//            val rectangle = Rect(x, 0, x + 6, 1)
+//            val pixels = getBitmapPixels(bitmap, rectangle)
+//            if (isDark(pixels)) {
+//                leftSquareLeft = x
+//                break
+//            }
+//        }
 
-        for (x in leftSquareLeft + 1 until bitmap.width - 7) {
-            val rectangle = Rect(x, 0, x + 6, 1)
-            val pixels = getBitmapPixels(bitmap, rectangle)
-            if (isNotDark(pixels)) {
-                leftSquareRight = x
-                break
-            }
-        }
+//        for (x in leftSquareLeft + 10 until bitmap.width - 7) {
+//            val rectangle = Rect(x, 0, x + 6, 1)
+//            val pixels = getBitmapPixels(bitmap, rectangle)
+//            if (isNotDark(pixels)) {
+//                leftSquareRight = x
+//                break
+//            }
+//        }
 
 //        for (x in leftSquareRight + 1 until bitmap.width - 1) {
 //            val rectangle = Rect(x, 1, x + 1, 20)
@@ -644,34 +683,34 @@ object ColorUtil {
 //            }
 //        }
 
-        var top = 0
-        for (y in 1 until 40) {
-            val right = bitmap.width - (bitmap.width * 0.15).toInt()
-            val rectangle = Rect(right, y, right + 10, y + 1)
-            val pixels = getBitmapPixels(bitmap, rectangle)
-            if (isDark(pixels)) {
-                top = y
-                break
-            }
-        }
+//        var top = 0
+//        for (y in 1 until 40) {
+//            val right = bitmap.width - (bitmap.width * 0.15).toInt()
+//            val rectangle = Rect(right, y, right + 10, y + 1)
+//            val pixels = getBitmapPixels(bitmap, rectangle)
+//            if (isDark(pixels)) {
+//                top = y
+//                break
+//            }
+//        }
 
-        for (x in bitmap.width - 7 downTo 0) {
-            val rectangle = Rect(x, top, x + 6, top + 2)
-            val pixels = getBitmapPixels(bitmap, rectangle)
-            if (isDark(pixels)) {
-                rightSquareRight = x
-                break
-            }
-        }
+//        for (x in bitmap.width - 11 downTo 0) {
+//            val rectangle = Rect(x, top, x + 10, top + 2)
+//            val pixels = getBitmapPixels(bitmap, rectangle)
+//            if (isDark(pixels)) {
+//                rightSquareRight = x
+//                break
+//            }
+//        }
 
-        for (x in rightSquareRight - 7 downTo 0) {
-            val rectangle = Rect(x, top, x + 6, top + 2)
-            val pixels = getBitmapPixels(bitmap, rectangle)
-            if (isNotDark(pixels)) {
-                rightSquareLeft = x
-                break
-            }
-        }
+//        for (x in rightSquareRight - 11 downTo 0) {
+//            val rectangle = Rect(x, top, x + 10, top + 2)
+//            val pixels = getBitmapPixels(bitmap, rectangle)
+//            if (isNotDark(pixels)) {
+//                rightSquareLeft = x
+//                break
+//            }
+//        }
 
 //        for (x in rightSquareLeft - 1 downTo 0) {
 //            val rectangle = Rect(x, 1, x + 1, 20)
@@ -682,9 +721,13 @@ object ColorUtil {
 //            }
 //        }
 
-        val leftSquareCenter = ((leftSquareRight - leftSquareLeft) / 2) + leftSquareLeft
-        val rightSquareCenter = ((rightSquareRight - rightSquareLeft) / 2) + rightSquareLeft
+//        val leftSquareCenter = ((leftSquareRight - leftSquareLeft) / 2) + leftSquareLeft
+//        val rightSquareCenter = ((rightSquareRight - rightSquareLeft) / 2) + rightSquareLeft
 //        val bottleCenter = ((bottleRight - bottleLeft) / 2) + bottleLeft
+
+
+        val leftSquareCenter = (bitmap.width * 0.12).toInt()
+        val rightSquareCenter = bitmap.width - (bitmap.width * 0.12).toInt()
 
         return Point(leftSquareCenter, rightSquareCenter)
     }

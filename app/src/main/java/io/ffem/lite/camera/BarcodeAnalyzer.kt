@@ -19,6 +19,7 @@ import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.model.TestConfig
 import io.ffem.lite.util.*
+import timber.log.Timber
 import java.util.*
 import kotlin.math.abs
 import kotlin.math.max
@@ -41,7 +42,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
     private var cropBottom = 0
 
     private val detector: FirebaseVisionBarcodeDetector by lazy {
-        localBroadcastManager = LocalBroadcastManager.getInstance(context)
+        Timber.e("Initializing detector")
         val options = FirebaseVisionBarcodeDetectorOptions.Builder()
             .setBarcodeFormats(
                 FirebaseVisionBarcode.FORMAT_CODE_128
@@ -120,6 +121,8 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
             bitmap, 0, 0,
             bitmap.width, bitmap.height / 2
         )
+
+        localBroadcastManager = LocalBroadcastManager.getInstance(context)
 
         val bwBitmap = ImageUtil.toBlackAndWhite(leftBarcodeBitmap, 90)
         val rect = Rect(200, 0, bitmap.width - 100, 5)
