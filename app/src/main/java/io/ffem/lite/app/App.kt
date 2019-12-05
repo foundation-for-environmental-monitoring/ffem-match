@@ -105,7 +105,12 @@ class App : BaseApplication() {
 
     companion object {
 
+        const val ERROR_MESSAGE = "error_message"
         const val LOCAL_RESULT_EVENT = "result_event"
+        const val CAPTURED_EVENT = "captured_event"
+
+        const val ERROR_EVENT = "error_event"
+
         const val SOUND_ON = true
 
         const val RESULT_SOUND_PLAYED_KEY = "result_sound_played"

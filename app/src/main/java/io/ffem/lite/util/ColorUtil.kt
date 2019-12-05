@@ -194,46 +194,9 @@ object ColorUtil {
         val pixels = getBitmapPixels(bwBitmap, rect)
         if (isDark(pixels)) {
             bwBitmap.recycle()
-
-            val db = AppDatabase.getDatabase(context)
-            if (db.resultDao().getResult(id) == null) {
-
-                val bitmapRotated = Utilities.rotateImage(bitmap, 270)
-
-                Utilities.savePicture(
-                    context,
-                    id,
-                    "Unknown",
-                    Utilities.bitmapToBytes(bitmapRotated)
-                )
-
-                val expectedValue = PreferencesUtil
-                    .getString(context, R.string.expectedValueKey, "")
-
-                db.resultDao().insert(
-                    TestResult(
-                        id, 0, "Unknown",
-                        Date().time, Date().time, "", "",
-                        expectedValue, ""
-                    )
-                )
-
-                bitmapRotated.recycle()
-            }
-            bitmap.recycle()
-            returnResult(context, id, "Bad lighting")
-
+            returnResult(context, id, context.getString(R.string.bad_lighting), bitmap)
             return
         }
-
-//        val rect1 = Rect(100, 0, bitmap.width, 5)
-//        val pixels1 = getBitmapPixels(bwBitmap, rect1)
-//        if (isDark(pixels1)) {
-//            returnResult(context, id, "Bad lighting")
-//            bitmap.recycle()
-//            bwBitmap.recycle()
-//            return
-//        }
 
         val leftBarcodeBitmap = Bitmap.createBitmap(
             bitmap, 0, 0,
@@ -253,6 +216,18 @@ object ColorUtil {
                     }
                     for (barcode in result) {
                         if (!barcode.rawValue.isNullOrEmpty()) {
+
+                            val input = context.resources.openRawResource(R.raw.calibration)
+                            val content = FileUtil.readTextFile(input)
+                            val testConfig = Gson().fromJson(content, TestConfig::class.java)
+
+                            var testName = ""
+                            for (test in testConfig.tests) {
+                                if (test.uuid == result[0].displayValue!!) {
+                                    testName = test.name!!
+                                    break
+                                }
+                            }
 
 //                            if (barcode.boundingBox!!.width() > bitmap.width * .44 &&
 //                                barcode.boundingBox!!.width() < bitmap.width * .48
@@ -301,7 +276,13 @@ object ColorUtil {
                                                                 - barcode2.boundingBox!!.right
                                                     ) > MAX_ANGLE
                                                 ) {
-                                                    returnResult(context, id)
+                                                    returnResult(
+                                                        context,
+                                                        id,
+                                                        context.getString(R.string.image_angled),
+                                                        bitmap,
+                                                        testName
+                                                    )
                                                     return
                                                 }
 
@@ -319,7 +300,13 @@ object ColorUtil {
                                                 }
 
                                                 rightBarcodeBitmap.recycle()
-                                                analyzeBarcode(context, id, bitmap, result)
+                                                analyzeBarcode(
+                                                    context,
+                                                    testConfig,
+                                                    id,
+                                                    bitmap,
+                                                    result
+                                                )
                                             }
 
                                         }
@@ -340,7 +327,7 @@ object ColorUtil {
     }
 
     private fun analyzeBarcode(
-        context: Context, id: String,
+        context: Context, testConfig: TestConfig, id: String,
         bitmap: Bitmap, result: List<FirebaseVisionBarcode>
     ) {
         if (result.isEmpty()) {
@@ -351,10 +338,6 @@ object ColorUtil {
 //                if (barcode2.boundingBox!!.width() > bitmap.width * .44 &&
 //                    barcode2.boundingBox!!.width() < bitmap.width * .48
 //                ) {
-
-                val input = context.resources.openRawResource(R.raw.calibration)
-                val content = FileUtil.readTextFile(input)
-                val testConfig = Gson().fromJson(content, TestConfig::class.java)
 
                 var testName = ""
                 for (test in testConfig.tests) {
@@ -416,7 +399,7 @@ object ColorUtil {
 
                 val resultDetail = extractColors(
                     context,
-                    croppedBitmap, result[0].displayValue!!
+                    croppedBitmap, id, result[0].displayValue!!
                 )
 
                 Utilities.savePicture(
@@ -448,7 +431,7 @@ object ColorUtil {
 
                 bitmapRotated.recycle()
 
-                returnResult(context, id, "", testName, resultDetail)
+                returnResult(context, id, "", null, testName, resultDetail)
 //                } else {
 //                    returnResult(context, id)
 //                }
@@ -461,7 +444,11 @@ object ColorUtil {
     }
 
     private fun returnResult(
-        context: Context, id: String, error: String = "Error", testName: String = "",
+        context: Context,
+        id: String,
+        error: String = "Error",
+        bitmap: Bitmap? = null,
+        testName: String = "Unknown",
         resultDetail: ResultDetail = ResultDetail((-1).toDouble(), 0)
     ) {
         val intent = Intent(App.LOCAL_RESULT_EVENT)
@@ -470,14 +457,41 @@ object ColorUtil {
 
         var result = (round(resultDetail.result * 100) / 100.0).toString()
         if (resultDetail.result < 0) {
-            if (error.isEmpty()) {
-                result = "No match"
+            result = if (error.isEmpty()) {
+                "No match"
             } else {
-                result = error
+                error
             }
         }
 
         intent.putExtra(App.TEST_RESULT, result)
+
+        val db = AppDatabase.getDatabase(context)
+        if (db.resultDao().getResult(id) == null) {
+
+            if (bitmap != null) {
+                val bitmapRotated = Utilities.rotateImage(bitmap, 270)
+                Utilities.savePicture(
+                    context,
+                    id,
+                    testName,
+                    Utilities.bitmapToBytes(bitmapRotated)
+                )
+                bitmap.recycle()
+                bitmapRotated.recycle()
+            }
+
+            val expectedValue = PreferencesUtil
+                .getString(context, R.string.expectedValueKey, "")
+
+            db.resultDao().insert(
+                TestResult(
+                    id, 0, testName,
+                    Date().time, Date().time, "", "",
+                    expectedValue, ""
+                )
+            )
+        }
 
         val localBroadcastManager = LocalBroadcastManager.getInstance(context)
         localBroadcastManager.sendBroadcast(intent)
@@ -486,7 +500,8 @@ object ColorUtil {
     private fun extractColors(
         context: Context,
         image: Bitmap,
-        id: String
+        id: String,
+        testId: String
     ): ResultDetail {
         try {
 
@@ -504,7 +519,7 @@ object ColorUtil {
 
             var calibration: List<CalibrationValue> = testConfig.tests[0].values
             for (test in testConfig.tests) {
-                if (test.uuid == id) {
+                if (test.uuid == testId) {
                     calibration = test.values
                     break
                 }
@@ -572,12 +587,12 @@ object ColorUtil {
                 }
 
 //                if (cal.value >= 0) {
-                    swatches.add(
-                        Swatch(
-                            cal.value.toDouble(),
-                            getCalibrationColor(cal.value, calibration)
-                        )
+                swatches.add(
+                    Swatch(
+                        cal.value.toDouble(),
+                        getCalibrationColor(cal.value, calibration)
                     )
+                )
 //                }
             }
 

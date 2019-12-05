@@ -24,8 +24,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Color
 import android.hardware.display.DisplayManager
 import android.os.Bundle
+import android.os.Handler
 import android.util.DisplayMetrics
 import android.util.Size
 import android.view.LayoutInflater
@@ -41,6 +43,7 @@ import androidx.navigation.Navigation
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import io.ffem.lite.R
+import io.ffem.lite.app.App
 import io.ffem.lite.preference.useFlashMode
 import io.ffem.lite.ui.BarcodeActivity.Companion.getOutputDirectory
 import io.ffem.lite.util.AutoFitPreviewBuilder
@@ -60,6 +63,8 @@ class CameraFragment : Fragment() {
     private var lensFacing = CameraX.LensFacing.BACK
     private var preview: Preview? = null
     private var imageAnalyzer: ImageAnalysis? = null
+    private lateinit var messageHandler: Handler
+    private lateinit var runnable: Runnable
 
     /** Internal reference of the [DisplayManager] */
     private lateinit var displayManager: DisplayManager
@@ -71,8 +76,27 @@ class CameraFragment : Fragment() {
         }
     }
 
+    private val broadcastReceiver2 = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val message = intent.getStringExtra(App.ERROR_MESSAGE)
+            bottom_overlay.setTextColor(Color.YELLOW)
+            bottom_overlay.text = message
+
+            messageHandler.postDelayed(runnable, 4000)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        messageHandler = Handler()
+
+        runnable = Runnable {
+            if (bottom_overlay != null) {
+                bottom_overlay.setTextColor(Color.WHITE)
+                bottom_overlay.text = getString(R.string.place_color_card)
+            }
+        }
+
         // Mark this as a retain fragment, so the lifecycle does not get restarted on config change
         retainInstance = true
     }
@@ -86,7 +110,8 @@ class CameraFragment : Fragment() {
                 CameraFragmentDirections.actionCameraToPermissions()
             )
         }
-        broadcastManager.registerReceiver(broadcastReceiver, IntentFilter(CAPTURED_EVENT))
+        broadcastManager.registerReceiver(broadcastReceiver, IntentFilter(App.CAPTURED_EVENT))
+        broadcastManager.registerReceiver(broadcastReceiver2, IntentFilter(App.ERROR_EVENT))
     }
 
     override fun onPause() {
@@ -94,7 +119,9 @@ class CameraFragment : Fragment() {
         imageAnalyzer?.removeAnalyzer()
         preview?.removePreviewOutputListener()
         CameraX.unbindAll()
+        messageHandler.removeCallbacksAndMessages(runnable)
         broadcastManager.unregisterReceiver(broadcastReceiver)
+        broadcastManager.unregisterReceiver(broadcastReceiver2)
 
         if (!activity!!.isFinishing) {
             activity?.finish()
@@ -103,7 +130,9 @@ class CameraFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        messageHandler.removeCallbacksAndMessages(runnable)
         broadcastManager.unregisterReceiver(broadcastReceiver)
+        broadcastManager.unregisterReceiver(broadcastReceiver2)
     }
 
     override fun onCreateView(
@@ -218,9 +247,5 @@ class CameraFragment : Fragment() {
                     }
                 }
             })
-    }
-
-    companion object {
-        const val CAPTURED_EVENT = "captured_event"
     }
 }

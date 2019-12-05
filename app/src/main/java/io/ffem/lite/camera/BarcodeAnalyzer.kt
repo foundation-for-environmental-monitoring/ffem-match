@@ -126,6 +126,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         val pixels = getBitmapPixels(bwBitmap, rect)
         if (isDark(pixels)) {
             processing = false
+            sendMessage(context.getString(R.string.try_moving_well_lit))
             bwBitmap.recycle()
             bitmap.recycle()
             return
@@ -187,6 +188,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                                             ) > MAX_ANGLE
                                                         ) {
                                                             processing = false
+                                                            sendMessage(context.getString(R.string.correct_camera_tilt))
                                                             return
                                                         }
 
@@ -213,6 +215,14 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                         }
                     }
                 )
+    }
+
+    private fun sendMessage(s: String) {
+        val intent = Intent(App.ERROR_EVENT)
+        intent.putExtra(App.ERROR_MESSAGE, s)
+        localBroadcastManager.sendBroadcast(
+            intent
+        )
     }
 
     private fun analyzeBarcode(
@@ -271,7 +281,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
                     bitmapRotated.recycle()
 
-                    val intent = Intent(CameraFragment.CAPTURED_EVENT)
+                    val intent = Intent(App.CAPTURED_EVENT)
                     intent.putExtra(App.FILE_PATH_KEY, filePath)
                     intent.putExtra(App.TEST_ID_KEY, testId)
                     intent.putExtra(App.TEST_NAME_KEY, testName)

@@ -13,7 +13,7 @@ import android.widget.FrameLayout
 import androidx.databinding.DataBindingUtil
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import io.ffem.lite.R
-import io.ffem.lite.camera.CameraFragment
+import io.ffem.lite.app.App
 import io.ffem.lite.databinding.ActivityBarcodeBinding
 import io.ffem.lite.preference.sendDummyImage
 import java.io.File
@@ -60,7 +60,7 @@ class BarcodeActivity : BaseActivity() {
 
         broadcastManager.registerReceiver(
             broadcastReceiver,
-            IntentFilter(CameraFragment.CAPTURED_EVENT)
+            IntentFilter(App.CAPTURED_EVENT)
         )
     }
 
