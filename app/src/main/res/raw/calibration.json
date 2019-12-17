@@ -3,7 +3,7 @@
     {
       "name": "Fluoride",
       "type": "water",
-      "uuid": "3006cf",
+      "uuid": "f0f3c1dd-89af-49f1-83e7-bcc31c3006cf",
       "values": [
         {
           "value": -1
@@ -46,7 +46,7 @@
     {
       "name": "pH",
       "type": "water",
-      "uuid": "40df93",
+      "uuid": "4d3a7d6d-2f11-49de-9f7f-9e21e840df93",
       "values": [
         {
           "value": 4

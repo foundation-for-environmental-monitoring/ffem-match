@@ -13,9 +13,9 @@ import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetector
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
-import com.google.gson.Gson
 import io.ffem.lite.R
 import io.ffem.lite.app.App
+import io.ffem.lite.app.App.Companion.testConfig
 import io.ffem.lite.app.AppDatabase
 import io.ffem.lite.camera.MAX_ANGLE
 import io.ffem.lite.camera.Utilities
@@ -168,7 +168,7 @@ fun hasBlackPixelsInArea(
 
 object ColorUtil {
 
-    private var gson = Gson()
+//    private var gson = Gson()
 
     private var cropLeft = 0
     private var cropRight = 0
@@ -217,17 +217,20 @@ object ColorUtil {
                     for (barcode in result) {
                         if (!barcode.rawValue.isNullOrEmpty()) {
 
-                            val input = context.resources.openRawResource(R.raw.calibration)
-                            val content = FileUtil.readTextFile(input)
-                            val testConfig = Gson().fromJson(content, TestConfig::class.java)
+//                            val input = context.resources.openRawResource(R.raw.calibration)
+//                            val content = FileUtil.readTextFile(input)
+//                            val testConfig = Gson().fromJson(content, TestConfig::class.java)
+//
+//                            var testName = ""
+//                            for (test in testConfig.tests) {
+//
+//                                if (test.uuid == result[0].displayValue!!) {
+//                                    testName = test.name!!
+//                                    break
+//                                }
+//                            }
 
-                            var testName = ""
-                            for (test in testConfig.tests) {
-                                if (test.uuid == result[0].displayValue!!) {
-                                    testName = test.name!!
-                                    break
-                                }
-                            }
+                            val testName = App.getTestName(result[0].displayValue!!)
 
 //                            if (barcode.boundingBox!!.width() > bitmap.width * .44 &&
 //                                barcode.boundingBox!!.width() < bitmap.width * .48
@@ -339,14 +342,15 @@ object ColorUtil {
 //                    barcode2.boundingBox!!.width() < bitmap.width * .48
 //                ) {
 
-                var testName = ""
-                for (test in testConfig.tests) {
-                    if (test.uuid == result[0].displayValue!!) {
-                        testName = test.name!!
-                        break
-                    }
-                }
+//                var testName = ""
+//                for (test in testConfig.tests) {
+//                    if (test.uuid == result[0].displayValue!!) {
+//                        testName = test.name!!
+//                        break
+//                    }
+//                }
 
+                val testName = App.getTestName(result[0].displayValue!!)
                 if (testName.isEmpty()) {
                     returnResult(context, id)
                     return
@@ -546,15 +550,15 @@ object ColorUtil {
 
             val bitmap = ImageUtil.toBlackAndWhite(image, 100)
 
-            val input = context.resources.openRawResource(R.raw.calibration)
             val paint = Paint()
             paint.style = Style.STROKE
             paint.color = Color.WHITE
             paint.strokeWidth = 2f
             paint.isAntiAlias = true
 
-            val content = FileUtil.readTextFile(input)
-            val testConfig = gson.fromJson(content, TestConfig::class.java)
+//            val input = context.resources.openRawResource(R.raw.calibration)
+//            val content = FileUtil.readTextFile(input)
+//            val testConfig = gson.fromJson(content, TestConfig::class.java)
 
             var calibration: List<CalibrationValue> = testConfig.tests[0].values
             for (test in testConfig.tests) {

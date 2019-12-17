@@ -7,9 +7,12 @@ import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.provider.Settings
+import com.google.gson.Gson
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
+import io.ffem.lite.model.TestConfig
 import io.ffem.lite.preference.isDiagnosticMode
+import io.ffem.lite.util.FileUtil
 import io.ffem.lite.util.PreferencesUtil
 import timber.log.Timber
 import java.util.*
@@ -125,6 +128,8 @@ class App : BaseApplication() {
 
         const val API_URL = "http://ec2-52-66-17-109.ap-south-1.compute.amazonaws.com:5000"
 
+        lateinit var testConfig: TestConfig
+
         /**
          * Gets the singleton app object.
          *
@@ -194,5 +199,23 @@ class App : BaseApplication() {
             i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
             context.startActivity(i)
         }
+
+        fun getTestName(id: String): String {
+            if (!::testConfig.isInitialized) {
+                val input = app.resources.openRawResource(R.raw.calibration)
+                val content = FileUtil.readTextFile(input)
+                testConfig = Gson().fromJson(content, TestConfig::class.java)
+            }
+
+            var testName = ""
+            for (test in testConfig.tests) {
+                if (test.uuid!!.substring(30) == id) {
+                    testName = test.name!!
+                    break
+                }
+            }
+            return testName
+        }
+
     }
 }

@@ -14,11 +14,13 @@ import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetector
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
-import com.google.gson.Gson
 import io.ffem.lite.R
 import io.ffem.lite.app.App
-import io.ffem.lite.model.TestConfig
-import io.ffem.lite.util.*
+import io.ffem.lite.app.App.Companion.getTestName
+import io.ffem.lite.util.ImageUtil
+import io.ffem.lite.util.getBitmapPixels
+import io.ffem.lite.util.hasBlackPixelsInArea
+import io.ffem.lite.util.isDark
 import timber.log.Timber
 import java.util.*
 import kotlin.math.abs
@@ -237,22 +239,9 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         }
         for (barcode2 in result) {
             if (!barcode2.rawValue.isNullOrEmpty()) {
-                if (barcode2.boundingBox!!.width() > bitmap.width * .44
-//                    && barcode2.boundingBox!!.width() < bitmap.width * .48
-                ) {
+                if (barcode2.boundingBox!!.width() > bitmap.width * .44) {
 
-                    val input = context.resources.openRawResource(R.raw.calibration)
-                    val content = FileUtil.readTextFile(input)
-                    val testConfig = Gson().fromJson(content, TestConfig::class.java)
-
-                    var testName = ""
-                    for (test in testConfig.tests) {
-                        if (test.uuid == result[0].displayValue!!) {
-                            testName = test.name!!
-                            break
-                        }
-                    }
-
+                    val testName = getTestName(result[0].displayValue!!)
                     if (testName.isEmpty()) {
                         processing = false
                         return
