@@ -152,10 +152,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                         }
                         for (barcode in result) {
                             if (!barcode.rawValue.isNullOrEmpty()) {
-
-                                if (barcode.boundingBox!!.width() > bitmap.width * .44
-//                                    && barcode.boundingBox!!.width() < bitmap.width * .48
-                                ) {
+                                if (barcode.boundingBox!!.width() > bitmap.width * .44) {
                                     try {
                                         cropTop = (bitmap.width - barcode.boundingBox!!.right) - 5
                                         cropBottom = (bitmap.width - barcode.boundingBox!!.left) + 5

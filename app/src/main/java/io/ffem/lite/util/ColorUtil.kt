@@ -15,7 +15,7 @@ import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOption
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import io.ffem.lite.R
 import io.ffem.lite.app.App
-import io.ffem.lite.app.App.Companion.testConfig
+import io.ffem.lite.app.App.Companion.getCalibration
 import io.ffem.lite.app.AppDatabase
 import io.ffem.lite.camera.MAX_ANGLE
 import io.ffem.lite.camera.Utilities
@@ -61,41 +61,6 @@ fun isDark(pixels: IntArray): Boolean {
 
     return (r / pixels.size) < 210
 }
-
-//private fun isNotDark(pixels: IntArray): Boolean {
-//    var r = 0
-//
-//    if (pixels.isEmpty()) {
-//        return false
-//    }
-//
-//    for (element in pixels) {
-//        r += element.red
-//    }
-//
-//    return (r / pixels.size) > 220
-//}
-
-//fun isDarkLine(pixels: IntArray, refPixel: IntArray): Boolean {
-//    var r = 0
-//    var rf = 0
-//    var total = 0
-//
-//    if (pixels.isEmpty()) {
-//        return false
-//    }
-//
-//    for (element in pixels) {
-//        r += element.red
-//    }
-//
-//    for (element in refPixel) {
-//        rf += element.red
-//        total++
-//    }
-//
-//    return (r / total) < 15 || abs((rf / total) - (r / total)) > 60
-//}
 
 fun getAverageColor(pixels: IntArray): Int {
 
@@ -217,19 +182,6 @@ object ColorUtil {
                     for (barcode in result) {
                         if (!barcode.rawValue.isNullOrEmpty()) {
 
-//                            val input = context.resources.openRawResource(R.raw.calibration)
-//                            val content = FileUtil.readTextFile(input)
-//                            val testConfig = Gson().fromJson(content, TestConfig::class.java)
-//
-//                            var testName = ""
-//                            for (test in testConfig.tests) {
-//
-//                                if (test.uuid == result[0].displayValue!!) {
-//                                    testName = test.name!!
-//                                    break
-//                                }
-//                            }
-
                             val testName = App.getTestName(result[0].displayValue!!)
 
 //                            if (barcode.boundingBox!!.width() > bitmap.width * .44 &&
@@ -305,7 +257,6 @@ object ColorUtil {
                                                 rightBarcodeBitmap.recycle()
                                                 analyzeBarcode(
                                                     context,
-                                                    testConfig,
                                                     id,
                                                     bitmap,
                                                     result
@@ -330,8 +281,7 @@ object ColorUtil {
     }
 
     private fun analyzeBarcode(
-        context: Context, testConfig: TestConfig, id: String,
-        bitmap: Bitmap, result: List<FirebaseVisionBarcode>
+        context: Context, id: String, bitmap: Bitmap, result: List<FirebaseVisionBarcode>
     ) {
         if (result.isEmpty()) {
             returnResult(context, id)
@@ -341,14 +291,6 @@ object ColorUtil {
 //                if (barcode2.boundingBox!!.width() > bitmap.width * .44 &&
 //                    barcode2.boundingBox!!.width() < bitmap.width * .48
 //                ) {
-
-//                var testName = ""
-//                for (test in testConfig.tests) {
-//                    if (test.uuid == result[0].displayValue!!) {
-//                        testName = test.name!!
-//                        break
-//                    }
-//                }
 
                 val testName = App.getTestName(result[0].displayValue!!)
                 if (testName.isEmpty()) {
@@ -556,17 +498,7 @@ object ColorUtil {
             paint.strokeWidth = 2f
             paint.isAntiAlias = true
 
-//            val input = context.resources.openRawResource(R.raw.calibration)
-//            val content = FileUtil.readTextFile(input)
-//            val testConfig = gson.fromJson(content, TestConfig::class.java)
-
-            var calibration: List<CalibrationValue> = testConfig.tests[0].values
-            for (test in testConfig.tests) {
-                if (test.uuid == testId) {
-                    calibration = test.values
-                    break
-                }
-            }
+            val calibration: List<CalibrationValue> = getCalibration(testId)
 
             val intervals = calibration.size / 2
             val commonTop = bitmap.height / intervals
@@ -629,14 +561,12 @@ object ColorUtil {
                     break
                 }
 
-//                if (cal.value >= 0) {
                 swatches.add(
                     Swatch(
                         cal.value.toDouble(),
                         getCalibrationColor(cal.value, calibration)
                     )
                 )
-//                }
             }
 
             return analyzeColor(swatches.size, colorInfo, generateGradient(swatches))

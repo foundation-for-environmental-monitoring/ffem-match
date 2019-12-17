@@ -10,6 +10,7 @@ import android.provider.Settings
 import com.google.gson.Gson
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
+import io.ffem.lite.model.CalibrationValue
 import io.ffem.lite.model.TestConfig
 import io.ffem.lite.preference.isDiagnosticMode
 import io.ffem.lite.util.FileUtil
@@ -128,7 +129,7 @@ class App : BaseApplication() {
 
         const val API_URL = "http://ec2-52-66-17-109.ap-south-1.compute.amazonaws.com:5000"
 
-        lateinit var testConfig: TestConfig
+        private lateinit var testConfig: TestConfig
 
         /**
          * Gets the singleton app object.
@@ -217,5 +218,22 @@ class App : BaseApplication() {
             return testName
         }
 
+        fun getCalibration(id: String): List<CalibrationValue> {
+            if (!::testConfig.isInitialized) {
+                val input = app.resources.openRawResource(R.raw.calibration)
+                val content = FileUtil.readTextFile(input)
+                testConfig = Gson().fromJson(content, TestConfig::class.java)
+            }
+
+            var calibration: List<CalibrationValue> = testConfig.tests[0].values
+            for (test in testConfig.tests) {
+                if (test.uuid!!.substring(30) == id) {
+                    calibration = test.values
+                    break
+                }
+            }
+
+            return calibration
+        }
     }
 }
