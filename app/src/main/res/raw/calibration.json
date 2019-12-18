@@ -91,6 +91,50 @@
           "value": 10
         }
       ]
+    },
+    {
+      "name": "Residual Chlorine",
+      "type": "water",
+      "uuid": "f1d64b11-64c4-4a34-806e-ad0d47bcc96b",
+      "unit": "mg/l",
+      "values": [
+        {
+          "value": 0
+        },
+        {
+          "value": 0.5
+        },
+        {
+          "value": 1
+        },
+        {
+          "value": 1.5
+        },
+        {
+          "value": 2
+        },
+        {
+          "value": 2.5
+        },
+        {
+          "value": 2.5
+        },
+        {
+          "value": 2
+        },
+        {
+          "value": 1.5
+        },
+        {
+          "value": 1
+        },
+        {
+          "value": 0.5
+        },
+        {
+          "value": 0
+        }
+      ]
     }
   ]
 }
