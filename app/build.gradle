@@ -16,8 +16,8 @@ android {
         applicationId "io.ffem.lite"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 26
-        versionName "Alpha 0.18"
+        versionCode 28
+        versionName "Alpha 0.20"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 

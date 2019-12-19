@@ -17,7 +17,7 @@ object Utilities {
      * Saves a specified picture on external disk.
      */
     fun savePicture(
-        context: Context, id: String, barcodeValue: String, bytes: ByteArray
+        context: Context, id: String, name: String, bytes: ByteArray
     ): String {
         try {
             val path = context.getExternalFilesDir(DIRECTORY_PICTURES).toString() +
@@ -27,7 +27,8 @@ object Utilities {
             if (!basePath.exists())
                 Timber.d(if (basePath.mkdirs()) "Success" else "Failed")
 
-            val filePath = "$path$id" + "_" + "$barcodeValue.jpg"
+            val fileName = name.replace(" ", "")
+            val filePath = "$path$id" + "_" + "$fileName.jpg"
             val stream = FileOutputStream(filePath)
             stream.write(bytes)
             stream.flush()

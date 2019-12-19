@@ -30,7 +30,8 @@ class ResultActivity : BaseActivity() {
                 File.separator + "captures" + File.separator
 
         localPath = path + id + "_" + ".jpg"
-        serverPath = path + id + "_" + name + ".jpg"
+        val fileName = name.replace(" ", "")
+        serverPath = path + id + "_" + fileName + ".jpg"
 
         textResultTitle.text = App.getVersionName()
 

@@ -178,7 +178,7 @@ class ResultListActivity : BaseActivity() {
         runnable = Runnable {
             analyzeImage()
             if (isInternetConnected) {
-                sendImagesToServer()
+//                sendImagesToServer()
                 getResultsFromServer()
             }
         }
@@ -560,7 +560,9 @@ class ResultListActivity : BaseActivity() {
         db.resultDao().getPendingLocalResults().forEach {
             val path = getExternalFilesDir(DIRECTORY_PICTURES).toString() +
                     File.separator + "captures" + File.separator
-            val filePath = "$path${it.id}" + "_" + "${it.name}.jpg"
+
+            val fileName = it.name.replace(" ", "")
+            val filePath = "$path${it.id}" + "_" + "$fileName.jpg"
 
             val file = File(filePath)
 
@@ -586,7 +588,9 @@ class ResultListActivity : BaseActivity() {
 
         val path = getExternalFilesDir(DIRECTORY_PICTURES).toString() +
                 File.separator + "captures" + File.separator
-        val filePath = "$path$id" + "_" + "$name.jpg"
+
+        val fileName = name.replace(" ", "")
+        val filePath = "$path$id" + "_" + "$fileName.jpg"
 
         try {
             val file = File(filePath)
