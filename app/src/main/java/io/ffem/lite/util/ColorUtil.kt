@@ -47,6 +47,21 @@ fun getBitmapPixels(bitmap: Bitmap, rect: Rect): IntArray {
     return subsetPixels
 }
 
+fun isDarkLine(pixels: IntArray): Boolean {
+    var r = 0
+
+    if (pixels.isEmpty()) {
+        return false
+    }
+
+    for (element in pixels) {
+        r += element.red
+    }
+
+    return (r / pixels.size) < 180
+}
+
+
 fun isDark(pixels: IntArray): Boolean {
     var r = 0
 
@@ -135,7 +150,6 @@ object ColorUtil {
     private var cropLeft = 0
     private var cropRight = 0
     private var cropTop = 0
-    private var cropBottom = 0
 
     fun extractImage(context: Context, id: String, bitmapImage: Bitmap) {
 
@@ -175,7 +189,6 @@ object ColorUtil {
 //                            if (barcode.boundingBox!!.width() > bitmap.width * .44) {
                             try {
                                 cropTop = bitmap.width - barcode.boundingBox!!.right - 1
-                                cropBottom = (bitmap.width - barcode.boundingBox!!.left) + 1
                                 cropLeft = barcode.boundingBox!!.bottom + 1
 
                                 leftBarcodeBitmap.recycle()
@@ -303,7 +316,8 @@ object ColorUtil {
 
                 bitmapRotated = Bitmap.createBitmap(
                     bitmapRotated, 0, cropTop,
-                    bitmapRotated.width, barcode2.boundingBox!!.width() + 3
+                    bitmapRotated.width,
+                    min(barcode2.boundingBox!!.width() + 3, bitmapRotated.height - cropTop)
                 )
 
                 val croppedBitmap1 = Bitmap.createBitmap(
@@ -320,7 +334,7 @@ object ColorUtil {
                 for (x in 1 until 100) {
                     val rectangle = Rect(x, 10, x + 1, croppedBitmap1.height - 10)
                     val pixels = getBitmapPixels(bwCroppedBitmap1, rectangle)
-                    if (isDark(pixels)) {
+                    if (isDarkLine(pixels)) {
                         left = x
                         break
                     }
@@ -330,7 +344,7 @@ object ColorUtil {
                 for (x in croppedBitmap1.width - 1 downTo croppedBitmap1.width - 100) {
                     val rectangle = Rect(x - 1, 10, x, croppedBitmap1.height - 10)
                     val pixels = getBitmapPixels(bwCroppedBitmap1, rectangle)
-                    if (isDark(pixels)) {
+                    if (isDarkLine(pixels)) {
                         right = x
                         break
                     }
@@ -351,7 +365,7 @@ object ColorUtil {
                         Rect(bwCroppedBitmap2.width - 70, y, bwCroppedBitmap2.width - 1, y + 3)
                     val pixels = getBitmapPixels(bwCroppedBitmap2, rectangle)
                     val pixelsRight = getBitmapPixels(bwCroppedBitmap2, rectangleRight)
-                    if (isDark(pixels) && isDark(pixelsRight)) {
+                    if (isDarkLine(pixels) && isDarkLine(pixelsRight)) {
                         top = y
                         break
                     }
