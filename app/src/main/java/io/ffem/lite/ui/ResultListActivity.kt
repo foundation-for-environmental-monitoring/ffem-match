@@ -179,7 +179,7 @@ class ResultListActivity : BaseActivity() {
             analyzeImage()
             if (isInternetConnected) {
 //                sendImagesToServer()
-                getResultsFromServer()
+//                getResultsFromServer()
             }
         }
 

@@ -17,16 +17,16 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
 import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.app.App.Companion.getTestName
+import io.ffem.lite.util.ColorUtil.fixBoundary
+import io.ffem.lite.util.ColorUtil.isBarcodeValid
+import io.ffem.lite.util.ColorUtil.isTilted
 import io.ffem.lite.util.ImageUtil
-import io.ffem.lite.util.getBitmapPixels
-import io.ffem.lite.util.isDark
 import timber.log.Timber
 import java.util.*
-import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
-const val MAX_ANGLE = 12
+const val MAX_ANGLE = 14
 
 class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
@@ -93,114 +93,125 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 //                "drawable", context.packageName
 //            )
 //        )
-
-//        val fullBitmap = (drawable as BitmapDrawable).bitmap
+//
+//        bitmap = (drawable as BitmapDrawable).bitmap
 
         bitmap = Bitmap.createBitmap(
             fullBitmap, 0, (fullBitmap.height * 0.18).toInt(),
             fullBitmap.width,
             fullBitmap.height - (fullBitmap.height * 0.36).toInt()
         )
-        fullBitmap.recycle()
 
         localBroadcastManager = LocalBroadcastManager.getInstance(context)
 
-        val leftBarcodeBitmap = Bitmap.createBitmap(
+        var badLighting = false
+
+        val leftBarcodeBitmapColor = Bitmap.createBitmap(
             bitmap, 0, 0,
             bitmap.width, bitmap.height / 2
         )
+
+        val leftBarcodeBitmap = ImageUtil.toBlackAndWhite(leftBarcodeBitmapColor, 100)
+        leftBarcodeBitmapColor.recycle()
 
         taskLeftBarcode =
             detector.detectInImage(FirebaseVisionImage.fromBitmap(leftBarcodeBitmap))
                 .addOnFailureListener(
                     fun(_: Exception) {
+                        sendMessage(context.getString(R.string.color_card_not_found) + ".")
                         processing = false
+                        return
                     }
                 )
                 .addOnSuccessListener(
                     fun(result: List<FirebaseVisionBarcode>) {
                         if (result.isEmpty()) {
+                            sendMessage(context.getString(R.string.color_card_not_found) + "..")
                             processing = false
                             return
                         }
-                        for (barcode in result) {
-                            if (!barcode.rawValue.isNullOrEmpty()) {
+                        for (leftBarcode in result) {
+                            if (!leftBarcode.rawValue.isNullOrEmpty()) {
 
 //                                val testName = App.getTestName(result[0].displayValue!!)
 
-                                if (barcode.boundingBox!!.width() > bitmap.width * .44) {
+                                val leftBoundingBox = fixBoundary(leftBarcode, leftBarcodeBitmap)
+
+                                if (leftBoundingBox.width() > bitmap.width * .44) {
                                     try {
-                                        cropTop = (bitmap.width - barcode.boundingBox!!.right) - 10
-                                        cropLeft = barcode.boundingBox!!.bottom + 1
+                                        cropTop =
+                                            (bitmap.width - leftBoundingBox.right) - 10
+                                        cropLeft = leftBoundingBox.bottom + 1
 
-                                        leftBarcodeBitmap.recycle()
+                                        if (!isBarcodeValid(
+                                                leftBarcodeBitmap,
+                                                leftBoundingBox,
+                                                true
+                                            )
+                                        ) {
+                                            badLighting = true
+                                        }
 
-                                        val rightBarcodeBitmap = Bitmap.createBitmap(
+                                        val rightBarcodeBitmapColor = Bitmap.createBitmap(
                                             bitmap, 0, bitmap.height / 2,
                                             bitmap.width, bitmap.height / 2
                                         )
+
+                                        val rightBarcodeBitmap =
+                                            ImageUtil.toBlackAndWhite(rightBarcodeBitmapColor, 100)
+                                        rightBarcodeBitmapColor.recycle()
 
                                         detector.detectInImage(
                                             FirebaseVisionImage.fromBitmap(rightBarcodeBitmap)
                                         )
                                             .addOnFailureListener(fun(_: Exception) {
+                                                sendMessage(context.getString(R.string.color_card_not_found) + "...")
                                                 processing = false
+                                                return
                                             })
                                             .addOnSuccessListener(
                                                 fun(result: List<FirebaseVisionBarcode>) {
-                                                    if (result.isEmpty()) {
+                                                    if (result.isNullOrEmpty()) {
+                                                        sendMessage(context.getString(R.string.color_card_not_found) + "....")
                                                         processing = false
+                                                        return
                                                     }
 
-                                                    for (barcode2 in result) {
+                                                    for (rightBarcode in result) {
 
-                                                        // Check if image angle is ok
-                                                        if (abs(
-                                                                barcode.boundingBox!!.left
-                                                                        - barcode2.boundingBox!!.left
-                                                            ) > MAX_ANGLE ||
-                                                            abs(
-                                                                barcode.boundingBox!!.right
-                                                                        - barcode2.boundingBox!!.right
-                                                            ) > MAX_ANGLE
+                                                        val rightBoundingBox =
+                                                            fixBoundary(
+                                                                rightBarcode,
+                                                                rightBarcodeBitmap
+                                                            )
+
+                                                        if (isTilted(
+                                                                leftBoundingBox, rightBoundingBox
+                                                            )
                                                         ) {
-                                                            rightBarcodeBitmap.recycle()
-                                                            bitmap.recycle()
+//                                                            bitmap.recycle()
                                                             sendMessage(context.getString(R.string.correct_camera_tilt))
                                                             processing = false
                                                             return
                                                         }
 
-                                                        val bwBitmap = ImageUtil.toBlackAndWhite(
-                                                            rightBarcodeBitmap,
-                                                            90
-                                                        )
-                                                        val rect = Rect(
-                                                            barcode.boundingBox!!.right + 3,
-                                                            10,
-                                                            min(
-                                                                barcode.boundingBox!!.right + 30,
-                                                                bwBitmap.width
-                                                            ),
-                                                            bwBitmap.height - 5
-                                                        )
-                                                        val pixels = getBitmapPixels(bwBitmap, rect)
-                                                        if (isDark(pixels)) {
-                                                            bwBitmap.recycle()
-                                                            rightBarcodeBitmap.recycle()
-                                                            bitmap.recycle()
-                                                            sendMessage(context.getString(R.string.bad_lighting))
+                                                        if (badLighting || !isBarcodeValid(
+                                                                rightBarcodeBitmap,
+                                                                rightBoundingBox, false
+                                                            )
+                                                        ) {
+//                                                            bitmap.recycle()
+                                                            sendMessage(context.getString(R.string.try_moving_well_lit))
                                                             processing = false
                                                             return
                                                         }
 
-                                                        cropRight = barcode2.boundingBox!!.top - 10
+                                                        cropRight = rightBoundingBox.top - 10
 
-                                                        rightBarcodeBitmap.recycle()
                                                         analyzeBarcode(
                                                             context,
                                                             bitmap,
-                                                            result
+                                                            rightBarcode, rightBoundingBox
                                                         )
                                                     }
                                                 }
@@ -219,68 +230,61 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                 )
     }
 
+    private fun analyzeBarcode(
+        context: Context, bitmap: Bitmap, rightBarcode: FirebaseVisionBarcode,
+        rightBoundingBox: Rect
+    ) {
+        if (rightBoundingBox.width() > bitmap.width * .44) {
+            if (!rightBarcode.rawValue.isNullOrEmpty()) {
+                val testName = getTestName(rightBarcode.displayValue!!)
+                if (testName.isEmpty()) {
+                    processing = false
+                    return
+                }
+
+                done = true
+
+                var bitmapRotated = Utilities.rotateImage(bitmap, 270)
+
+                cropTop = max(0, cropTop - 10)
+
+                bitmapRotated = Bitmap.createBitmap(
+                    bitmapRotated, 0, cropTop,
+                    bitmapRotated.width,
+                    min(rightBoundingBox.width() + 40, bitmapRotated.height - cropTop)
+                )
+
+                bitmap.recycle()
+
+                val testId = UUID.randomUUID().toString()
+                val filePath = Utilities.savePicture(
+                    context.applicationContext, testId,
+                    testName, Utilities.bitmapToBytes(bitmapRotated)
+                )
+
+                bitmapRotated.recycle()
+
+                val intent = Intent(App.CAPTURED_EVENT)
+                intent.putExtra(App.FILE_PATH_KEY, filePath)
+                intent.putExtra(App.TEST_ID_KEY, testId)
+                intent.putExtra(App.TEST_NAME_KEY, testName)
+                localBroadcastManager.sendBroadcast(
+                    intent
+                )
+
+            } else {
+                processing = false
+            }
+        } else {
+            processing = false
+        }
+    }
+
     private fun sendMessage(s: String) {
         val intent = Intent(App.ERROR_EVENT)
         intent.putExtra(App.ERROR_MESSAGE, s)
         localBroadcastManager.sendBroadcast(
             intent
         )
-    }
-
-    private fun analyzeBarcode(
-        context: Context, bitmap: Bitmap, result: List<FirebaseVisionBarcode>
-    ) {
-        if (result.isEmpty()) {
-            processing = false
-            return
-        }
-        for (barcode2 in result) {
-            if (!barcode2.rawValue.isNullOrEmpty()) {
-                if (barcode2.boundingBox!!.width() > bitmap.width * .44) {
-
-                    val testName = getTestName(result[0].displayValue!!)
-                    if (testName.isEmpty()) {
-                        processing = false
-                        return
-                    }
-
-                    done = true
-
-                    var bitmapRotated = Utilities.rotateImage(bitmap, 270)
-
-                    cropTop = max(0, cropTop - 1)
-
-                    bitmapRotated = Bitmap.createBitmap(
-                        bitmapRotated, 0, cropTop,
-                        bitmapRotated.width,
-                        min(barcode2.boundingBox!!.width() + 15, bitmapRotated.height - cropTop)
-                    )
-
-                    bitmap.recycle()
-
-                    val testId = UUID.randomUUID().toString()
-                    val filePath =
-                        Utilities.savePicture(
-                            context.applicationContext, testId,
-                            testName, Utilities.bitmapToBytes(bitmapRotated)
-                        )
-
-                    bitmapRotated.recycle()
-
-                    val intent = Intent(App.CAPTURED_EVENT)
-                    intent.putExtra(App.FILE_PATH_KEY, filePath)
-                    intent.putExtra(App.TEST_ID_KEY, testId)
-                    intent.putExtra(App.TEST_NAME_KEY, testName)
-                    localBroadcastManager.sendBroadcast(
-                        intent
-                    )
-
-                } else {
-                    processing = false
-                }
-            } else {
-                processing = false
-            }
-        }
     }
 }

@@ -80,7 +80,7 @@ class DiagnosticPreferenceFragment : PreferenceFragmentCompat() {
 
     private fun setupAverageDistancePreference() {
         val distancePreference =
-            findPreference<Preference>(getString(string.maxCardColorDistancesAllowedKey)) as EditTextPreference
+            findPreference<Preference>(getString(string.maxCardColorDistanceAllowedKey)) as EditTextPreference
 
         distancePreference.summary = distancePreference.text
         distancePreference.onPreferenceChangeListener =

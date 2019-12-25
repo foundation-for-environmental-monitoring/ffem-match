@@ -14,13 +14,13 @@
             android:title="Max sample color distance"
             app:iconSpaceReserved="false" />
         <EditTextPreference
-            android:defaultValue="40"
+            android:defaultValue="50"
             android:dialogMessage="This is the max allowed distance between the colors on the card for a specific value"
             android:inputType="number"
-            android:key="@string/maxCardColorDistancesAllowedKey"
+            android:key="@string/maxCardColorDistanceAllowedKey"
             android:maxLength="3"
             android:selectAllOnFocus="true"
-            android:title="Max card color distances"
+            android:title="Max card color calibration distance"
             app:iconSpaceReserved="false" />
     </PreferenceCategory>
 </PreferenceScreen>

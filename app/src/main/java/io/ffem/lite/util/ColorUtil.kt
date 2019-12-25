@@ -16,6 +16,7 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.app.App.Companion.getCalibration
+import io.ffem.lite.app.App.Companion.getTestName
 import io.ffem.lite.app.AppDatabase
 import io.ffem.lite.camera.MAX_ANGLE
 import io.ffem.lite.camera.Utilities
@@ -26,10 +27,10 @@ import java.util.*
 import kotlin.math.*
 
 const val MAX_COLOR_DISTANCE_RGB = 80
-const val MAX_COLOR_DISTANCE_CALIBRATION = 40
+const val MAX_COLOR_DISTANCE_CALIBRATION = 50
 const val INTERPOLATION_COUNT = 100.0
 const val MAX_DISTANCE = 999
-const val MIN_BRIGHTNESS = 30
+//const val MIN_BRIGHTNESS = 30
 
 fun getBitmapPixels(bitmap: Bitmap, rect: Rect): IntArray {
     val pixels = IntArray(bitmap.width * bitmap.height)
@@ -97,28 +98,28 @@ fun getAverageColor(pixels: IntArray): Int {
     return Color.argb(255, r, g, b)
 }
 
-fun hasBlackPixelsOnLine(bitmap: Bitmap, row: Int): Boolean {
-    var total = 0
-
-    val pixels = getBitmapPixels(
-        bitmap,
-        Rect(0, row, bitmap.width, row + 1)
-    )
-
-    for (element in pixels) {
-        if (element.red < MIN_BRIGHTNESS &&
-            element.green < MIN_BRIGHTNESS &&
-            element.blue < MIN_BRIGHTNESS
-        ) {
-            total++
-            if (total > 50) {
-                return true
-            }
-        }
-    }
-
-    return false
-}
+//fun hasBlackPixelsOnLine(bitmap: Bitmap, row: Int): Boolean {
+//    var total = 0
+//
+//    val pixels = getBitmapPixels(
+//        bitmap,
+//        Rect(0, row, bitmap.width, row + 1)
+//    )
+//
+//    for (element in pixels) {
+//        if (element.red < MIN_BRIGHTNESS &&
+//            element.green < MIN_BRIGHTNESS &&
+//            element.blue < MIN_BRIGHTNESS
+//        ) {
+//            total++
+//            if (total > 50) {
+//                return true
+//            }
+//        }
+//    }
+//
+//    return false
+//}
 
 //fun hasBlackPixelsInArea(
 //    bitmap: Bitmap, left: Int, top: Int, right: Int, bottom: Int
@@ -165,10 +166,15 @@ object ColorUtil {
 
         val bitmap = Utilities.rotateImage(bitmapImage, 90)
 
-        val leftBarcodeBitmap = Bitmap.createBitmap(
+        var badLighting = false
+
+        val leftBarcodeBitmapColor = Bitmap.createBitmap(
             bitmap, 0, 0,
             bitmap.width, bitmap.height / 2
         )
+
+        val leftBarcodeBitmap = ImageUtil.toBlackAndWhite(leftBarcodeBitmapColor, 110)
+        leftBarcodeBitmapColor.recycle()
 
         detector.detectInImage(FirebaseVisionImage.fromBitmap(leftBarcodeBitmap))
             .addOnFailureListener(
@@ -179,101 +185,91 @@ object ColorUtil {
             .addOnSuccessListener(
                 fun(result: List<FirebaseVisionBarcode>) {
                     if (result.isEmpty()) {
-                        returnResult(context, id)
+                        returnResult(context, id, R.string.bad_lighting, bitmap)
                     }
-                    for (barcode in result) {
-                        if (!barcode.rawValue.isNullOrEmpty()) {
+                    for (leftBarcode in result) {
+                        if (!leftBarcode.rawValue.isNullOrEmpty()) {
 
                             val testName = App.getTestName(result[0].displayValue!!)
 
-//                            if (barcode.boundingBox!!.width() > bitmap.width * .44) {
+//                            if (leftBarcode.boundingBox!!.width() > bitmap.width * .44) {
                             try {
-                                cropTop = bitmap.width - barcode.boundingBox!!.right - 1
-                                cropLeft = barcode.boundingBox!!.bottom + 1
 
-                                leftBarcodeBitmap.recycle()
+                                val leftBoundingBox = fixBoundary(leftBarcode, leftBarcodeBitmap)
 
-                                val rightBarcodeBitmap = Bitmap.createBitmap(
+                                cropTop = bitmap.width - leftBoundingBox.right - 1
+                                cropLeft = leftBoundingBox.bottom + 1
+
+                                if (!isBarcodeValid(leftBarcodeBitmap, leftBoundingBox, true)) {
+                                    badLighting = true
+                                }
+
+                                val rightBarcodeBitmapColor = Bitmap.createBitmap(
                                     bitmap, 0, bitmap.height / 2,
                                     bitmap.width, bitmap.height / 2
                                 )
+
+                                val rightBarcodeBitmap =
+                                    ImageUtil.toBlackAndWhite(rightBarcodeBitmapColor, 110)
+                                rightBarcodeBitmapColor.recycle()
 
                                 detector.detectInImage(
                                     FirebaseVisionImage.fromBitmap(rightBarcodeBitmap)
                                 )
                                     .addOnFailureListener(fun(_: Exception) {
-                                        returnResult(context, id)
+                                        returnResult(
+                                            context,
+                                            id,
+                                            R.string.bad_lighting,
+                                            bitmap,
+                                            testName
+                                        )
                                     })
                                     .addOnSuccessListener(
                                         fun(result: List<FirebaseVisionBarcode>) {
-                                            for (barcode2 in result) {
+                                            if (result.isEmpty()) {
+                                                returnResult(
+                                                    context,
+                                                    id,
+                                                    R.string.bad_lighting,
+                                                    bitmap,
+                                                    testName
+                                                )
+                                                return
+                                            }
 
-                                                // Check if image angle is ok
-                                                if (abs(
-                                                        barcode.boundingBox!!.left
-                                                                - barcode2.boundingBox!!.left
-                                                    ) > MAX_ANGLE ||
-                                                    abs(
-                                                        barcode.boundingBox!!.right
-                                                                - barcode2.boundingBox!!.right
-                                                    ) > MAX_ANGLE
-                                                ) {
+                                            for (rightBarcode in result) {
+
+                                                val rightBoundingBox =
+                                                    fixBoundary(rightBarcode, rightBarcodeBitmap)
+
+                                                if (isTilted(leftBoundingBox, rightBoundingBox)) {
                                                     returnResult(
-                                                        context,
-                                                        id,
-                                                        context.getString(R.string.image_tilted),
-                                                        bitmap,
-                                                        testName
+                                                        context, id,
+                                                        R.string.image_tilted, bitmap, testName
                                                     )
                                                     return
                                                 }
 
-                                                val bwBitmap = ImageUtil.toBlackAndWhite(
-                                                    rightBarcodeBitmap,
-                                                    90
-                                                )
-
-                                                if (bwBitmap.width - barcode.boundingBox!!.right > 3) {
-                                                    val rect = Rect(
-                                                        barcode.boundingBox!!.right + 3,
-                                                        10,
-                                                        min(
-                                                            barcode.boundingBox!!.right + 30,
-                                                            bwBitmap.width
-                                                        ),
-                                                        bwBitmap.height - 5
+                                                if (badLighting || !isBarcodeValid(
+                                                        rightBarcodeBitmap, rightBoundingBox, false
                                                     )
-                                                    val pixels = getBitmapPixels(bwBitmap, rect)
-                                                    if (isDark(pixels)) {
-                                                        bwBitmap.recycle()
-                                                        returnResult(
-                                                            context,
-                                                            id,
-                                                            context.getString(R.string.bad_lighting),
-                                                            bitmap
-                                                        )
-                                                        return
-                                                    }
-                                                }
-                                                cropRight = barcode2.boundingBox!!.top - 1
-
-                                                for (i in cropRight downTo cropRight - 100) {
-                                                    if (!hasBlackPixelsOnLine(
-                                                            rightBarcodeBitmap,
-                                                            i
-                                                        )
-                                                    ) {
-                                                        cropRight = i - 1
-                                                        break
-                                                    }
+                                                ) {
+                                                    returnResult(
+                                                        context, id,
+                                                        R.string.bad_lighting, bitmap, testName
+                                                    )
+                                                    return
                                                 }
 
-                                                rightBarcodeBitmap.recycle()
+                                                cropRight = rightBoundingBox.top - 1
+
                                                 analyzeBarcode(
                                                     context,
                                                     id,
                                                     bitmap,
-                                                    result
+                                                    rightBarcode,
+                                                    rightBoundingBox
                                                 )
                                             }
 
@@ -295,156 +291,153 @@ object ColorUtil {
     }
 
     private fun analyzeBarcode(
-        context: Context, id: String, bitmap: Bitmap, result: List<FirebaseVisionBarcode>
+        context: Context, id: String, bitmap: Bitmap, rightBarcode: FirebaseVisionBarcode,
+        rightBoundingBox: Rect
     ) {
-        if (result.isEmpty()) {
-            returnResult(context, id)
-        }
-        for (barcode2 in result) {
-            if (!barcode2.rawValue.isNullOrEmpty()) {
+
+        if (!rightBarcode.rawValue.isNullOrEmpty()) {
 //                if (barcode2.boundingBox!!.width() > bitmap.width * .44) {
 
-                val testName = App.getTestName(result[0].displayValue!!)
-                if (testName.isEmpty()) {
-                    returnResult(context, id)
-                    return
+            val testName = getTestName(rightBarcode.displayValue!!)
+            if (testName.isEmpty()) {
+                returnResult(context, id)
+                return
+            }
+
+            var bitmapRotated = Utilities.rotateImage(bitmap, 270)
+
+            cropTop = max(0, cropTop - 10)
+
+            bitmapRotated = Bitmap.createBitmap(
+                bitmapRotated, 0, cropTop,
+                bitmapRotated.width,
+                min(rightBoundingBox.width() + 40, bitmapRotated.height - cropTop)
+            )
+
+            val croppedBitmap1 = Bitmap.createBitmap(
+                bitmapRotated, max(1, cropLeft), 0,
+                max(1, cropRight + ((bitmapRotated.width / 2) - cropLeft)),
+                bitmapRotated.height
+            )
+
+            val bwCroppedBitmap1 = ImageUtil.toBlackAndWhite(croppedBitmap1, 100)
+            var top = 0
+            var bottom = 0
+
+            var left = 0
+            for (x in 1 until 100) {
+                val rectangle = Rect(x, 10, x + 1, croppedBitmap1.height - 10)
+                val pixels = getBitmapPixels(bwCroppedBitmap1, rectangle)
+                if (isDarkLine(pixels)) {
+                    left = x
+                    break
                 }
+            }
 
-                var bitmapRotated = Utilities.rotateImage(bitmap, 270)
-
-                cropTop = max(0, cropTop - 1)
-
-                bitmapRotated = Bitmap.createBitmap(
-                    bitmapRotated, 0, cropTop,
-                    bitmapRotated.width,
-                    min(barcode2.boundingBox!!.width() + 3, bitmapRotated.height - cropTop)
-                )
-
-                val croppedBitmap1 = Bitmap.createBitmap(
-                    bitmapRotated, max(1, cropLeft), 0,
-                    max(1, cropRight + ((bitmapRotated.width / 2) - cropLeft)),
-                    bitmapRotated.height
-                )
-
-                val bwCroppedBitmap1 = ImageUtil.toBlackAndWhite(croppedBitmap1, 100)
-                var top = 0
-                var bottom = 0
-
-                var left = 0
-                for (x in 1 until 100) {
-                    val rectangle = Rect(x, 10, x + 1, croppedBitmap1.height - 10)
-                    val pixels = getBitmapPixels(bwCroppedBitmap1, rectangle)
-                    if (isDarkLine(pixels)) {
-                        left = x
-                        break
-                    }
+            var right = 0
+            for (x in croppedBitmap1.width - 1 downTo croppedBitmap1.width - 100) {
+                val rectangle = Rect(x - 1, 10, x, croppedBitmap1.height - 10)
+                val pixels = getBitmapPixels(bwCroppedBitmap1, rectangle)
+                if (isDarkLine(pixels)) {
+                    right = x
+                    break
                 }
+            }
 
-                var right = 0
-                for (x in croppedBitmap1.width - 1 downTo croppedBitmap1.width - 100) {
-                    val rectangle = Rect(x - 1, 10, x, croppedBitmap1.height - 10)
-                    val pixels = getBitmapPixels(bwCroppedBitmap1, rectangle)
-                    if (isDarkLine(pixels)) {
-                        right = x
-                        break
-                    }
+            val croppedBitmap2 = Bitmap.createBitmap(
+                croppedBitmap1, left, 0,
+                right - left,
+                croppedBitmap1.height
+            )
+            croppedBitmap1.recycle()
+            val bwCroppedBitmap2 = ImageUtil.toBlackAndWhite(croppedBitmap2, 100)
+            bwCroppedBitmap1.recycle()
+
+            for (y in 1 until 100) {
+                val rectangle = Rect(3, y, 70, y + 3)
+                val rectangleRight =
+                    Rect(bwCroppedBitmap2.width - 70, y, bwCroppedBitmap2.width - 1, y + 3)
+                val pixels = getBitmapPixels(bwCroppedBitmap2, rectangle)
+                val pixelsRight = getBitmapPixels(bwCroppedBitmap2, rectangleRight)
+                if (isDarkLine(pixels) && isDarkLine(pixelsRight)) {
+                    top = y
+                    break
                 }
+            }
 
-                val croppedBitmap2 = Bitmap.createBitmap(
-                    croppedBitmap1, left, 0,
-                    right - left,
-                    croppedBitmap1.height
-                )
-                croppedBitmap1.recycle()
-                val bwCroppedBitmap2 = ImageUtil.toBlackAndWhite(croppedBitmap2, 100)
-                bwCroppedBitmap1.recycle()
-
-                for (y in 1 until 100) {
-                    val rectangle = Rect(3, y, 70, y + 3)
-                    val rectangleRight =
-                        Rect(bwCroppedBitmap2.width - 70, y, bwCroppedBitmap2.width - 1, y + 3)
-                    val pixels = getBitmapPixels(bwCroppedBitmap2, rectangle)
-                    val pixelsRight = getBitmapPixels(bwCroppedBitmap2, rectangleRight)
-                    if (isDarkLine(pixels) && isDarkLine(pixelsRight)) {
-                        top = y
-                        break
-                    }
+            for (y in bwCroppedBitmap2.height - 3 downTo 0) {
+                val pixel =
+                    bwCroppedBitmap2.getPixel((bwCroppedBitmap2.width * 0.15).toInt(), y)
+                if (isDarkPixel(pixel)) {
+                    bottom = y
+                    break
                 }
+            }
 
-                for (y in bwCroppedBitmap2.height - 3 downTo 0) {
-                    val pixel =
-                        bwCroppedBitmap2.getPixel((bwCroppedBitmap2.width * 0.15).toInt(), y)
-                    if (isDarkPixel(pixel)) {
-                        bottom = y
-                        break
-                    }
-                }
+            bwCroppedBitmap2.recycle()
 
-                bwCroppedBitmap2.recycle()
+            val croppedBitmap = Bitmap.createBitmap(
+                croppedBitmap2, 0, top,
+                croppedBitmap2.width,
+                max(1, bottom - top)
+            )
 
-                val croppedBitmap = Bitmap.createBitmap(
-                    croppedBitmap2, 0, top,
-                    croppedBitmap2.width,
-                    max(1, bottom - top)
-                )
+            croppedBitmap1.recycle()
+            bitmap.recycle()
 
-                croppedBitmap1.recycle()
-                bitmap.recycle()
+            var error = -1
+            var resultDetail = ResultDetail(-1.0, 0)
+            try {
+                resultDetail = extractColors(croppedBitmap, rightBarcode.displayValue!!)
+            } catch (e: Exception) {
+                error = R.string.calibration_error
+            }
 
+            Utilities.savePicture(
+                context.applicationContext, id,
+                "", Utilities.bitmapToBytes(croppedBitmap)
+            )
+            croppedBitmap.recycle()
 
-                var error = ""
-                var resultDetail = ResultDetail(-1.0, 0)
-                try {
-                    resultDetail = extractColors(croppedBitmap, result[0].displayValue!!)
-                } catch (e: Exception) {
-                    error = "Calibration error"
-                }
-
+            val db = AppDatabase.getDatabase(context)
+            if (db.resultDao().getResult(id) == null) {
                 Utilities.savePicture(
-                    context.applicationContext, id,
-                    "", Utilities.bitmapToBytes(croppedBitmap)
+                    context,
+                    id,
+                    testName,
+                    Utilities.bitmapToBytes(bitmapRotated)
                 )
-                croppedBitmap.recycle()
 
-                val db = AppDatabase.getDatabase(context)
-                if (db.resultDao().getResult(id) == null) {
-                    Utilities.savePicture(
-                        context,
-                        id,
-                        testName,
-                        Utilities.bitmapToBytes(bitmapRotated)
+                val expectedValue = PreferencesUtil
+                    .getString(context, R.string.expectedValueKey, "")
+
+                db.resultDao().insert(
+                    TestResult(
+                        id, 0, testName,
+                        Date().time, Date().time, "", "",
+                        expectedValue, context.getString(R.string.outbox)
                     )
+                )
+            }
 
-                    val expectedValue = PreferencesUtil
-                        .getString(context, R.string.expectedValueKey, "")
+            bitmapRotated.recycle()
 
-                    db.resultDao().insert(
-                        TestResult(
-                            id, 0, testName,
-                            Date().time, Date().time, "", "",
-                            expectedValue, context.getString(R.string.outbox)
-                        )
-                    )
-                }
-
-                bitmapRotated.recycle()
-
-                returnResult(context, id, error, null, testName, resultDetail)
+            returnResult(context, id, error, null, testName, resultDetail)
 //                } else {
 //                    returnResult(context, id)
 //                }
 
-            } else {
-                returnResult(context, id)
-                return
-            }
+        } else {
+            returnResult(context, id)
+            return
         }
+
     }
 
     private fun returnResult(
         context: Context,
         id: String,
-        error: String = "Error",
+        error: Int = R.string.error,
         bitmap: Bitmap? = null,
         testName: String = "Unknown",
         resultDetail: ResultDetail = ResultDetail((-1).toDouble(), 0)
@@ -455,10 +448,10 @@ object ColorUtil {
 
         var result = (round(resultDetail.result * 100) / 100.0).toString()
         if (resultDetail.result < 0) {
-            result = if (error.isEmpty()) {
+            result = if (error == -1) {
                 "No match"
             } else {
-                error
+                context.getString(error)
             }
         }
 
@@ -577,6 +570,125 @@ object ColorUtil {
         }
 
         return analyzeColor(swatches.size, colorInfo, generateGradient(swatches))
+    }
+
+    fun isTilted(
+        barcode: Rect,
+        otherBarcode: Rect
+    ): Boolean {
+
+//        val top = barcode.boundingBox!!.top
+        val left = barcode.left
+        val right = barcode.right
+//        val bottom = barcode.boundingBox!!.bottom
+
+        if (abs(left - otherBarcode.left) > MAX_ANGLE ||
+            abs(right - otherBarcode.right) > MAX_ANGLE
+        ) {
+            return true
+        }
+        return false
+    }
+
+    fun fixBoundary(barcode: FirebaseVisionBarcode, barcodeBitmap: Bitmap): Rect {
+        val bwBitmap = ImageUtil.toBlackAndWhite(barcodeBitmap, 100)
+
+        var top = barcode.boundingBox!!.top
+        var left = barcode.boundingBox!!.left
+        val right = barcode.boundingBox!!.right
+        var bottom = barcode.boundingBox!!.bottom
+        val midY = ((bottom - top) / 2) + top
+
+        for (x in left until left + 50) {
+            val pixel = bwBitmap.getPixel(x, midY)
+            if (isDarkPixel(pixel)) {
+                left = x + 2
+                break
+            }
+        }
+
+        for (y in midY downTo 1) {
+            top = y
+            val pixel = bwBitmap.getPixel(left, top)
+            if (!isDarkPixel(pixel)) {
+                break
+            }
+        }
+
+        for (y in midY until min(midY + 150, bwBitmap.height)) {
+            bottom = y
+            val pixel = bwBitmap.getPixel(left, bottom)
+            if (!isDarkPixel(pixel)) {
+                break
+            }
+        }
+
+        return Rect(left, top, right, bottom)
+    }
+
+    fun isBarcodeValid(
+        barcodeBitmap: Bitmap, barcode: Rect, isLeft: Boolean
+    ): Boolean {
+
+        var valid = true
+        val bwBitmap = ImageUtil.toBlackAndWhite(barcodeBitmap, 110)
+
+        val top = barcode.top
+        val left = barcode.left
+        val right = barcode.right
+        val bottom = barcode.bottom
+
+        val margin1 = 3
+        val margin2 = 5
+
+        if (top < 4 || left < 4 || right > bwBitmap.width - 5 || bottom > bwBitmap.height - 13) {
+            valid = false
+        }
+
+        var rect: Rect
+        var pixels: IntArray
+
+        if (valid) {
+            rect = Rect(left - margin2, top, left - margin1, bottom)
+            pixels = getBitmapPixels(bwBitmap, rect)
+            valid = !isDark(pixels)
+        }
+
+        if (valid) {
+            rect = Rect(right + margin1, top, right + margin2, bottom)
+            pixels = getBitmapPixels(bwBitmap, rect)
+            valid = !isDark(pixels)
+        }
+
+        var margin3 = 0
+        if (isLeft) {
+            margin3 = 10
+        }
+
+        if (valid) {
+            rect = Rect(left, top - margin2 - margin3, right, top - margin1 - margin3)
+            pixels = getBitmapPixels(bwBitmap, rect)
+            valid = !isDark(pixels)
+        }
+
+        margin3 = if (!isLeft) {
+            10
+        } else {
+            0
+        }
+
+        if (valid) {
+            rect = Rect(left, bottom + margin1 + margin3, right, bottom + margin2 + margin3)
+            pixels = getBitmapPixels(bwBitmap, rect)
+            valid = !isDark(pixels)
+        }
+
+        if (!valid) {
+            bwBitmap.recycle()
+            return false
+        }
+
+        return valid
     }
 
     private fun getMarkers(

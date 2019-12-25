@@ -78,11 +78,14 @@ class CameraFragment : Fragment() {
 
     private val broadcastReceiver2 = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
+
+            messageHandler.removeCallbacksAndMessages(null)
+
             val message = intent.getStringExtra(App.ERROR_MESSAGE)
             bottom_overlay.setTextColor(Color.YELLOW)
             bottom_overlay.text = message
 
-            messageHandler.postDelayed(runnable, 4000)
+            messageHandler.postDelayed(runnable, 2000)
         }
     }
 

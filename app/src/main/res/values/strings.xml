@@ -52,4 +52,7 @@
     <string name="correct_camera_tilt">Camera tilted. Position the camera correctly over the card</string>
     <string name="bad_lighting">Bad lighting</string>
     <string name="image_tilted">Tilted image</string>
+    <string name="error">Error</string>
+    <string name="calibration_error">Calibration error</string>
+    <string name="color_card_not_found">Card missing or not readable</string>
 </resources>

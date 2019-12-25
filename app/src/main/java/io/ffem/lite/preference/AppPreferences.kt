@@ -49,7 +49,7 @@ fun getCalibrationColorDistanceTolerance(): Int {
         Integer.parseInt(
             PreferencesUtil.getString(
                 App.app,
-                R.string.maxCardColorDistancesAllowedKey,
+                R.string.maxCardColorDistanceAllowedKey,
                 MAX_COLOR_DISTANCE_CALIBRATION.toString()
             )
         )
