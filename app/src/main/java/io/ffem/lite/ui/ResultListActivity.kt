@@ -731,7 +731,6 @@ class ResultListActivity : BaseActivity() {
                         }
 
                         override fun onFailure(call: Call<ResultResponse>?, t: Throwable?) {
-                            Timber.e(t.toString())
                             requestCount++
                         }
                     })

@@ -34,6 +34,7 @@ import android.view.LayoutInflater
 import android.view.TextureView
 import android.view.View
 import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.camera.core.*
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -44,9 +45,11 @@ import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import io.ffem.lite.R
 import io.ffem.lite.app.App
+import io.ffem.lite.preference.isDiagnosticMode
 import io.ffem.lite.preference.useFlashMode
 import io.ffem.lite.ui.BarcodeActivity.Companion.getOutputDirectory
 import io.ffem.lite.util.AutoFitPreviewBuilder
+import kotlinx.android.synthetic.main.fragment_camera.*
 import kotlinx.android.synthetic.main.preview_overlay.*
 import timber.log.Timber
 import java.io.File
@@ -63,6 +66,8 @@ class CameraFragment : Fragment() {
     private var lensFacing = CameraX.LensFacing.BACK
     private var preview: Preview? = null
     private var imageAnalyzer: ImageAnalysis? = null
+    private var barcodeAnalyzer: BarcodeAnalyzer? = null
+
     private lateinit var messageHandler: Handler
     private lateinit var runnable: Runnable
 
@@ -151,6 +156,12 @@ class CameraFragment : Fragment() {
         container = view as ConstraintLayout
         viewFinder = container.findViewById(R.id.view_finder)
 
+        if (isDiagnosticMode()) {
+            capture_button.visibility = VISIBLE
+        } else {
+            capture_button.visibility = GONE
+        }
+
         broadcastManager = LocalBroadcastManager.getInstance(view.context)
 
         // Every time the orientation of device changes, recompute layout
@@ -214,14 +225,20 @@ class CameraFragment : Fragment() {
             setTargetRotation(viewFinder.display.rotation)
         }.build()
 
+        barcodeAnalyzer = BarcodeAnalyzer(context!!)
+
         imageAnalyzer = ImageAnalysis(analyzerConfig).apply {
             val googlePlayServicesAvailable = GoogleApiAvailability.getInstance()
                 .isGooglePlayServicesAvailable(context)
             if (googlePlayServicesAvailable == ConnectionResult.SUCCESS) {
-                setAnalyzer(Executors.newSingleThreadExecutor(), BarcodeAnalyzer(context!!))
+                setAnalyzer(Executors.newSingleThreadExecutor(), barcodeAnalyzer!!)
             } else {
                 activity?.finish()
             }
+        }
+
+        capture_button.setOnClickListener {
+            barcodeAnalyzer!!.takePhoto()
         }
 
         // Apply declared configs to CameraX using the same lifecycle owner

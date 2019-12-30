@@ -93,6 +93,55 @@
       ]
     },
     {
+      "name": "pH",
+      "type": "water",
+      "uuid": "ff96e965-13a3-4507-9edf-7aa7fc084354",
+      "values": [
+        {
+          "value": 4
+        },
+        {
+          "value": 5
+        },
+        {
+          "value": 6
+        },
+        {
+          "value": 7
+        },
+        {
+          "value": 8
+        },
+        {
+          "value": 9
+        },
+        {
+          "value": 10
+        },
+        {
+          "value": 10
+        },
+        {
+          "value": 9
+        },
+        {
+          "value": 8
+        },
+        {
+          "value": 7
+        },
+        {
+          "value": 6
+        },
+        {
+          "value": 5
+        },
+        {
+          "value": 4
+        }
+      ]
+    },
+    {
       "name": "Residual Chlorine",
       "type": "water",
       "uuid": "f1d64b11-64c4-4a34-806e-ad0d47bcc96b",

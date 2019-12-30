@@ -6,7 +6,7 @@
         app:iconSpaceReserved="false">
         <EditTextPreference
             android:defaultValue="80"
-            android:dialogMessage="This is the max allowed distance between the sample color and the calibration colors on the card"
+            android:dialogMessage="The max difference between the sample color and the colors on the card"
             android:inputType="number"
             android:key="@string/colorDistanceToleranceKey"
             android:maxLength="3"
@@ -14,8 +14,8 @@
             android:title="Max sample color distance"
             app:iconSpaceReserved="false" />
         <EditTextPreference
-            android:defaultValue="50"
-            android:dialogMessage="This is the max allowed distance between the colors on the card for a specific value"
+            android:defaultValue="60"
+            android:dialogMessage="The max difference between the colors on the left and right columns of the color card"
             android:inputType="number"
             android:key="@string/maxCardColorDistanceAllowedKey"
             android:maxLength="3"

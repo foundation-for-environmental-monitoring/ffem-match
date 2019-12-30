@@ -27,7 +27,7 @@ import java.util.*
 import kotlin.math.*
 
 const val MAX_COLOR_DISTANCE_RGB = 80
-const val MAX_COLOR_DISTANCE_CALIBRATION = 50
+const val MAX_COLOR_DISTANCE_CALIBRATION = 60
 const val INTERPOLATION_COUNT = 100.0
 const val MAX_DISTANCE = 999
 //const val MIN_BRIGHTNESS = 30
@@ -168,13 +168,13 @@ object ColorUtil {
 
         var badLighting = false
 
-        val leftBarcodeBitmapColor = Bitmap.createBitmap(
+        val leftBarcodeBitmap = Bitmap.createBitmap(
             bitmap, 0, 0,
             bitmap.width, bitmap.height / 2
         )
 
-        val leftBarcodeBitmap = ImageUtil.toBlackAndWhite(leftBarcodeBitmapColor, 110)
-        leftBarcodeBitmapColor.recycle()
+//        val leftBarcodeBitmap = ImageUtil.toBlackAndWhite(leftBarcodeBitmapColor, 110)
+//        leftBarcodeBitmapColor.recycle()
 
         detector.detectInImage(FirebaseVisionImage.fromBitmap(leftBarcodeBitmap))
             .addOnFailureListener(
@@ -190,7 +190,7 @@ object ColorUtil {
                     for (leftBarcode in result) {
                         if (!leftBarcode.rawValue.isNullOrEmpty()) {
 
-                            val testName = App.getTestName(result[0].displayValue!!)
+                            val testName = getTestName(result[0].displayValue!!)
 
 //                            if (leftBarcode.boundingBox!!.width() > bitmap.width * .44) {
                             try {
@@ -204,14 +204,14 @@ object ColorUtil {
                                     badLighting = true
                                 }
 
-                                val rightBarcodeBitmapColor = Bitmap.createBitmap(
+                                val rightBarcodeBitmap = Bitmap.createBitmap(
                                     bitmap, 0, bitmap.height / 2,
                                     bitmap.width, bitmap.height / 2
                                 )
 
-                                val rightBarcodeBitmap =
-                                    ImageUtil.toBlackAndWhite(rightBarcodeBitmapColor, 110)
-                                rightBarcodeBitmapColor.recycle()
+//                                val rightBarcodeBitmap =
+//                                    ImageUtil.toBlackAndWhite(rightBarcodeBitmapColor, 110)
+//                                rightBarcodeBitmapColor.recycle()
 
                                 detector.detectInImage(
                                     FirebaseVisionImage.fromBitmap(rightBarcodeBitmap)
@@ -395,7 +395,7 @@ object ColorUtil {
 
             Utilities.savePicture(
                 context.applicationContext, id,
-                "", Utilities.bitmapToBytes(croppedBitmap)
+                testName, Utilities.bitmapToBytes(croppedBitmap)
             )
             croppedBitmap.recycle()
 
@@ -602,7 +602,7 @@ object ColorUtil {
         for (x in left until left + 50) {
             val pixel = bwBitmap.getPixel(x, midY)
             if (isDarkPixel(pixel)) {
-                left = x + 2
+                left = min(x, barcode.boundingBox!!.left) + 2
                 break
             }
         }
@@ -611,6 +611,7 @@ object ColorUtil {
             top = y
             val pixel = bwBitmap.getPixel(left, top)
             if (!isDarkPixel(pixel)) {
+                top = min(top, barcode.boundingBox!!.top)
                 break
             }
         }
@@ -619,6 +620,7 @@ object ColorUtil {
             bottom = y
             val pixel = bwBitmap.getPixel(left, bottom)
             if (!isDarkPixel(pixel)) {
+                bottom = max(bottom, barcode.boundingBox!!.bottom)
                 break
             }
         }
@@ -638,8 +640,8 @@ object ColorUtil {
         val right = barcode.right
         val bottom = barcode.bottom
 
-        val margin1 = 3
-        val margin2 = 5
+        val margin1 = 5
+        val margin2 = 7
 
         if (top < 4 || left < 4 || right > bwBitmap.width - 5 || bottom > bwBitmap.height - 13) {
             valid = false
