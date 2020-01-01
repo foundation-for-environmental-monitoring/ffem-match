@@ -19,14 +19,13 @@ package io.ffem.lite.util
 import android.content.Context
 import android.graphics.Matrix
 import android.hardware.display.DisplayManager
+import android.util.Log
 import android.util.Size
 import android.view.*
 import androidx.camera.core.Preview
 import androidx.camera.core.PreviewConfig
-import timber.log.Timber
 import java.lang.ref.WeakReference
-import java.util.*
-import kotlin.math.roundToInt
+import kotlin.math.max
 
 /**
  * Builder for [Preview] that takes in a [WeakReference] of the view finder and [PreviewConfig],
@@ -77,7 +76,8 @@ class AutoFitPreviewBuilder private constructor(
 
     init {
         // Make sure that the view finder reference is valid
-        val viewFinder = viewFinderRef.get() ?: throw IllegalArgumentException("Invalid reference to view finder used")
+        val viewFinder = viewFinderRef.get()
+            ?: throw IllegalArgumentException("Invalid reference to view finder used")
 
         // Initialize the display and rotation from texture view information
         viewFinderDisplay = viewFinder.display.displayId
@@ -87,35 +87,35 @@ class AutoFitPreviewBuilder private constructor(
         useCase = Preview(config)
 
         // Every time the view finder is updated, recompute layout
-        useCase.setOnPreviewOutputUpdateListener {
-            val viewFinder1 = viewFinderRef.get()
-            if (viewFinder1 != null) {
-                Timber.d(
-                    "Preview output changed. Size: ${it.textureSize}. Rotation: ${it.rotationDegrees}"
-                )
+        useCase.setOnPreviewOutputUpdateListener(Preview.OnPreviewOutputUpdateListener {
+            val viewFinder =
+                viewFinderRef.get() ?: return@OnPreviewOutputUpdateListener
+            Log.d(
+                TAG, "Preview output changed. " +
+                        "Size: ${it.textureSize}. Rotation: ${it.rotationDegrees}"
+            )
 
-                // To update the SurfaceTexture, we have to remove it and re-add it
-                val parent = viewFinder1.parent as ViewGroup
-                parent.removeView(viewFinder1)
-                parent.addView(viewFinder1, 0)
+            // To update the SurfaceTexture, we have to remove it and re-add it
+            val parent = viewFinder.parent as ViewGroup
+            parent.removeView(viewFinder)
+            parent.addView(viewFinder, 0)
 
-                // Update internal texture
-                viewFinder1.surfaceTexture = it.surfaceTexture
+            // Update internal texture
+            viewFinder.surfaceTexture = it.surfaceTexture
 
-                // Apply relevant transformations
-                bufferRotation = it.rotationDegrees
-                val rotation = getDisplaySurfaceRotation(viewFinder1.display)
-                updateTransform(viewFinder1, rotation, it.textureSize, viewFinderDimens)
-            }
-        }
+            // Apply relevant transformations
+            bufferRotation = it.rotationDegrees
+            val rotation = getDisplaySurfaceRotation(viewFinder.display)
+            updateTransform(viewFinder, rotation, it.textureSize, viewFinderDimens)
+        })
 
         // Every time the provided texture view changes, recompute layout
         viewFinder.addOnLayoutChangeListener { view, left, top, right, bottom, _, _, _, _ ->
-            val viewFinder1 = view as TextureView
+            val viewFinder = view as TextureView
             val newViewFinderDimens = Size(right - left, bottom - top)
-            Timber.d("View finder layout changed. Size: $newViewFinderDimens")
-            val rotation = getDisplaySurfaceRotation(viewFinder1.display)
-            updateTransform(viewFinder1, rotation, bufferDimens, newViewFinderDimens)
+            Log.d(TAG, "View finder layout changed. Size: $newViewFinderDimens")
+            val rotation = getDisplaySurfaceRotation(viewFinder.display)
+            updateTransform(viewFinder, rotation, bufferDimens, newViewFinderDimens)
         }
 
         // Every time the orientation of device changes, recompute layout
@@ -150,12 +150,12 @@ class AutoFitPreviewBuilder private constructor(
         textureView: TextureView?, rotation: Int?, newBufferDimens: Size,
         newViewFinderDimens: Size
     ) {
-        // This should not happen anyway...
-        val textureView1 = textureView ?: return
+        // This should not happen anyway, but now the linter knows
+        textureView ?: return
 
         if (rotation == viewFinderRotation &&
-            Objects.equals(newBufferDimens, bufferDimens) &&
-            Objects.equals(newViewFinderDimens, viewFinderDimens)
+            newBufferDimens == bufferDimens &&
+            newViewFinderDimens == viewFinderDimens
         ) {
             // Nothing has changed, no need to transform output again
             return
@@ -186,8 +186,12 @@ class AutoFitPreviewBuilder private constructor(
         }
 
         val matrix = Matrix()
-        Timber.d(
-            "Finder: $viewFinderDimens.\nPreview: $bufferDimens\nRotation: $viewFinderRotation\nRotation: $bufferRotation"
+        Log.d(
+            TAG, "Applying output transformation.\n" +
+                    "View finder size: $viewFinderDimens.\n" +
+                    "Preview output size: $bufferDimens\n" +
+                    "View finder rotation: $viewFinderRotation\n" +
+                    "Preview output rotation: $bufferRotation"
         )
 
         // Compute the center of the view finder
@@ -197,32 +201,51 @@ class AutoFitPreviewBuilder private constructor(
         // Correct preview output to account for display rotation
         matrix.postRotate(-viewFinderRotation!!.toFloat(), centerX, centerY)
 
-        // Buffers are rotated relative to the device's 'natural' orientation: swap width and height
-        val bufferRatio = bufferDimens.height / bufferDimens.width.toFloat()
-
-        val scaledWidth: Int
-        val scaledHeight: Int
-        // Match longest sides together -- i.e. apply center-crop transformation
-        if (viewFinderDimens.width > viewFinderDimens.height) {
-            scaledHeight = viewFinderDimens.width
-            scaledWidth = (viewFinderDimens.width * bufferRatio).roundToInt()
+        // Buffers are rotated relative to the device's 'natural' orientation.
+        val isNaturalPortrait = ((viewFinderRotation == 0 || viewFinderRotation == 180) &&
+                viewFinderDimens.width < viewFinderDimens.height)
+                || ((viewFinderRotation == 90 || viewFinderRotation == 270) &&
+                viewFinderDimens.width >= viewFinderDimens.height)
+        val bufferWidth: Int
+        val bufferHeight: Int
+        if (isNaturalPortrait) {
+            bufferWidth = bufferDimens.height
+            bufferHeight = bufferDimens.width
         } else {
-            scaledHeight = viewFinderDimens.height
-            scaledWidth = (viewFinderDimens.height * bufferRatio).roundToInt()
+            bufferWidth = bufferDimens.width
+            bufferHeight = bufferDimens.height
+        }
+        // Scale back the buffers back to the original output buffer dimensions.
+        var xScale = bufferWidth / viewFinderDimens.width.toFloat()
+        var yScale = bufferHeight / viewFinderDimens.height.toFloat()
+
+        val bufferRotatedWidth: Int
+        val bufferRotatedHeight: Int
+        if (viewFinderRotation == 0 || viewFinderRotation == 180) {
+            bufferRotatedWidth = bufferWidth
+            bufferRotatedHeight = bufferHeight
+        } else {
+            bufferRotatedWidth = bufferHeight
+            bufferRotatedHeight = bufferWidth
         }
 
-        // Compute the relative scale value
-        val xScale = scaledWidth / viewFinderDimens.width.toFloat()
-        val yScale = scaledHeight / viewFinderDimens.height.toFloat()
+        // Scale the buffer so that it just covers the viewfinder.
+        val scale = max(
+            viewFinderDimens.width / bufferRotatedWidth.toFloat(),
+            viewFinderDimens.height / bufferRotatedHeight.toFloat()
+        )
+        xScale *= scale
+        yScale *= scale
 
         // Scale input buffers to fill the view finder
         matrix.preScale(xScale, yScale, centerX, centerY)
 
         // Finally, apply transformations to our TextureView
-        textureView1.setTransform(matrix)
+        textureView.setTransform(matrix)
     }
 
     companion object {
+        private val TAG = AutoFitPreviewBuilder::class.java.simpleName
 
         /** Helper function that gets the rotation of a [Display] in degrees */
         fun getDisplaySurfaceRotation(display: Display?) = when (display?.rotation) {
@@ -234,7 +257,7 @@ class AutoFitPreviewBuilder private constructor(
         }
 
         /**
-         * Main entry point for users of this class: instantiates the adapter and returns an instance
+         * Main entrypoint for users of this class: instantiates the adapter and returns an instance
          * of [Preview] which automatically adjusts in size and rotation to compensate for
          * config changes.
          */

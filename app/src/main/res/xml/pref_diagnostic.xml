@@ -14,7 +14,7 @@
             android:title="Max sample color distance"
             app:iconSpaceReserved="false" />
         <EditTextPreference
-            android:defaultValue="60"
+            android:defaultValue="70"
             android:dialogMessage="The max difference between the colors on the left and right columns of the color card"
             android:inputType="number"
             android:key="@string/maxCardColorDistanceAllowedKey"

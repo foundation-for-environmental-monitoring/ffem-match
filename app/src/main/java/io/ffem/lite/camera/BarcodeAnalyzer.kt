@@ -22,9 +22,10 @@ import io.ffem.lite.util.ColorUtil.fixBoundary
 import io.ffem.lite.util.ColorUtil.isBarcodeValid
 import io.ffem.lite.util.ColorUtil.isTilted
 import java.util.*
+import kotlin.math.max
 
 
-const val MAX_ANGLE = 14
+const val MAX_ANGLE = 16
 
 class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
@@ -103,6 +104,14 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 //
 //        bitmap = (drawable as BitmapDrawable).bitmap
 
+        bitmap = Bitmap.createBitmap(
+            bitmap, 0, 0,
+            bitmap.width,
+            bitmap.height / 2
+        )
+
+        bitmap = Utilities.rotateImage(bitmap, 90)
+
         var badLighting = false
 
         val leftBarcodeBitmap = Bitmap.createBitmap(
@@ -137,7 +146,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
                                 val leftBoundingBox = fixBoundary(leftBarcode, leftBarcodeBitmap)
 
-                                if (leftBoundingBox.width() > bitmap.width * .44) {
+                                if (leftBoundingBox.top < 300) {
                                     try {
 
                                         if (!isBarcodeValid(
@@ -229,12 +238,10 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
     }
 
     private fun analyzeBarcode(
-        bitmap: Bitmap,
-        rightBarcode: FirebaseVisionBarcode,
-        rightBoundingBox: Rect,
-        leftBoundingBox: Rect
+        bitmap: Bitmap, rightBarcode: FirebaseVisionBarcode,
+        rightBoundingBox: Rect, leftBoundingBox: Rect
     ) {
-        if (rightBoundingBox.width() > bitmap.width * .44) {
+        if ((bitmap.height / 2) - rightBoundingBox.bottom < 300) {
             if (!rightBarcode.rawValue.isNullOrEmpty()) {
                 val testName = getTestName(rightBarcode.displayValue!!)
                 if (testName.isEmpty()) {
@@ -245,7 +252,8 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                 done = true
 
                 val finalBitmap = Bitmap.createBitmap(
-                    bitmap, leftBoundingBox.left - 20, leftBoundingBox.top - 40,
+                    bitmap, max(leftBoundingBox.left - 20, 0),
+                    max(leftBoundingBox.top - 40, 0),
                     leftBoundingBox.right - leftBoundingBox.left + 40,
                     rightBoundingBox.bottom - leftBoundingBox.top + (bitmap.height / 2) + 80
                 )

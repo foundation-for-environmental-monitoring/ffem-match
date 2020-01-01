@@ -16,7 +16,6 @@ import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.databinding.ActivityBarcodeBinding
 import io.ffem.lite.preference.sendDummyImage
-import java.io.File
 
 /** Combination of all flags required to put activity into immersive mode */
 const val FLAGS_FULLSCREEN =
@@ -82,14 +81,14 @@ class BarcodeActivity : BaseActivity() {
     companion object {
         private const val IMMERSIVE_FLAG_TIMEOUT = 500L
 
-        /** Use external media if it is available, our app's file directory otherwise */
-        fun getOutputDirectory(context: Context): File {
-            val appContext = context.applicationContext
-            val mediaDir = context.externalMediaDirs.firstOrNull()?.let {
-                File(it, appContext.resources.getString(R.string.app_name)).apply { mkdirs() }
-            }
-            return if (mediaDir != null && mediaDir.exists())
-                mediaDir else appContext.filesDir
-        }
+//        /** Use external media if it is available, our app's file directory otherwise */
+//        fun getOutputDirectory(context: Context): File {
+//            val appContext = context.applicationContext
+//            val mediaDir = context.externalMediaDirs.firstOrNull()?.let {
+//                File(it, appContext.resources.getString(R.string.app_name)).apply { mkdirs() }
+//            }
+//            return if (mediaDir != null && mediaDir.exists())
+//                mediaDir else appContext.filesDir
+//        }
     }
 }

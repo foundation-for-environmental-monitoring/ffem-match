@@ -34,6 +34,17 @@ object Utilities {
             stream.flush()
             stream.fd.sync()
             stream.close()
+
+            // Create a no media file in the folder to prevent images showing up in Gallery app
+            val noMediaFile = File(path, ".nomedia")
+            if (!noMediaFile.exists()) {
+                try {
+                    noMediaFile.createNewFile()
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+            }
+
             return filePath
         } catch (e: IOException) {
             e.printStackTrace()

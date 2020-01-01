@@ -27,7 +27,7 @@ import java.util.*
 import kotlin.math.*
 
 const val MAX_COLOR_DISTANCE_RGB = 80
-const val MAX_COLOR_DISTANCE_CALIBRATION = 60
+const val MAX_COLOR_DISTANCE_CALIBRATION = 70
 const val INTERPOLATION_COUNT = 100.0
 const val MAX_DISTANCE = 999
 //const val MIN_BRIGHTNESS = 30
@@ -74,7 +74,7 @@ fun isDark(pixels: IntArray): Boolean {
         r += element.red
     }
 
-    return (r / pixels.size) < 210
+    return (r / pixels.size) < 180
 }
 
 fun getAverageColor(pixels: IntArray): Int {
@@ -148,10 +148,6 @@ fun getAverageColor(pixels: IntArray): Int {
 
 object ColorUtil {
 
-    private var cropLeft = 0
-    private var cropRight = 0
-    private var cropTop = 0
-
     fun extractImage(context: Context, id: String, bitmapImage: Bitmap) {
 
         val detector: FirebaseVisionBarcodeDetector by lazy {
@@ -196,9 +192,6 @@ object ColorUtil {
                             try {
 
                                 val leftBoundingBox = fixBoundary(leftBarcode, leftBarcodeBitmap)
-
-                                cropTop = bitmap.width - leftBoundingBox.right - 1
-                                cropLeft = leftBoundingBox.bottom + 1
 
                                 if (!isBarcodeValid(leftBarcodeBitmap, leftBoundingBox, true)) {
                                     badLighting = true
@@ -262,14 +255,9 @@ object ColorUtil {
                                                     return
                                                 }
 
-                                                cropRight = rightBoundingBox.top - 1
-
                                                 analyzeBarcode(
-                                                    context,
-                                                    id,
-                                                    bitmap,
-                                                    rightBarcode,
-                                                    rightBoundingBox
+                                                    context, id, bitmap, rightBarcode,
+                                                    rightBoundingBox, leftBoundingBox
                                                 )
                                             }
 
@@ -292,7 +280,7 @@ object ColorUtil {
 
     private fun analyzeBarcode(
         context: Context, id: String, bitmap: Bitmap, rightBarcode: FirebaseVisionBarcode,
-        rightBoundingBox: Rect
+        rightBoundingBox: Rect, leftBoundingBox: Rect
     ) {
 
         if (!rightBarcode.rawValue.isNullOrEmpty()) {
@@ -300,25 +288,22 @@ object ColorUtil {
 
             val testName = getTestName(rightBarcode.displayValue!!)
             if (testName.isEmpty()) {
-                returnResult(context, id)
+                returnResult(context, id, R.string.invalid_barcode)
                 return
             }
 
-            var bitmapRotated = Utilities.rotateImage(bitmap, 270)
-
-            cropTop = max(0, cropTop - 10)
-
-            bitmapRotated = Bitmap.createBitmap(
-                bitmapRotated, 0, cropTop,
-                bitmapRotated.width,
-                min(rightBoundingBox.width() + 40, bitmapRotated.height - cropTop)
+            val cropLeft = max(leftBoundingBox.left - 20, 0)
+            val cropWidth = min(
+                leftBoundingBox.right - cropLeft + 40,
+                bitmap.width - cropLeft
             )
 
-            val croppedBitmap1 = Bitmap.createBitmap(
-                bitmapRotated, max(1, cropLeft), 0,
-                max(1, cropRight + ((bitmapRotated.width / 2) - cropLeft)),
-                bitmapRotated.height
+            val finalBitmap = Bitmap.createBitmap(
+                bitmap, cropLeft, leftBoundingBox.bottom + 2, cropWidth,
+                rightBoundingBox.top - leftBoundingBox.bottom + (bitmap.height / 2) - 4
             )
+
+            val croppedBitmap1 = Utilities.rotateImage(finalBitmap, 270)
 
             val bwCroppedBitmap1 = ImageUtil.toBlackAndWhite(croppedBitmap1, 100)
             var top = 0
@@ -326,7 +311,7 @@ object ColorUtil {
 
             var left = 0
             for (x in 1 until 100) {
-                val rectangle = Rect(x, 10, x + 1, croppedBitmap1.height - 10)
+                val rectangle = Rect(x, 10, x + 1, bwCroppedBitmap1.height - 10)
                 val pixels = getBitmapPixels(bwCroppedBitmap1, rectangle)
                 if (isDarkLine(pixels)) {
                     left = x
@@ -335,8 +320,8 @@ object ColorUtil {
             }
 
             var right = 0
-            for (x in croppedBitmap1.width - 1 downTo croppedBitmap1.width - 100) {
-                val rectangle = Rect(x - 1, 10, x, croppedBitmap1.height - 10)
+            for (x in bwCroppedBitmap1.width - 1 downTo bwCroppedBitmap1.width - 100) {
+                val rectangle = Rect(x - 1, 10, x, bwCroppedBitmap1.height - 10)
                 val pixels = getBitmapPixels(bwCroppedBitmap1, rectangle)
                 if (isDarkLine(pixels)) {
                     right = x
@@ -395,7 +380,7 @@ object ColorUtil {
 
             Utilities.savePicture(
                 context.applicationContext, id,
-                testName, Utilities.bitmapToBytes(croppedBitmap)
+                testName + "_swatch", Utilities.bitmapToBytes(croppedBitmap)
             )
             croppedBitmap.recycle()
 
@@ -405,7 +390,7 @@ object ColorUtil {
                     context,
                     id,
                     testName,
-                    Utilities.bitmapToBytes(bitmapRotated)
+                    Utilities.bitmapToBytes(finalBitmap)
                 )
 
                 val expectedValue = PreferencesUtil
@@ -420,7 +405,7 @@ object ColorUtil {
                 )
             }
 
-            bitmapRotated.recycle()
+            finalBitmap.recycle()
 
             returnResult(context, id, error, null, testName, resultDetail)
 //                } else {
@@ -643,7 +628,9 @@ object ColorUtil {
         val margin1 = 5
         val margin2 = 7
 
-        if (top < 4 || left < 4 || right > bwBitmap.width - 5 || bottom > bwBitmap.height - 13) {
+        if (top < margin1 || left < margin1 ||
+            right > bwBitmap.width - margin2 || bottom > bwBitmap.height - (margin2 * 2)
+        ) {
             valid = false
         }
 
@@ -685,10 +672,7 @@ object ColorUtil {
             valid = !isDark(pixels)
         }
 
-        if (!valid) {
-            bwBitmap.recycle()
-            return false
-        }
+        bwBitmap.recycle()
 
         return valid
     }

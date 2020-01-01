@@ -33,8 +33,7 @@ import android.util.Size
 import android.view.LayoutInflater
 import android.view.TextureView
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.view.ViewGroup
 import androidx.camera.core.*
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -47,19 +46,16 @@ import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.preference.isDiagnosticMode
 import io.ffem.lite.preference.useFlashMode
-import io.ffem.lite.ui.BarcodeActivity.Companion.getOutputDirectory
 import io.ffem.lite.util.AutoFitPreviewBuilder
-import kotlinx.android.synthetic.main.fragment_camera.*
 import kotlinx.android.synthetic.main.preview_overlay.*
 import timber.log.Timber
-import java.io.File
 import java.util.concurrent.Executors
 
 class CameraFragment : Fragment() {
 
     private lateinit var container: ConstraintLayout
     private lateinit var viewFinder: TextureView
-    private lateinit var outputDirectory: File
+    //    private lateinit var outputDirectory: File
     private lateinit var broadcastManager: LocalBroadcastManager
 
     private var displayId = -1
@@ -156,12 +152,6 @@ class CameraFragment : Fragment() {
         container = view as ConstraintLayout
         viewFinder = container.findViewById(R.id.view_finder)
 
-        if (isDiagnosticMode()) {
-            capture_button.visibility = VISIBLE
-        } else {
-            capture_button.visibility = GONE
-        }
-
         broadcastManager = LocalBroadcastManager.getInstance(view.context)
 
         // Every time the orientation of device changes, recompute layout
@@ -169,7 +159,7 @@ class CameraFragment : Fragment() {
             .getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
 
         // Determine the output directory
-        outputDirectory = getOutputDirectory(requireContext())
+//        outputDirectory = getOutputDirectory(requireContext())
 
         viewFinder.post {
 
@@ -254,7 +244,13 @@ class CameraFragment : Fragment() {
             container.removeView(it)
         }
 
-        View.inflate(requireContext(), R.layout.preview_overlay, container)
+        inflate(requireContext(), R.layout.preview_overlay, container)
+
+        if (isDiagnosticMode()) {
+            capture_button.visibility = VISIBLE
+        } else {
+            capture_button.visibility = GONE
+        }
 
         card_overlay.animate()
             .setStartDelay(1000)
@@ -263,7 +259,7 @@ class CameraFragment : Fragment() {
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
                     if (card_overlay != null) {
-                        card_overlay.visibility = GONE
+                        card_overlay.visibility = INVISIBLE
                     }
                 }
             })

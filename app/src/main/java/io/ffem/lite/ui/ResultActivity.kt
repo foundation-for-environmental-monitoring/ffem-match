@@ -29,8 +29,8 @@ class ResultActivity : BaseActivity() {
         val path = getExternalFilesDir(DIRECTORY_PICTURES).toString() +
                 File.separator + "captures" + File.separator
 
-        localPath = path + id + "_" + ".jpg"
         val fileName = name.replace(" ", "")
+        localPath = path + id + "_" + fileName + "_swatch" + ".jpg"
         serverPath = path + id + "_" + fileName + ".jpg"
 
         textResultTitle.text = App.getVersionName()
