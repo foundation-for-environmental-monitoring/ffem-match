@@ -19,61 +19,78 @@ package io.ffem.lite.camera
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
-import android.app.ActivityManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.res.Configuration
 import android.graphics.Color
-import android.hardware.display.DisplayManager
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
-import android.util.Size
+import android.util.Log
 import android.view.LayoutInflater
-import android.view.TextureView
 import android.view.View
-import android.view.View.*
 import android.view.ViewGroup
 import androidx.camera.core.*
+import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.view.PreviewView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LifecycleOwner
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.Navigation
-import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.GoogleApiAvailability
 import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.preference.isDiagnosticMode
-import io.ffem.lite.preference.useFlashMode
-import io.ffem.lite.util.AutoFitPreviewBuilder
 import kotlinx.android.synthetic.main.preview_overlay.*
-import timber.log.Timber
-import java.util.concurrent.Executors
+import java.util.concurrent.Executor
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
+//const val KEY_EVENT_ACTION = "key_event_action"
+//const val KEY_EVENT_EXTRA = "key_event_extra"
+//private const val IMMERSIVE_FLAG_TIMEOUT = 500L
+
+/** Helper type alias used for analysis use case callbacks */
+typealias LumaListener = (luma: Double) -> Unit
+
+/**
+ * Main fragment for this app. Implements all camera operations including:
+ * - Viewfinder
+ * - Photo taking
+ * - Image analysis
+ */
 class CameraFragment : Fragment() {
 
     private lateinit var container: ConstraintLayout
-    private lateinit var viewFinder: TextureView
-    //    private lateinit var outputDirectory: File
     private lateinit var broadcastManager: LocalBroadcastManager
+    //    private lateinit var outputDirectory: File
+    private lateinit var mainExecutor: Executor
 
-    private var displayId = -1
-    private var lensFacing = CameraX.LensFacing.BACK
+    private lateinit var cameraControl: CameraControl
+    private lateinit var cameraInfo: CameraInfo
+    private lateinit var previewView: PreviewView
+
+    private var displayId: Int = -1
+    private var lensFacing: Int = CameraSelector.LENS_FACING_BACK
     private var preview: Preview? = null
-    private var imageAnalyzer: ImageAnalysis? = null
-    private var barcodeAnalyzer: BarcodeAnalyzer? = null
+
+    private lateinit var barcodeAnalyzer: BarcodeAnalyzer
+
+    //    private var capture: ImageCapture? = null
+    private var analysis: ImageAnalysis? = null
 
     private lateinit var messageHandler: Handler
     private lateinit var runnable: Runnable
 
-    /** Internal reference of the [DisplayManager] */
-    private lateinit var displayManager: DisplayManager
-
+//    private lateinit var displayManager: DisplayManager
 
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            preview?.removePreviewOutputListener()
+//            preview?.removePreviewOutputListener()
         }
     }
 
@@ -90,6 +107,27 @@ class CameraFragment : Fragment() {
         }
     }
 
+
+//    /**
+//     * We need a display listener for orientation changes that do not trigger a configuration
+//     * change, for example if we choose to override config change in manifest or for 180-degree
+//     * orientation changes.
+//     */
+//    private val displayListener = object : DisplayManager.DisplayListener {
+//        override fun onDisplayAdded(displayId: Int) = Unit
+//        override fun onDisplayRemoved(displayId: Int) = Unit
+//        override fun onDisplayChanged(displayId: Int) = view?.let { view ->
+//            if (displayId == this@CameraFragment.displayId) {
+//
+//                Log.d(LOG_TAG, "Rotation changed: ${view.display.rotation}")
+//                // preview?.setTargetRotation(view.display.rotation)
+//                // capture?.setTargetRotation(view.display.rotation)
+//                // analysis?.setTargetRotation(view.display.rotation)
+//
+//            }
+//        } ?: Unit
+//    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         messageHandler = Handler()
@@ -101,28 +139,42 @@ class CameraFragment : Fragment() {
             }
         }
 
-        // Mark this as a retain fragment, so the lifecycle does not get restarted on config change
-        retainInstance = true
+        mainExecutor = ContextCompat.getMainExecutor(requireContext())
+
+        // Determine the output directory
+//        outputDirectory = MainActivity.getOutputDirectory(requireContext())
+
+        // Every time the orientation of device changes, recompute layout
+//        displayManager =
+//            requireContext().getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
+//        displayManager.registerDisplayListener(displayListener, null)
+//
+        // Set up the intent filter that will receive events from our main activity
+//        val filter = IntentFilter().apply { addAction(KEY_EVENT_ACTION) }
+        broadcastManager = LocalBroadcastManager.getInstance(requireContext())
+//        broadcastManager.registerReceiver(volumeDownReceiver, filter)
     }
 
+    /**
+     * Make sure that all permissions are still present, since user
+     * could have removed them while the app was in paused state.
+     */
     override fun onResume() {
         super.onResume()
-        // Make sure that all permissions are still present, since user could have removed them
-        //  while the app was on paused state
         if (!PermissionsFragment.hasPermissions(requireContext())) {
-            Navigation.findNavController(requireActivity(), R.id.fragment_container).navigate(
-                CameraFragmentDirections.actionCameraToPermissions()
-            )
+            Navigation.findNavController(requireActivity(), R.id.fragment_container)
+                .navigate(
+                    CameraFragmentDirections.actionCameraToPermissions()
+                )
         }
+
         broadcastManager.registerReceiver(broadcastReceiver, IntentFilter(App.CAPTURED_EVENT))
         broadcastManager.registerReceiver(broadcastReceiver2, IntentFilter(App.ERROR_EVENT))
     }
 
+
     override fun onPause() {
         super.onPause()
-        imageAnalyzer?.removeAnalyzer()
-        preview?.removePreviewOutputListener()
-        CameraX.unbindAll()
         messageHandler.removeCallbacksAndMessages(runnable)
         broadcastManager.unregisterReceiver(broadcastReceiver)
         broadcastManager.unregisterReceiver(broadcastReceiver2)
@@ -134,122 +186,239 @@ class CameraFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        // Unregister the broadcast receivers and listeners
+//        broadcastManager.unregisterReceiver(volumeDownReceiver)
+//        displayManager.unregisterDisplayListener(displayListener)
+
         messageHandler.removeCallbacksAndMessages(runnable)
         broadcastManager.unregisterReceiver(broadcastReceiver)
         broadcastManager.unregisterReceiver(broadcastReceiver2)
+
     }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? =
-        inflater.inflate(R.layout.fragment_camera, container, false)
+    ): View? = inflater.inflate(R.layout.fragment_camera, container, false)
+
+//    /** Define callback that will be triggered after a photo has been taken and saved to disk */
+//    private val imageSavedListener = object : ImageCapture.OnImageSavedCallback {
+//
+//        override fun onError(imageCaptureError: Int, message: String, cause: Throwable?) {
+//            Log.e(LOG_TAG, "Photo capture failed: $message")
+//        }
+//
+//        override fun onImageSaved(photoFile: File) {
+//
+//            Log.d(LOG_TAG, "Photo capture succeeded: ${photoFile.absolutePath}")
+//
+//            // Implicit broadcasts will be ignored for devices running API
+//            // level >= 24, so if you only target 24+ you can remove this statement
+//            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+//                requireActivity().sendBroadcast(
+//                    Intent("android.hardware.action.NEW_PICTURE", Uri.fromFile(photoFile))
+//                )
+//            }
+//
+//            // If the folder selected is an external media directory, this is unnecessary
+//            // but otherwise other apps will not be able to access our images unless we
+//            // scan them using [MediaScannerConnection]
+//            val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(photoFile.extension)
+//            MediaScannerConnection.scanFile(
+//                context, arrayOf(photoFile.absolutePath), arrayOf(mimeType), null
+//            )
+//        }
+//    }
 
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
         super.onViewCreated(view, savedInstanceState)
         container = view as ConstraintLayout
-        viewFinder = container.findViewById(R.id.view_finder)
 
-        broadcastManager = LocalBroadcastManager.getInstance(view.context)
+        previewView = container.findViewById(R.id.previewView)
 
-        // Every time the orientation of device changes, recompute layout
-        displayManager = viewFinder.context
-            .getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
+        // Wait for the views to be properly laid out
+        previewView.post {
 
-        // Determine the output directory
-//        outputDirectory = getOutputDirectory(requireContext())
+            // Keep track of the display in which this view is attached
+            displayId = previewView.display.displayId
 
-        viewFinder.post {
-
-            displayId = viewFinder.display.displayId
-
+            // Build UI controls
             updateCameraUi()
+
+            // Bind use cases
             bindCameraUseCases()
+
         }
+    }
+
+    /**
+     * Inflate camera controls and update the UI manually upon config changes to avoid removing
+     * and re-adding the view finder from the view hierarchy; this provides a seamless rotation
+     * transition on devices that support it.
+     *
+     * NOTE: The flag is supported starting in Android 8 but there still is a small flash on the
+     * screen for devices that run Android 9 or below.
+     */
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        updateCameraUi()
     }
 
     /** Declare and bind preview, capture and analysis use cases */
     private fun bindCameraUseCases() {
 
         // Get screen metrics used to setup camera for full screen resolution
-        val metrics = DisplayMetrics().also { viewFinder.display.getRealMetrics(it) }
-//        val screenAspectRatio = Rational(metrics.widthPixels, metrics.heightPixels)
-        Timber.d("Screen metrics: ${metrics.widthPixels} x ${metrics.heightPixels}")
+        val metrics = DisplayMetrics().also { previewView.display.getRealMetrics(it) }
+        Log.d(LOG_TAG, "Screen metrics: ${metrics.widthPixels} x ${metrics.heightPixels}")
+        val screenAspectRatio = aspectRatio(metrics.widthPixels, metrics.heightPixels)
+        Log.d(LOG_TAG, "Preview aspect ratio: $screenAspectRatio")
 
-        // Set up the view finder use case to display camera preview
-        val viewFinderConfig = PreviewConfig.Builder().apply {
-            setLensFacing(lensFacing)
-            // We request aspect ratio but no resolution to let CameraX optimize our use cases
-            setTargetAspectRatio(AspectRatio.RATIO_16_9)
-            // Set initial target rotation, we will have to call this again if rotation changes
-            // during the lifecycle of this use case
-            setTargetRotation(viewFinder.display.rotation)
-        }.build()
+        val rotation = previewView.display.rotation
 
-        // Use the auto-fit preview builder to automatically handle size and orientation changes
-        preview = AutoFitPreviewBuilder.build(viewFinderConfig, viewFinder)
+        capture_button.setOnClickListener {
+            barcodeAnalyzer.takePhoto()
+        }
 
-        // Setup image analysis pipeline that computes average pixel luminance in real time
-        val analyzerConfig = ImageAnalysisConfig.Builder().apply {
-            setLensFacing(lensFacing)
+        // Bind the cameraProvider to the LifeCycleOwner
+        val cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
+        cameraProviderFuture.addListener(Runnable {
 
-            val actManager = context?.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-            val memInfo = ActivityManager.MemoryInfo()
-            actManager.getMemoryInfo(memInfo)
+            // CameraProvider
+            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
-            if (memInfo.totalMem / 1048576 < 900) {
-                setTargetResolution(Size(800, 500))
-            } else {
-                setTargetResolution(Size(1800, 1000))
-            }
+            // Preview
+            preview = Preview.Builder()
+                .setTargetName("Preview")
+                .setTargetAspectRatio(screenAspectRatio)
+                .setTargetRotation(rotation)
+                .build()
+
+            // Default PreviewSurfaceProvider
+            preview?.previewSurfaceProvider = previewView.previewSurfaceProvider
+
+            // ImageCapture
+//            capture = ImageCapture.Builder()
+//                .setTargetName("Capture")
+//                .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+//                // We request aspect ratio but no resolution to match preview config but letting
+//                // CameraX optimize for whatever specific resolution best fits requested capture mode
+//                .setTargetAspectRatio(screenAspectRatio)
+//                // Set initial target rotation, we will have to call this again if rotation changes
+//                // during the lifecycle of this use case
+//                .setTargetRotation(rotation)
+//                .build()
+
+
+            barcodeAnalyzer = BarcodeAnalyzer(context!!)
+
+//            imageAnalyzer = ImageAnalysis(analyzerConfig).apply {
+//                val googlePlayServicesAvailable = GoogleApiAvailability.getInstance()
+//                    .isGooglePlayServicesAvailable(context)
+//                if (googlePlayServicesAvailable == ConnectionResult.SUCCESS) {
+//                    setAnalyzer(Executors.newSingleThreadExecutor(), barcodeAnalyzer!!)
+//                } else {
+//                    activity?.finish()
+//                }
+//            }
+//
+
 
             // Use a worker thread for image analysis to prevent preview glitches
 //            val analyzerThread = HandlerThread("BarcodeReader").apply { start() }
 //            setCallbackHandler(Handler(analyzerThread.looper))
 
-            setImageReaderMode(ImageAnalysis.ImageReaderMode.ACQUIRE_LATEST_IMAGE)
-
             // call this again if rotation changes
-            setTargetRotation(viewFinder.display.rotation)
-        }.build()
+//            setTargetRotation(viewFinder.display.rotation)
 
-        barcodeAnalyzer = BarcodeAnalyzer(context!!)
+            // ImageAnalysis
+            analysis = ImageAnalysis.Builder()
+                .setTargetName("Analysis")
+                .setTargetAspectRatio(screenAspectRatio)
+                .setTargetRotation(rotation)
+                .build()
 
-        imageAnalyzer = ImageAnalysis(analyzerConfig).apply {
-            val googlePlayServicesAvailable = GoogleApiAvailability.getInstance()
-                .isGooglePlayServicesAvailable(context)
-            if (googlePlayServicesAvailable == ConnectionResult.SUCCESS) {
-                setAnalyzer(Executors.newSingleThreadExecutor(), barcodeAnalyzer!!)
-            } else {
-                activity?.finish()
+            analysis?.setAnalyzer(mainExecutor, BarcodeAnalyzer(context!!))
+
+
+//            analysis?.setAnalyzer(mainExecutor, BarcodeAnalyzer { luma ->
+//
+//            })
+
+            // Must unbind use cases before rebinding them.
+            cameraProvider.unbindAll()
+
+            try {
+                // A variable number of use-cases can be passed here.
+                val camera = cameraProvider.bindToLifecycle(
+                    this as LifecycleOwner, cameraSelector, preview, analysis
+                )
+                cameraControl = camera.cameraControl
+                cameraInfo = camera.cameraInfo
+                logCameraInfo()
+            } catch (e: Exception) {
+                Log.e(LOG_TAG, "" + e.message)
             }
-        }
 
-        capture_button.setOnClickListener {
-            barcodeAnalyzer!!.takePhoto()
-        }
-
-        // Apply declared configs to CameraX using the same lifecycle owner
-        CameraX.bindToLifecycle(
-            viewLifecycleOwner, preview, imageAnalyzer
-        )
-
-        preview!!.enableTorch(useFlashMode())
+        }, mainExecutor)
     }
 
+    private fun logCameraInfo() {
+        Log.i(
+            LOG_TAG,
+            "flash unit present: " + cameraInfo.hasFlashUnit() + ", " +
+                    "sensor rotation: " + cameraInfo.sensorRotationDegrees + "°"
+        )
+        Log.i(
+            LOG_TAG,
+            "zoom: ratio min: " + cameraInfo.minZoomRatio.value + "f, " +
+                    "ratio max: " + cameraInfo.maxZoomRatio.value + "f, " +
+                    "ratio current: " + cameraInfo.zoomRatio.value + "f"
+        )
+        Log.i(
+            LOG_TAG,
+            "zoom: " + cameraInfo.linearZoom.value + "f linear"
+        )
+    }
+
+    /**
+     *  [androidx.camera.core.ImageAnalysisConfig] requires enum value of
+     *  [androidx.camera.core.AspectRatio]. Currently it has values of 4:3 & 16:9.
+     *
+     *  Detecting the most suitable ratio for dimensions provided in @params by counting absolute
+     *  of preview ratio to one of the provided values.
+     *
+     *  @param width - preview width
+     *  @param height - preview height
+     *  @return suitable aspect ratio
+     */
+    private fun aspectRatio(width: Int, height: Int): Int {
+        val previewRatio = max(width, height).toDouble() / min(width, height)
+        if (abs(previewRatio - RATIO_4_3_VALUE) <= abs(previewRatio - RATIO_16_9_VALUE)) {
+            return AspectRatio.RATIO_4_3
+        }
+        return AspectRatio.RATIO_16_9
+    }
+
+    /**
+     * Method used to re-draw the camera UI controls, called every time configuration changes.
+     */
     private fun updateCameraUi() {
+
+        // Remove previous UI if any
         container.findViewById<ConstraintLayout>(R.id.camera_ui_container)?.let {
             container.removeView(it)
         }
 
-        inflate(requireContext(), R.layout.preview_overlay, container)
+        View.inflate(requireContext(), R.layout.preview_overlay, container)
 
         if (isDiagnosticMode()) {
-            capture_button.visibility = VISIBLE
+            capture_button.visibility = View.VISIBLE
         } else {
-            capture_button.visibility = GONE
+            capture_button.visibility = View.GONE
         }
 
         card_overlay.animate()
@@ -259,9 +428,39 @@ class CameraFragment : Fragment() {
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
                     if (card_overlay != null) {
-                        card_overlay.visibility = INVISIBLE
+                        card_overlay.visibility = View.INVISIBLE
                     }
                 }
             })
+
+        // Inflate a new view containing all UI for controlling the camera
+//        val controls = View.inflate(requireContext(), io.ffem.lite.R.layout.camera_ui_container, container)
+
+        // Listener for button used to switch cameras
+//        controls.findViewById<AppCompatImageButton>(io.ffem.lite.R.id.camera_switch_button).setOnClickListener {
+//            lensFacing = if (CameraSelector.LENS_FACING_FRONT == lensFacing) {
+//                CameraSelector.LENS_FACING_BACK
+//            } else {
+//                CameraSelector.LENS_FACING_FRONT
+//            }
+        // Bind use cases
+        bindCameraUseCases()
+//        }
+    }
+
+    companion object {
+
+        private const val LOG_TAG = "CameraXBasic"
+        //        private const val FILENAME = "yyyy-MM-dd-HH-mm-ss-SSS"
+//        private const val PHOTO_EXTENSION = ".jpg"
+        private const val RATIO_4_3_VALUE = 4.0 / 3.0
+        private const val RATIO_16_9_VALUE = 16.0 / 9.0
+
+        /** Helper function used to create a timestamped file */
+//        private fun createFile(baseFolder: File, format: String, extension: String) =
+//            File(
+//                baseFolder, SimpleDateFormat(format, Locale.getDefault())
+//                    .format(System.currentTimeMillis()) + extension
+//            )
     }
 }

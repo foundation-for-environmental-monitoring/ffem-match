@@ -3,7 +3,7 @@
     {
       "name": "Fluoride",
       "type": "water",
-      "uuid": "f0f3c1dd-89af-49f1-83e7-bcc31c3006cf",
+      "uuid": "f0f3c1dd-89af-49f1-83e7-bcc31cb61159",
       "values": [
         {
           "value": -1
@@ -24,22 +24,22 @@
           "value": 2
         },
         {
-          "value": -1
-        },
-        {
-          "value": 0
-        },
-        {
-          "value": 0.5
-        },
-        {
-          "value": 1.0
+          "value": 2
         },
         {
           "value": 1.5
         },
         {
-          "value": 2
+          "value": 1.0
+        },
+        {
+          "value": 0.5
+        },
+        {
+          "value": 0
+        },
+        {
+          "value": -1
         }
       ]
     },
