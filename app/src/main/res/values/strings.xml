@@ -15,8 +15,8 @@
     <string name="about">About</string>
     <string name="settings">Settings</string>
     <string name="ok">OK</string>
-    <string name="show_server_image">Show server image</string>
-    <string name="show_local_image">Show local image</string>
+    <string name="show_server_image">Server image</string>
+    <string name="show_local_image">Local image</string>
     <string name="camera">Camera</string>
     <string name="expectedValue">Expected result value</string>
 

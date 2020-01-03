@@ -18,7 +18,7 @@
     <string name="soundOnKey">soundOn</string>
     <string name="data_delete_key">data_delete</string>
     <string name="colorDistanceToleranceKey">colorDistanceTolerance</string>
-    <string name="maxCardColorDistanceAllowedKey">maxCardColorDistance</string>
+    <string name="maxCardColorDistanceAllowedKey">maxCardCalibrationDistance</string>
     <string name="expectedValueKey">expectedValue</string>
     <string name="useFlashModeKey">userFlashMode</string>
 

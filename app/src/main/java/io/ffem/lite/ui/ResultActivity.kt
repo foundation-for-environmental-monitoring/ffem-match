@@ -6,10 +6,12 @@ import android.os.Environment.DIRECTORY_PICTURES
 import android.view.MenuItem
 import android.view.View
 import android.view.View.GONE
+import androidx.core.content.ContextCompat
 import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.app.App.Companion.TEST_ID_KEY
 import io.ffem.lite.app.App.Companion.TEST_NAME_KEY
+import io.ffem.lite.preference.isDiagnosticMode
 import kotlinx.android.synthetic.main.activity_result.*
 import java.io.File
 
@@ -35,6 +37,10 @@ class ResultActivity : BaseActivity() {
 
         textResultTitle.text = App.getVersionName()
 
+        if (isDiagnosticMode()) {
+            app_bar.setBackgroundColor(ContextCompat.getColor(this, R.color.diagnostic))
+        }
+
         showLocalImage()
     }
 
@@ -51,6 +57,7 @@ class ResultActivity : BaseActivity() {
         imageModeButton.text = getString(R.string.show_server_image)
         if (file.exists()) {
             image.setImageURI(Uri.fromFile(file))
+            image.refreshDrawableState()
         } else {
             imageModeButton.visibility = GONE
             showServerImage()

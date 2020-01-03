@@ -25,17 +25,17 @@ import java.util.*
 import kotlin.math.max
 import kotlin.math.min
 
-
-const val MAX_ANGLE = 16
+const val MAX_ANGLE = 10
 
 class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
-    private lateinit var bitmap: Bitmap
-    private var processing = false
-//    private var processBlackAndWhite = false
+    companion object {
+        private var capturePhoto: Boolean = false
+        private var processing = false
+        private var done: Boolean = false
+    }
 
-    private var done: Boolean = false
-    private var capturePhoto: Boolean = false
+    private lateinit var bitmap: Bitmap
     private lateinit var localBroadcastManager: LocalBroadcastManager
 
     private val detector: FirebaseVisionBarcodeDetector by lazy {
@@ -56,14 +56,6 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         }
         processing = true
 
-//        processBlackAndWhite = !processBlackAndWhite
-
-        //YUV_420 is normally the input type here
-//        var rotation = rotationDegrees % 360
-//        if (rotation < 0) {
-//            rotation += 360
-//        }
-
         mediaImage = FirebaseVisionImage.fromMediaImage(
             image.image!!, FirebaseVisionImageMetadata.ROTATION_180
         )
@@ -72,18 +64,6 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
         bitmap = mediaImage.bitmap
 
-        if (capturePhoto) {
-            done = true
-
-            bitmap = Bitmap.createBitmap(
-                bitmap, (bitmap.width * 0.20).toInt(), 0,
-                bitmap.width - (bitmap.width * 0.40).toInt(),
-                bitmap.height
-            )
-
-            savePhoto(bitmap, "Unknown", true)
-            return
-        }
 
 //        val expectedValue = (PreferencesUtil
 //            .getString(context, R.string.expectedValueKey, "").toFloat().toInt())
@@ -97,20 +77,20 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 //
 //        bitmap = (drawable as BitmapDrawable).bitmap
 
-//        bitmap = Bitmap.createBitmap(
-//            bitmap, 0, 0,
-//            bitmap.width / 2,
-//            bitmap.height
-//        )
-
         bitmap = Bitmap.createBitmap(
             bitmap, bitmap.width / 2, 0,
             bitmap.width / 2,
             bitmap.height
         )
 
+        if (capturePhoto) {
+            done = true
+//            bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height)
+            savePhoto(bitmap, "Unknown", true)
+            endProcessing(image)
+            return
+        }
 
-//        bitmap = Utilities.rotateImage(bitmap, 90)
 
         var badLighting = false
 
@@ -119,15 +99,11 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
             bitmap.width, bitmap.height / 2
         )
 
-//        if (processBlackAndWhite) {
-//            leftBarcodeBitmap = ImageUtil.toBlackAndWhite(leftBarcodeBitmap, 110)
-//        }
-
         taskLeftBarcode =
             detector.detectInImage(FirebaseVisionImage.fromBitmap(leftBarcodeBitmap))
                 .addOnFailureListener(
                     fun(_: Exception) {
-                        sendMessage(context.getString(R.string.color_card_not_found) + ".")
+//                        sendMessage(context.getString(R.string.color_card_not_found) + ".")
                         endProcessing(image)
                         return
                     }
@@ -135,7 +111,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                 .addOnSuccessListener(
                     fun(result: List<FirebaseVisionBarcode>) {
                         if (result.isEmpty()) {
-                            sendMessage(context.getString(R.string.color_card_not_found) + "..")
+//                            sendMessage(context.getString(R.string.color_card_not_found) + "..")
                             endProcessing(image)
                             return
                         }
@@ -143,11 +119,12 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                             if (!leftBarcode.rawValue.isNullOrEmpty()) {
 
 //                                val testName = App.getTestName(result[0].displayValue!!)
+                                try {
 
-                                val leftBoundingBox = fixBoundary(leftBarcode, leftBarcodeBitmap)
+                                    val leftBoundingBox =
+                                        fixBoundary(leftBarcode, leftBarcodeBitmap)
 
-                                if (leftBoundingBox.top < 300) {
-                                    try {
+                                    if (leftBoundingBox.top in 11..69) {
 
                                         if (!isBarcodeValid(
                                                 leftBarcodeBitmap,
@@ -163,24 +140,18 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                             bitmap.width, bitmap.height / 2
                                         )
 
-//                                        if (processBlackAndWhite) {
-//                                            rightBarcodeBitmap = ImageUtil.toBlackAndWhite(
-//                                                rightBarcodeBitmap, 110
-//                                            )
-//                                        }
-
                                         detector.detectInImage(
                                             FirebaseVisionImage.fromBitmap(rightBarcodeBitmap)
                                         )
                                             .addOnFailureListener(fun(_: Exception) {
-                                                sendMessage(context.getString(R.string.color_card_not_found) + "...")
+//                                                sendMessage(context.getString(R.string.color_card_not_found) + "...")
                                                 endProcessing(image)
                                                 return
                                             })
                                             .addOnSuccessListener(
                                                 fun(result: List<FirebaseVisionBarcode>) {
                                                     if (result.isNullOrEmpty()) {
-                                                        sendMessage(context.getString(R.string.color_card_not_found) + "....")
+//                                                        sendMessage(context.getString(R.string.color_card_not_found) + "....")
                                                         endProcessing(image)
                                                         return
                                                     }
@@ -197,7 +168,6 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                                                 leftBoundingBox, rightBoundingBox
                                                             )
                                                         ) {
-//                                                            bitmap.recycle()
                                                             sendMessage(context.getString(R.string.correct_camera_tilt))
                                                             endProcessing(image)
                                                             return
@@ -208,7 +178,6 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                                                 rightBoundingBox, false
                                                             )
                                                         ) {
-//                                                            bitmap.recycle()
                                                             sendMessage(context.getString(R.string.try_moving_well_lit))
                                                             endProcessing(image)
                                                             return
@@ -224,10 +193,10 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                                     }
                                                 }
                                             )
-                                    } catch (ignored: Exception) {
+                                    } else {
                                         endProcessing(image)
                                     }
-                                } else {
+                                } catch (ignored: Exception) {
                                     endProcessing(image)
                                 }
                             } else {
@@ -240,6 +209,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
     private fun endProcessing(image: ImageProxy) {
         processing = false
+        bitmap.recycle()
         image.close()
     }
 
@@ -248,10 +218,11 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         bitmap: Bitmap, rightBarcode: FirebaseVisionBarcode,
         rightBoundingBox: Rect, leftBoundingBox: Rect
     ) {
-        if ((bitmap.height / 2) - rightBoundingBox.bottom < 300) {
+        if ((bitmap.height / 2) - rightBoundingBox.bottom in 11..69) {
             if (!rightBarcode.rawValue.isNullOrEmpty()) {
                 val testName = getTestName(rightBarcode.displayValue!!)
                 if (testName.isEmpty()) {
+                    sendMessage(context.getString(R.string.invalid_barcode))
                     endProcessing(image)
                     return
                 }
@@ -272,8 +243,6 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                 val finalBitmap = Bitmap.createBitmap(
                     bitmap, cropLeft, cropTop, cropWidth, cropHeight
                 )
-
-                bitmap.recycle()
 
                 savePhoto(finalBitmap, testName, false)
 
@@ -334,5 +303,11 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
             )
         } catch (ignored: Exception) {
         }
+    }
+
+    fun reset() {
+        done = false
+        processing = false
+        capturePhoto = false
     }
 }

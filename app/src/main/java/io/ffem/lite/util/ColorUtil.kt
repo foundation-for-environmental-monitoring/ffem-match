@@ -27,7 +27,7 @@ import java.util.*
 import kotlin.math.*
 
 const val MAX_COLOR_DISTANCE_RGB = 80
-const val MAX_COLOR_DISTANCE_CALIBRATION = 70
+const val MAX_COLOR_DISTANCE_CALIBRATION = 80
 const val INTERPOLATION_COUNT = 100.0
 const val MAX_DISTANCE = 999
 //const val MIN_BRIGHTNESS = 30
@@ -74,7 +74,7 @@ fun isDark(pixels: IntArray): Boolean {
         r += element.red
     }
 
-    return (r / pixels.size) < 180
+    return (r / pixels.size) < 170
 }
 
 fun getAverageColor(pixels: IntArray): Int {
@@ -97,54 +97,6 @@ fun getAverageColor(pixels: IntArray): Int {
 
     return Color.argb(255, r, g, b)
 }
-
-//fun hasBlackPixelsOnLine(bitmap: Bitmap, row: Int): Boolean {
-//    var total = 0
-//
-//    val pixels = getBitmapPixels(
-//        bitmap,
-//        Rect(0, row, bitmap.width, row + 1)
-//    )
-//
-//    for (element in pixels) {
-//        if (element.red < MIN_BRIGHTNESS &&
-//            element.green < MIN_BRIGHTNESS &&
-//            element.blue < MIN_BRIGHTNESS
-//        ) {
-//            total++
-//            if (total > 50) {
-//                return true
-//            }
-//        }
-//    }
-//
-//    return false
-//}
-
-//fun hasBlackPixelsInArea(
-//    bitmap: Bitmap, left: Int, top: Int, right: Int, bottom: Int
-//): Boolean {
-//    var total = 0
-//
-//    val pixels = getBitmapPixels(
-//        bitmap,
-//        Rect(left, top, right, bottom)
-//    )
-//
-//    for (element in pixels) {
-//        if (element.red < MIN_BRIGHTNESS &&
-//            element.green < MIN_BRIGHTNESS &&
-//            element.blue < MIN_BRIGHTNESS
-//        ) {
-//            total++
-//            if (total > 50) {
-//                return true
-//            }
-//        }
-//    }
-//
-//    return false
-//}
 
 object ColorUtil {
 
@@ -288,7 +240,7 @@ object ColorUtil {
 
             val testName = getTestName(rightBarcode.displayValue!!)
             if (testName.isEmpty()) {
-                returnResult(context, id, R.string.invalid_barcode)
+                returnResult(context, id, R.string.invalid_barcode, bitmap)
                 return
             }
 
@@ -334,7 +286,7 @@ object ColorUtil {
                 right - left,
                 croppedBitmap1.height
             )
-            croppedBitmap1.recycle()
+
             val bwCroppedBitmap2 = ImageUtil.toBlackAndWhite(croppedBitmap2, 100)
             bwCroppedBitmap1.recycle()
 
@@ -367,9 +319,6 @@ object ColorUtil {
                 max(1, bottom - top)
             )
 
-            croppedBitmap1.recycle()
-            bitmap.recycle()
-
             var error = -1
             var resultDetail = ResultDetail(-1.0, 0)
             try {
@@ -384,30 +333,22 @@ object ColorUtil {
             )
             croppedBitmap.recycle()
 
-            val db = AppDatabase.getDatabase(context)
-            if (db.resultDao().getResult(id) == null) {
-                Utilities.savePicture(
-                    context,
-                    id,
-                    testName,
-                    Utilities.bitmapToBytes(finalBitmap)
-                )
+//            val db = AppDatabase.getDatabase(context)
+//            if (db.resultDao().getResult(id) == null) {
+//                Utilities.savePicture(
+//                    context,
+//                    id,
+//                    testName,
+//                    Utilities.bitmapToBytes(bitmap)
+//                )
+//
+//
+//            }
 
-                val expectedValue = PreferencesUtil
-                    .getString(context, R.string.expectedValueKey, "")
-
-                db.resultDao().insert(
-                    TestResult(
-                        id, 0, testName,
-                        Date().time, Date().time, "", "",
-                        expectedValue, context.getString(R.string.outbox)
-                    )
-                )
-            }
-
+            croppedBitmap1.recycle()
             finalBitmap.recycle()
 
-            returnResult(context, id, error, null, testName, resultDetail)
+            returnResult(context, id, error, bitmap, testName, resultDetail)
 //                } else {
 //                    returnResult(context, id)
 //                }
@@ -444,7 +385,6 @@ object ColorUtil {
 
         val db = AppDatabase.getDatabase(context)
         if (db.resultDao().getResult(id) == null) {
-
             if (bitmap != null) {
                 val bitmapRotated = Utilities.rotateImage(bitmap, 270)
                 Utilities.savePicture(
@@ -453,6 +393,18 @@ object ColorUtil {
                     testName,
                     Utilities.bitmapToBytes(bitmapRotated)
                 )
+
+                val expectedValue = PreferencesUtil
+                    .getString(context, R.string.expectedValueKey, "")
+
+                db.resultDao().insert(
+                    TestResult(
+                        id, 0, testName,
+                        Date().time, Date().time, "", "",
+                        expectedValue, context.getString(R.string.outbox)
+                    )
+                )
+
                 bitmap.recycle()
                 bitmapRotated.recycle()
             }
@@ -561,12 +513,8 @@ object ColorUtil {
         barcode: Rect,
         otherBarcode: Rect
     ): Boolean {
-
-//        val top = barcode.boundingBox!!.top
         val left = barcode.left
         val right = barcode.right
-//        val bottom = barcode.boundingBox!!.bottom
-
         if (abs(left - otherBarcode.left) > MAX_ANGLE ||
             abs(right - otherBarcode.right) > MAX_ANGLE
         ) {
@@ -637,42 +585,47 @@ object ColorUtil {
         var rect: Rect
         var pixels: IntArray
 
-        if (valid) {
-            rect = Rect(left - margin2, top, left - margin1, bottom)
-            pixels = getBitmapPixels(bwBitmap, rect)
-            valid = !isDark(pixels)
-        }
+        try {
 
-        if (valid) {
-            rect = Rect(right + margin1, top, right + margin2, bottom)
-            pixels = getBitmapPixels(bwBitmap, rect)
-            valid = !isDark(pixels)
-        }
+            if (valid) {
+                rect = Rect(left - margin2, top, left - margin1, bottom)
+                pixels = getBitmapPixels(bwBitmap, rect)
+                valid = !isDark(pixels)
+            }
 
-        var margin3 = 0
-        if (isLeft) {
-            margin3 = 10
-        }
+            if (valid) {
+                rect = Rect(right + margin1, top, right + margin2, bottom)
+                pixels = getBitmapPixels(bwBitmap, rect)
+                valid = !isDark(pixels)
+            }
 
-        if (valid) {
-            rect = Rect(left, top - margin2 - margin3, right, top - margin1 - margin3)
-            pixels = getBitmapPixels(bwBitmap, rect)
-            valid = !isDark(pixels)
-        }
+            var margin3 = 0
+            if (isLeft) {
+                margin3 = 10
+            }
 
-        margin3 = if (!isLeft) {
-            10
-        } else {
-            0
-        }
+            if (valid) {
+                rect = Rect(left, top - margin2 - margin3, right, top - margin1 - margin3)
+                pixels = getBitmapPixels(bwBitmap, rect)
+                valid = !isDark(pixels)
+            }
 
-        if (valid) {
-            rect = Rect(left, bottom + margin1 + margin3, right, bottom + margin2 + margin3)
-            pixels = getBitmapPixels(bwBitmap, rect)
-            valid = !isDark(pixels)
-        }
+            margin3 = if (!isLeft) {
+                10
+            } else {
+                0
+            }
 
-        bwBitmap.recycle()
+            if (valid) {
+                rect = Rect(left, bottom + margin1 + margin3, right, bottom + margin2 + margin3)
+                pixels = getBitmapPixels(bwBitmap, rect)
+                valid = !isDark(pixels)
+            }
+
+            bwBitmap.recycle()
+        } catch (ex: Exception) {
+            valid = false
+        }
 
         return valid
     }
@@ -680,85 +633,6 @@ object ColorUtil {
     private fun getMarkers(
         bitmap: Bitmap
     ): Point {
-//        var leftSquareLeft = 0
-//        var leftSquareRight: Int = bitmap.width -1
-
-//        var bottleLeft: Int = -1
-//        var bottleRight: Int = -1
-
-//        var rightSquareLeft: Int = -1
-//        var rightSquareRight: Int = -1
-
-//        for (x in 1 until bitmap.width - 7) {
-//            val rectangle = Rect(x, 0, x + 6, 1)
-//            val pixels = getBitmapPixels(bitmap, rectangle)
-//            if (isDark(pixels)) {
-//                leftSquareLeft = x
-//                break
-//            }
-//        }
-
-//        for (x in leftSquareLeft + 10 until bitmap.width - 7) {
-//            val rectangle = Rect(x, 0, x + 6, 1)
-//            val pixels = getBitmapPixels(bitmap, rectangle)
-//            if (isNotDark(pixels)) {
-//                leftSquareRight = x
-//                break
-//            }
-//        }
-
-//        for (x in leftSquareRight + 1 until bitmap.width - 1) {
-//            val rectangle = Rect(x, 1, x + 1, 20)
-//            val pixels = getBitmapPixels(bitmap, rectangle)
-//            if (isDark(pixels)) {
-//                bottleLeft = x
-//                break
-//            }
-//        }
-
-//        var top = 0
-//        for (y in 1 until 40) {
-//            val right = bitmap.width - (bitmap.width * 0.15).toInt()
-//            val rectangle = Rect(right, y, right + 10, y + 1)
-//            val pixels = getBitmapPixels(bitmap, rectangle)
-//            if (isDark(pixels)) {
-//                top = y
-//                break
-//            }
-//        }
-
-//        for (x in bitmap.width - 11 downTo 0) {
-//            val rectangle = Rect(x, top, x + 10, top + 2)
-//            val pixels = getBitmapPixels(bitmap, rectangle)
-//            if (isDark(pixels)) {
-//                rightSquareRight = x
-//                break
-//            }
-//        }
-
-//        for (x in rightSquareRight - 11 downTo 0) {
-//            val rectangle = Rect(x, top, x + 10, top + 2)
-//            val pixels = getBitmapPixels(bitmap, rectangle)
-//            if (isNotDark(pixels)) {
-//                rightSquareLeft = x
-//                break
-//            }
-//        }
-
-//        for (x in rightSquareLeft - 1 downTo 0) {
-//            val rectangle = Rect(x, 1, x + 1, 20)
-//            val pixels = getBitmapPixels(bitmap, rectangle)
-//            if (isDark(pixels)) {
-//                bottleRight = x
-//                break
-//            }
-//        }
-
-//        val leftSquareCenter = ((leftSquareRight - leftSquareLeft) / 2) + leftSquareLeft
-//        val rightSquareCenter = ((rightSquareRight - rightSquareLeft) / 2) + rightSquareLeft
-//        val bottleCenter = ((bottleRight - bottleLeft) / 2) + bottleLeft
-
-
         val leftSquareCenter = (bitmap.width * 0.12).toInt()
         val rightSquareCenter = bitmap.width - (bitmap.width * 0.12).toInt()
 

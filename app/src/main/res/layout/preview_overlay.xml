@@ -8,16 +8,6 @@
     tools:context=".ui.BarcodeActivity">
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:elevation="3dp"
-        android:layout_marginStart="16dp"
-        android:src="@drawable/ic_arrow_back"
-        app:layout_constraintBottom_toBottomOf="@+id/top_overlay"
-        app:layout_constraintStart_toStartOf="@id/top_overlay"
-        app:layout_constraintTop_toTopOf="@id/top_overlay" />
-
-    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/card_overlay"
         android:layout_width="match_parent"
         android:layout_height="300dp"
@@ -25,43 +15,26 @@
         android:src="@drawable/card_overlay"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/top_overlay" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/bottom_overlay"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:background="#444444"
         android:paddingTop="16dp"
-        android:background="@color/black"
         android:text="@string/place_color_card"
         android:textAlignment="center"
         android:textColor="#EEEEEE"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/card_overlay" />
-
-    <TextView
-        android:id="@+id/top_overlay"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:paddingStart="60dp"
-        android:background="@color/colorPrimaryDark"
-        android:paddingTop="16dp"
-        android:paddingEnd="16dp"
-        android:text="@string/scanning"
-        android:textColor="#EEEEEE"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/card_overlay" />
 
     <ImageButton
         android:id="@+id/capture_button"
         android:layout_width="82dp"
-        android:background="@null"
         android:layout_height="82dp"
         android:layout_margin="24dp"
+        android:background="@null"
         android:contentDescription="@string/capture_photo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
