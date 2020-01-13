@@ -12,9 +12,9 @@ import android.view.View
 import android.widget.FrameLayout
 import androidx.databinding.DataBindingUtil
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.app.App
-import io.ffem.lite.common.INSTRUMENTED_TEST_RUNNING
 import io.ffem.lite.databinding.ActivityBarcodeBinding
 import io.ffem.lite.preference.sendDummyImage
 
@@ -38,7 +38,7 @@ class BarcodeActivity : BaseActivity() {
 
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (!sendDummyImage() && !INSTRUMENTED_TEST_RUNNING) {
+            if (!sendDummyImage() && !BuildConfig.TEST_RUNNING) {
                 val sound = MediaActionSound()
                 sound.play(MediaActionSound.SHUTTER_CLICK)
             }

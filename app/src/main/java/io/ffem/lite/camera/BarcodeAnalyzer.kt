@@ -17,10 +17,10 @@ import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetector
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
+import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.app.App.Companion.getTestName
-import io.ffem.lite.common.INSTRUMENTED_TEST_RUNNING
 import io.ffem.lite.util.ColorUtil.fixBoundary
 import io.ffem.lite.util.ColorUtil.isBarcodeValid
 import io.ffem.lite.util.ColorUtil.isTilted
@@ -67,7 +67,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         localBroadcastManager = LocalBroadcastManager.getInstance(context)
 
         @Suppress("ConstantConditionIf")
-        bitmap = if (INSTRUMENTED_TEST_RUNNING) {
+        bitmap = if (BuildConfig.TEST_RUNNING) {
             val expectedValue = (PreferencesUtil
                 .getString(context, R.string.expectedValueKey, "").toFloat().toInt())
 

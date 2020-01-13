@@ -42,6 +42,9 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField "Boolean", "TEST_RUNNING", "true"
+        }
         release {
             if (secrets.getProperty('FFEM_RELEASE_STORE_FILE')) {
                 signingConfig signingConfigs.release
@@ -50,6 +53,7 @@ android {
             shrinkResources true
             zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "Boolean", "TEST_RUNNING", "false"
         }
     }
 }
