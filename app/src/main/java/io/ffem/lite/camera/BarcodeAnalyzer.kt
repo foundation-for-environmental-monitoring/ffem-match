@@ -4,9 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Rect
+import android.graphics.drawable.BitmapDrawable
 import android.provider.MediaStore
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
+import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.tasks.Task
 import com.google.firebase.ml.vision.FirebaseVision
@@ -18,9 +20,11 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
 import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.app.App.Companion.getTestName
+import io.ffem.lite.common.INSTRUMENTED_TEST_RUNNING
 import io.ffem.lite.util.ColorUtil.fixBoundary
 import io.ffem.lite.util.ColorUtil.isBarcodeValid
 import io.ffem.lite.util.ColorUtil.isTilted
+import io.ffem.lite.util.PreferencesUtil
 import java.util.*
 import kotlin.math.max
 import kotlin.math.min
@@ -62,20 +66,22 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
         localBroadcastManager = LocalBroadcastManager.getInstance(context)
 
-        bitmap = mediaImage.bitmap
+        @Suppress("ConstantConditionIf")
+        bitmap = if (INSTRUMENTED_TEST_RUNNING) {
+            val expectedValue = (PreferencesUtil
+                .getString(context, R.string.expectedValueKey, "").toFloat().toInt())
 
+            val drawable = ContextCompat.getDrawable(
+                context, context.resources.getIdentifier(
+                    "test$expectedValue",
+                    "drawable", context.packageName
+                )
+            )
 
-//        val expectedValue = (PreferencesUtil
-//            .getString(context, R.string.expectedValueKey, "").toFloat().toInt())
-//
-//        val drawable = ContextCompat.getDrawable(
-//            context, context.resources.getIdentifier(
-//                "test$expectedValue",
-//                "drawable", context.packageName
-//            )
-//        )
-//
-//        bitmap = (drawable as BitmapDrawable).bitmap
+            (drawable as BitmapDrawable).bitmap
+        } else {
+            mediaImage.bitmap
+        }
 
         bitmap = Bitmap.createBitmap(
             bitmap, bitmap.width / 2, 0,

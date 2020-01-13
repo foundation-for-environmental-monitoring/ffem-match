@@ -137,11 +137,10 @@ object ColorUtil {
                     }
                     for (leftBarcode in result) {
                         if (!leftBarcode.rawValue.isNullOrEmpty()) {
-
-                            val testName = getTestName(result[0].displayValue!!)
-
 //                            if (leftBarcode.boundingBox!!.width() > bitmap.width * .44) {
                             try {
+
+                                val testName = getTestName(result[0].displayValue!!)
 
                                 val leftBoundingBox = fixBoundary(leftBarcode, leftBarcodeBitmap)
 
@@ -250,9 +249,14 @@ object ColorUtil {
                 bitmap.width - cropLeft
             )
 
+            val cropTop = leftBoundingBox.bottom + 2
+            val cropHeight = min(
+                rightBoundingBox.top - leftBoundingBox.bottom + (bitmap.height / 2) - 4,
+                bitmap.height - cropTop
+            )
+
             val finalBitmap = Bitmap.createBitmap(
-                bitmap, cropLeft, leftBoundingBox.bottom + 2, cropWidth,
-                rightBoundingBox.top - leftBoundingBox.bottom + (bitmap.height / 2) - 4
+                bitmap, cropLeft, cropTop, cropWidth, cropHeight
             )
 
             val croppedBitmap1 = Utilities.rotateImage(finalBitmap, 270)

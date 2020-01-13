@@ -14,6 +14,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import io.ffem.lite.R
 import io.ffem.lite.app.App
+import io.ffem.lite.common.INSTRUMENTED_TEST_RUNNING
 import io.ffem.lite.databinding.ActivityBarcodeBinding
 import io.ffem.lite.preference.sendDummyImage
 
@@ -37,7 +38,7 @@ class BarcodeActivity : BaseActivity() {
 
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (!sendDummyImage()) {
+            if (!sendDummyImage() && !INSTRUMENTED_TEST_RUNNING) {
                 val sound = MediaActionSound()
                 sound.play(MediaActionSound.SHUTTER_CLICK)
             }
