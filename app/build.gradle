@@ -44,6 +44,8 @@ android {
     buildTypes {
         debug {
             buildConfigField "Boolean", "TEST_RUNNING", "false"
+            buildConfigField "Boolean", "TAKE_SCREENSHOTS", "false"
+            buildConfigField "String", "TEST_LANGUAGE", "\"en\""
         }
         release {
             if (secrets.getProperty('FFEM_RELEASE_STORE_FILE')) {
@@ -127,5 +129,8 @@ dependencies {
         exclude group: 'com.android.support'
         exclude group: 'javax.inject'
     }
+
+    // UIAutomator
+    androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
 }
 apply plugin: 'com.google.gms.google-services'

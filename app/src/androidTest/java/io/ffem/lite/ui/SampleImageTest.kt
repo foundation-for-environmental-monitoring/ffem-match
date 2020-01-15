@@ -1,30 +1,39 @@
 package io.ffem.lite.ui
 
 
-import android.view.View
-import android.view.ViewGroup
+import android.content.Context
+import android.os.Environment
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
 import io.ffem.lite.R
+import io.ffem.lite.app.AppDatabase
+import io.ffem.lite.common.TestHelper.clearPreferences
 import io.ffem.lite.common.TestUtil
-import org.hamcrest.Description
-import org.hamcrest.Matcher
+import io.ffem.lite.common.TestUtil.checkResult
+import io.ffem.lite.common.TestUtil.childAtPosition
 import org.hamcrest.Matchers.allOf
-import org.hamcrest.TypeSafeMatcher
 import org.hamcrest.core.IsInstanceOf
-import org.junit.Rule
-import org.junit.Test
+import org.junit.*
 import org.junit.runner.RunWith
+import org.junit.runners.MethodSorters
+import java.io.File
+
+fun clearData(context: Context) {
+    val db = AppDatabase.getDatabase(context)
+    db.resultDao().deleteAll()
+}
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
-class ResultListActivityTest {
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+class SampleImageTest {
 
     @Rule
     @JvmField
@@ -38,47 +47,63 @@ class ResultListActivityTest {
             "android.permission.WRITE_EXTERNAL_STORAGE"
         )
 
+    @Before
+    fun setUp() {
+        clearPreferences(mActivityTestRule)
+        clearData(mActivityTestRule.activity)
+    }
+
     @Test
-    fun runTest0() {
+    fun image000_Result_0_Point_5() {
+        startTest(0, "0.5", -1)
+    }
+
+    @Test
+    fun image001_Result_0() {
         startTest(1, "0.0", -1)
     }
 
     @Test
-    fun runTestsInvalidBarcode() {
-        startTest(2, "", R.string.invalid_barcode)
+    fun image002_InvalidBarcode() {
+        startTest(2, "", -1, R.string.invalid_barcode)
     }
 
     @Test
-    fun runTestsNoMatch() {
-        startTest(6, "No match", -1)
+    fun image006_NoMatch() {
+        startTest(6, "", R.string.no_match)
     }
 
     @Test
-    fun runTestsPointFive() {
-        startTest(7, "0.44", -1)
+    fun image007_Result_Point_5() {
+        startTest(7, "0.5")
     }
 
     @Test
-    fun runTestsOnePointFive() {
-        startTest(8, "1.5", -1)
+    fun image008_Result_1_Point_5() {
+        startTest(8, "1.5")
     }
 
     @Test
-    fun runTestsCalibrationError() {
+    fun image010_CalibrationError() {
         startTest(10, "", R.string.calibration_error)
     }
 
     @Test
-    fun runTestsTilted() {
-        startTest(11, "", R.string.correct_camera_tilt)
+    fun image011_Tilted() {
+        startTest(11, "", -1, R.string.correct_camera_tilt)
     }
 
-//    @Test
-//    fun runTestsWaiting() {
-//        startTest(500, "", R.string.place_color_card)
-//    }
+    @Test
+    fun imageX_Waiting() {
+        startTest(500, "", -1, R.string.place_color_card)
+    }
 
-    private fun startTest(imageNumber: Int, result: String, error: Int) {
+    private fun startTest(
+        imageNumber: Int,
+        result: String,
+        resultError: Int = -1,
+        previewError: Int = -1
+    ) {
 
         Thread.sleep(5000)
 
@@ -113,7 +138,7 @@ class ResultListActivityTest {
         appCompatEditText.perform(replaceText(imageNumber.toString()), closeSoftKeyboard())
 
         if (TestUtil.isEmulator) {
-            Thread.sleep(5000)
+            Thread.sleep(3000)
         }
 
         val appCompatButton = onView(
@@ -121,13 +146,9 @@ class ResultListActivityTest {
         )
         appCompatButton.perform(click())
 
-        if (error == -1) {
+        if (previewError == -1) {
 
-            if (TestUtil.isEmulator) {
-                Thread.sleep(40000)
-            } else {
-                Thread.sleep(7000)
-            }
+            Thread.sleep(7000)
 
             onView(
                 allOf(
@@ -144,11 +165,12 @@ class ResultListActivityTest {
                     ),
                     isDisplayed()
                 )
-            ).check(matches(withText("Residual Chlorine ($imageNumber.0)")))
+            )
+                .check(matches(withText("Residual Chlorine ($imageNumber.0)")))
 
-            onView(
+            val textView = onView(
                 allOf(
-                    withId(R.id.textLocalValue), withText(result),
+                    withId(R.id.textLocalValue),
                     childAtPosition(
                         childAtPosition(
                             allOf(
@@ -161,32 +183,40 @@ class ResultListActivityTest {
                     ),
                     isDisplayed()
                 )
-            ).check(matches(withText(result)))
-        } else {
-            if (TestUtil.isEmulator) {
-                Thread.sleep(40000)
+            )
+
+            if (resultError == -1) {
+                val floatValue = result.toFloat()
+                textView.check(matches(checkResult(floatValue)))
             } else {
-                Thread.sleep(7000)
+                textView.check(matches(withText(resultError)))
             }
-            onView(withText(error)).check(matches(isDisplayed()))
+
+        } else {
+
+            Thread.sleep(7000)
+
+            onView(withText(previewError)).check(matches(isDisplayed()))
         }
     }
 
-    private fun childAtPosition(
-        parentMatcher: Matcher<View>, position: Int
-    ): Matcher<View> {
+    companion object {
 
-        return object : TypeSafeMatcher<View>() {
-            override fun describeTo(description: Description) {
-                description.appendText("Child at position $position in parent ")
-                parentMatcher.describeTo(description)
+        @JvmStatic
+        @AfterClass
+        fun teardown() {
+            val context = InstrumentationRegistry.getInstrumentation().targetContext
+            val folder = File(
+                context.getExternalFilesDir(
+                    Environment.DIRECTORY_PICTURES
+                ).toString() + File.separator + "captures"
+            )
+            if (folder.exists() && folder.isDirectory) {
+                folder.listFiles()?.forEach {
+                    it.delete()
+                }
             }
-
-            public override fun matchesSafely(view: View): Boolean {
-                val parent = view.parent
-                return parent is ViewGroup && parentMatcher.matches(parent)
-                        && view == parent.getChildAt(position)
-            }
+            clearData(context)
         }
     }
 }

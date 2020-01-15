@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.TestRunActivity">
     <item
+        android:id="@+id/action_settings"
         android:icon="@drawable/ic_settings_black_24dp"
         android:onClick="onSettingsClick"
         android:title="@string/settings"

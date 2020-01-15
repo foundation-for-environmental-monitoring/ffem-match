@@ -84,6 +84,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                 mediaImage.bitmap
             }
         } catch (ex: Exception) {
+            sendMessage(context.getString(R.string.place_color_card))
             endProcessing(image)
             return
         }
@@ -101,7 +102,6 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
             endProcessing(image)
             return
         }
-
 
         var badLighting = false
 
