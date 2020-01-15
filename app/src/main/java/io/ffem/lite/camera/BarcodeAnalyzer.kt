@@ -66,21 +66,26 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
         localBroadcastManager = LocalBroadcastManager.getInstance(context)
 
-        @Suppress("ConstantConditionIf")
-        bitmap = if (BuildConfig.TEST_RUNNING) {
-            val expectedValue = (PreferencesUtil
-                .getString(context, R.string.expectedValueKey, "").toFloat().toInt())
+        try {
+            @Suppress("ConstantConditionIf")
+            bitmap = if (BuildConfig.TEST_RUNNING) {
+                val expectedValue = (PreferencesUtil
+                    .getString(context, R.string.expectedValueKey, "").toFloat().toInt())
 
-            val drawable = ContextCompat.getDrawable(
-                context, context.resources.getIdentifier(
-                    "test$expectedValue",
-                    "drawable", context.packageName
+                val drawable = ContextCompat.getDrawable(
+                    context, context.resources.getIdentifier(
+                        "test$expectedValue",
+                        "drawable", context.packageName
+                    )
                 )
-            )
 
-            (drawable as BitmapDrawable).bitmap
-        } else {
-            mediaImage.bitmap
+                (drawable as BitmapDrawable).bitmap
+            } else {
+                mediaImage.bitmap
+            }
+        } catch (ex: Exception) {
+            endProcessing(image)
+            return
         }
 
         bitmap = Bitmap.createBitmap(
@@ -215,7 +220,9 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
     private fun endProcessing(image: ImageProxy) {
         processing = false
-        bitmap.recycle()
+        if (::bitmap.isInitialized) {
+            bitmap.recycle()
+        }
         image.close()
     }
 

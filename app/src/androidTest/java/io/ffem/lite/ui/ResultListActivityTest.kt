@@ -11,11 +11,10 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
-
 import io.ffem.lite.R
+import io.ffem.lite.common.TestUtil
 import org.hamcrest.Description
 import org.hamcrest.Matcher
-import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.TypeSafeMatcher
 import org.hamcrest.core.IsInstanceOf
@@ -40,20 +39,47 @@ class ResultListActivityTest {
         )
 
     @Test
-    fun runTest_0() {
-        startTest(1, "0.0")
+    fun runTest0() {
+        startTest(1, "0.0", -1)
     }
 
     @Test
-    fun runTests_NoMatch() {
-        startTest(6, "No match")
+    fun runTestsInvalidBarcode() {
+        startTest(2, "", R.string.invalid_barcode)
     }
 
+    @Test
+    fun runTestsNoMatch() {
+        startTest(6, "No match", -1)
+    }
 
-    private fun startTest(imageNumber: Int, result: String) {
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+    @Test
+    fun runTestsPointFive() {
+        startTest(7, "0.44", -1)
+    }
+
+    @Test
+    fun runTestsOnePointFive() {
+        startTest(8, "1.5", -1)
+    }
+
+    @Test
+    fun runTestsCalibrationError() {
+        startTest(10, "", R.string.calibration_error)
+    }
+
+    @Test
+    fun runTestsTilted() {
+        startTest(11, "", R.string.correct_camera_tilt)
+    }
+
+//    @Test
+//    fun runTestsWaiting() {
+//        startTest(500, "", R.string.place_color_card)
+//    }
+
+    private fun startTest(imageNumber: Int, result: String, error: Int) {
+
         Thread.sleep(5000)
 
         val floatingActionButton = onView(
@@ -86,61 +112,64 @@ class ResultListActivityTest {
         )
         appCompatEditText.perform(replaceText(imageNumber.toString()), closeSoftKeyboard())
 
+        if (TestUtil.isEmulator) {
+            Thread.sleep(5000)
+        }
+
         val appCompatButton = onView(
-            allOf(
-                withId(android.R.id.button1), withText("OK"),
-                childAtPosition(
-                    allOf(
-                        withClassName(`is`("com.android.internal.widget.ButtonBarLayout")),
-                        childAtPosition(
-                            withClassName(`is`("android.widget.LinearLayout")),
-                            3
-                        )
-                    ),
-                    3
-                ),
-                isDisplayed()
-            )
+            allOf(withId(android.R.id.button1), withText("OK"), isDisplayed())
         )
         appCompatButton.perform(click())
 
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        Thread.sleep(7000)
+        if (error == -1) {
 
-        val textView = onView(
-            allOf(
-                withId(R.id.text_title), withText("Residual Chlorine (1.0)"),
-                childAtPosition(
-                    allOf(
-                        withId(R.id.layout),
-                        childAtPosition(
-                            IsInstanceOf.instanceOf(android.view.ViewGroup::class.java),
-                            0
-                        )
-                    ),
-                    0
-                ),
-                isDisplayed()
-            )
-        )
-        textView.check(matches(withText("Residual Chlorine (1.0)")))
+            if (TestUtil.isEmulator) {
+                Thread.sleep(40000)
+            } else {
+                Thread.sleep(7000)
+            }
 
-        val textView2 = onView(
-            allOf(
-                withId(R.id.textLocalValue), withText(result),
-                childAtPosition(
+            onView(
+                allOf(
+                    withId(R.id.text_title), withText("Residual Chlorine ($imageNumber.0)"),
                     childAtPosition(
-                        allOf(withId(R.id.list_results), withContentDescription("List of results")),
+                        allOf(
+                            withId(R.id.layout),
+                            childAtPosition(
+                                IsInstanceOf.instanceOf(android.view.ViewGroup::class.java),
+                                0
+                            )
+                        ),
                         0
                     ),
-                    1
-                ),
-                isDisplayed()
-            )
-        )
-        textView2.check(matches(withText(result)))
+                    isDisplayed()
+                )
+            ).check(matches(withText("Residual Chlorine ($imageNumber.0)")))
+
+            onView(
+                allOf(
+                    withId(R.id.textLocalValue), withText(result),
+                    childAtPosition(
+                        childAtPosition(
+                            allOf(
+                                withId(R.id.list_results),
+                                withContentDescription("List of results")
+                            ),
+                            0
+                        ),
+                        1
+                    ),
+                    isDisplayed()
+                )
+            ).check(matches(withText(result)))
+        } else {
+            if (TestUtil.isEmulator) {
+                Thread.sleep(40000)
+            } else {
+                Thread.sleep(7000)
+            }
+            onView(withText(error)).check(matches(isDisplayed()))
+        }
     }
 
     private fun childAtPosition(

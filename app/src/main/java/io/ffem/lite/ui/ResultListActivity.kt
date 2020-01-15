@@ -345,7 +345,9 @@ class ResultListActivity : BaseActivity() {
             button.setOnClickListener {
                 var value = inputValue.text.toString()
 
-                if (value.isNotEmpty() && (value.toFloat() < 0 || value.toFloat() > 10)) {
+                if (!BuildConfig.DEBUG && value.isNotEmpty() &&
+                    (value.toFloat() < 0 || value.toFloat() > 10)
+                ) {
                     inputValue.error = "Should be between 0 and 10"
                 } else {
                     closeKeyboard(this, inputValue)

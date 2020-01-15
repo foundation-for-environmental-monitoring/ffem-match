@@ -43,7 +43,7 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField "Boolean", "TEST_RUNNING", "true"
+            buildConfigField "Boolean", "TEST_RUNNING", "false"
         }
         release {
             if (secrets.getProperty('FFEM_RELEASE_STORE_FILE')) {
