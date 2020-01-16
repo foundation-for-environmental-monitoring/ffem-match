@@ -75,7 +75,7 @@ fun isDark(pixels: IntArray): Boolean {
         r += element.red
     }
 
-    return (r / pixels.size) < 180
+    return (r / pixels.size) < 170
 }
 
 fun getAverageColor(pixels: IntArray): Int {
@@ -604,7 +604,7 @@ object ColorUtil {
         val margin2 = 7
 
         if (top < margin1 || left < margin1 ||
-            right > bwBitmap.width - margin2 || bottom > bwBitmap.height - (margin2 * 2)
+            right > bwBitmap.width - margin2 || bottom > bwBitmap.height - margin2
         ) {
             valid = false
         }
@@ -626,28 +626,30 @@ object ColorUtil {
                 valid = !isDark(pixels)
             }
 
-            var margin3 = 0
-            if (isLeft == ImageEdgeType.WhiteTop) {
-                margin3 = 10
-            }
+//            var margin3 = 0
+//            if (isLeft == ImageEdgeType.WhiteTop) {
+//                margin3 = 10
+//            }
 
-            if (valid) {
-                rect = Rect(left, top - margin2 - margin3, right, top - margin1 - margin3)
-                pixels = getBitmapPixels(bwBitmap, rect)
-                valid = !isDark(pixels)
-            }
+//            if (valid) {
+//                val top1 = max(0, top - margin2)
+//                rect = Rect(left, top1, right, top1 + margin1)
+//                pixels = getBitmapPixels(bwBitmap, rect)
+//                valid = !isDark(pixels)
+//            }
+//
+//            margin3 = if (isLeft == ImageEdgeType.WhiteDown) {
+//                10
+//            } else {
+//                0
+//            }
 
-            margin3 = if (isLeft == ImageEdgeType.WhiteDown) {
-                10
-            } else {
-                0
-            }
-
-            if (valid) {
-                rect = Rect(left, bottom + margin1 + margin3, right, bottom + margin2 + margin3)
-                pixels = getBitmapPixels(bwBitmap, rect)
-                valid = !isDark(pixels)
-            }
+//            if (valid) {
+//                val top1 = min(bwBitmap.height -  margin1, bottom)
+//                rect = Rect(left, top1, right, top1 + margin1)
+//                pixels = getBitmapPixels(bwBitmap, rect)
+//                valid = !isDark(pixels)
+//            }
 
             bwBitmap.recycle()
         } catch (ex: Exception) {

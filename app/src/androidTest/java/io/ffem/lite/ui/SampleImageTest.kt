@@ -25,6 +25,9 @@ import org.junit.runner.RunWith
 import org.junit.runners.MethodSorters
 import java.io.File
 
+const val pH = "pH"
+const val residualChlorine = "Residual Chlorine"
+
 fun clearData(context: Context) {
     val db = AppDatabase.getDatabase(context)
     db.resultDao().deleteAll()
@@ -49,63 +52,71 @@ class SampleImageTest {
 
     @Before
     fun setUp() {
-        clearPreferences(mActivityTestRule)
-        clearData(mActivityTestRule.activity)
+        if (!initialized) {
+            clearPreferences(mActivityTestRule)
+            clearData(mActivityTestRule.activity)
+            initialized = true
+        }
     }
 
     @Test
     fun image000_Result_0_Point_5() {
-        startTest(0, "0.5", -1)
+        startTest(residualChlorine, 0, "0.5")
     }
 
     @Test
     fun image001_Result_0() {
-        startTest(1, "0.0", -1)
+        startTest(residualChlorine, 1, "0.0")
     }
 
     @Test
     fun image002_InvalidBarcode() {
-        startTest(2, "", -1, R.string.invalid_barcode)
+        startTest(residualChlorine, 2, scanError = R.string.invalid_barcode)
     }
 
     @Test
     fun image003_Tilted() {
-        startTest(3, "", -1, R.string.correct_camera_tilt)
+        startTest(residualChlorine, 3, scanError = R.string.correct_camera_tilt)
     }
 
     @Test
     fun image004_Tilted() {
-        startTest(4, "", -1, R.string.try_moving_well_lit)
+        startTest(residualChlorine, 4, scanError = R.string.try_moving_well_lit)
     }
 
     @Test
     fun image006_NoMatch() {
-        startTest(6, "", R.string.no_match)
+        startTest(residualChlorine, 6, resultError = R.string.no_match)
     }
 
     @Test
     fun image007_Result_Point_5() {
-        startTest(7, "0.5")
+        startTest(residualChlorine, 7, "0.5")
     }
 
     @Test
     fun image008_Result_1_Point_5() {
-        startTest(8, "1.5")
+        startTest(residualChlorine, 8, "1.5")
     }
 
     @Test
     fun image009_BadLight() {
-        startTest(9, "0.5")
+        startTest(residualChlorine, 9, "0.5")
     }
 
     @Test
     fun image010_CalibrationError() {
-        startTest(10, "", R.string.calibration_error)
+        startTest(residualChlorine, 10, resultError = R.string.calibration_error)
     }
 
     @Test
     fun image011_Tilted() {
-        startTest(11, "", -1, R.string.correct_camera_tilt)
+        startTest(residualChlorine, 11, scanError = R.string.correct_camera_tilt)
+    }
+
+    @Test
+    fun image014_Result_6_Point_5() {
+        startTest(pH, 14, "6.5")
     }
 
 //    @Test
@@ -114,17 +125,18 @@ class SampleImageTest {
 //    }
 
     private fun startTest(
+        name: String,
         imageNumber: Int,
-        result: String,
+        result: String = "",
         resultError: Int = -1,
-        previewError: Int = -1
+        scanError: Int = -1
     ) {
 
         Thread.sleep(5000)
 
         val floatingActionButton = onView(
             allOf(
-                withId(R.id.fab), withContentDescription("Start test"),
+                withId(R.id.fab), withContentDescription(R.string.start_test),
                 childAtPosition(
                     childAtPosition(
                         withId(android.R.id.content),
@@ -161,13 +173,13 @@ class SampleImageTest {
         )
         appCompatButton.perform(click())
 
-        if (previewError == -1) {
+        if (scanError == -1) {
 
             Thread.sleep(7000)
 
             onView(
                 allOf(
-                    withId(R.id.text_title), withText("Residual Chlorine ($imageNumber.0)"),
+                    withId(R.id.text_title), withText("$name ($imageNumber.0)"),
                     childAtPosition(
                         allOf(
                             withId(R.id.layout),
@@ -180,7 +192,7 @@ class SampleImageTest {
                     ),
                     isDisplayed()
                 )
-            ).check(matches(withText("Residual Chlorine ($imageNumber.0)")))
+            ).check(matches(withText("$name ($imageNumber.0)")))
 
             val textView = onView(
                 allOf(
@@ -210,11 +222,14 @@ class SampleImageTest {
 
             Thread.sleep(7000)
 
-            onView(withText(previewError)).check(matches(isDisplayed()))
+            onView(withText(scanError)).check(matches(isDisplayed()))
         }
     }
 
     companion object {
+
+        @JvmStatic
+        var initialized = false
 
         @JvmStatic
         @AfterClass

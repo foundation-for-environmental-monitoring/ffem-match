@@ -49,7 +49,7 @@ object TestUtil {
                 val convertedValue =
                     java.lang.Float.valueOf(item.text.toString())
                 val delta = abs(convertedValue - value)
-                return delta < 0.08f
+                return delta < 0.20f
             }
 
             override fun describeTo(description: Description) {
