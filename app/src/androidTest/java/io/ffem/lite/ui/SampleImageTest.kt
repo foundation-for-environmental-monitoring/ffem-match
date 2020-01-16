@@ -69,6 +69,16 @@ class SampleImageTest {
     }
 
     @Test
+    fun image003_Tilted() {
+        startTest(3, "", -1, R.string.correct_camera_tilt)
+    }
+
+    @Test
+    fun image004_Tilted() {
+        startTest(4, "", -1, R.string.try_moving_well_lit)
+    }
+
+    @Test
     fun image006_NoMatch() {
         startTest(6, "", R.string.no_match)
     }
@@ -84,6 +94,11 @@ class SampleImageTest {
     }
 
     @Test
+    fun image009_BadLight() {
+        startTest(9, "", -1, R.string.color_card_not_found)
+    }
+
+    @Test
     fun image010_CalibrationError() {
         startTest(10, "", R.string.calibration_error)
     }
@@ -93,10 +108,10 @@ class SampleImageTest {
         startTest(11, "", -1, R.string.correct_camera_tilt)
     }
 
-    @Test
-    fun imageX_Waiting() {
-        startTest(500, "", -1, R.string.place_color_card)
-    }
+//    @Test
+//    fun imageX_Waiting() {
+//        startTest(500, "", -1, R.string.place_color_card)
+//    }
 
     private fun startTest(
         imageNumber: Int,
@@ -165,8 +180,7 @@ class SampleImageTest {
                     ),
                     isDisplayed()
                 )
-            )
-                .check(matches(withText("Residual Chlorine ($imageNumber.0)")))
+            ).check(matches(withText("Residual Chlorine ($imageNumber.0)")))
 
             val textView = onView(
                 allOf(

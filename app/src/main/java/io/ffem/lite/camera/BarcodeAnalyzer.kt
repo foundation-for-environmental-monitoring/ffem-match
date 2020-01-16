@@ -114,7 +114,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
             detector.detectInImage(FirebaseVisionImage.fromBitmap(leftBarcodeBitmap))
                 .addOnFailureListener(
                     fun(_: Exception) {
-//                        sendMessage(context.getString(R.string.color_card_not_found) + ".")
+                        sendMessage(context.getString(R.string.color_card_not_found))
                         endProcessing(image)
                         return
                     }
@@ -122,7 +122,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                 .addOnSuccessListener(
                     fun(result: List<FirebaseVisionBarcode>) {
                         if (result.isEmpty()) {
-//                            sendMessage(context.getString(R.string.color_card_not_found) + "..")
+                            sendMessage(context.getString(R.string.color_card_not_found))
                             endProcessing(image)
                             return
                         }
@@ -205,6 +205,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                                 }
                                             )
                                     } else {
+                                        sendMessage(context.getString(R.string.color_card_not_found))
                                         endProcessing(image)
                                     }
                                 } catch (ignored: Exception) {

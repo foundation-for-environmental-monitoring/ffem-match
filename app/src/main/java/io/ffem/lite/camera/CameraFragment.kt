@@ -84,10 +84,12 @@ class CameraFragment : Fragment() {
             messageHandler.removeCallbacksAndMessages(null)
 
             val message = intent.getStringExtra(App.ERROR_MESSAGE)
-            bottom_overlay.setTextColor(Color.YELLOW)
-            bottom_overlay.text = message
+            if (bottom_overlay != null && bottom_overlay.text != message) {
+                bottom_overlay.setTextColor(Color.YELLOW)
+                bottom_overlay.text = message
+            }
 
-            messageHandler.postDelayed(runnable, 2000)
+            messageHandler.postDelayed(runnable, 3000)
         }
     }
 
@@ -96,7 +98,7 @@ class CameraFragment : Fragment() {
         messageHandler = Handler()
 
         runnable = Runnable {
-            if (bottom_overlay != null) {
+            if (bottom_overlay != null && bottom_overlay.text != getString(R.string.place_color_card)) {
                 bottom_overlay.setTextColor(Color.WHITE)
                 bottom_overlay.text = getString(R.string.place_color_card)
             }

@@ -54,7 +54,7 @@
     <string name="image_tilted">Tilted image</string>
     <string name="error">Error</string>
     <string name="calibration_error">Calibration error</string>
-    <string name="color_card_not_found">Card missing or not readable</string>
+    <string name="color_card_not_found">Barcode not found. Check lighting</string>
     <string name="capture_photo">Capture photo</string>
     <string name="invalid_barcode">Invalid barcode</string>
     <string name="no_match">No match</string>
