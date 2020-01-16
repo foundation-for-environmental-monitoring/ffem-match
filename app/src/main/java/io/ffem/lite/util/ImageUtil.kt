@@ -1,6 +1,7 @@
 package io.ffem.lite.util
 
 import android.graphics.*
+import io.ffem.lite.model.ImageEdgeType
 
 
 object ImageUtil {
@@ -39,22 +40,55 @@ object ImageUtil {
 //    }
 
     // https://codeday.me/en/qa/20190310/15630.html
-    fun toBlackAndWhite(src: Bitmap, threshold: Int): Bitmap {
+    fun toBlackAndWhite(
+        src: Bitmap,
+        threshold: Int,
+        imageEdgeSide: ImageEdgeType
+    ): Bitmap {
+
+        var thresholdValue = threshold
+
         val options = BitmapFactory.Options()
         options.inScaled = false
-
         val bitmapPaint = Paint()
+        var result = Bitmap.createBitmap(src.width, src.height, Bitmap.Config.ARGB_8888)
 
-        val result = Bitmap.createBitmap(src.width, src.height, Bitmap.Config.ARGB_8888)
-        val c = Canvas(result)
-
+        var c = Canvas(result)
         // convert bitmap to grey scale:
         bitmapPaint.colorFilter = ColorMatrixColorFilter(createGreyMatrix())
         c.drawBitmap(src, 0f, 0f, bitmapPaint)
 
-        // to black and white using threshold matrix
         bitmapPaint.colorFilter = ColorMatrixColorFilter(createThresholdMatrix(threshold))
         c.drawBitmap(result, 0f, 0f, bitmapPaint)
+
+        val left = 0
+        var top = 0
+        var bottom = 4
+
+        if (imageEdgeSide == ImageEdgeType.WhiteDown) {
+            top = result.height - 4
+            bottom = result.height
+        }
+
+        var rect = Rect(left, top, result.width, bottom)
+        var pixels = getBitmapPixels(result, rect)
+        while (isDark(pixels)) {
+            result.recycle()
+            thresholdValue -= 5
+            result = Bitmap.createBitmap(src.width, src.height, Bitmap.Config.ARGB_8888)
+
+            c = Canvas(result)
+
+            // convert bitmap to grey scale:
+            bitmapPaint.colorFilter = ColorMatrixColorFilter(createGreyMatrix())
+            c.drawBitmap(src, 0f, 0f, bitmapPaint)
+
+            bitmapPaint.colorFilter = ColorMatrixColorFilter(createThresholdMatrix(thresholdValue))
+            c.drawBitmap(result, 0f, 0f, bitmapPaint)
+
+            rect = Rect(left, top, result.width, bottom)
+            pixels = getBitmapPixels(result, rect)
+        }
 
         return result
     }

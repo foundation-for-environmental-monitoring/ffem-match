@@ -26,6 +26,7 @@ import io.ffem.lite.preference.getColorDistanceTolerance
 import java.util.*
 import kotlin.math.*
 
+const val IMAGE_THRESHOLD = 130
 const val MAX_COLOR_DISTANCE_RGB = 80
 const val MAX_COLOR_DISTANCE_CALIBRATION = 80
 const val INTERPOLATION_COUNT = 100.0
@@ -74,7 +75,7 @@ fun isDark(pixels: IntArray): Boolean {
         r += element.red
     }
 
-    return (r / pixels.size) < 170
+    return (r / pixels.size) < 180
 }
 
 fun getAverageColor(pixels: IntArray): Int {
@@ -121,7 +122,7 @@ object ColorUtil {
             bitmap.width, bitmap.height / 2
         )
 
-//        val leftBarcodeBitmap = ImageUtil.toBlackAndWhite(leftBarcodeBitmapColor, 110)
+//        val leftBarcodeBitmap = ImageUtil.toBlackAndWhite(leftBarcodeBitmapColor, IMAGE_THRESHOLD)
 //        leftBarcodeBitmapColor.recycle()
 
         detector.detectInImage(FirebaseVisionImage.fromBitmap(leftBarcodeBitmap))
@@ -142,9 +143,18 @@ object ColorUtil {
 
                                 val testName = getTestName(result[0].displayValue!!)
 
-                                val leftBoundingBox = fixBoundary(leftBarcode, leftBarcodeBitmap)
+                                val leftBoundingBox = fixBoundary(
+                                    leftBarcode,
+                                    leftBarcodeBitmap,
+                                    ImageEdgeType.WhiteTop
+                                )
 
-                                if (!isBarcodeValid(leftBarcodeBitmap, leftBoundingBox, true)) {
+                                if (!isBarcodeValid(
+                                        leftBarcodeBitmap,
+                                        leftBoundingBox,
+                                        ImageEdgeType.WhiteTop
+                                    )
+                                ) {
                                     badLighting = true
                                 }
 
@@ -154,7 +164,7 @@ object ColorUtil {
                                 )
 
 //                                val rightBarcodeBitmap =
-//                                    ImageUtil.toBlackAndWhite(rightBarcodeBitmapColor, 110)
+//                                    ImageUtil.toBlackAndWhite(rightBarcodeBitmapColor, IMAGE_THRESHOLD)
 //                                rightBarcodeBitmapColor.recycle()
 
                                 detector.detectInImage(
@@ -185,7 +195,11 @@ object ColorUtil {
                                             for (rightBarcode in result) {
 
                                                 val rightBoundingBox =
-                                                    fixBoundary(rightBarcode, rightBarcodeBitmap)
+                                                    fixBoundary(
+                                                        rightBarcode,
+                                                        rightBarcodeBitmap,
+                                                        ImageEdgeType.WhiteTop
+                                                    )
 
                                                 if (isTilted(leftBoundingBox, rightBoundingBox)) {
                                                     returnResult(
@@ -196,7 +210,9 @@ object ColorUtil {
                                                 }
 
                                                 if (badLighting || !isBarcodeValid(
-                                                        rightBarcodeBitmap, rightBoundingBox, false
+                                                        rightBarcodeBitmap,
+                                                        rightBoundingBox,
+                                                        ImageEdgeType.WhiteDown
                                                     )
                                                 ) {
                                                     returnResult(
@@ -261,7 +277,8 @@ object ColorUtil {
 
             val croppedBitmap1 = Utilities.rotateImage(finalBitmap, 270)
 
-            val bwCroppedBitmap1 = ImageUtil.toBlackAndWhite(croppedBitmap1, 100)
+            val bwCroppedBitmap1 =
+                ImageUtil.toBlackAndWhite(croppedBitmap1, IMAGE_THRESHOLD, ImageEdgeType.WhiteTop)
             var top = 0
             var bottom = 0
 
@@ -291,7 +308,8 @@ object ColorUtil {
                 croppedBitmap1.height
             )
 
-            val bwCroppedBitmap2 = ImageUtil.toBlackAndWhite(croppedBitmap2, 100)
+            val bwCroppedBitmap2 =
+                ImageUtil.toBlackAndWhite(croppedBitmap2, IMAGE_THRESHOLD, ImageEdgeType.WhiteTop)
             bwCroppedBitmap1.recycle()
 
             for (y in 1 until 100) {
@@ -431,7 +449,7 @@ object ColorUtil {
 
     private fun extractColors(image: Bitmap, barcodeValue: String): ResultDetail {
 
-        val bitmap = ImageUtil.toBlackAndWhite(image, 100)
+        val bitmap = ImageUtil.toBlackAndWhite(image, IMAGE_THRESHOLD, ImageEdgeType.WhiteTop)
 
         val paint = Paint()
         paint.style = Style.STROKE
@@ -527,8 +545,13 @@ object ColorUtil {
         return false
     }
 
-    fun fixBoundary(barcode: FirebaseVisionBarcode, barcodeBitmap: Bitmap): Rect {
-        val bwBitmap = ImageUtil.toBlackAndWhite(barcodeBitmap, 100)
+    fun fixBoundary(
+        barcode: FirebaseVisionBarcode,
+        barcodeBitmap: Bitmap,
+        imageEdgeSide: ImageEdgeType
+    ): Rect {
+
+        val bwBitmap = ImageUtil.toBlackAndWhite(barcodeBitmap, IMAGE_THRESHOLD, imageEdgeSide)
 
         var top = barcode.boundingBox!!.top
         var left = barcode.boundingBox!!.left
@@ -566,11 +589,11 @@ object ColorUtil {
     }
 
     fun isBarcodeValid(
-        barcodeBitmap: Bitmap, barcode: Rect, isLeft: Boolean
+        barcodeBitmap: Bitmap, barcode: Rect, isLeft: ImageEdgeType
     ): Boolean {
 
         var valid = true
-        val bwBitmap = ImageUtil.toBlackAndWhite(barcodeBitmap, 110)
+        val bwBitmap = ImageUtil.toBlackAndWhite(barcodeBitmap, IMAGE_THRESHOLD, isLeft)
 
         val top = barcode.top
         val left = barcode.left
@@ -604,7 +627,7 @@ object ColorUtil {
             }
 
             var margin3 = 0
-            if (isLeft) {
+            if (isLeft == ImageEdgeType.WhiteTop) {
                 margin3 = 10
             }
 
@@ -614,7 +637,7 @@ object ColorUtil {
                 valid = !isDark(pixels)
             }
 
-            margin3 = if (!isLeft) {
+            margin3 = if (isLeft == ImageEdgeType.WhiteDown) {
                 10
             } else {
                 0

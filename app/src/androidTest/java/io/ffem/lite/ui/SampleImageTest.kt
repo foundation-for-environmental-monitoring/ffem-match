@@ -95,7 +95,7 @@ class SampleImageTest {
 
     @Test
     fun image009_BadLight() {
-        startTest(9, "", -1, R.string.color_card_not_found)
+        startTest(9, "0.5")
     }
 
     @Test

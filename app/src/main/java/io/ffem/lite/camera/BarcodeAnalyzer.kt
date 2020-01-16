@@ -21,6 +21,7 @@ import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.app.App.Companion.getTestName
+import io.ffem.lite.model.ImageEdgeType
 import io.ffem.lite.util.ColorUtil.fixBoundary
 import io.ffem.lite.util.ColorUtil.isBarcodeValid
 import io.ffem.lite.util.ColorUtil.isTilted
@@ -133,14 +134,18 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                 try {
 
                                     val leftBoundingBox =
-                                        fixBoundary(leftBarcode, leftBarcodeBitmap)
+                                        fixBoundary(
+                                            leftBarcode,
+                                            leftBarcodeBitmap,
+                                            ImageEdgeType.WhiteTop
+                                        )
 
                                     if (leftBoundingBox.top in 11..69) {
 
                                         if (!isBarcodeValid(
                                                 leftBarcodeBitmap,
                                                 leftBoundingBox,
-                                                true
+                                                ImageEdgeType.WhiteTop
                                             )
                                         ) {
                                             badLighting = true
@@ -172,7 +177,8 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                                         val rightBoundingBox =
                                                             fixBoundary(
                                                                 rightBarcode,
-                                                                rightBarcodeBitmap
+                                                                rightBarcodeBitmap,
+                                                                ImageEdgeType.WhiteDown
                                                             )
 
                                                         if (isTilted(
@@ -186,7 +192,8 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
                                                         if (badLighting || !isBarcodeValid(
                                                                 rightBarcodeBitmap,
-                                                                rightBoundingBox, false
+                                                                rightBoundingBox,
+                                                                ImageEdgeType.WhiteDown
                                                             )
                                                         ) {
                                                             sendMessage(context.getString(R.string.try_moving_well_lit))
