@@ -183,58 +183,65 @@ class ResultListActivity : BaseActivity() {
             }
         }
 
-        val calendar = Calendar.getInstance()
-        if (calendar.get(Calendar.MONTH) > 11 && calendar.get(Calendar.YEAR) > 2018
-            && isNonStoreVersion(this)
-        ) {
-            appIsClosing = true
-            val marketUrl = Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
-            val message = String.format(
-                "%s%n%n%s", getString(R.string.thisVersionHasExpired),
-                getString(R.string.uninstallAndInstallFromStore)
-            )
+        if (BuildConfig.BUILD_TYPE == "release" && isNonStoreVersion(this)) {
+            val appExpiryDate = GregorianCalendar.getInstance()
+            appExpiryDate.time = BuildConfig.BUILD_TIME
+            appExpiryDate.add(Calendar.DAY_OF_YEAR, 15)
 
-            val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+            if (GregorianCalendar().after(appExpiryDate)) {
 
-            builder.setTitle(R.string.versionExpired)
-                .setMessage(message)
-                .setCancelable(false)
+                appIsClosing = true
+                val marketUrl =
+                    Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
+                val message = String.format(
+                    "%s%n%n%s", getString(R.string.thisVersionHasExpired),
+                    getString(R.string.uninstallAndInstallFromStore)
+                )
 
-            builder.setPositiveButton(R.string.ok) { dialogInterface, _ ->
-                dialogInterface.dismiss()
-                val intent = Intent(Intent.ACTION_VIEW)
-                intent.data = marketUrl
-                intent.setPackage("com.android.vending")
-                startActivity(intent)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    finishAndRemoveTask()
-                } else {
-                    finish()
+                val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+
+                builder.setTitle(R.string.versionExpired)
+                    .setMessage(message)
+                    .setCancelable(false)
+
+                builder.setPositiveButton(R.string.ok) { dialogInterface, _ ->
+                    dialogInterface.dismiss()
+                    val intent = Intent(Intent.ACTION_VIEW)
+                    intent.data = marketUrl
+                    intent.setPackage("com.android.vending")
+                    startActivity(intent)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        finishAndRemoveTask()
+                    } else {
+                        finish()
+                    }
                 }
+
+                val alertDialog = builder.create()
+                alertDialog.show()
+                return
             }
 
-            val alertDialog = builder.create()
-            alertDialog.show()
-
-        } else {
-
-            checkForUpdate()
-
-            db = AppDatabase.getDatabase(baseContext)
-
-            val resultList = db.resultDao().getResults()
-
-            adapter.setTestList(resultList)
-
-            list_results.addItemDecoration(
-                DividerItemDecoration(
-                    this,
-                    DividerItemDecoration.VERTICAL
-                )
-            )
-
-            list_results.adapter = adapter
         }
+
+
+        checkForUpdate()
+
+        db = AppDatabase.getDatabase(baseContext)
+
+        val resultList = db.resultDao().getResults()
+
+        adapter.setTestList(resultList)
+
+        list_results.addItemDecoration(
+            DividerItemDecoration(
+                this,
+                DividerItemDecoration.VERTICAL
+            )
+        )
+
+        list_results.adapter = adapter
+
     }
 
     private fun checkForUpdate() {
