@@ -30,7 +30,7 @@ import java.util.*
 import kotlin.math.max
 import kotlin.math.min
 
-const val MAX_ANGLE = 12
+const val MAX_ANGLE = 14
 
 class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
@@ -184,6 +184,11 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                                                 rightBarcodeBitmap,
                                                                 ImageEdgeType.WhiteDown
                                                             )
+
+                                                        if (rightBarcodeBitmap.height - rightBoundingBox.bottom !in 11..80) {
+                                                            endProcessing(image)
+                                                            return
+                                                        }
 
                                                         if (isTilted(
                                                                 leftBoundingBox, rightBoundingBox

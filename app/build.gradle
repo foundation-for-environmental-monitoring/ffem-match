@@ -101,6 +101,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.5'
 
     implementation 'com.google.firebase:firebase-ml-vision:24.0.1'
+    implementation 'com.google.firebase:firebase-ml-vision-barcode-model:16.0.2'
 
     // Navigation library
     def nav_version = "2.1.0"

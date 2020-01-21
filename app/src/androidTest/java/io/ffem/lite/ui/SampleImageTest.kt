@@ -86,6 +86,11 @@ class SampleImageTest {
     }
 
     @Test
+    fun image005_Waiting() {
+        startTest(residualChlorine, 5, scanError = R.string.place_color_card)
+    }
+
+    @Test
     fun image006_NoMatch() {
         startTest(residualChlorine, 6, resultError = R.string.no_match)
     }
@@ -116,6 +121,11 @@ class SampleImageTest {
     }
 
     @Test
+    fun image012_Waiting() {
+        startTest(residualChlorine, 12, scanError = R.string.place_color_card)
+    }
+
+    @Test
     fun image014_Result_6_Point_5() {
         startTest(pH, 14, "6.5")
     }
@@ -137,7 +147,7 @@ class SampleImageTest {
 
     @Test
     fun image018_Waiting() {
-        startTest(residualChlorine, 18, "0.5")
+        startTest(residualChlorine, 18, scanError = R.string.place_color_card)
     }
 
     @Test

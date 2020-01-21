@@ -43,25 +43,30 @@ object ImageUtil {
     fun toBlackAndWhite(
         src: Bitmap,
         threshold: Int,
-        imageEdgeSide: ImageEdgeType
+        imageEdgeSide: ImageEdgeType,
+        left: Int,
+        right: Int
     ): Bitmap {
 
+        val width = right - left
         var thresholdValue = threshold
 
         val options = BitmapFactory.Options()
         options.inScaled = false
         val bitmapPaint = Paint()
-        var result = Bitmap.createBitmap(src.width, src.height, Bitmap.Config.ARGB_8888)
+        var result = Bitmap.createBitmap(width, src.height, Bitmap.Config.ARGB_8888)
+
+        val srcRect = Rect(left, 0, right, src.height)
+        val dstRect = Rect(0, 0, width, src.height)
 
         var c = Canvas(result)
         // convert bitmap to grey scale:
         bitmapPaint.colorFilter = ColorMatrixColorFilter(createGreyMatrix())
-        c.drawBitmap(src, 0f, 0f, bitmapPaint)
+        c.drawBitmap(src, srcRect, dstRect, bitmapPaint)
 
         bitmapPaint.colorFilter = ColorMatrixColorFilter(createThresholdMatrix(threshold))
         c.drawBitmap(result, 0f, 0f, bitmapPaint)
 
-        val left = 0
         var top = 0
         var bottom = 4
 
@@ -75,13 +80,13 @@ object ImageUtil {
         while (!isWhite(pixels)) {
             result.recycle()
             thresholdValue -= 5
-            result = Bitmap.createBitmap(src.width, src.height, Bitmap.Config.ARGB_8888)
+            result = Bitmap.createBitmap(width, src.height, Bitmap.Config.ARGB_8888)
 
             c = Canvas(result)
 
             // convert bitmap to grey scale:
             bitmapPaint.colorFilter = ColorMatrixColorFilter(createGreyMatrix())
-            c.drawBitmap(src, 0f, 0f, bitmapPaint)
+            c.drawBitmap(src, srcRect, dstRect, bitmapPaint)
 
             bitmapPaint.colorFilter = ColorMatrixColorFilter(createThresholdMatrix(thresholdValue))
             c.drawBitmap(result, 0f, 0f, bitmapPaint)
@@ -89,6 +94,18 @@ object ImageUtil {
             rect = Rect(left, top, result.width, bottom)
             pixels = getBitmapPixels(result, rect)
         }
+
+        result.recycle()
+        result = Bitmap.createBitmap(src.width, src.height, Bitmap.Config.ARGB_8888)
+
+        c = Canvas(result)
+
+        // convert bitmap to grey scale:
+        bitmapPaint.colorFilter = ColorMatrixColorFilter(createGreyMatrix())
+        c.drawBitmap(src, 0f, 0f, bitmapPaint)
+
+        bitmapPaint.colorFilter = ColorMatrixColorFilter(createThresholdMatrix(thresholdValue))
+        c.drawBitmap(result, 0f, 0f, bitmapPaint)
 
         return result
     }

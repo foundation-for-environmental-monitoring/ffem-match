@@ -290,7 +290,10 @@ object ColorUtil {
             val croppedBitmap1 = Utilities.rotateImage(finalBitmap, 270)
 
             val bwCroppedBitmap1 =
-                ImageUtil.toBlackAndWhite(croppedBitmap1, IMAGE_THRESHOLD, ImageEdgeType.WhiteTop)
+                ImageUtil.toBlackAndWhite(
+                    croppedBitmap1, IMAGE_THRESHOLD, ImageEdgeType.WhiteTop,
+                    0, croppedBitmap1.width
+                )
             var top = 0
             var bottom = 0
 
@@ -321,7 +324,10 @@ object ColorUtil {
             )
 
             val bwCroppedBitmap2 =
-                ImageUtil.toBlackAndWhite(croppedBitmap2, IMAGE_THRESHOLD, ImageEdgeType.WhiteTop)
+                ImageUtil.toBlackAndWhite(
+                    croppedBitmap2, IMAGE_THRESHOLD, ImageEdgeType.WhiteTop,
+                    0, croppedBitmap2.width
+                )
             bwCroppedBitmap1.recycle()
 
             for (y in 1 until 100) {
@@ -461,7 +467,9 @@ object ColorUtil {
 
     private fun extractColors(image: Bitmap, barcodeValue: String): ResultDetail {
 
-        val bitmap = ImageUtil.toBlackAndWhite(image, IMAGE_THRESHOLD, ImageEdgeType.WhiteTop)
+        val bitmap = ImageUtil.toBlackAndWhite(
+            image, IMAGE_THRESHOLD, ImageEdgeType.WhiteTop, 0, image.width
+        )
 
         val paint = Paint()
         paint.style = Style.STROKE
@@ -563,13 +571,15 @@ object ColorUtil {
         imageEdgeSide: ImageEdgeType
     ): Rect {
 
-        val bwBitmap = ImageUtil.toBlackAndWhite(barcodeBitmap, IMAGE_THRESHOLD, imageEdgeSide)
-
         var top = barcode.boundingBox!!.top
         var left = barcode.boundingBox!!.left
         val right = barcode.boundingBox!!.right
         var bottom = barcode.boundingBox!!.bottom
         val midY = ((bottom - top) / 2) + top
+
+        val bwBitmap = ImageUtil.toBlackAndWhite(
+            barcodeBitmap, IMAGE_THRESHOLD, imageEdgeSide, left, right
+        )
 
         for (x in left until left + 50) {
             val pixel = bwBitmap.getPixel(x, midY)
@@ -590,7 +600,7 @@ object ColorUtil {
 
         for (y in midY until min(midY + 150, bwBitmap.height)) {
             bottom = y
-            val pixel = bwBitmap.getPixel(left, bottom)
+            val pixel = bwBitmap.getPixel(left + 2, bottom)
             if (!isDarkPixel(pixel)) {
                 bottom = max(bottom, barcode.boundingBox!!.bottom)
                 break
@@ -605,7 +615,9 @@ object ColorUtil {
     ): Boolean {
 
         var valid = true
-        val bwBitmap = ImageUtil.toBlackAndWhite(barcodeBitmap, IMAGE_THRESHOLD, imageEdgeSide)
+        val bwBitmap = ImageUtil.toBlackAndWhite(
+            barcodeBitmap, IMAGE_THRESHOLD, imageEdgeSide, 0, barcodeBitmap.width
+        )
 
         val top = barcode.top
         val left = barcode.left
