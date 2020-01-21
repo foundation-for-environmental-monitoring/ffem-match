@@ -16,8 +16,8 @@ android {
         applicationId "io.ffem.lite"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 34
-        versionName "Alpha 0.24"
+        versionCode 36
+        versionName "Alpha 0.25"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -46,6 +46,7 @@ android {
             buildConfigField "Boolean", "TEST_RUNNING", "false"
             buildConfigField "Boolean", "TAKE_SCREENSHOTS", "false"
             buildConfigField "String", "TEST_LANGUAGE", "\"en\""
+            buildConfigField "java.util.Date", "BUILD_TIME", "new java.util.Date(" + 0L + ")"
         }
         release {
             if (secrets.getProperty('FFEM_RELEASE_STORE_FILE')) {
@@ -56,6 +57,13 @@ android {
             zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField "Boolean", "TEST_RUNNING", "false"
+            buildConfigField "java.util.Date", "BUILD_TIME", "new java.util.Date(" +
+                    (System.currentTimeMillis()) + "L)"
+            android.applicationVariants.all { variant ->
+                variant.outputs.all {
+                    outputFileName = "ffem-lite-${variant.versionCode}.apk"
+                }
+            }
         }
     }
 }
