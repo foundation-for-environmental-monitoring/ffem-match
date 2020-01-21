@@ -48,7 +48,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginBottom="2dp"
+                android:layout_marginBottom="4dp"
+                android:clickable="false"
+                android:focusable="false"
+                android:text="@{TimeAgo.using(result.date)}"
+                android:textColor="#737373"
+                android:textSize="14sp"
+                tools:text="date time" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginBottom="4dp"
                 android:clickable="false"
                 android:focusable="false"
                 android:text="@{String.valueOf(result.id)}"
@@ -56,18 +68,6 @@
                 android:textSize="13sp"
                 android:visibility="@{AppPreferencesKt.isDiagnosticMode() ? View.VISIBLE : View.GONE}"
                 tools:text="Test id" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginBottom="7dp"
-                android:clickable="false"
-                android:focusable="false"
-                android:text="@{TimeAgo.using(result.date)}"
-                android:textColor="#737373"
-                android:textSize="14sp"
-                tools:text="date time" />
         </LinearLayout>
 
         <TextView
@@ -82,22 +82,22 @@
             android:textIsSelectable="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="2.5" />
+            tools:text="No match" />
 
-        <TextView
-            android:id="@+id/textValue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/activity_horizontal_margin"
-            android:clickable="false"
-            android:focusable="false"
-            android:text="@{result.value}"
-            android:textIsSelectable="false"
-            android:textSize="22sp"
-            android:visibility="@{result.value.equals(`-`) ? View.GONE : View.VISIBLE}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textLocalValue"
-            tools:text="2.5" />
+        <!--        <TextView-->
+        <!--            android:id="@+id/textValue"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginEnd="@dimen/activity_horizontal_margin"-->
+        <!--            android:clickable="false"-->
+        <!--            android:focusable="false"-->
+        <!--            android:text="@{result.value}"-->
+        <!--            android:textIsSelectable="false"-->
+        <!--            android:textSize="22sp"-->
+        <!--            android:visibility="@{result.value.equals(``) ? View.GONE : View.VISIBLE}"-->
+        <!--            app:layout_constraintEnd_toEndOf="parent"-->
+        <!--            app:layout_constraintTop_toBottomOf="@id/textLocalValue"-->
+        <!--            tools:text="2.5" />-->
 
         <!--        <TextView-->
         <!--            android:id="@+id/textProgress"-->

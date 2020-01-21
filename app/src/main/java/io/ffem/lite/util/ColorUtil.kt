@@ -60,7 +60,7 @@ fun isDarkLine(pixels: IntArray): Boolean {
         r += element.red
     }
 
-    return (r / pixels.size) < 180
+    return (r / pixels.size) < 150
 }
 
 
@@ -75,7 +75,21 @@ fun isDark(pixels: IntArray): Boolean {
         r += element.red
     }
 
-    return (r / pixels.size) < 170
+    return (r / pixels.size) < 150
+}
+
+fun isWhite(pixels: IntArray): Boolean {
+    var r = 0
+
+    if (pixels.isEmpty()) {
+        return false
+    }
+
+    for (element in pixels) {
+        r += element.red
+    }
+
+    return (r / pixels.size) > 240
 }
 
 fun getAverageColor(pixels: IntArray): Int {
@@ -104,7 +118,6 @@ object ColorUtil {
     fun extractImage(context: Context, id: String, bitmapImage: Bitmap) {
 
         val detector: FirebaseVisionBarcodeDetector by lazy {
-
             val options = FirebaseVisionBarcodeDetectorOptions.Builder()
                 .setBarcodeFormats(
                     FirebaseVisionBarcode.FORMAT_CODE_128
@@ -140,7 +153,6 @@ object ColorUtil {
                         if (!leftBarcode.rawValue.isNullOrEmpty()) {
 //                            if (leftBarcode.boundingBox!!.width() > bitmap.width * .44) {
                             try {
-
                                 val testName = getTestName(result[0].displayValue!!)
 
                                 val leftBoundingBox = fixBoundary(
@@ -198,7 +210,7 @@ object ColorUtil {
                                                     fixBoundary(
                                                         rightBarcode,
                                                         rightBarcodeBitmap,
-                                                        ImageEdgeType.WhiteTop
+                                                        ImageEdgeType.WhiteDown
                                                     )
 
                                                 if (isTilted(leftBoundingBox, rightBoundingBox)) {
@@ -267,7 +279,7 @@ object ColorUtil {
 
             val cropTop = leftBoundingBox.bottom + 2
             val cropHeight = min(
-                rightBoundingBox.top - leftBoundingBox.bottom + (bitmap.height / 2) - 4,
+                rightBoundingBox.top - cropTop + (bitmap.height / 2) - 2,
                 bitmap.height - cropTop
             )
 
@@ -562,14 +574,14 @@ object ColorUtil {
         for (x in left until left + 50) {
             val pixel = bwBitmap.getPixel(x, midY)
             if (isDarkPixel(pixel)) {
-                left = min(x, barcode.boundingBox!!.left) + 2
+                left = min(x, barcode.boundingBox!!.left)
                 break
             }
         }
 
         for (y in midY downTo 1) {
             top = y
-            val pixel = bwBitmap.getPixel(left, top)
+            val pixel = bwBitmap.getPixel(left + 2, top)
             if (!isDarkPixel(pixel)) {
                 top = min(top, barcode.boundingBox!!.top)
                 break
@@ -589,11 +601,11 @@ object ColorUtil {
     }
 
     fun isBarcodeValid(
-        barcodeBitmap: Bitmap, barcode: Rect, isLeft: ImageEdgeType
+        barcodeBitmap: Bitmap, barcode: Rect, imageEdgeSide: ImageEdgeType
     ): Boolean {
 
         var valid = true
-        val bwBitmap = ImageUtil.toBlackAndWhite(barcodeBitmap, IMAGE_THRESHOLD, isLeft)
+        val bwBitmap = ImageUtil.toBlackAndWhite(barcodeBitmap, IMAGE_THRESHOLD, imageEdgeSide)
 
         val top = barcode.top
         val left = barcode.left
@@ -750,6 +762,10 @@ object ColorUtil {
 
         if (swatches.size < 2) {
             return list
+        }
+
+        if (swatches[0].value == -1.0) {
+            swatches.removeAt(0)
         }
 
         // Predict 2 more points in the calibration list to account for high levels of contamination

@@ -30,7 +30,7 @@ import java.util.*
 import kotlin.math.max
 import kotlin.math.min
 
-const val MAX_ANGLE = 10
+const val MAX_ANGLE = 12
 
 class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
@@ -129,8 +129,12 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                         }
                         for (leftBarcode in result) {
                             if (!leftBarcode.rawValue.isNullOrEmpty()) {
-
-//                                val testName = App.getTestName(result[0].displayValue!!)
+                                var testName = getTestName(result[0].displayValue!!)
+                                if (testName.isEmpty()) {
+                                    sendMessage(context.getString(R.string.invalid_barcode))
+                                    endProcessing(image)
+                                    return
+                                }
                                 try {
 
                                     val leftBoundingBox =
@@ -140,7 +144,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                             ImageEdgeType.WhiteTop
                                         )
 
-                                    if (leftBoundingBox.top in 11..69) {
+                                    if (leftBoundingBox.top in 11..80) {
 
                                         if (!isBarcodeValid(
                                                 leftBarcodeBitmap,
@@ -190,6 +194,14 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                                             return
                                                         }
 
+                                                        testName =
+                                                            getTestName(result[0].displayValue!!)
+                                                        if (testName.isEmpty()) {
+                                                            sendMessage(context.getString(R.string.invalid_barcode))
+                                                            endProcessing(image)
+                                                            return
+                                                        }
+
                                                         if (badLighting || !isBarcodeValid(
                                                                 rightBarcodeBitmap,
                                                                 rightBoundingBox,
@@ -227,10 +239,10 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
     }
 
     private fun endProcessing(image: ImageProxy) {
-        processing = false
         if (::bitmap.isInitialized) {
             bitmap.recycle()
         }
+        processing = false
         image.close()
     }
 
@@ -239,7 +251,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         bitmap: Bitmap, rightBarcode: FirebaseVisionBarcode,
         rightBoundingBox: Rect, leftBoundingBox: Rect
     ) {
-        if ((bitmap.height / 2) - rightBoundingBox.bottom in 11..69) {
+        if ((bitmap.height / 2) - rightBoundingBox.bottom in 11..80) {
             if (!rightBarcode.rawValue.isNullOrEmpty()) {
                 val testName = getTestName(rightBarcode.displayValue!!)
                 if (testName.isEmpty()) {

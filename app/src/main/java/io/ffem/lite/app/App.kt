@@ -202,6 +202,14 @@ class App : BaseApplication() {
         }
 
         fun getTestName(id: String): String {
+
+//            var shortId = id
+
+//            // todo: remove this
+//            if (id =="3006cf"){
+//                shortId = "b61159"
+//            }
+
             if (!::testConfig.isInitialized) {
                 val input = app.resources.openRawResource(R.raw.calibration)
                 val content = FileUtil.readTextFile(input)

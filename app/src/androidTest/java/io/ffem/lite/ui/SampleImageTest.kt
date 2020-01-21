@@ -27,6 +27,7 @@ import java.io.File
 
 const val pH = "pH"
 const val residualChlorine = "Residual Chlorine"
+const val fluoride: String = "Fluoride"
 
 fun clearData(context: Context) {
     val db = AppDatabase.getDatabase(context)
@@ -76,12 +77,12 @@ class SampleImageTest {
 
     @Test
     fun image003_Tilted() {
-        startTest(residualChlorine, 3, scanError = R.string.correct_camera_tilt)
+        startTest(fluoride, 3, scanError = R.string.invalid_barcode)
     }
 
     @Test
-    fun image004_Tilted() {
-        startTest(residualChlorine, 4, scanError = R.string.try_moving_well_lit)
+    fun image004_NoMatch() {
+        startTest(pH, 4, resultError = R.string.no_match)
     }
 
     @Test
@@ -119,10 +120,35 @@ class SampleImageTest {
         startTest(pH, 14, "6.5")
     }
 
-//    @Test
-//    fun imageX_Waiting() {
-//        startTest(500, "", -1, R.string.place_color_card)
-//    }
+    @Test
+    fun image015_Result_4_Point_3() {
+        startTest(residualChlorine, 15, "0.43")
+    }
+
+    @Test
+    fun image016t_CalibrationError() {
+        startTest(residualChlorine, 16, resultError = R.string.calibration_error)
+    }
+
+    @Test
+    fun image017_BadLighting() {
+        startTest(residualChlorine, 17, scanError = R.string.color_card_not_found)
+    }
+
+    @Test
+    fun image018_Waiting() {
+        startTest(residualChlorine, 18, "0.5")
+    }
+
+    @Test
+    fun image019_Result_3_Point_0() {
+        startTest(residualChlorine, 19, "3.0")
+    }
+
+    @Test
+    fun imageX_Waiting() {
+        startTest(pH, 500, scanError = R.string.place_color_card)
+    }
 
     private fun startTest(
         name: String,

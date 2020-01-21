@@ -72,7 +72,7 @@ object ImageUtil {
 
         var rect = Rect(left, top, result.width, bottom)
         var pixels = getBitmapPixels(result, rect)
-        while (isDark(pixels)) {
+        while (!isWhite(pixels)) {
             result.recycle()
             thresholdValue -= 5
             result = Bitmap.createBitmap(src.width, src.height, Bitmap.Config.ARGB_8888)

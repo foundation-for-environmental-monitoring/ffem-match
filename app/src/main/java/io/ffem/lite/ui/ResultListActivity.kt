@@ -92,7 +92,7 @@ const val SNACK_BAR_LINE_SPACING = 1.4f
 fun TextView.bindTextSize(result: String) {
     if (result.toDoubleOrNull() == null) {
         textSize = 14f
-        setPadding(0, 20, 0, 20)
+        setPadding(0, 10, 0, 0)
         setTextColor(Color.rgb(200, 50, 50))
     } else {
         textSize = 30f
