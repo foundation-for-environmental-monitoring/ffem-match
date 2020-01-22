@@ -107,7 +107,7 @@ class SampleImageTest {
 
     @Test
     fun image009_BadLight() {
-        startTest(residualChlorine, 9, "0.5")
+        startTest(residualChlorine, 9, scanError = R.string.place_color_card)
     }
 
     @Test
@@ -126,6 +126,11 @@ class SampleImageTest {
     }
 
     @Test
+    fun image013_Waiting() {
+        startTest(residualChlorine, 13, scanError = R.string.place_color_card)
+    }
+
+    @Test
     fun image014_Result_6_Point_5() {
         startTest(pH, 14, "6.5")
     }
@@ -136,13 +141,13 @@ class SampleImageTest {
     }
 
     @Test
-    fun image016t_CalibrationError() {
+    fun image016_CalibrationError() {
         startTest(residualChlorine, 16, resultError = R.string.calibration_error)
     }
 
     @Test
     fun image017_BadLighting() {
-        startTest(residualChlorine, 17, scanError = R.string.color_card_not_found)
+        startTest(residualChlorine, 17, scanError = R.string.place_color_card)
     }
 
     @Test
@@ -153,6 +158,16 @@ class SampleImageTest {
     @Test
     fun image019_Result_3_Point_0() {
         startTest(residualChlorine, 19, "3.0")
+    }
+
+    @Test
+    fun image020_Waiting() {
+        startTest(residualChlorine, 20, scanError = R.string.place_color_card)
+    }
+
+    @Test
+    fun image021_Waiting() {
+        startTest(residualChlorine, 21, scanError = R.string.place_color_card)
     }
 
     @Test

@@ -41,11 +41,7 @@ object ImageUtil {
 
     // https://codeday.me/en/qa/20190310/15630.html
     fun toBlackAndWhite(
-        src: Bitmap,
-        threshold: Int,
-        imageEdgeSide: ImageEdgeType,
-        left: Int,
-        right: Int
+        src: Bitmap, threshold: Int, imageEdgeSide: ImageEdgeType, left: Int, right: Int
     ): Bitmap {
 
         val width = right - left
@@ -67,12 +63,12 @@ object ImageUtil {
         bitmapPaint.colorFilter = ColorMatrixColorFilter(createThresholdMatrix(threshold))
         c.drawBitmap(result, 0f, 0f, bitmapPaint)
 
-        var top = 0
-        var bottom = 4
+        var top = 3
+        var bottom = 7
 
         if (imageEdgeSide == ImageEdgeType.WhiteDown) {
-            top = result.height - 4
-            bottom = result.height
+            top = result.height - 7
+            bottom = result.height - 3
         }
 
         var rect = Rect(left, top, result.width, bottom)

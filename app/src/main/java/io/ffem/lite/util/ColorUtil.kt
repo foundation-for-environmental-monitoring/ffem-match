@@ -75,8 +75,23 @@ fun isDark(pixels: IntArray): Boolean {
         r += element.red
     }
 
-    return (r / pixels.size) < 150
+    return (r / pixels.size) < 140
 }
+
+fun isNotBright(pixels: IntArray): Boolean {
+    var r = 0
+
+    if (pixels.isEmpty()) {
+        return false
+    }
+
+    for (element in pixels) {
+        r += element.red
+    }
+
+    return (r / pixels.size) < 110
+}
+
 
 fun isWhite(pixels: IntArray): Boolean {
     var r = 0
@@ -160,6 +175,13 @@ object ColorUtil {
                                     leftBarcodeBitmap,
                                     ImageEdgeType.WhiteTop
                                 )
+
+//                                Timber.d(
+//                                    "%s %s %s %s", leftBoundingBox.left,
+//                                    leftBoundingBox.top,
+//                                    leftBoundingBox.right,
+//                                    leftBoundingBox.bottom
+//                                )
 
                                 if (!isBarcodeValid(
                                         leftBarcodeBitmap,
@@ -289,6 +311,8 @@ object ColorUtil {
 
             val croppedBitmap1 = Utilities.rotateImage(finalBitmap, 270)
 
+            finalBitmap.recycle()
+
             val bwCroppedBitmap1 =
                 ImageUtil.toBlackAndWhite(
                     croppedBitmap1, IMAGE_THRESHOLD, ImageEdgeType.WhiteTop,
@@ -322,6 +346,8 @@ object ColorUtil {
                 right - left,
                 croppedBitmap1.height
             )
+
+            croppedBitmap1.recycle()
 
             val bwCroppedBitmap2 =
                 ImageUtil.toBlackAndWhite(
@@ -359,6 +385,8 @@ object ColorUtil {
                 max(1, bottom - top)
             )
 
+            croppedBitmap2.recycle()
+
             var error = -1
             var resultDetail = ResultDetail(-1.0, 0)
             try {
@@ -384,9 +412,6 @@ object ColorUtil {
 //
 //
 //            }
-
-            croppedBitmap1.recycle()
-            finalBitmap.recycle()
 
             returnResult(context, id, error, bitmap, testName, resultDetail)
 //                } else {
