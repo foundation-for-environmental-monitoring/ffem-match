@@ -15,8 +15,8 @@
     <string name="about">About</string>
     <string name="settings">Settings</string>
     <string name="ok">OK</string>
-    <string name="show_server_image">Full Image</string>
-    <string name="show_local_image">Color Areas</string>
+    <string name="show_server_image">View Full</string>
+    <string name="show_local_image">View Extracts</string>
     <string name="camera">Camera</string>
     <string name="expectedValue">Expected result value</string>
 

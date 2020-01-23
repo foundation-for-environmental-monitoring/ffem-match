@@ -40,6 +40,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         private var capturePhoto: Boolean = false
         private var processing = false
         private var done: Boolean = false
+        var autoFocusCounter = 0
     }
 
     private lateinit var bitmap: Bitmap
@@ -88,7 +89,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
             }
         } catch (ex: Exception) {
             sendMessage(context.getString(R.string.place_color_card))
-            endProcessing(image)
+            endProcessing(image, true)
             return
         }
 
@@ -102,7 +103,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
             done = true
 //            bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height)
             savePhoto(bitmap, "Unknown", true)
-            endProcessing(image)
+            endProcessing(image, true)
             return
         }
 
@@ -111,14 +112,14 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         var rect = Rect(100, 0, bitmap.width - 100, 10)
         var pixels = getBitmapPixels(bitmap, rect)
         if (isNotBright(pixels)) {
-            endProcessing(image)
+            endProcessing(image, true)
             return
         }
 
         rect = Rect(100, bitmap.height - 10, bitmap.width - 100, bitmap.height)
         pixels = getBitmapPixels(bitmap, rect)
         if (isNotBright(pixels)) {
-            endProcessing(image)
+            endProcessing(image, true)
             return
         }
 
@@ -132,7 +133,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                 .addOnFailureListener(
                     fun(_: Exception) {
                         sendMessage(context.getString(R.string.color_card_not_found))
-                        endProcessing(image)
+                        endProcessing(image, true)
                         return
                     }
                 )
@@ -140,7 +141,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                     fun(result: List<FirebaseVisionBarcode>) {
                         if (result.isEmpty()) {
                             sendMessage(context.getString(R.string.color_card_not_found))
-                            endProcessing(image)
+                            endProcessing(image, true)
                             return
                         }
                         for (leftBarcode in result) {
@@ -148,11 +149,17 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                 var testName = getTestName(result[0].displayValue!!)
                                 if (testName.isEmpty()) {
                                     sendMessage(context.getString(R.string.invalid_barcode))
-                                    endProcessing(image)
+                                    endProcessing(image, true)
                                     return
                                 }
-                                try {
 
+                                if (autoFocusCounter < 25) {
+                                    autoFocusCounter++
+                                    endProcessing(image, false)
+                                    return
+                                }
+
+                                try {
                                     val leftBoundingBox =
                                         fixBoundary(
                                             leftBarcode,
@@ -177,7 +184,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                         ) {
                                             badLighting = true
                                             leftBarcodeBitmap.recycle()
-                                            endProcessing(image)
+                                            endProcessing(image, false)
                                             return
                                         }
 
@@ -193,14 +200,14 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                         )
                                             .addOnFailureListener(fun(_: Exception) {
 //                                                sendMessage(context.getString(R.string.color_card_not_found) + "...")
-                                                endProcessing(image)
+                                                endProcessing(image, true)
                                                 return
                                             })
                                             .addOnSuccessListener(
                                                 fun(result: List<FirebaseVisionBarcode>) {
                                                     if (result.isNullOrEmpty()) {
 //                                                        sendMessage(context.getString(R.string.color_card_not_found) + "....")
-                                                        endProcessing(image)
+                                                        endProcessing(image, true)
                                                         return
                                                     }
 
@@ -215,7 +222,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
                                                         if (rightBarcodeBitmap.height - rightBoundingBox.bottom !in 11..80) {
                                                             rightBarcodeBitmap.recycle()
-                                                            endProcessing(image)
+                                                            endProcessing(image, false)
                                                             return
                                                         }
 
@@ -224,7 +231,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                                             )
                                                         ) {
                                                             sendMessage(context.getString(R.string.correct_camera_tilt))
-                                                            endProcessing(image)
+                                                            endProcessing(image, false)
                                                             return
                                                         }
 
@@ -232,7 +239,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                                             getTestName(result[0].displayValue!!)
                                                         if (testName.isEmpty()) {
                                                             sendMessage(context.getString(R.string.invalid_barcode))
-                                                            endProcessing(image)
+                                                            endProcessing(image, false)
                                                             return
                                                         }
 
@@ -244,7 +251,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                                         ) {
                                                             sendMessage(context.getString(R.string.try_moving_well_lit))
                                                             rightBarcodeBitmap.recycle()
-                                                            endProcessing(image)
+                                                            endProcessing(image, false)
                                                             return
                                                         }
 
@@ -262,24 +269,27 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                             )
                                     } else {
                                         sendMessage(context.getString(R.string.color_card_not_found))
-                                        endProcessing(image)
+                                        endProcessing(image, true)
                                     }
                                 } catch (ignored: Exception) {
-                                    endProcessing(image)
+                                    endProcessing(image, true)
                                 }
                             } else {
-                                endProcessing(image)
+                                endProcessing(image, true)
                             }
                         }
                     }
                 )
     }
 
-    private fun endProcessing(image: ImageProxy) {
+    private fun endProcessing(image: ImageProxy, reset: Boolean) {
         if (::bitmap.isInitialized) {
             bitmap.recycle()
         }
         processing = false
+        if (reset) {
+            autoFocusCounter = 0
+        }
         image.close()
     }
 
@@ -292,7 +302,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
             val testName = getTestName(rightBarcode.displayValue!!)
             if (testName.isEmpty()) {
                 sendMessage(context.getString(R.string.invalid_barcode))
-                endProcessing(image)
+                endProcessing(image, false)
                 return
             }
 
@@ -317,10 +327,10 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
             finalBitmap.recycle()
 
-            endProcessing(image)
+            endProcessing(image, true)
 
         } else {
-            endProcessing(image)
+            endProcessing(image, true)
         }
     }
 
@@ -377,5 +387,6 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         done = false
         processing = false
         capturePhoto = false
+        autoFocusCounter = 0
     }
 }
