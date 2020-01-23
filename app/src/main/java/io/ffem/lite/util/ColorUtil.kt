@@ -299,11 +299,9 @@ object ColorUtil {
                 bitmap.width - cropLeft
             )
 
-            val cropTop = leftBoundingBox.bottom + 2
-            val cropHeight = min(
-                rightBoundingBox.top - cropTop + (bitmap.height / 2) - 2,
-                bitmap.height - cropTop
-            )
+            val cropTop = max(leftBoundingBox.bottom + 2, 0)
+            val cropBottom = (bitmap.height / 2) + rightBoundingBox.top
+            val cropHeight = min(cropBottom - cropTop, bitmap.height - cropTop)
 
             val finalBitmap = Bitmap.createBitmap(
                 bitmap, cropLeft, cropTop, cropWidth, cropHeight

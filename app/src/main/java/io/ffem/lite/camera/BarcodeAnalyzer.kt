@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.Rect
 import android.graphics.drawable.BitmapDrawable
 import android.provider.MediaStore
+import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.core.content.ContextCompat
@@ -64,6 +65,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         }
         processing = true
 
+        @ExperimentalGetImage
         mediaImage = FirebaseVisionImage.fromMediaImage(
             image.image!!, FirebaseVisionImageMetadata.ROTATION_180
         )

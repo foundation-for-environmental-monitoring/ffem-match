@@ -16,8 +16,8 @@ android {
         applicationId "io.ffem.lite"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 36
-        versionName "Alpha 0.25"
+        versionCode 37
+        versionName "Alpha 0.26"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -43,7 +43,7 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField "Boolean", "TEST_RUNNING", "false"
+            buildConfigField "Boolean", "TEST_RUNNING", "true"
             buildConfigField "Boolean", "TAKE_SCREENSHOTS", "false"
             buildConfigField "String", "TEST_LANGUAGE", "\"en\""
             buildConfigField "java.util.Date", "BUILD_TIME", "new java.util.Date(" + 0L + ")"
@@ -118,11 +118,6 @@ dependencies {
 
     // CameraX View class
     implementation "androidx.camera:camera-view:1.0.0-alpha05"
-
-    // Glide
-    implementation "com.github.bumptech.glide:glide:4.10.0"
-    kapt "com.github.bumptech.glide:compiler:4.10.0"
-    kapt "com.google.auto.service:auto-service:1.0-rc4"
 
     // Timber
     implementation 'com.jakewharton.timber:timber:4.7.1'
