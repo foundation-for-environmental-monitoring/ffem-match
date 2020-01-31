@@ -32,8 +32,8 @@ abstract class ResultDao {
     @Query("UPDATE results SET status = :status, message = :message, value = :result WHERE id = :id")
     abstract fun updateResult(id: String, status: Int, message: String, result: String)
 
-    @Query("UPDATE results SET localValue = :result WHERE id = :id")
-    abstract fun updateLocalResult(id: String, result: String)
+    @Query("UPDATE results SET name= :name, localValue = :result WHERE id = :id")
+    abstract fun updateLocalResult(id: String, name: String, result: String)
 
     @Query("DELETE FROM results")
     abstract fun deleteAll()

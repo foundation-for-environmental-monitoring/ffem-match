@@ -395,7 +395,7 @@ object ColorUtil {
 
             Utilities.savePicture(
                 context.applicationContext, id,
-                testName + "_swatch", Utilities.bitmapToBytes(croppedBitmap)
+                testName, Utilities.bitmapToBytes(croppedBitmap), true
             )
             croppedBitmap.recycle()
 
@@ -454,7 +454,8 @@ object ColorUtil {
                     context,
                     id,
                     testName,
-                    Utilities.bitmapToBytes(bitmapRotated)
+                    Utilities.bitmapToBytes(bitmapRotated),
+                    false
                 )
 
                 val expectedValue = PreferencesUtil

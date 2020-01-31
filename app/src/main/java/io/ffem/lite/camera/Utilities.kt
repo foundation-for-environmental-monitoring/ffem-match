@@ -17,7 +17,11 @@ object Utilities {
      * Saves a specified picture on external disk.
      */
     fun savePicture(
-        context: Context, id: String, name: String, bytes: ByteArray
+        context: Context,
+        id: String,
+        name: String,
+        bytes: ByteArray,
+        isExtract: Boolean
     ): String {
         try {
             val path = context.getExternalFilesDir(DIRECTORY_PICTURES).toString() +
@@ -27,13 +31,25 @@ object Utilities {
             if (!basePath.exists())
                 Timber.d(if (basePath.mkdirs()) "Success" else "Failed")
 
-            val fileName = name.replace(" ", "")
+            val fixedName = name.replace(" ", "")
+            var fileName = fixedName
+            if (isExtract) {
+                fileName += "_swatch"
+            }
             val filePath = "$path$id" + "_" + "$fileName.jpg"
             val stream = FileOutputStream(filePath)
             stream.write(bytes)
             stream.flush()
             stream.fd.sync()
             stream.close()
+
+            if (name != "Unknown") {
+                val unknown = File("$path$id" + "_" + "Unknown.jpg")
+                if (unknown.exists()) {
+                    val newName = File("$path$id" + "_" + "$fixedName.jpg")
+                    unknown.renameTo(newName)
+                }
+            }
 
             // Create a no media file in the folder to prevent images showing up in Gallery app
             val noMediaFile = File(path, ".nomedia")

@@ -155,7 +155,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                     return
                                 }
 
-                                if (autoFocusCounter < 25) {
+                                if (autoFocusCounter < 10) {
                                     autoFocusCounter++
                                     endProcessing(image, false)
                                     return
@@ -343,7 +343,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         val testId = UUID.randomUUID().toString()
         val filePath = Utilities.savePicture(
             context.applicationContext, testId,
-            testName, Utilities.bitmapToBytes(bitmapRotated)
+            testName, Utilities.bitmapToBytes(bitmapRotated), false
         )
 
         if (saveCopy) {

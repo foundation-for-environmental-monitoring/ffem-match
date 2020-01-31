@@ -122,6 +122,7 @@ class ResultListActivity : BaseActivity() {
 
             db.resultDao().updateLocalResult(
                 intent.getStringExtra(TEST_ID_KEY)!!,
+                intent.getStringExtra(TEST_NAME_KEY)!!,
                 intent.getStringExtra(TEST_RESULT)!!
             )
 
