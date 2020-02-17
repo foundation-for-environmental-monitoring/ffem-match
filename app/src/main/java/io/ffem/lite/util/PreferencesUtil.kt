@@ -49,32 +49,32 @@ object PreferencesUtil {
         editor.apply()
     }
 
-    /**
-     * Gets an integer value from preferences.
-     *
-     * @param context      the context
-     * @param key          the key id
-     * @param defaultValue the default value
-     * @return stored int value
-     */
-    fun getInt(context: Context, key: String, defaultValue: Int): Int {
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-        return sharedPreferences.getInt(key, defaultValue)
-    }
-
-    /**
-     * Sets an integer value to preferences.
-     *
-     * @param context the context
-     * @param key     the key id
-     * @param value   the value to set
-     */
-    fun setInt(context: Context, key: String, value: Int) {
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-        val editor = sharedPreferences.edit()
-        editor.putInt(key, value)
-        editor.apply()
-    }
+//    /**
+//     * Gets an integer value from preferences.
+//     *
+//     * @param context      the context
+//     * @param key          the key id
+//     * @param defaultValue the default value
+//     * @return stored int value
+//     */
+//    fun getInt(context: Context, key: String, defaultValue: Int): Int {
+//        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+//        return sharedPreferences.getInt(key, defaultValue)
+//    }
+//
+//    /**
+//     * Sets an integer value to preferences.
+//     *
+//     * @param context the context
+//     * @param key     the key id
+//     * @param value   the value to set
+//     */
+//    fun setInt(context: Context, key: String, value: Int) {
+//        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+//        val editor = sharedPreferences.edit()
+//        editor.putInt(key, value)
+//        editor.apply()
+//    }
 
     /**
      * Gets a string value from preferences.

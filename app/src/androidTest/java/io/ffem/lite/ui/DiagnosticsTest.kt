@@ -8,7 +8,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
 import io.ffem.lite.R
-import io.ffem.lite.app.App
+import io.ffem.lite.common.TestHelper.enterDiagnosticMode
 import io.ffem.lite.common.TestHelper.leaveDiagnosticMode
 import io.ffem.lite.common.TestUtil.childAtPosition
 import io.ffem.lite.preference.isDiagnosticMode
@@ -100,15 +100,7 @@ class DiagnosticsTest {
 
         Thread.sleep(500)
 
-        for (i in 0..9) {
-            val appCompatTextView = onView(
-                allOf(
-                    withId(R.id.textVersion), withText(App.getAppVersion()),
-                    isDisplayed()
-                )
-            )
-            appCompatTextView.perform(click())
-        }
+        enterDiagnosticMode()
 
         Thread.sleep(400)
 

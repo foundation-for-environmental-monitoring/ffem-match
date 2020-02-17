@@ -7,6 +7,7 @@ class TestInfo {
     @SerializedName("name")
     @Expose
     var name: String? = null
+    @Suppress("unused")
     @SerializedName("type")
     @Expose
     var type: String? = null

@@ -33,6 +33,7 @@ import java.util.*
 import kotlin.math.max
 import kotlin.math.min
 
+
 const val MAX_ANGLE = 14
 
 class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
@@ -78,9 +79,11 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                 val expectedValue = (PreferencesUtil
                     .getString(context, R.string.expectedValueKey, "").toFloat().toInt())
 
+                val value = java.lang.String.format("%03d", expectedValue)
+
                 val drawable = ContextCompat.getDrawable(
                     context, context.resources.getIdentifier(
-                        "test$expectedValue",
+                        "test$value",
                         "drawable", context.packageName
                     )
                 )

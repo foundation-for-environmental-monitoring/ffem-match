@@ -1,21 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string-array name="language_codes">
-        <item>en</item>
-        <item>hi</item>
-    </string-array>
-
     <!--Keys-->
-    <string name="languageKey">language</string>
-    <string name="systemLanguageKey">systemLanguage</string>
     <string name="diagnosticModeKey">diagnosticMode</string>
-    <string name="refreshKey">refresh</string>
     <string name="testModeOnKey">testModeOn</string>
     <string name="dummyImageKey">dummyImage</string>
-    <string name="largeColorCardKey">largeColorCard</string>
     <string name="aboutKey">aboutApp</string>
-    <string name="soundOnKey">soundOn</string>
     <string name="data_delete_key">data_delete</string>
     <string name="colorDistanceToleranceKey">colorDistanceTolerance</string>
     <string name="maxCardColorDistanceAllowedKey">maxCardCalibrationDistance</string>

@@ -14,10 +14,6 @@ fun isTestMode(): Boolean {
     )
 }
 
-fun isSoundOn(): Boolean {
-    return !isDiagnosticMode() || PreferencesUtil.getBoolean(App.app, R.string.soundOnKey, true)
-}
-
 fun sendDummyImage(): Boolean {
     return isDiagnosticMode() && PreferencesUtil.getBoolean(App.app, R.string.dummyImageKey, false)
 }

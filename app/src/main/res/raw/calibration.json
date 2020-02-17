@@ -46,55 +46,6 @@
     {
       "name": "pH",
       "type": "water",
-      "uuid": "4d3a7d6d-2f11-49de-9f7f-9e21e840df93",
-      "values": [
-        {
-          "value": 4
-        },
-        {
-          "value": 5
-        },
-        {
-          "value": 6
-        },
-        {
-          "value": 7
-        },
-        {
-          "value": 8
-        },
-        {
-          "value": 9
-        },
-        {
-          "value": 10
-        },
-        {
-          "value": 4
-        },
-        {
-          "value": 5
-        },
-        {
-          "value": 6
-        },
-        {
-          "value": 7
-        },
-        {
-          "value": 8
-        },
-        {
-          "value": 9
-        },
-        {
-          "value": 10
-        }
-      ]
-    },
-    {
-      "name": "pH",
-      "type": "water",
       "uuid": "ff96e965-13a3-4507-9edf-7aa7fc084354",
       "values": [
         {

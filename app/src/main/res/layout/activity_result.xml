@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:background="@color/black"
     android:orientation="horizontal"
-    tools:context=".ui.ResultActivity">
+    tools:context=".ui.ResultActivity"
+    tools:ignore="Overdraw">
 
     <LinearLayout
         android:id="@+id/app_bar"

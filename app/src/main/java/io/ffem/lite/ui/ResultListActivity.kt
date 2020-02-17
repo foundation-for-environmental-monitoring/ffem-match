@@ -41,7 +41,6 @@ import com.google.android.play.core.install.model.UpdateAvailability
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.app.App
-import io.ffem.lite.app.App.Companion.API_URL
 import io.ffem.lite.app.App.Companion.LOCAL_RESULT_EVENT
 import io.ffem.lite.app.App.Companion.PERMISSIONS_MISSING_KEY
 import io.ffem.lite.app.App.Companion.TEST_ID_KEY
@@ -50,34 +49,16 @@ import io.ffem.lite.app.App.Companion.TEST_RESULT
 import io.ffem.lite.app.App.Companion.getVersionName
 import io.ffem.lite.app.AppDatabase
 import io.ffem.lite.helper.ApkHelper.isNonStoreVersion
-import io.ffem.lite.model.ResultResponse
 import io.ffem.lite.model.TestResult
 import io.ffem.lite.preference.SettingsActivity
 import io.ffem.lite.preference.sendDummyImage
-import io.ffem.lite.remote.ApiService
 import io.ffem.lite.util.ColorUtil
 import io.ffem.lite.util.FileUtil
 import io.ffem.lite.util.PreferencesUtil
-import io.ffem.lite.util.SoundUtil
 import kotlinx.android.synthetic.main.activity_result_list.*
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody.Companion.asRequestBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
 import java.io.File
-import java.io.FileInputStream
-import java.io.IOException
-import java.security.MessageDigest
 import java.util.*
-import kotlin.math.abs
-import kotlin.math.max
 
 const val APP_UPDATE_REQUEST = 101
 const val READ_REQUEST_CODE = 102
@@ -85,7 +66,6 @@ const val PERMISSION_REQUEST = 103
 
 const val TOAST_Y_OFFSET = 240
 const val RESULT_CHECK_INTERVAL = 10000L
-const val MIN_RESULT_WAIT_TIME = 70000L
 const val SNACK_BAR_LINE_SPACING = 1.4f
 
 @BindingAdapter("android:resultSize")
@@ -146,7 +126,6 @@ class ResultListActivity : BaseActivity() {
         onResultClick(it)
     })
 
-    private var requestCount = 0
     private lateinit var db: AppDatabase
     private lateinit var resultRequestHandler: Handler
     private lateinit var runnable: Runnable
@@ -178,10 +157,10 @@ class ResultListActivity : BaseActivity() {
         resultRequestHandler = Handler()
         runnable = Runnable {
             analyzeImage()
-            if (isInternetConnected) {
+//            if (isInternetConnected) {
 //                sendImagesToServer()
 //                getResultsFromServer()
-            }
+//            }
         }
 
         if (BuildConfig.BUILD_TYPE == "release" && isNonStoreVersion(this)) {
@@ -555,17 +534,6 @@ class ResultListActivity : BaseActivity() {
         snackbar.show()
     }
 
-    private fun notifyFileSent() {
-
-        refreshList()
-
-        Handler().postDelayed({
-            showToast(getString(R.string.wait_few_minutes))
-        }, 800)
-
-        startResultCheckTimer(RESULT_CHECK_INTERVAL)
-    }
-
     private fun analyzeImage() {
         db.resultDao().getPendingLocalResults().forEach {
             val path = getExternalFilesDir(DIRECTORY_PICTURES).toString() +
@@ -584,181 +552,6 @@ class ResultListActivity : BaseActivity() {
 
             refreshList()
         }
-    }
-
-    private fun sendImagesToServer() {
-        if (isInternetConnected) {
-            db.resultDao().getUnsent().forEach {
-                sendToServer(it.id, it.name)
-            }
-        }
-    }
-
-    private fun sendToServer(id: String, name: String) {
-
-        val path = getExternalFilesDir(DIRECTORY_PICTURES).toString() +
-                File.separator + "captures" + File.separator
-
-        val fileName = name.replace(" ", "")
-        val filePath = "$path$id" + "_" + "$fileName.jpg"
-
-        try {
-            val file = File(filePath)
-            val requestBody = MultipartBody.Builder()
-                .setType(MultipartBody.FORM)
-                .addFormDataPart("user_id", "1")
-                .addFormDataPart("testId", id)
-                .addFormDataPart("versionCode", BuildConfig.VERSION_CODE.toString())
-                .addFormDataPart("sdkVersion", Build.VERSION.SDK_INT.toString())
-                .addFormDataPart("deviceModel", Build.MODEL)
-                .addFormDataPart("md5", calculateMD5ofFile(filePath))
-                .addFormDataPart(
-                    "image",
-                    file.name,
-                    file.asRequestBody("image/jpeg".toMediaTypeOrNull())
-                )
-                .build()
-
-            val request = Request.Builder()
-                .url(API_URL)
-                .post(requestBody)
-                .build()
-
-            val okHttpClient = OkHttpClient()
-            okHttpClient.newCall(request).enqueue(object : okhttp3.Callback {
-                override fun onFailure(call: okhttp3.Call, e: IOException) {
-                    Timber.d(e)
-                }
-
-                override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
-                    if (response.isSuccessful) {
-                        db.resultDao()
-                            .updateStatus(id, 1, Date().time, getString(R.string.analyzing))
-
-                        this@ResultListActivity.runOnUiThread {
-                            notifyFileSent()
-                        }
-                    } else {
-                        Timber.d(response.message)
-                    }
-                    response.body!!.close()
-                }
-            })
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    private fun calculateMD5ofFile(location: String): String {
-        val bufferSize = 8192
-        val fs = FileInputStream(location)
-        val md = MessageDigest.getInstance("MD5")
-        val buffer = ByteArray(bufferSize)
-        var bytes: Int
-        do {
-            bytes = fs.read(buffer, 0, bufferSize)
-            if (bytes > 0)
-                md.update(buffer, 0, bytes)
-
-        } while (bytes > 0)
-
-        val hexString = StringBuilder()
-        val byteArray = md.digest()
-
-        for (element in byteArray) {
-            val hex = Integer.toHexString(element.toInt() and 0xFF)
-            if (hex.length == 1) {
-                hexString.append('0')
-            }
-            hexString.append(hex)
-
-        }
-        return hexString.toString()
-    }
-
-    private fun getResultsFromServer() {
-
-        startResultCheckTimer(RESULT_CHECK_INTERVAL)
-
-        if (!isInternetConnected) {
-            notifyNoInternet()
-            return
-        }
-
-        val resultList = db.resultDao().getPendingResults()
-        if (resultList.isNotEmpty()) {
-            val retrofit: Retrofit = Retrofit.Builder()
-                .baseUrl(API_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-
-            var maxWaitTime: Long = MIN_RESULT_WAIT_TIME
-
-            val api = retrofit.create(ApiService::class.java)
-            resultList.forEach {
-                val timeAgoSent = System.currentTimeMillis() - it.sent
-                val timeToWait = max(3, abs(timeAgoSent - MIN_RESULT_WAIT_TIME))
-                if (timeToWait < maxWaitTime) {
-                    maxWaitTime = timeToWait
-                }
-                if (timeAgoSent > MIN_RESULT_WAIT_TIME) {
-                    val call = api.getResponse(it.id)
-
-                    Timber.d("Requesting result %s", it.id)
-
-                    call.enqueue(object : Callback<ResultResponse> {
-
-                        override fun onResponse(
-                            call: Call<ResultResponse>?,
-                            response: Response<ResultResponse>?
-                        ) {
-                            val body = response?.body()
-
-                            val id = body?.id
-                            var result = ""
-                            var message = "-"
-                            if (body?.result != null) {
-                                result = body.result.toString()
-                                message = body.message.toString()
-                            }
-
-                            if (result.isNotEmpty()) {
-                                val resultData = db.resultDao().getResult(id)
-
-                                if (resultData != null) {
-                                    db.resultDao().updateResult(id.toString(), 2, message, result)
-
-                                    this@ResultListActivity.runOnUiThread {
-                                        SoundUtil.playShortResource(
-                                            applicationContext,
-                                            R.raw.triangle
-                                        )
-                                        refreshList()
-                                        showToast(getString(R.string.result_received))
-                                    }
-                                }
-                            }
-                        }
-
-                        override fun onFailure(call: Call<ResultResponse>?, t: Throwable?) {
-                            requestCount++
-                        }
-                    })
-                }
-            }
-            startResultCheckTimer(maxWaitTime)
-        }
-    }
-
-    private fun showToast(message: String) {
-        toastLong.cancel()
-        toastLong = Toast.makeText(
-            applicationContext,
-            message,
-            Toast.LENGTH_LONG
-        )
-        toastLong.setGravity(Gravity.BOTTOM, 0, TOAST_Y_OFFSET)
-        toastLong.show()
     }
 
     private fun notifyNoInternet() {
