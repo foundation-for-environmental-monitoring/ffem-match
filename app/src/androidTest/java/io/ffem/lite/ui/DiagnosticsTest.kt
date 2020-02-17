@@ -8,6 +8,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
 import io.ffem.lite.R
+import io.ffem.lite.app.App
 import io.ffem.lite.common.TestHelper.leaveDiagnosticMode
 import io.ffem.lite.common.TestUtil.childAtPosition
 import io.ffem.lite.preference.isDiagnosticMode
@@ -45,19 +46,11 @@ class DiagnosticsTest {
 
         Thread.sleep(400)
 
-        val appCompatButton = onView(
+        onView(
             allOf(
-                withId(android.R.id.button2), withText("Cancel"),
-                childAtPosition(
-                    childAtPosition(
-                        withClassName(`is`("android.widget.ScrollView")),
-                        0
-                    ),
-                    2
-                )
+                withId(android.R.id.button2), withText("Cancel")
             )
-        )
-        appCompatButton.perform(scrollTo(), click())
+        ).perform(click())
 
         if (isDiagnosticMode()) {
             Thread.sleep(400)
@@ -107,10 +100,10 @@ class DiagnosticsTest {
 
         Thread.sleep(500)
 
-        for (i in 0..10) {
+        for (i in 0..9) {
             val appCompatTextView = onView(
                 allOf(
-                    withId(R.id.textVersion), withText("Version Alpha 0.24"),
+                    withId(R.id.textVersion), withText(App.getAppVersion()),
                     isDisplayed()
                 )
             )

@@ -226,7 +226,7 @@ class SampleImageTest {
 
         if (scanError == -1) {
 
-            Thread.sleep(7000)
+            Thread.sleep(9000)
 
             onView(
                 allOf(
@@ -271,7 +271,7 @@ class SampleImageTest {
 
         } else {
 
-            Thread.sleep(7000)
+            Thread.sleep(9000)
 
             onView(withText(scanError)).check(matches(isDisplayed()))
         }

@@ -211,7 +211,7 @@ class CameraFragment : Fragment() {
                 .build()
 
             // Default PreviewSurfaceProvider
-            preview?.previewSurfaceProvider = previewView.previewSurfaceProvider
+            preview?.setSurfaceProvider(previewView.previewSurfaceProvider)
 
             barcodeAnalyzer = BarcodeAnalyzer(context!!)
             barcodeAnalyzer.reset()
@@ -235,6 +235,7 @@ class CameraFragment : Fragment() {
                 .setTargetName("Analysis")
                 .setTargetAspectRatio(screenAspectRatio)
                 .setTargetRotation(rotation)
+                .setImageQueueDepth(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build()
 
             analysis?.setAnalyzer(mainExecutor, BarcodeAnalyzer(context!!))
@@ -273,7 +274,6 @@ class CameraFragment : Fragment() {
 //    }
 
     /**
-     *  [androidx.camera.core.ImageAnalysisConfig] requires enum value of
      *  [androidx.camera.core.AspectRatio]. Currently it has values of 4:3 & 16:9.
      *
      *  Detecting the most suitable ratio for dimensions provided in @params by counting absolute
