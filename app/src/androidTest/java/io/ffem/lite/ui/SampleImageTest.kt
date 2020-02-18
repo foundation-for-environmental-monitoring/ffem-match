@@ -4,7 +4,7 @@ package io.ffem.lite.ui
 import android.content.Context
 import android.os.Environment
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions.*
+import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -18,6 +18,7 @@ import io.ffem.lite.common.TestHelper.clearPreferences
 import io.ffem.lite.common.TestUtil
 import io.ffem.lite.common.TestUtil.checkResult
 import io.ffem.lite.common.TestUtil.childAtPosition
+import io.ffem.lite.util.PreferencesUtil
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.core.IsInstanceOf
 import org.junit.*
@@ -200,37 +201,22 @@ class SampleImageTest {
         )
         floatingActionButton.perform(click())
 
-        val appCompatEditText = onView(
-            allOf(
-                withId(R.id.editExpectedValue),
-                childAtPosition(
-                    childAtPosition(
-                        withId(android.R.id.custom),
-                        0
-                    ),
-                    2
-                ),
-                isDisplayed()
-            )
-        )
-        appCompatEditText.perform(replaceText(imageNumber.toString()), closeSoftKeyboard())
-
         if (TestUtil.isEmulator) {
             Thread.sleep(3000)
         }
 
-        val appCompatButton = onView(
-            allOf(withId(android.R.id.button1), withText("OK"), isDisplayed())
+        PreferencesUtil.setString(
+            mActivityTestRule.activity,
+            R.string.expectedValueKey, imageNumber.toString()
         )
-        appCompatButton.perform(click())
 
         if (scanError == -1) {
 
-            Thread.sleep(9000)
+            Thread.sleep(10000)
 
             onView(
                 allOf(
-                    withId(R.id.text_title), withText("$name ($imageNumber.0)"),
+                    withId(R.id.text_title), withText("$name ($imageNumber)"),
                     childAtPosition(
                         allOf(
                             withId(R.id.layout),
@@ -243,7 +229,7 @@ class SampleImageTest {
                     ),
                     isDisplayed()
                 )
-            ).check(matches(withText("$name ($imageNumber.0)")))
+            ).check(matches(withText("$name ($imageNumber)")))
 
             val textView = onView(
                 allOf(
@@ -271,7 +257,7 @@ class SampleImageTest {
 
         } else {
 
-            Thread.sleep(9000)
+            Thread.sleep(10000)
 
             onView(withText(scanError)).check(matches(isDisplayed()))
         }
