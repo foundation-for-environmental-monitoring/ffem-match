@@ -4,6 +4,7 @@ package io.ffem.lite.ui
 import android.content.Context
 import android.os.Environment
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -77,7 +78,7 @@ class SampleImageTest {
     }
 
     @Test
-    fun image003_Tilted() {
+    fun image003_InvalidBarcode() {
         startTest(fluoride, 3, scanError = R.string.invalid_barcode)
     }
 
@@ -184,6 +185,11 @@ class SampleImageTest {
         scanError: Int = -1
     ) {
 
+        PreferencesUtil.setString(
+            mActivityTestRule.activity,
+            R.string.testImageNumberKey, imageNumber.toString()
+        )
+
         Thread.sleep(5000)
 
         val floatingActionButton = onView(
@@ -201,14 +207,32 @@ class SampleImageTest {
         )
         floatingActionButton.perform(click())
 
+        val appCompatEditText = onView(
+            allOf(
+                withId(R.id.editExpectedValue),
+                childAtPosition(
+                    childAtPosition(
+                        withId(android.R.id.custom),
+                        0
+                    ),
+                    2
+                ),
+                isDisplayed()
+            )
+        )
+        appCompatEditText.perform(
+            ViewActions.replaceText(imageNumber.toString()),
+            ViewActions.closeSoftKeyboard()
+        )
+
         if (TestUtil.isEmulator) {
             Thread.sleep(3000)
         }
 
-        PreferencesUtil.setString(
-            mActivityTestRule.activity,
-            R.string.expectedValueKey, imageNumber.toString()
+        val appCompatButton = onView(
+            allOf(withId(android.R.id.button1), withText("OK"), isDisplayed())
         )
+        appCompatButton.perform(click())
 
         if (scanError == -1) {
 

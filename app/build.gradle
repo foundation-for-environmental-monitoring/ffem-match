@@ -43,12 +43,23 @@ android {
         }
     }
 
+    testBuildType "inspect"
+
     buildTypes {
-        debug {
-            buildConfigField "Boolean", "TEST_RUNNING", "false"
+        // NOTE: This variant is for running instrumented tests only
+        inspect {
+            // Takes screenshots during test
             buildConfigField "Boolean", "TAKE_SCREENSHOTS", "false"
+            // Analyzes images in resource folder instead of from camera
+            buildConfigField "Boolean", "TEST_RUNNING", "true"
+            // The language to run the instrumented tests in
             buildConfigField "String", "TEST_LANGUAGE", "\"en\""
-            buildConfigField "java.util.Date", "BUILD_TIME", "new java.util.Date(" + 0L + ")"
+
+            debuggable = true
+            signingConfig signingConfigs.debug
+        }
+        debug {
+
         }
         release {
             if (secrets.getProperty('FFEM_RELEASE_STORE_FILE')) {
@@ -58,7 +69,6 @@ android {
             shrinkResources true
             zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField "Boolean", "TEST_RUNNING", "false"
             buildConfigField "java.util.Date", "BUILD_TIME", "new java.util.Date(" +
                     (System.currentTimeMillis()) + "L)"
             android.applicationVariants.all { variant ->
@@ -67,6 +77,14 @@ android {
                 }
             }
         }
+    }
+
+    defaultConfig {
+        // do not change these defaults
+        buildConfigField "Boolean", "TEST_RUNNING", "false"
+        buildConfigField "Boolean", "TAKE_SCREENSHOTS", "false"
+        buildConfigField "String", "TEST_LANGUAGE", "\"en\""
+        buildConfigField "java.util.Date", "BUILD_TIME", "new java.util.Date(" + 0L + ")"
     }
 }
 
@@ -135,5 +153,6 @@ dependencies {
 
     // UIAutomator
     androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
+
 }
 apply plugin: 'com.google.gms.google-services'

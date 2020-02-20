@@ -335,7 +335,7 @@ class ResultListActivity : BaseActivity() {
                 if (!BuildConfig.DEBUG && value.isNotEmpty() &&
                     (value.toFloat() < 0 || value.toFloat() > 10)
                 ) {
-                    inputValue.error = "Should be between 0 and 10"
+                    inputValue.error = getString(R.string.should_be_within_values)
                 } else {
                     closeKeyboard(this, inputValue)
 
@@ -501,17 +501,20 @@ class ResultListActivity : BaseActivity() {
             val expectedValue = PreferencesUtil
                 .getString(this, R.string.expectedValueKey, "")
 
+            val testImageNumber = PreferencesUtil
+                .getString(this, R.string.testImageNumberKey, "")
+
             db.resultDao().insert(
                 TestResult(
                     id, 0, testName, Date().time,
-                    Date().time, "", "", expectedValue, getString(R.string.outbox)
+                    Date().time, "", "", expectedValue, testImageNumber, getString(R.string.outbox)
                 )
             )
             analyzeImage()
         }
     }
 
-    private fun startResultCheckTimer(delay: Long) {
+    private fun startResultCheckTimer(@Suppress("SameParameterValue") delay: Long) {
         if (db.resultDao().getPendingResults().isNotEmpty()
             || db.resultDao().getUnsent().isNotEmpty()
         ) {

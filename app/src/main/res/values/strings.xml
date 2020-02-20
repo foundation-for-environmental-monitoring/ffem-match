@@ -16,7 +16,12 @@
     <string name="show_local_image">View Extracts</string>
     <string name="camera">Camera</string>
 
-    <!--Software notices-->
+    <!-- Dialog-->
+    <string name="value_or_blank_if_unknown">Value (0 – 10). Blank if unknown</string>
+    <string name="enter_expected_value">Enter expected value</string>
+    <string name="should_be_within_values">Should be between 0 and 10</string>
+
+    <!-- Software notices -->
     <string name="software_notices">Software Notices</string>
     <string name="apache_license_2">Apache License 2.0</string>
     <string name="mit_license">MIT License</string>
@@ -27,17 +32,14 @@
     <string name="storage_permission">Storage permissions are required</string>
     <string name="camera_storage_permission">Camera &amp; storage permissions are required</string>
 
-    <!--Diagnostics-->
-    <string name="data">Data</string>
-    <string name="delete_data">Delete all data and photos</string>
-    <string name="delete">Delete</string>
-
+    <!-- App Expiry -->
     <string name="versionExpired">Version expired</string>
     <string name="thisVersionHasExpired">This version of the app has expired.</string>
     <string name="uninstallAndInstallFromStore">Please uninstall and then install the latest version from Play Store.</string>
 
-    <!--Content Descriptions-->
+    <!-- Content Descriptions -->
     <string name="result_list">List of results</string>
+
     <string name="start_test">Start test</string>
     <string name="analyzed_image">Analyzed image</string>
     <string name="disable_diagnostics">Disable diagnostics</string>

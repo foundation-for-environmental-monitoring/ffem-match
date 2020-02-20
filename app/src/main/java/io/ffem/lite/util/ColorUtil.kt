@@ -465,7 +465,7 @@ object ColorUtil {
                     TestResult(
                         id, 0, testName,
                         Date().time, Date().time, "", "",
-                        expectedValue, context.getString(R.string.outbox)
+                        expectedValue, "-1", context.getString(R.string.outbox)
                     )
                 )
 
@@ -480,7 +480,7 @@ object ColorUtil {
                 TestResult(
                     id, 0, testName,
                     Date().time, Date().time, "", "",
-                    expectedValue, ""
+                    expectedValue, "-1", ""
                 )
             )
         }

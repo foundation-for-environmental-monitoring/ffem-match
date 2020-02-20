@@ -76,14 +76,12 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         try {
             @Suppress("ConstantConditionIf")
             bitmap = if (BuildConfig.TEST_RUNNING) {
-                val expectedValue = (PreferencesUtil
-                    .getString(context, R.string.expectedValueKey, "").toFloat().toInt())
-
-                val value = java.lang.String.format("%03d", expectedValue)
+                val imageNumber = (PreferencesUtil
+                    .getString(context, R.string.testImageNumberKey, "").toFloat().toInt())
 
                 val drawable = ContextCompat.getDrawable(
                     context, context.resources.getIdentifier(
-                        "test$value",
+                        "test${java.lang.String.format("%03d", imageNumber)}",
                         "drawable", context.packageName
                     )
                 )

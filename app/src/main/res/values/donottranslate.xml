@@ -11,6 +11,7 @@
     <string name="maxCardColorDistanceAllowedKey">maxCardCalibrationDistance</string>
     <string name="expectedValueKey">expectedValue</string>
     <string name="useFlashModeKey">userFlashMode</string>
+    <string name="testImageNumberKey">testImageNumber</string>
 
     <!--Diagnostic-->
     <string name="diagnostics">Diagnostics</string>
@@ -18,6 +19,9 @@
     <string name="diagnosticModeDisabled">Diagnostic mode disabled</string>
     <string name="delete_all_data">Delete all photos and test results?</string>
     <string name="data_deleted">Data deleted</string>
+    <string name="data">Data</string>
+    <string name="delete_data">Delete all data and photos</string>
+    <string name="delete">Delete</string>
 
     <!--Software Notices-->
     <string name="apache_software"><a href="https://source.android.com/setup/licenses">Android&#160;Open&#160;Source&#160;Project</a>&#160;&#160;&#8226;&#160;&#160;<a href="https://github.com/sriksun/salila">Salila</a>&#160;&#160;&#8226;&#160;&#160;&#32;<a href="https://github.com/joel-costigliola/assertj-core">AssertJ</a>&#160;&#160;&#8226;&#160;&#160;<a href="https://github.com/google/gson">Gson</a>&#160;&#160;&#8226;&#160;&#160;<a href="https://github.com/JakeWharton/timber">Timber</a>&#160;&#160;&#8226;&#160;&#160;<a href="https://github.com/marlonlom/timeago">TimeAgo</a></string>

@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:text="Value (0 - 10). Blank if unknown"
+        android:text="@string/value_or_blank_if_unknown"
         android:textSize="16sp" />
 
     <TextView
@@ -17,7 +17,7 @@
         android:layout_height="0dp"
         android:layout_marginStart="10dp"
         android:labelFor="@+id/editExpectedValue"
-        android:text="Enter expected value"
+        android:text="@string/enter_expected_value"
         android:textSize="16sp" />
 
     <EditText
