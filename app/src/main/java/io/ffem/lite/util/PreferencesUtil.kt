@@ -102,12 +102,20 @@ object PreferencesUtil {
         editor.apply()
     }
 
-    fun getLong(context: Context, key: String): Long {
+    fun getLong(context: Context, @StringRes keyId: Int): Long {
+        return getLong(context, getKey(context, keyId))
+    }
+
+    private fun getLong(context: Context, key: String): Long {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         return sharedPreferences.getLong(key, -1L)
     }
 
-    fun setLong(context: Context, key: String, value: Long) {
+    fun setLong(context: Context?, @StringRes keyId: Int, value: Long) {
+        setLong(context!!, getKey(context, keyId), value)
+    }
+
+    private fun setLong(context: Context, key: String, value: Long) {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         val editor = sharedPreferences.edit()
         editor.putLong(key, value)

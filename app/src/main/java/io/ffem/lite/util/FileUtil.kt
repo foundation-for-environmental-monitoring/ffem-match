@@ -5,7 +5,6 @@ import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.os.Build
-import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import java.io.BufferedReader
@@ -44,17 +43,13 @@ object FileUtil {
             return file.path.split(":")[1]
         } else if (DocumentsContract.isDocumentUri(context, uri)) {
             // ExternalStorageProvider
-
             if (isExternalStorageDocument(uri)) {
                 val docId: String = DocumentsContract.getDocumentId(uri)
                 val split = docId.split(":").toTypedArray()
                 val type = split[0]
                 if ("primary".equals(type, ignoreCase = true)) {
-                    return Environment.getExternalStorageDirectory().toString() + "/" + split[1]
+                    return context.getExternalFilesDir(null)?.absolutePath + "/" + split[1]
                 }
-
-                // TODO handle non-primary volumes
-
             }
             // DownloadsProvider
             else if (isDownloadsDocument(uri)) {

@@ -4,7 +4,6 @@
     <string name="copyrightMessage">Copyright © ffem</string>
     <string name="legalInformation">Legal Information</string>
 
-    <string name="navigate_up">Navigate up</string>
     <string name="testing">Testing</string>
     <string name="place_color_card">Place the color card within the view finder above</string>
     <string name="outbox">In outbox</string>
@@ -28,7 +27,6 @@
     <string name="cca_license">CC BY 4.0 International</string>
     <string name="eclipse_public_license">Eclipse Public License 1.0</string>
 
-    <string name="no_Internet_connection">Connect to internet for results</string>
     <string name="storage_permission">Storage permissions are required</string>
     <string name="camera_storage_permission">Camera &amp; storage permissions are required</string>
 

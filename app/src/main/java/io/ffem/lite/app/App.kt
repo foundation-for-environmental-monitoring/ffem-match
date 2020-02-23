@@ -37,7 +37,6 @@ class App : BaseApplication() {
 
         const val ERROR_EVENT = "error_event"
 
-        const val CONNECTION_ERROR_NOTIFIED_KEY = "connection_error_notified"
         const val PERMISSIONS_MISSING_KEY = "permissions_missing"
 
         // Keys
@@ -119,14 +118,6 @@ class App : BaseApplication() {
         }
 
         fun getTestName(id: String): String {
-
-//            var shortId = id
-
-//            // todo: remove this
-//            if (id =="3006cf"){
-//                shortId = "b61159"
-//            }
-
             if (!::testConfig.isInitialized) {
                 val input = app.resources.openRawResource(R.raw.calibration)
                 val content = FileUtil.readTextFile(input)

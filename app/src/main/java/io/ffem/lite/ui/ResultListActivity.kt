@@ -1,6 +1,5 @@
 package io.ffem.lite.ui
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
@@ -11,15 +10,11 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.graphics.Color
-import android.net.ConnectivityManager
-import android.net.Network
-import android.net.NetworkRequest
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment.DIRECTORY_PICTURES
 import android.os.Handler
-import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -28,8 +23,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import androidx.annotation.IntRange
-import androidx.core.app.ActivityCompat
 import androidx.databinding.BindingAdapter
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -50,8 +43,8 @@ import io.ffem.lite.app.App.Companion.getVersionName
 import io.ffem.lite.app.AppDatabase
 import io.ffem.lite.helper.ApkHelper.isNonStoreVersion
 import io.ffem.lite.model.TestResult
+import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.preference.SettingsActivity
-import io.ffem.lite.preference.sendDummyImage
 import io.ffem.lite.util.ColorUtil
 import io.ffem.lite.util.FileUtil
 import io.ffem.lite.util.PreferencesUtil
@@ -64,8 +57,6 @@ const val APP_UPDATE_REQUEST = 101
 const val READ_REQUEST_CODE = 102
 const val PERMISSION_REQUEST = 103
 
-const val TOAST_Y_OFFSET = 240
-const val RESULT_CHECK_INTERVAL = 10000L
 const val SNACK_BAR_LINE_SPACING = 1.4f
 
 @BindingAdapter("android:resultSize")
@@ -84,11 +75,9 @@ fun TextView.bindTextSize(result: String) {
 class ResultListActivity : BaseActivity() {
 
     private var appIsClosing: Boolean = false
-    private lateinit var connectivityManager: ConnectivityManager
     private lateinit var appUpdateManager: AppUpdateManager
     private lateinit var toastLong: Toast
     private lateinit var toastShort: Toast
-    private var isInternetConnected = true
     private lateinit var broadcastManager: LocalBroadcastManager
 
     private val broadcastReceiver = object : BroadcastReceiver() {
@@ -127,8 +116,6 @@ class ResultListActivity : BaseActivity() {
     })
 
     private lateinit var db: AppDatabase
-    private lateinit var resultRequestHandler: Handler
-    private lateinit var runnable: Runnable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -153,15 +140,6 @@ class ResultListActivity : BaseActivity() {
             "",
             Toast.LENGTH_SHORT
         )
-
-        resultRequestHandler = Handler()
-        runnable = Runnable {
-            analyzeImage()
-//            if (isInternetConnected) {
-//                sendImagesToServer()
-//                getResultsFromServer()
-//            }
-        }
 
         if (BuildConfig.BUILD_TYPE == "release" && isNonStoreVersion(this)) {
             val appExpiryDate = GregorianCalendar.getInstance()
@@ -201,9 +179,7 @@ class ResultListActivity : BaseActivity() {
                 alertDialog.show()
                 return
             }
-
         }
-
 
         checkForUpdate()
 
@@ -221,7 +197,6 @@ class ResultListActivity : BaseActivity() {
         )
 
         list_results.adapter = adapter
-
     }
 
     private fun checkForUpdate() {
@@ -248,6 +223,9 @@ class ResultListActivity : BaseActivity() {
     }
 
     override fun onResume() {
+
+        AppPreferences.checkDiagnosticModeExpiry()
+
         super.onResume()
 
         broadcastManager.registerReceiver(
@@ -256,8 +234,6 @@ class ResultListActivity : BaseActivity() {
         )
 
         if (!appIsClosing) {
-
-            monitorNetwork()
 
             appUpdateManager
                 .appUpdateInfo
@@ -273,8 +249,6 @@ class ResultListActivity : BaseActivity() {
                         )
                     }
                 }
-
-            startResultCheckTimer(RESULT_CHECK_INTERVAL)
         }
 
         list_results.adapter = adapter
@@ -282,34 +256,12 @@ class ResultListActivity : BaseActivity() {
 
     override fun onPause() {
         super.onPause()
-        resultRequestHandler.removeCallbacksAndMessages(null)
         broadcastManager.unregisterReceiver(broadcastReceiver)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        if (::connectivityManager.isInitialized) {
-            connectivityManager.unregisterNetworkCallback(networkCallback)
-        }
-    }
-
     fun onStartClick(@Suppress("UNUSED_PARAMETER") view: View) {
-        if (sendDummyImage()) {
-
-            val permissions = arrayOf(
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            )
-
-            if (!isHasPermission(*permissions))
-                askPermission(permissions = *permissions, requestCode = PERMISSION_REQUEST)
-            else
-                performFileSearch()
-
-        } else {
-            PreferencesUtil.removeKey(this, R.string.expectedValueKey)
-            showInputDialog()
-        }
+        PreferencesUtil.removeKey(this, R.string.expectedValueKey)
+        showInputDialog()
     }
 
     private fun showInputDialog() {
@@ -389,50 +341,6 @@ class ResultListActivity : BaseActivity() {
         }
     }
 
-    private val networkCallback = object : ConnectivityManager.NetworkCallback() {
-
-        override fun onAvailable(network: Network) {
-            super.onAvailable(network)
-            Timber.d("Connection Available")
-            isInternetConnected = true
-            startResultCheckTimer(RESULT_CHECK_INTERVAL)
-        }
-
-        override fun onUnavailable() {
-            super.onUnavailable()
-            Timber.d("Connection Not Available")
-//            isInternetConnected = false
-            resultRequestHandler.removeCallbacksAndMessages(null)
-            notifyNoInternet()
-        }
-
-        override fun onLost(network: Network) {
-            super.onLost(network)
-            Timber.d("Connection Lost")
-//            isInternetConnected = false
-            resultRequestHandler.removeCallbacksAndMessages(null)
-            notifyNoInternet()
-        }
-    }
-
-    private fun monitorNetwork() {
-        connectivityManager =
-            getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            connectivityManager.registerDefaultNetworkCallback(networkCallback)
-        } else {
-            val builder = NetworkRequest.Builder()
-            connectivityManager.registerNetworkCallback(builder.build(), networkCallback)
-        }
-
-        Handler().postDelayed({
-            if (!isFinishing && !isDestroyed) {
-                notifyNoInternet()
-            }
-        }, 5000)
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -445,12 +353,6 @@ class ResultListActivity : BaseActivity() {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == READ_REQUEST_CODE) {
                 data?.data?.also { uri ->
-
-                    //                    val testName = data.getStringExtra(TEST_NAME_KEY)
-//
-//                    if (testName.isNullOrEmpty()) {
-//                        return
-//                    }
 
                     val bitmapFromFile =
                         BitmapFactory.decodeFile(FileUtil.getPath(this, uri))
@@ -514,16 +416,6 @@ class ResultListActivity : BaseActivity() {
         }
     }
 
-    private fun startResultCheckTimer(@Suppress("SameParameterValue") delay: Long) {
-        if (db.resultDao().getPendingResults().isNotEmpty()
-            || db.resultDao().getUnsent().isNotEmpty()
-        ) {
-            Timber.d("Waiting for: %s", delay)
-            resultRequestHandler.removeCallbacksAndMessages(null)
-            resultRequestHandler.postDelayed(runnable, delay)
-        }
-    }
-
     private fun showSnackbar(message: String) {
         val rootView = window.decorView.rootView
         val snackbar = Snackbar
@@ -557,39 +449,6 @@ class ResultListActivity : BaseActivity() {
         }
     }
 
-    private fun notifyNoInternet() {
-
-        if (isInternetConnected) {
-            return
-        }
-
-        if (db.resultDao().getUnsent().isEmpty() && db.resultDao().getPendingResults().isEmpty()) {
-            return
-        }
-
-        val lastNotified = PreferencesUtil.getLong(this, App.CONNECTION_ERROR_NOTIFIED_KEY)
-        if (System.currentTimeMillis() - lastNotified < 180000) {
-            return
-        }
-
-        Handler().postDelayed({
-            if (!isFinishing && !isDestroyed) {
-                PreferencesUtil.setLong(
-                    this,
-                    App.CONNECTION_ERROR_NOTIFIED_KEY,
-                    System.currentTimeMillis()
-                )
-                val toast = Toast.makeText(
-                    applicationContext,
-                    R.string.no_Internet_connection,
-                    Toast.LENGTH_LONG
-                )
-                toast.setGravity(Gravity.BOTTOM, 0, TOAST_Y_OFFSET)
-                toast.show()
-            }
-        }, 2000)
-    }
-
     private fun refreshList() {
         adapter.setTestList(db.resultDao().getResults())
         adapter.notifyDataSetChanged()
@@ -610,21 +469,8 @@ class ResultListActivity : BaseActivity() {
             addCategory(Intent.CATEGORY_OPENABLE)
             type = "image/jpeg"
         }
-
         startActivityForResult(intent, READ_REQUEST_CODE)
     }
-
-    private fun Activity.isHasPermission(vararg permissions: String): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            permissions.all { singlePermission ->
-                applicationContext.checkSelfPermission(singlePermission) ==
-                        PackageManager.PERMISSION_GRANTED
-            }
-        else true
-    }
-
-    private fun Activity.askPermission(vararg permissions: String, @IntRange(from = 0) requestCode: Int) =
-        ActivityCompat.requestPermissions(this, permissions, requestCode)
 
     private fun permissionsGranted(grantResults: IntArray): Boolean {
         for (element in grantResults) {
@@ -632,7 +478,6 @@ class ResultListActivity : BaseActivity() {
                 return false
             }
         }
-
         return true
     }
 

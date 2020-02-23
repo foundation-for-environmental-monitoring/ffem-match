@@ -75,7 +75,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
         try {
             @Suppress("ConstantConditionIf")
-            bitmap = if (BuildConfig.TEST_RUNNING) {
+            bitmap = if (BuildConfig.TEST_RUNNING.get()) {
                 val imageNumber = (PreferencesUtil
                     .getString(context, R.string.testImageNumberKey, "").toFloat().toInt())
 

@@ -16,7 +16,6 @@ import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.databinding.ActivityBarcodeBinding
-import io.ffem.lite.preference.sendDummyImage
 
 /** Combination of all flags required to put activity into immersive mode */
 const val FLAGS_FULLSCREEN =
@@ -38,7 +37,7 @@ class BarcodeActivity : BaseActivity() {
 
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (!sendDummyImage() && !BuildConfig.TEST_RUNNING) {
+            if (!BuildConfig.TEST_RUNNING.get()) {
                 val sound = MediaActionSound()
                 sound.play(MediaActionSound.SHUTTER_CLICK)
             }

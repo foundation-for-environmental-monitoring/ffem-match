@@ -5,6 +5,8 @@ import io.ffem.lite.app.App
 import io.ffem.lite.util.MAX_COLOR_DISTANCE_CALIBRATION
 import io.ffem.lite.util.MAX_COLOR_DISTANCE_RGB
 import io.ffem.lite.util.PreferencesUtil
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 const val IS_TEST_MODE = false
 
@@ -12,10 +14,6 @@ fun isTestMode(): Boolean {
     return IS_TEST_MODE || isDiagnosticMode() && PreferencesUtil.getBoolean(
         App.app, R.string.testModeOnKey, false
     )
-}
-
-fun sendDummyImage(): Boolean {
-    return isDiagnosticMode() && PreferencesUtil.getBoolean(App.app, R.string.dummyImageKey, false)
 }
 
 fun isDiagnosticMode(): Boolean {
@@ -58,11 +56,29 @@ object AppPreferences {
 
     fun enableDiagnosticMode() {
         PreferencesUtil.setBoolean(App.app, R.string.diagnosticModeKey, true)
+        PreferencesUtil.setLong(
+            App.app, R.string.diagnosticEnableTimeKey,
+            Calendar.getInstance().timeInMillis
+        )
     }
 
     fun disableDiagnosticMode() {
         PreferencesUtil.setBoolean(App.app, R.string.diagnosticModeKey, false)
         PreferencesUtil.setBoolean(App.app, R.string.testModeOnKey, false)
         PreferencesUtil.setBoolean(App.app, R.string.dummyImageKey, false)
+    }
+
+    fun checkDiagnosticModeExpiry() {
+        if (isDiagnosticMode()) {
+            val lastCheck = PreferencesUtil.getLong(App.app, R.string.diagnosticEnableTimeKey)
+            if (TimeUnit.MILLISECONDS.toMinutes(Calendar.getInstance().timeInMillis - lastCheck) > 30) {
+                disableDiagnosticMode()
+            } else {
+                PreferencesUtil.setLong(
+                    App.app, R.string.diagnosticEnableTimeKey,
+                    Calendar.getInstance().timeInMillis
+                )
+            }
+        }
     }
 }

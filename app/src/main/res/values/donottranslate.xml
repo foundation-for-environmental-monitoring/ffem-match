@@ -1,18 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!--Keys-->
-    <string name="diagnosticModeKey">diagnosticMode</string>
-    <string name="testModeOnKey">testModeOn</string>
-    <string name="dummyImageKey">dummyImage</string>
-    <string name="aboutKey">aboutApp</string>
-    <string name="data_delete_key">data_delete</string>
-    <string name="colorDistanceToleranceKey">colorDistanceTolerance</string>
-    <string name="maxCardColorDistanceAllowedKey">maxCardCalibrationDistance</string>
-    <string name="expectedValueKey">expectedValue</string>
-    <string name="useFlashModeKey">userFlashMode</string>
-    <string name="testImageNumberKey">testImageNumber</string>
-
     <!--Diagnostic-->
     <string name="diagnostics">Diagnostics</string>
     <string name="diagnosticModeEnabled">Diagnostic mode enabled</string>
@@ -28,5 +16,18 @@
     <string name="mit_software"><a href="http://robolectric.org/">Robolectric</a></string>
     <string name="cca_software"><a href="https://design.google.com/icons/">Material Icons</a></string>
     <string name="eclipse_software"><a href="https://github.com/junit-team/junit4">Junit 4</a></string>
+
+    <!--Keys-->
+    <string name="diagnosticModeKey">diagnosticMode</string>
+    <string name="testModeOnKey">testModeOn</string>
+    <string name="dummyImageKey">dummyImage</string>
+    <string name="aboutKey">aboutApp</string>
+    <string name="data_delete_key">data_delete</string>
+    <string name="colorDistanceToleranceKey">colorDistanceTolerance</string>
+    <string name="maxCardColorDistanceAllowedKey">maxCardCalibrationDistance</string>
+    <string name="expectedValueKey">expectedValue</string>
+    <string name="useFlashModeKey">userFlashMode</string>
+    <string name="testImageNumberKey">testImageNumber</string>
+    <string name="diagnosticEnableTimeKey">diagnosticEnableTime</string>
 
 </resources>

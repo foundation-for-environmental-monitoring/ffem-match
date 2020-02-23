@@ -13,6 +13,7 @@ import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
+import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.app.AppDatabase
 import io.ffem.lite.common.TestHelper.clearPreferences
@@ -307,6 +308,12 @@ class SampleImageTest {
                 }
             }
             clearData(context)
+        }
+
+        @JvmStatic
+        @BeforeClass
+        fun initialize() {
+            BuildConfig.TEST_RUNNING.set(true)
         }
     }
 }

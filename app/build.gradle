@@ -43,24 +43,7 @@ android {
         }
     }
 
-    testBuildType "inspect"
-
     buildTypes {
-        // NOTE: This variant is for running instrumented tests only
-        inspect {
-            // Takes screenshots during test
-            buildConfigField "Boolean", "TAKE_SCREENSHOTS", "false"
-            // Analyzes images in resource folder instead of from camera
-            buildConfigField "Boolean", "TEST_RUNNING", "true"
-            // The language to run the instrumented tests in
-            buildConfigField "String", "TEST_LANGUAGE", "\"en\""
-
-            debuggable = true
-            signingConfig signingConfigs.debug
-        }
-        debug {
-
-        }
         release {
             if (secrets.getProperty('FFEM_RELEASE_STORE_FILE')) {
                 signingConfig signingConfigs.release
@@ -80,8 +63,8 @@ android {
     }
 
     defaultConfig {
-        // do not change these defaults
-        buildConfigField "Boolean", "TEST_RUNNING", "false"
+        buildConfigField "java.util.concurrent.atomic.AtomicBoolean", "TEST_RUNNING",
+                "new java.util.concurrent.atomic.AtomicBoolean(false)"
         buildConfigField "Boolean", "TAKE_SCREENSHOTS", "false"
         buildConfigField "String", "TEST_LANGUAGE", "\"en\""
         buildConfigField "java.util.Date", "BUILD_TIME", "new java.util.Date(" + 0L + ")"
@@ -113,12 +96,8 @@ dependencies {
     implementation 'androidx.room:room-runtime:2.2.3'
     kapt 'androidx.room:room-compiler:2.2.3'
 
-    implementation 'com.squareup.okhttp3:okhttp:4.2.0'
-    implementation 'com.squareup.retrofit2:retrofit:2.6.1'
-    implementation 'com.squareup.retrofit2:converter-gson:2.6.1'
-
     // Gson
-    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.google.code.gson:gson:2.8.6'
 
     implementation 'com.google.firebase:firebase-ml-vision:24.0.1'
     implementation 'com.google.firebase:firebase-ml-vision-barcode-model:16.0.2'
