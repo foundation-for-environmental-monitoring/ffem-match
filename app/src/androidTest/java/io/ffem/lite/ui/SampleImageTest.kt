@@ -4,7 +4,6 @@ package io.ffem.lite.ui
 import android.content.Context
 import android.os.Environment
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -17,7 +16,6 @@ import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.app.AppDatabase
 import io.ffem.lite.common.TestHelper.clearPreferences
-import io.ffem.lite.common.TestUtil
 import io.ffem.lite.common.TestUtil.checkResult
 import io.ffem.lite.common.TestUtil.childAtPosition
 import io.ffem.lite.util.PreferencesUtil
@@ -207,33 +205,6 @@ class SampleImageTest {
             )
         )
         floatingActionButton.perform(click())
-
-        val appCompatEditText = onView(
-            allOf(
-                withId(R.id.editExpectedValue),
-                childAtPosition(
-                    childAtPosition(
-                        withId(android.R.id.custom),
-                        0
-                    ),
-                    2
-                ),
-                isDisplayed()
-            )
-        )
-        appCompatEditText.perform(
-            ViewActions.replaceText(imageNumber.toString()),
-            ViewActions.closeSoftKeyboard()
-        )
-
-        if (TestUtil.isEmulator) {
-            Thread.sleep(3000)
-        }
-
-        val appCompatButton = onView(
-            allOf(withId(android.R.id.button1), withText("OK"), isDisplayed())
-        )
-        appCompatButton.perform(click())
 
         if (scanError == -1) {
 

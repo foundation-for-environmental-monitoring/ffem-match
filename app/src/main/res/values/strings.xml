@@ -15,11 +15,6 @@
     <string name="show_local_image">View Extracts</string>
     <string name="camera">Camera</string>
 
-    <!-- Dialog-->
-    <string name="value_or_blank_if_unknown">Value (0 – 10). Blank if unknown</string>
-    <string name="enter_expected_value">Enter expected value</string>
-    <string name="should_be_within_values">Should be between 0 and 10</string>
-
     <!-- Software notices -->
     <string name="software_notices">Software Notices</string>
     <string name="apache_license_2">Apache License 2.0</string>

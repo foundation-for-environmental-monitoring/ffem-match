@@ -18,9 +18,6 @@ import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.databinding.BindingAdapter
@@ -261,84 +258,10 @@ class ResultListActivity : BaseActivity() {
 
     fun onStartClick(@Suppress("UNUSED_PARAMETER") view: View) {
         PreferencesUtil.removeKey(this, R.string.expectedValueKey)
-        showInputDialog()
-    }
 
-    private fun showInputDialog() {
-        @SuppressLint("InflateParams")
-        val view = layoutInflater.inflate(R.layout.value_input_dialog, null)
-        val inputValue = view.findViewById(R.id.editExpectedValue) as EditText
-
-        val builder = AlertDialog.Builder(this)
-            .setTitle("Expected result")
-            .setPositiveButton(android.R.string.ok, null)
-            .setNegativeButton(android.R.string.cancel) { dialog, _ ->
-                closeKeyboard(this, inputValue)
-                dialog.dismiss()
-            }
-
-        val dialog = builder.setView(view).create()
-
-        dialog.setOnShowListener { d ->
-            val button = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-            button.setOnClickListener {
-                var value = inputValue.text.toString()
-
-                if (!BuildConfig.DEBUG && value.isNotEmpty() &&
-                    (value.toFloat() < 0 || value.toFloat() > 10)
-                ) {
-                    inputValue.error = getString(R.string.should_be_within_values)
-                } else {
-                    closeKeyboard(this, inputValue)
-
-                    if (value.isNotEmpty() && !value.contains(".")) {
-                        value += ".0"
-                    }
-
-                    PreferencesUtil.setString(this, R.string.expectedValueKey, value)
-
-                    d.dismiss()
-
-                    val intent = Intent(baseContext, BarcodeActivity::class.java)
-                    startActivityForResult(intent, 100)
-                }
-            }
-        }
-
-        inputValue.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).performClick()
-                true
-            } else {
-                false
-            }
-        }
-
-        dialog.show()
-        inputValue.requestFocus()
-        showKeyboard(this)
-    }
-
-    private fun showKeyboard(context: Context) {
-        val imm = context.getSystemService(
-            Context.INPUT_METHOD_SERVICE
-        ) as InputMethodManager
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
-    }
-
-    private fun closeKeyboard(context: Context, input: EditText) {
-        try {
-            val imm = context.getSystemService(
-                Context.INPUT_METHOD_SERVICE
-            ) as InputMethodManager
-            imm.hideSoftInputFromWindow(input.windowToken, 0)
-            if (currentFocus != null) {
-                val view: View = currentFocus!!
-                imm.hideSoftInputFromWindow(view.windowToken, 0)
-            }
-        } catch (e: java.lang.Exception) {
-            Timber.e(e)
-        }
+        //Starts camera preview
+        val intent = Intent(baseContext, BarcodeActivity::class.java)
+        startActivityForResult(intent, 100)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
