@@ -86,7 +86,7 @@ class ResultListActivity : BaseActivity() {
             if (!basePath.exists())
                 Timber.d(if (basePath.mkdirs()) "Success" else "Failed")
 
-            db.resultDao().updateLocalResult(
+            db.resultDao().updateResult(
                 intent.getStringExtra(TEST_ID_KEY)!!,
                 intent.getStringExtra(TEST_NAME_KEY)!!,
                 intent.getStringExtra(TEST_RESULT)!!
@@ -257,9 +257,7 @@ class ResultListActivity : BaseActivity() {
     }
 
     fun onStartClick(@Suppress("UNUSED_PARAMETER") view: View) {
-        PreferencesUtil.removeKey(this, R.string.expectedValueKey)
-
-        //Starts camera preview
+        // Start camera preview
         val intent = Intent(baseContext, BarcodeActivity::class.java)
         startActivityForResult(intent, 100)
     }
@@ -279,20 +277,6 @@ class ResultListActivity : BaseActivity() {
 
                     val bitmapFromFile =
                         BitmapFactory.decodeFile(FileUtil.getPath(this, uri))
-
-                    var expectedValue = uri.pathSegments[uri.pathSegments.size - 1]
-                        .substringAfterLast("_", "")
-                        .substringBeforeLast(".")
-
-                    try {
-                        expectedValue.toFloat()
-                        if (expectedValue.isNotEmpty() && !expectedValue.contains(".")) {
-                            expectedValue += ".0"
-                        }
-                    } catch (ignored: Exception) {
-                    }
-
-                    PreferencesUtil.setString(this, R.string.expectedValueKey, expectedValue)
 
                     val id = UUID.randomUUID().toString()
 
@@ -323,16 +307,13 @@ class ResultListActivity : BaseActivity() {
 
         if (id != null) {
 
-            val expectedValue = PreferencesUtil
-                .getString(this, R.string.expectedValueKey, "")
-
             val testImageNumber = PreferencesUtil
                 .getString(this, R.string.testImageNumberKey, "")
 
             db.resultDao().insert(
                 TestResult(
                     id, 0, testName, Date().time,
-                    Date().time, "", "", expectedValue, testImageNumber, getString(R.string.outbox)
+                    Date().time, "", testImageNumber, getString(R.string.outbox)
                 )
             )
             analyzeImage()
@@ -353,7 +334,7 @@ class ResultListActivity : BaseActivity() {
     }
 
     private fun analyzeImage() {
-        db.resultDao().getPendingLocalResults().forEach {
+        db.resultDao().getPendingResults().forEach {
             val path = getExternalFilesDir(DIRECTORY_PICTURES).toString() +
                     File.separator + "captures" + File.separator
 

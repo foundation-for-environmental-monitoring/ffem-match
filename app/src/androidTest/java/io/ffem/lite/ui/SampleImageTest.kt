@@ -229,7 +229,7 @@ class SampleImageTest {
 
             val textView = onView(
                 allOf(
-                    withId(R.id.textLocalValue),
+                    withId(R.id.textResultValue),
                     childAtPosition(
                         childAtPosition(
                             allOf(

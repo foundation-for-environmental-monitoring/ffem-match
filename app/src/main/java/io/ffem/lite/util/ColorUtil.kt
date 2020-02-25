@@ -458,14 +458,11 @@ object ColorUtil {
                     false
                 )
 
-                val expectedValue = PreferencesUtil
-                    .getString(context, R.string.expectedValueKey, "")
-
                 db.resultDao().insert(
                     TestResult(
                         id, 0, testName,
-                        Date().time, Date().time, "", "",
-                        expectedValue, "-1", context.getString(R.string.outbox)
+                        Date().time, Date().time, "",
+                        "-1", context.getString(R.string.outbox)
                     )
                 )
 
@@ -473,14 +470,10 @@ object ColorUtil {
                 bitmapRotated.recycle()
             }
 
-            val expectedValue = PreferencesUtil
-                .getString(context, R.string.expectedValueKey, "")
-
             db.resultDao().insert(
                 TestResult(
                     id, 0, testName,
-                    Date().time, Date().time, "", "",
-                    expectedValue, "-1", ""
+                    Date().time, Date().time, "", "-1", ""
                 )
             )
         }
