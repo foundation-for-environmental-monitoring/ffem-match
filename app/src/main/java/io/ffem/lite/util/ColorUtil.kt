@@ -27,7 +27,7 @@ import java.util.*
 import kotlin.math.*
 
 const val IMAGE_THRESHOLD = 130
-const val MAX_COLOR_DISTANCE_RGB = 80
+const val MAX_COLOR_DISTANCE_RGB = 60
 const val MAX_COLOR_DISTANCE_CALIBRATION = 80
 const val INTERPOLATION_COUNT = 100.0
 const val MAX_DISTANCE = 999
