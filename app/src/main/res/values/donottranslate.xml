@@ -25,7 +25,6 @@
     <string name="data_delete_key">data_delete</string>
     <string name="colorDistanceToleranceKey">colorDistanceTolerance</string>
     <string name="maxCardColorDistanceAllowedKey">maxCardCalibrationDistance</string>
-    <string name="expectedValueKey">expectedValue</string>
     <string name="useFlashModeKey">userFlashMode</string>
     <string name="testImageNumberKey">testImageNumber</string>
     <string name="diagnosticEnableTimeKey">diagnosticEnableTime</string>

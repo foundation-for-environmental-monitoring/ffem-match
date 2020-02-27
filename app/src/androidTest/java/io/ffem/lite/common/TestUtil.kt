@@ -39,7 +39,7 @@ object TestUtil {
             }
 
             override fun describeTo(description: Description) {
-                description.appendText("Value expected is wrong")
+                description.appendText("Result does not match expected value")
             }
         }
     }
