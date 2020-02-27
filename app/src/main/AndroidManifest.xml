@@ -32,10 +32,10 @@
         </activity>
         <activity
             android:name=".ui.BarcodeActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="nosensor" />
         <activity
             android:name=".ui.ResultActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="nosensor" />
         <activity
             android:name=".preference.SettingsActivity"
             android:screenOrientation="nosensor" />

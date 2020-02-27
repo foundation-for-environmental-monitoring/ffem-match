@@ -1,6 +1,5 @@
 package io.ffem.lite.common
 
-import android.os.Build
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -10,17 +9,6 @@ import org.hamcrest.TypeSafeMatcher
 import kotlin.math.abs
 
 object TestUtil {
-
-    val isEmulator: Boolean
-        get() = ((Build.ID.contains("KOT49H") && Build.MODEL.contains("MLA-AL10"))
-                || Build.FINGERPRINT.startsWith("generic")
-                || Build.FINGERPRINT.startsWith("unknown")
-                || Build.MODEL.contains("google_sdk")
-                || Build.MODEL.contains("Emulator")
-                || Build.MODEL.contains("Android SDK built for x86")
-                || Build.BRAND.startsWith("generic")
-                && Build.DEVICE.startsWith("generic")
-                || "google_sdk" == Build.PRODUCT)
 
     fun childAtPosition(
         parentMatcher: Matcher<View>, position: Int
@@ -51,7 +39,7 @@ object TestUtil {
             }
 
             override fun describeTo(description: Description) {
-                description.appendText("Value expected is wrong")
+                description.appendText("Result does not match expected value")
             }
         }
     }

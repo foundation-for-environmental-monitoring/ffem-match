@@ -12,8 +12,6 @@ data class TestResult(
     @ColumnInfo(name = "date") val date: Long,
     @ColumnInfo(name = "sent") val sent: Long,
     @ColumnInfo(name = "value") val value: String,
-    @ColumnInfo(name = "localValue") val localValue: String,
-    @ColumnInfo(name = "expectedValue") val expectedValue: String,
     @ColumnInfo(name = "testImageNumber") val testImageNumber: String,
     @ColumnInfo(name = "message") val message: String
 )

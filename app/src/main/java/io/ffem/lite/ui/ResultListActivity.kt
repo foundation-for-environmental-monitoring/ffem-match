@@ -18,9 +18,6 @@ import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.databinding.BindingAdapter
@@ -89,7 +86,7 @@ class ResultListActivity : BaseActivity() {
             if (!basePath.exists())
                 Timber.d(if (basePath.mkdirs()) "Success" else "Failed")
 
-            db.resultDao().updateLocalResult(
+            db.resultDao().updateResult(
                 intent.getStringExtra(TEST_ID_KEY)!!,
                 intent.getStringExtra(TEST_NAME_KEY)!!,
                 intent.getStringExtra(TEST_RESULT)!!
@@ -260,85 +257,9 @@ class ResultListActivity : BaseActivity() {
     }
 
     fun onStartClick(@Suppress("UNUSED_PARAMETER") view: View) {
-        PreferencesUtil.removeKey(this, R.string.expectedValueKey)
-        showInputDialog()
-    }
-
-    private fun showInputDialog() {
-        @SuppressLint("InflateParams")
-        val view = layoutInflater.inflate(R.layout.value_input_dialog, null)
-        val inputValue = view.findViewById(R.id.editExpectedValue) as EditText
-
-        val builder = AlertDialog.Builder(this)
-            .setTitle("Expected result")
-            .setPositiveButton(android.R.string.ok, null)
-            .setNegativeButton(android.R.string.cancel) { dialog, _ ->
-                closeKeyboard(this, inputValue)
-                dialog.dismiss()
-            }
-
-        val dialog = builder.setView(view).create()
-
-        dialog.setOnShowListener { d ->
-            val button = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-            button.setOnClickListener {
-                var value = inputValue.text.toString()
-
-                if (!BuildConfig.DEBUG && value.isNotEmpty() &&
-                    (value.toFloat() < 0 || value.toFloat() > 10)
-                ) {
-                    inputValue.error = getString(R.string.should_be_within_values)
-                } else {
-                    closeKeyboard(this, inputValue)
-
-                    if (value.isNotEmpty() && !value.contains(".")) {
-                        value += ".0"
-                    }
-
-                    PreferencesUtil.setString(this, R.string.expectedValueKey, value)
-
-                    d.dismiss()
-
-                    val intent = Intent(baseContext, BarcodeActivity::class.java)
-                    startActivityForResult(intent, 100)
-                }
-            }
-        }
-
-        inputValue.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).performClick()
-                true
-            } else {
-                false
-            }
-        }
-
-        dialog.show()
-        inputValue.requestFocus()
-        showKeyboard(this)
-    }
-
-    private fun showKeyboard(context: Context) {
-        val imm = context.getSystemService(
-            Context.INPUT_METHOD_SERVICE
-        ) as InputMethodManager
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
-    }
-
-    private fun closeKeyboard(context: Context, input: EditText) {
-        try {
-            val imm = context.getSystemService(
-                Context.INPUT_METHOD_SERVICE
-            ) as InputMethodManager
-            imm.hideSoftInputFromWindow(input.windowToken, 0)
-            if (currentFocus != null) {
-                val view: View = currentFocus!!
-                imm.hideSoftInputFromWindow(view.windowToken, 0)
-            }
-        } catch (e: java.lang.Exception) {
-            Timber.e(e)
-        }
+        // Start camera preview
+        val intent = Intent(baseContext, BarcodeActivity::class.java)
+        startActivityForResult(intent, 100)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -356,20 +277,6 @@ class ResultListActivity : BaseActivity() {
 
                     val bitmapFromFile =
                         BitmapFactory.decodeFile(FileUtil.getPath(this, uri))
-
-                    var expectedValue = uri.pathSegments[uri.pathSegments.size - 1]
-                        .substringAfterLast("_", "")
-                        .substringBeforeLast(".")
-
-                    try {
-                        expectedValue.toFloat()
-                        if (expectedValue.isNotEmpty() && !expectedValue.contains(".")) {
-                            expectedValue += ".0"
-                        }
-                    } catch (ignored: Exception) {
-                    }
-
-                    PreferencesUtil.setString(this, R.string.expectedValueKey, expectedValue)
 
                     val id = UUID.randomUUID().toString()
 
@@ -400,16 +307,13 @@ class ResultListActivity : BaseActivity() {
 
         if (id != null) {
 
-            val expectedValue = PreferencesUtil
-                .getString(this, R.string.expectedValueKey, "")
-
             val testImageNumber = PreferencesUtil
                 .getString(this, R.string.testImageNumberKey, "")
 
             db.resultDao().insert(
                 TestResult(
                     id, 0, testName, Date().time,
-                    Date().time, "", "", expectedValue, testImageNumber, getString(R.string.outbox)
+                    Date().time, "", testImageNumber, getString(R.string.outbox)
                 )
             )
             analyzeImage()
@@ -430,7 +334,7 @@ class ResultListActivity : BaseActivity() {
     }
 
     private fun analyzeImage() {
-        db.resultDao().getPendingLocalResults().forEach {
+        db.resultDao().getPendingResults().forEach {
             val path = getExternalFilesDir(DIRECTORY_PICTURES).toString() +
                     File.separator + "captures" + File.separator
 

@@ -71,48 +71,18 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/textLocalValue"
+            android:id="@+id/textResultValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/activity_horizontal_margin"
             android:clickable="false"
             android:focusable="false"
-            android:resultSize="@{result.localValue}"
-            android:text="@{result.localValue}"
+            android:resultSize="@{result.value}"
+            android:text="@{result.value}"
             android:textIsSelectable="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="No match" />
 
-        <!--        <TextView-->
-        <!--            android:id="@+id/textValue"-->
-        <!--            android:layout_width="wrap_content"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:layout_marginEnd="@dimen/activity_horizontal_margin"-->
-        <!--            android:clickable="false"-->
-        <!--            android:focusable="false"-->
-        <!--            android:text="@{result.value}"-->
-        <!--            android:textIsSelectable="false"-->
-        <!--            android:textSize="22sp"-->
-        <!--            android:visibility="@{result.value.equals(``) ? View.GONE : View.VISIBLE}"-->
-        <!--            app:layout_constraintEnd_toEndOf="parent"-->
-        <!--            app:layout_constraintTop_toBottomOf="@id/textLocalValue"-->
-        <!--            tools:text="2.5" />-->
-
-        <!--        <TextView-->
-        <!--            android:id="@+id/textProgress"-->
-        <!--            android:layout_width="wrap_content"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:layout_marginEnd="@dimen/activity_horizontal_margin"-->
-        <!--            android:clickable="false"-->
-        <!--            android:focusable="false"-->
-        <!--            android:text="@{result.message}"-->
-        <!--            android:textIsSelectable="false"-->
-        <!--            android:textSize="14sp"-->
-        <!--            android:visibility="@{result.message.equals(`-`) ? View.GONE : View.VISIBLE}"-->
-        <!--            app:layout_constraintBottom_toBottomOf="@id/layout"-->
-        <!--            app:layout_constraintEnd_toEndOf="parent"-->
-        <!--            app:layout_constraintTop_toTopOf="@id/textValue"-->
-        <!--            tools:text="Analyzing" />-->
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

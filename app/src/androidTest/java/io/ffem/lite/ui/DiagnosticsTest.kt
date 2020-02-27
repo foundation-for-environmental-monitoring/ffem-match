@@ -29,29 +29,6 @@ class DiagnosticsTest {
 
     @Test
     fun deleteDataTest() {
-        val floatingActionButton = onView(
-            allOf(
-                withId(R.id.fab), withContentDescription("Start test"),
-                childAtPosition(
-                    childAtPosition(
-                        withId(android.R.id.content),
-                        0
-                    ),
-                    1
-                ),
-                isDisplayed()
-            )
-        )
-        floatingActionButton.perform(click())
-
-        Thread.sleep(400)
-
-        onView(
-            allOf(
-                withId(android.R.id.button2), withText("Cancel")
-            )
-        ).perform(click())
-
         if (isDiagnosticMode()) {
             Thread.sleep(400)
 
