@@ -608,8 +608,15 @@ object ColorUtil {
 
         for (y in midY downTo 1) {
             top = y
-            val pixel = bwBitmap.getPixel(left + 2, top)
-            if (!isDarkPixel(pixel)) {
+            var isClear = true
+            for (x in 0 until 20) {
+                val pixel = bwBitmap.getPixel(left + x, top)
+                if (isDarkPixel(pixel)) {
+                    isClear = false
+                    break
+                }
+            }
+            if (isClear) {
                 top = min(top, barcode.boundingBox!!.top)
                 break
             }
@@ -617,8 +624,15 @@ object ColorUtil {
 
         for (y in midY until min(midY + 150, bwBitmap.height)) {
             bottom = y
-            val pixel = bwBitmap.getPixel(left + 2, bottom)
-            if (!isDarkPixel(pixel)) {
+            var isClear = true
+            for (x in 0 until 20) {
+                val pixel = bwBitmap.getPixel(left + x, bottom)
+                if (isDarkPixel(pixel)) {
+                    isClear = false
+                    break
+                }
+            }
+            if (isClear) {
                 bottom = max(bottom, barcode.boundingBox!!.bottom)
                 break
             }

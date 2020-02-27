@@ -172,9 +172,14 @@ class SampleImageTest {
     }
 
     @Test
-    fun imageX_Waiting() {
-        startTest(pH, 500, scanError = R.string.place_color_card)
+    fun image022_Waiting() {
+        startTest(pH, 22, scanError = R.string.place_color_card)
     }
+
+//    @Test
+//    fun imageX_Waiting() {
+//        startTest(pH, 500, scanError = R.string.place_color_card)
+//    }
 
     private fun startTest(
         name: String,
