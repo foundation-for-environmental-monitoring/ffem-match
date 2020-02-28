@@ -29,6 +29,7 @@ import java.io.File
 const val pH = "pH"
 const val residualChlorine = "Residual Chlorine"
 const val fluoride: String = "Fluoride"
+const val fluorideHighRange: String = "Fluoride - High Range"
 
 fun clearData(context: Context) {
     val db = AppDatabase.getDatabase(context)
@@ -174,6 +175,11 @@ class SampleImageTest {
     @Test
     fun image022_Waiting() {
         startTest(pH, 22, scanError = R.string.place_color_card)
+    }
+
+    @Test
+    fun image023_NoMatch() {
+        startTest(fluorideHighRange, 23, resultError = R.string.no_match)
     }
 
 //    @Test
