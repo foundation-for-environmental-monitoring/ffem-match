@@ -24,5 +24,6 @@
         <ignore path="src/debug/res/drawable-nodpi/test020.jpg" />
         <ignore path="src/debug/res/drawable-nodpi/test021.jpg" />
         <ignore path="src/debug/res/drawable-nodpi/test022.jpg" />
+        <ignore path="src/debug/res/drawable-nodpi/test023.jpg" />
     </issue>
 </lint>

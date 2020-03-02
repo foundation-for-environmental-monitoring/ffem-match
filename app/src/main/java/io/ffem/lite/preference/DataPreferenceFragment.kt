@@ -1,6 +1,5 @@
 package io.ffem.lite.preference
 
-import android.graphics.Color
 import android.os.Bundle
 import android.os.Environment
 import android.view.View
@@ -20,8 +19,6 @@ class DataPreferenceFragment : PreferenceFragmentCompat() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        setBackgroundColor(view)
 
         findPreference<Preference>(getString(R.string.data_delete_key))
             ?.setOnPreferenceClickListener {
@@ -58,9 +55,5 @@ class DataPreferenceFragment : PreferenceFragmentCompat() {
 
                 true
             }
-    }
-
-    private fun setBackgroundColor(view: View) {
-        view.setBackgroundColor(Color.rgb(255, 240, 220))
     }
 }

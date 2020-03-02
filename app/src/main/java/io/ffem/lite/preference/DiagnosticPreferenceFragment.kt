@@ -1,6 +1,5 @@
 package io.ffem.lite.preference
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import androidx.preference.EditTextPreference
@@ -20,19 +19,9 @@ class DiagnosticPreferenceFragment : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setBackgroundColor(view)
-
         setupDistancePreference()
 
         setupAverageDistancePreference()
-    }
-
-    private fun setBackgroundColor(view: View) {
-        if (isTestMode()) {
-            view.setBackgroundColor(Color.rgb(255, 165, 0))
-        } else {
-            view.setBackgroundColor(Color.rgb(255, 240, 220))
-        }
     }
 
     private fun setupDistancePreference() {

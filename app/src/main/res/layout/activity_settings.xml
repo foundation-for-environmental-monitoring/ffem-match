@@ -28,21 +28,25 @@
 
             <FrameLayout
                 android:id="@+id/layoutCamera"
+                android:background="@color/diagnostic_option_background"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
             <FrameLayout
                 android:id="@+id/layoutDiagnostics"
+                android:background="@color/diagnostic_option_background"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
             <FrameLayout
                 android:id="@+id/layoutTesting"
+                android:background="@color/diagnostic_option_background"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
             <FrameLayout
                 android:id="@+id/layoutData"
+                android:background="@color/diagnostic_option_background"
                 android:layout_width="match_parent"
                 android:layout_height="200dp" />
 

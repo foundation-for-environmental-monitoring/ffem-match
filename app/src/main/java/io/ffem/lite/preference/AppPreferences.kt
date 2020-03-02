@@ -8,14 +8,6 @@ import io.ffem.lite.util.PreferencesUtil
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-const val IS_TEST_MODE = false
-
-fun isTestMode(): Boolean {
-    return IS_TEST_MODE || isDiagnosticMode() && PreferencesUtil.getBoolean(
-        App.app, R.string.testModeOnKey, false
-    )
-}
-
 fun isDiagnosticMode(): Boolean {
     return PreferencesUtil.getBoolean(App.app, R.string.diagnosticModeKey, false)
 }
