@@ -22,5 +22,16 @@
             android:selectAllOnFocus="true"
             android:title="Max card color calibration distance"
             app:iconSpaceReserved="false" />
+
+        <PreferenceCategory
+            android:key="preferenceCategoryDiagnostics"
+            android:title="@string/camera"
+            app:iconSpaceReserved="false">
+            <SwitchPreferenceCompat
+                android:key="@string/useFlashModeKey"
+                android:title="Torch mode"
+                app:iconSpaceReserved="false" />
+        </PreferenceCategory>
+
     </PreferenceCategory>
 </PreferenceScreen>

@@ -39,10 +39,6 @@ class SettingsActivity : BaseActivity() {
             .replace(R.id.layoutOther, OtherPreferenceFragment())
             .commit()
 
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.layoutCamera, CameraPreferenceFragment())
-            .commit()
-
         if (isDiagnosticMode()) {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.layoutDiagnostics, DiagnosticPreferenceFragment())
