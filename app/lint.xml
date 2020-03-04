@@ -1,29 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lint>
     <issue id="UnusedResources">
-        <ignore path="src/debug/res/drawable-nodpi/test000.jpg" />
-        <ignore path="src/debug/res/drawable-nodpi/test001.jpg" />
-        <ignore path="src/debug/res/drawable-nodpi/test002.jpg" />
-        <ignore path="src/debug/res/drawable-nodpi/test003.jpg" />
-        <ignore path="src/debug/res/drawable-nodpi/test004.jpg" />
-        <ignore path="src/debug/res/drawable-nodpi/test005.jpg" />
-        <ignore path="src/debug/res/drawable-nodpi/test006.jpg" />
-        <ignore path="src/debug/res/drawable-nodpi/test007.jpg" />
-        <ignore path="src/debug/res/drawable-nodpi/test008.jpg" />
-        <ignore path="src/debug/res/drawable-nodpi/test009.jpg" />
-        <ignore path="src/debug/res/drawable-nodpi/test010.jpg" />
-        <ignore path="src/debug/res/drawable-nodpi/test011.jpg" />
-        <ignore path="src/debug/res/drawable-nodpi/test012.jpg" />
-        <ignore path="src/debug/res/drawable-nodpi/test013.jpg" />
-        <ignore path="src/debug/res/drawable-nodpi/test014.jpg" />
-        <ignore path="src/debug/res/drawable-nodpi/test015.jpg" />
-        <ignore path="src/debug/res/drawable-nodpi/test016.jpg" />
-        <ignore path="src/debug/res/drawable-nodpi/test017.jpg" />
-        <ignore path="src/debug/res/drawable-nodpi/test018.jpg" />
-        <ignore path="src/debug/res/drawable-nodpi/test019.jpg" />
-        <ignore path="src/debug/res/drawable-nodpi/test020.jpg" />
-        <ignore path="src/debug/res/drawable-nodpi/test021.jpg" />
-        <ignore path="src/debug/res/drawable-nodpi/test022.jpg" />
-        <ignore path="src/debug/res/drawable-nodpi/test023.jpg" />
+        <ignore path="src/debug/res/drawable-nodpi/*.jpg" />
     </issue>
 </lint>
