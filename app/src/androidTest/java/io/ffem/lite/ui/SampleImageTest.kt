@@ -3,6 +3,7 @@ package io.ffem.lite.ui
 
 import android.content.Context
 import android.os.Environment
+import android.os.SystemClock
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -19,6 +20,7 @@ import io.ffem.lite.common.TestHelper.clearPreferences
 import io.ffem.lite.common.TestUtil.checkResult
 import io.ffem.lite.common.TestUtil.childAtPosition
 import io.ffem.lite.util.PreferencesUtil
+import org.hamcrest.Matchers
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.core.IsInstanceOf
 import org.junit.*
@@ -63,123 +65,123 @@ class SampleImageTest {
     }
 
     @Test
-    fun image000_Result_0_Point_5() {
+    fun image_000_Chlorine_0_Point_5() {
         startTest(residualChlorine, 0, "0.5")
     }
 
     @Test
-    fun image001_Result_0() {
+    fun image_001_Chlorine_0() {
         startTest(residualChlorine, 1, "0.0")
     }
 
     @Test
-    fun image002_InvalidBarcode() {
-        startTest(residualChlorine, 2, scanError = R.string.invalid_barcode)
+    fun image_002_InvalidBarcode() {
+        startTest(residualChlorine, 2, expectedScanError = R.string.invalid_barcode)
     }
 
     @Test
-    fun image003_InvalidBarcode() {
-        startTest(fluoride, 3, scanError = R.string.invalid_barcode)
+    fun image_003_InvalidBarcode() {
+        startTest(fluoride, 3, expectedScanError = R.string.invalid_barcode)
     }
 
     @Test
-    fun image004_NoMatch() {
-        startTest(pH, 4, resultError = R.string.no_match)
+    fun image_004_pH_NoMatch() {
+        startTest(pH, 4, expectedResultError = R.string.no_match)
     }
 
     @Test
-    fun image005_Waiting() {
-        startTest(residualChlorine, 5, scanError = R.string.place_color_card)
+    fun image_005_Waiting() {
+        startTest(residualChlorine, 5, expectedScanError = R.string.place_color_card)
     }
 
     @Test
-    fun image006_NoMatch() {
-        startTest(residualChlorine, 6, resultError = R.string.no_match)
+    fun image_006_Chlorine_NoMatch() {
+        startTest(residualChlorine, 6, expectedResultError = R.string.no_match)
     }
 
     @Test
-    fun image007_Result_Point_5() {
+    fun image_007_Chlorine_Point_5() {
         startTest(residualChlorine, 7, "0.5")
     }
 
     @Test
-    fun image008_Result_1_Point_5() {
+    fun image_008_Chlorine_1_Point_5() {
         startTest(residualChlorine, 8, "1.5")
     }
 
     @Test
-    fun image009_BadLight() {
-        startTest(residualChlorine, 9, scanError = R.string.place_color_card)
+    fun image_009_BadLight() {
+        startTest(residualChlorine, 9, expectedScanError = R.string.place_color_card)
     }
 
     @Test
-    fun image010_CalibrationError() {
-        startTest(residualChlorine, 10, resultError = R.string.calibration_error)
+    fun image_010_Chlorine_CalibrationError() {
+        startTest(residualChlorine, 10, expectedResultError = R.string.calibration_error)
     }
 
     @Test
-    fun image011_Tilted() {
-        startTest(residualChlorine, 11, scanError = R.string.correct_camera_tilt)
+    fun image_011_Tilted() {
+        startTest(residualChlorine, 11, expectedScanError = R.string.correct_camera_tilt)
     }
 
     @Test
-    fun image012_Waiting() {
-        startTest(residualChlorine, 12, scanError = R.string.place_color_card)
+    fun image_012_Waiting() {
+        startTest(residualChlorine, 12, expectedScanError = R.string.place_color_card)
     }
 
     @Test
-    fun image013_Waiting() {
-        startTest(residualChlorine, 13, scanError = R.string.place_color_card)
+    fun image_013_Waiting() {
+        startTest(residualChlorine, 13, expectedScanError = R.string.place_color_card)
     }
 
     @Test
-    fun image014_Result_6_Point_5() {
+    fun image_014_pH_6_Point_5() {
         startTest(pH, 14, "6.5")
     }
 
     @Test
-    fun image015_Result_4_Point_3() {
+    fun image_015_Chlorine_4_Point_3() {
         startTest(residualChlorine, 15, "0.43")
     }
 
     @Test
-    fun image016_CalibrationError() {
-        startTest(residualChlorine, 16, resultError = R.string.calibration_error)
+    fun image_016_Chlorine_CalibrationError() {
+        startTest(residualChlorine, 16, expectedResultError = R.string.calibration_error)
     }
 
     @Test
-    fun image017_BadLighting() {
-        startTest(residualChlorine, 17, scanError = R.string.place_color_card)
+    fun image_017_BadLighting() {
+        startTest(residualChlorine, 17, expectedScanError = R.string.place_color_card)
     }
 
     @Test
-    fun image018_Waiting() {
-        startTest(residualChlorine, 18, scanError = R.string.place_color_card)
+    fun image_018_Waiting() {
+        startTest(residualChlorine, 18, expectedScanError = R.string.place_color_card)
     }
 
     @Test
-    fun image019_Result_3_Point_0() {
+    fun image_019_Chlorine_3_Point_0() {
         startTest(residualChlorine, 19, "3.0")
     }
 
     @Test
-    fun image020_Waiting() {
-        startTest(residualChlorine, 20, scanError = R.string.place_color_card)
+    fun image_020_Waiting() {
+        startTest(residualChlorine, 20, expectedScanError = R.string.place_color_card)
     }
 
     @Test
-    fun image021_Waiting() {
-        startTest(residualChlorine, 21, scanError = R.string.place_color_card)
+    fun image_021_Waiting() {
+        startTest(residualChlorine, 21, expectedScanError = R.string.place_color_card)
     }
 
     @Test
-    fun image022_Waiting() {
-        startTest(pH, 22, scanError = R.string.place_color_card)
+    fun image_022_Waiting() {
+        startTest(pH, 22, expectedScanError = R.string.place_color_card)
     }
 
     @Test
-    fun image023_NoMatch() {
-        startTest(fluorideHighRange, 23, resultError = R.string.no_match)
+    fun image_023_FluorideHighRange_NoMatch() {
+        startTest(fluorideHighRange, 23, expectedResultError = R.string.no_match)
     }
 
 //    @Test
@@ -190,9 +192,9 @@ class SampleImageTest {
     private fun startTest(
         name: String,
         imageNumber: Int,
-        result: String = "",
-        resultError: Int = -1,
-        scanError: Int = -1
+        expectedResult: String = "",
+        expectedResultError: Int = -1,
+        expectedScanError: Int = -1
     ) {
 
         PreferencesUtil.setString(
@@ -200,7 +202,7 @@ class SampleImageTest {
             R.string.testImageNumberKey, imageNumber.toString()
         )
 
-        Thread.sleep(5000)
+        Thread.sleep(2000)
 
         val floatingActionButton = onView(
             allOf(
@@ -217,9 +219,9 @@ class SampleImageTest {
         )
         floatingActionButton.perform(click())
 
-        if (scanError == -1) {
+        if (expectedScanError == -1) {
 
-            Thread.sleep(10000)
+            Thread.sleep(9000)
 
             onView(
                 allOf(
@@ -255,18 +257,101 @@ class SampleImageTest {
                 )
             )
 
-            if (resultError == -1) {
-                val floatValue = result.toFloat()
+            if (expectedResultError == -1) {
+                val floatValue = expectedResult.toFloat()
                 textView.check(matches(checkResult(floatValue)))
             } else {
-                textView.check(matches(withText(resultError)))
+                textView.check(matches(withText(expectedResultError)))
             }
 
+            textView.perform(click())
+
+            SystemClock.sleep(2000)
+
+            val imageView = onView(
+                allOf(
+                    withId(R.id.image), withContentDescription("Analyzed image"),
+                    childAtPosition(
+                        childAtPosition(
+                            withId(android.R.id.content),
+                            0
+                        ),
+                        2
+                    ),
+                    isDisplayed()
+                )
+            )
+            imageView.check(matches(isDisplayed()))
+
+            val appCompatButton = onView(
+                allOf(
+                    withId(R.id.imageModeButton), withText("View Full"),
+                    childAtPosition(
+                        childAtPosition(
+                            withId(android.R.id.content),
+                            0
+                        ),
+                        1
+                    ),
+                    isDisplayed()
+                )
+            )
+            appCompatButton.perform(click())
+
+            SystemClock.sleep(2000)
+
+            val imageView2 = onView(
+                allOf(
+                    withId(R.id.image), withContentDescription("Analyzed image"),
+                    childAtPosition(
+                        childAtPosition(
+                            withId(android.R.id.content),
+                            0
+                        ),
+                        2
+                    ),
+                    isDisplayed()
+                )
+            )
+            imageView2.check(matches(isDisplayed()))
+
+            val appCompatButton2 = onView(
+                allOf(
+                    withId(R.id.imageModeButton), withText("View Extracts"),
+                    childAtPosition(
+                        childAtPosition(
+                            withId(android.R.id.content),
+                            0
+                        ),
+                        1
+                    ),
+                    isDisplayed()
+                )
+            )
+            appCompatButton2.perform(click())
+
+            val appCompatImageButton = onView(
+                allOf(
+                    withContentDescription("Navigate up"),
+                    childAtPosition(
+                        allOf(
+                            withId(R.id.app_bar),
+                            childAtPosition(
+                                withClassName(Matchers.`is`("androidx.constraintlayout.widget.ConstraintLayout")),
+                                0
+                            )
+                        ),
+                        0
+                    ),
+                    isDisplayed()
+                )
+            )
+            appCompatImageButton.perform(click())
         } else {
 
-            Thread.sleep(10000)
+            Thread.sleep(9000)
 
-            onView(withText(scanError)).check(matches(isDisplayed()))
+            onView(withText(expectedScanError)).check(matches(isDisplayed()))
         }
     }
 
