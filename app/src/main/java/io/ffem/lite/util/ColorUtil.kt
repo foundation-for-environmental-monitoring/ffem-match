@@ -141,7 +141,23 @@ object ColorUtil {
             FirebaseVision.getInstance().getVisionBarcodeDetector(options)
         }
 
-        val bitmap = Utilities.rotateImage(bitmapImage, 90)
+        var bitmap: Bitmap
+        bitmap = when {
+            bitmapImage.width.toDouble() / bitmapImage.height > 1.58 -> {
+                cropImageToHalfSize(bitmapImage)
+            }
+            bitmapImage.height.toDouble() / bitmapImage.width > 1.58 -> {
+                bitmap = Utilities.rotateImage(bitmapImage, 90)
+                cropImageToHalfSize(bitmap)
+            }
+            else -> {
+                bitmapImage
+            }
+        }
+
+        if (bitmap.width > bitmap.height) {
+            bitmap = Utilities.rotateImage(bitmap, 90)
+        }
 
         var badLighting = false
 
@@ -202,8 +218,8 @@ object ColorUtil {
 //                                rightBarcodeBitmapColor.recycle()
 
                                 detector.detectInImage(
-                                    FirebaseVisionImage.fromBitmap(rightBarcodeBitmap)
-                                )
+                                        FirebaseVisionImage.fromBitmap(rightBarcodeBitmap)
+                                    )
                                     .addOnFailureListener(fun(_: Exception) {
                                         returnResult(
                                             context,
@@ -277,6 +293,14 @@ object ColorUtil {
                     }
                 }
             )
+    }
+
+    private fun cropImageToHalfSize(bitmap: Bitmap): Bitmap {
+        return Bitmap.createBitmap(
+            bitmap, bitmap.width / 2, 0,
+            bitmap.width / 2,
+            bitmap.height
+        )
     }
 
     private fun analyzeBarcode(
@@ -447,6 +471,10 @@ object ColorUtil {
         intent.putExtra(App.TEST_RESULT, result)
 
         val db = AppDatabase.getDatabase(context)
+
+        val testImageNumber = PreferencesUtil
+            .getString(context, R.string.testImageNumberKey, "")
+
         if (db.resultDao().getResult(id) == null) {
             if (bitmap != null) {
                 val bitmapRotated = Utilities.rotateImage(bitmap, 270)
@@ -462,7 +490,7 @@ object ColorUtil {
                     TestResult(
                         id, 0, testName,
                         Date().time, Date().time, "",
-                        "-1", context.getString(R.string.outbox)
+                        testImageNumber, context.getString(R.string.outbox)
                     )
                 )
 
@@ -473,7 +501,7 @@ object ColorUtil {
             db.resultDao().insert(
                 TestResult(
                     id, 0, testName,
-                    Date().time, Date().time, "", "-1", ""
+                    Date().time, Date().time, "", testImageNumber, ""
                 )
             )
         }

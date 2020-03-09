@@ -81,7 +81,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
                 val drawable = ContextCompat.getDrawable(
                     context, context.resources.getIdentifier(
-                        "test${java.lang.String.format("%03d", imageNumber)}",
+                        "test_${java.lang.String.format("%03d", imageNumber)}",
                         "drawable", context.packageName
                     )
                 )
@@ -379,6 +379,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
     ) {
         try {
             val filename = "lite_" + System.currentTimeMillis()
+            @Suppress("DEPRECATION")
             MediaStore.Images.Media.insertImage(
                 context.contentResolver, bitmap, filename, "ffem Lite"
             )

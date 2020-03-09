@@ -1,5 +1,6 @@
 package io.ffem.lite.ui
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
@@ -20,6 +21,8 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.IntRange
+import androidx.core.app.ActivityCompat
 import androidx.databinding.BindingAdapter
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -42,6 +45,7 @@ import io.ffem.lite.helper.ApkHelper.isNonStoreVersion
 import io.ffem.lite.model.TestResult
 import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.preference.SettingsActivity
+import io.ffem.lite.preference.useDummyImage
 import io.ffem.lite.util.ColorUtil
 import io.ffem.lite.util.FileUtil
 import io.ffem.lite.util.PreferencesUtil
@@ -257,9 +261,22 @@ class ResultListActivity : BaseActivity() {
     }
 
     fun onStartClick(@Suppress("UNUSED_PARAMETER") view: View) {
-        // Start camera preview
-        val intent = Intent(baseContext, BarcodeActivity::class.java)
-        startActivityForResult(intent, 100)
+        if (useDummyImage()) {
+            val permissions = arrayOf(
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+
+            if (!isHasPermission(*permissions))
+                askPermission(permissions = *permissions, requestCode = PERMISSION_REQUEST)
+            else
+                performFileSearch()
+
+        } else {
+            // Start camera preview
+            val intent = Intent(baseContext, BarcodeActivity::class.java)
+            startActivityForResult(intent, 100)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -278,9 +295,26 @@ class ResultListActivity : BaseActivity() {
                     val bitmapFromFile =
                         BitmapFactory.decodeFile(FileUtil.getPath(this, uri))
 
-                    val id = UUID.randomUUID().toString()
+                    var imageNumber = uri.pathSegments[uri.pathSegments.size - 1]
+                        .substringAfterLast("_", "")
+                        .substringBeforeLast(".")
 
-                    ColorUtil.extractImage(this, id, bitmapFromFile)
+                    try {
+                        imageNumber = imageNumber.toInt().toString()
+                    } catch (ignored: Exception) {
+                    }
+
+                    PreferencesUtil.setString(this, R.string.testImageNumberKey, imageNumber)
+
+                    val id = UUID.randomUUID().toString()
+                    if (bitmapFromFile != null) {
+                        ColorUtil.extractImage(this, id, bitmapFromFile)
+                    } else {
+                        Toast.makeText(
+                            baseContext, getString(R.string.invalid_image),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
                 }
             } else if (data != null) {
                 saveImageData(data)
@@ -375,6 +409,21 @@ class ResultListActivity : BaseActivity() {
         }
         startActivityForResult(intent, READ_REQUEST_CODE)
     }
+
+    private fun Activity.isHasPermission(vararg permissions: String): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            permissions.all { singlePermission ->
+                applicationContext.checkSelfPermission(singlePermission) ==
+                        PackageManager.PERMISSION_GRANTED
+            }
+        else true
+    }
+
+    private fun Activity.askPermission(
+        vararg permissions: String,
+        @IntRange(from = 0) requestCode: Int
+    ) =
+        ActivityCompat.requestPermissions(this, permissions, requestCode)
 
     private fun permissionsGranted(grantResults: IntArray): Boolean {
         for (element in grantResults) {
