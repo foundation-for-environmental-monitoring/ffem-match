@@ -15,7 +15,7 @@ import io.ffem.lite.preference.isDiagnosticMode
 import kotlinx.android.synthetic.main.activity_result.*
 import java.io.File
 
-class ResultActivity : BaseActivity() {
+class ImageViewActivity : BaseActivity() {
 
     private lateinit var localPath: String
     private lateinit var serverPath: String

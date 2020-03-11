@@ -257,6 +257,8 @@ class SampleImageTest {
                 )
             )
 
+            SystemClock.sleep(3000)
+
             if (expectedResultError == -1) {
                 val floatValue = expectedResult.toFloat()
                 textView.check(matches(checkResult(floatValue)))

@@ -44,6 +44,7 @@ class App : BaseApplication() {
         const val TEST_ID_KEY = "test_id"
         const val TEST_RESULT = "test_result"
         const val TEST_NAME_KEY = "test_name"
+        const val TEST_VALUE = "value"
 
         private lateinit var testConfig: TestConfig
 

@@ -42,7 +42,6 @@ import io.ffem.lite.app.App.Companion.TEST_RESULT
 import io.ffem.lite.app.App.Companion.getVersionName
 import io.ffem.lite.app.AppDatabase
 import io.ffem.lite.helper.ApkHelper.isNonStoreVersion
-import io.ffem.lite.model.TestResult
 import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.preference.SettingsActivity
 import io.ffem.lite.preference.useDummyImage
@@ -104,7 +103,7 @@ class ResultListActivity : BaseActivity() {
         Handler().postDelayed(
             {
                 val item = adapter.getItemAt(position)
-                val intent = Intent(baseContext, ResultActivity::class.java)
+                val intent = Intent(baseContext, ImageViewActivity::class.java)
                 intent.putExtra(TEST_ID_KEY, item.id)
                 intent.putExtra(TEST_NAME_KEY, item.name)
                 startActivity(intent)
@@ -292,32 +291,40 @@ class ResultListActivity : BaseActivity() {
             if (requestCode == READ_REQUEST_CODE) {
                 data?.data?.also { uri ->
 
-                    val bitmapFromFile =
-                        BitmapFactory.decodeFile(FileUtil.getPath(this, uri))
+                    val fiePath = FileUtil.getPath(this, uri)
+                    if (fiePath != null) {
+                        val filePtah = File(fiePath)
+                        if (filePtah.exists()) {
+                            val bitmapFromFile =
+                                BitmapFactory.decodeFile(filePtah.absolutePath)
 
-                    var imageNumber = uri.pathSegments[uri.pathSegments.size - 1]
-                        .substringAfterLast("_", "")
-                        .substringBeforeLast(".")
+                            var imageNumber = uri.pathSegments[uri.pathSegments.size - 1]
+                                .substringAfterLast("_", "")
+                                .substringBeforeLast(".")
 
-                    try {
-                        imageNumber = imageNumber.toInt().toString()
-                    } catch (ignored: Exception) {
-                    }
+                            try {
+                                imageNumber = imageNumber.toInt().toString()
+                            } catch (ignored: Exception) {
+                            }
 
-                    PreferencesUtil.setString(this, R.string.testImageNumberKey, imageNumber)
+                            PreferencesUtil.setString(
+                                this,
+                                R.string.testImageNumberKey,
+                                imageNumber
+                            )
 
-                    val id = UUID.randomUUID().toString()
-                    if (bitmapFromFile != null) {
-                        ColorUtil.extractImage(this, id, bitmapFromFile)
-                    } else {
-                        Toast.makeText(
-                            baseContext, getString(R.string.invalid_image),
-                            Toast.LENGTH_LONG
-                        ).show()
+                            val id = UUID.randomUUID().toString()
+                            if (bitmapFromFile != null) {
+                                ColorUtil.extractImage(this, id, bitmapFromFile)
+                            } else {
+                                Toast.makeText(
+                                    baseContext, getString(R.string.invalid_image),
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        }
                     }
                 }
-            } else if (data != null) {
-                saveImageData(data)
             }
         } else {
             if (data != null) {
@@ -328,30 +335,6 @@ class ResultListActivity : BaseActivity() {
         }
 
         refreshList()
-    }
-
-    private fun saveImageData(data: Intent) {
-        val id = data.getStringExtra(TEST_ID_KEY)
-
-        val testName = data.getStringExtra(TEST_NAME_KEY)
-
-        if (testName.isNullOrEmpty()) {
-            return
-        }
-
-        if (id != null) {
-
-            val testImageNumber = PreferencesUtil
-                .getString(this, R.string.testImageNumberKey, "")
-
-            db.resultDao().insert(
-                TestResult(
-                    id, 0, testName, Date().time,
-                    Date().time, "", testImageNumber, getString(R.string.outbox)
-                )
-            )
-            analyzeImage()
-        }
     }
 
     private fun showSnackbar(message: String) {
@@ -365,26 +348,6 @@ class ResultListActivity : BaseActivity() {
         textView.setLineSpacing(0f, SNACK_BAR_LINE_SPACING)
         snackbar.setActionTextColor(Color.YELLOW)
         snackbar.show()
-    }
-
-    private fun analyzeImage() {
-        db.resultDao().getPendingResults().forEach {
-            val path = getExternalFilesDir(DIRECTORY_PICTURES).toString() +
-                    File.separator + "captures" + File.separator
-
-            val fileName = it.name.replace(" ", "")
-            val filePath = "$path${it.id}" + "_" + "$fileName.jpg"
-
-            val file = File(filePath)
-
-            val bitmap = BitmapFactory.decodeFile(file.path)
-
-            if (bitmap != null) {
-                ColorUtil.extractImage(this, it.id, bitmap)
-            }
-
-            refreshList()
-        }
     }
 
     private fun refreshList() {
@@ -403,7 +366,7 @@ class ResultListActivity : BaseActivity() {
     }
 
     private fun performFileSearch() {
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+        val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
             type = "image/jpeg"
         }

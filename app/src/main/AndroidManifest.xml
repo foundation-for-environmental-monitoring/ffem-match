@@ -26,15 +26,19 @@
             android:theme="@style/AppTheme.Launcher">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".ui.BarcodeActivity"
-            android:screenOrientation="nosensor" />
+            android:screenOrientation="nosensor">
+            <intent-filter>
+                <action android:name="io.ffem.lite" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity
-            android:name=".ui.ResultActivity"
+            android:name=".ui.ImageViewActivity"
             android:screenOrientation="nosensor" />
         <activity
             android:name=".preference.SettingsActivity"

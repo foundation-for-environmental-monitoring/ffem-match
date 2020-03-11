@@ -5,8 +5,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.BitmapFactory
 import android.media.MediaActionSound
 import android.os.Bundle
+import android.os.Environment.DIRECTORY_PICTURES
 import android.os.Handler
 import android.view.View
 import android.widget.FrameLayout
@@ -15,7 +17,13 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.app.App
+import io.ffem.lite.app.AppDatabase
 import io.ffem.lite.databinding.ActivityBarcodeBinding
+import io.ffem.lite.model.TestResult
+import io.ffem.lite.util.ColorUtil
+import io.ffem.lite.util.PreferencesUtil
+import java.io.File
+import java.util.*
 
 /** Combination of all flags required to put activity into immersive mode */
 const val FLAGS_FULLSCREEN =
@@ -41,11 +49,67 @@ class BarcodeActivity : BaseActivity() {
                 val sound = MediaActionSound()
                 sound.play(MediaActionSound.SHUTTER_CLICK)
             }
+
+            saveImageData(intent)
+
             setResult(Activity.RESULT_OK, intent)
 
             Handler().postDelayed({
                 finish()
             }, 2000)
+        }
+    }
+
+    private val resultBroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            setResult(Activity.RESULT_OK, intent)
+            Handler().postDelayed({
+                finish()
+            }, 2000)
+        }
+    }
+
+    private fun saveImageData(data: Intent) {
+        val id = data.getStringExtra(App.TEST_ID_KEY)
+
+        val testName = data.getStringExtra(App.TEST_NAME_KEY)
+
+        if (testName.isNullOrEmpty()) {
+            return
+        }
+
+        if (id != null) {
+
+            val testImageNumber = PreferencesUtil
+                .getString(this, R.string.testImageNumberKey, "")
+
+            val db = AppDatabase.getDatabase(baseContext)
+            db.resultDao().insert(
+                TestResult(
+                    id, 0, testName, Date().time,
+                    Date().time, "", testImageNumber, getString(R.string.outbox)
+                )
+            )
+            analyzeImage()
+        }
+    }
+
+    private fun analyzeImage() {
+        val db = AppDatabase.getDatabase(baseContext)
+        db.resultDao().getPendingResults().forEach {
+            val path = getExternalFilesDir(DIRECTORY_PICTURES).toString() +
+                    File.separator + "captures" + File.separator
+
+            val fileName = it.name.replace(" ", "")
+            val filePath = "$path${it.id}" + "_" + "$fileName.jpg"
+
+            val file = File(filePath)
+
+            val bitmap = BitmapFactory.decodeFile(file.path)
+
+            if (bitmap != null) {
+                ColorUtil.extractImage(this, it.id, bitmap)
+            }
         }
     }
 
@@ -60,6 +124,11 @@ class BarcodeActivity : BaseActivity() {
         broadcastManager.registerReceiver(
             broadcastReceiver,
             IntentFilter(App.CAPTURED_EVENT)
+        )
+
+        broadcastManager.registerReceiver(
+            resultBroadcastReceiver,
+            IntentFilter(App.LOCAL_RESULT_EVENT)
         )
     }
 
@@ -76,6 +145,7 @@ class BarcodeActivity : BaseActivity() {
         super.onDestroy()
         // Unregister the broadcast receivers and listeners
         broadcastManager.unregisterReceiver(broadcastReceiver)
+        broadcastManager.unregisterReceiver(resultBroadcastReceiver)
     }
 
     companion object {

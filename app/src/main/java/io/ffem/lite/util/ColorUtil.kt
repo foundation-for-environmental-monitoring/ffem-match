@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.*
 import android.graphics.Paint.Style
+import android.os.Environment
 import androidx.core.graphics.blue
 import androidx.core.graphics.green
 import androidx.core.graphics.red
@@ -15,6 +16,7 @@ import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOption
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import io.ffem.lite.R
 import io.ffem.lite.app.App
+import io.ffem.lite.app.App.Companion.TEST_VALUE
 import io.ffem.lite.app.App.Companion.getCalibration
 import io.ffem.lite.app.App.Companion.getTestName
 import io.ffem.lite.app.AppDatabase
@@ -23,6 +25,8 @@ import io.ffem.lite.camera.Utilities
 import io.ffem.lite.model.*
 import io.ffem.lite.preference.getCalibrationColorDistanceTolerance
 import io.ffem.lite.preference.getColorDistanceTolerance
+import timber.log.Timber
+import java.io.File
 import java.util.*
 import kotlin.math.*
 
@@ -31,7 +35,6 @@ const val MAX_COLOR_DISTANCE_RGB = 60
 const val MAX_COLOR_DISTANCE_CALIBRATION = 80
 const val INTERPOLATION_COUNT = 100.0
 const val MAX_DISTANCE = 999
-//const val MIN_BRIGHTNESS = 30
 
 fun getBitmapPixels(bitmap: Bitmap, rect: Rect): IntArray {
     val pixels = IntArray(bitmap.width * bitmap.height)
@@ -431,8 +434,6 @@ object ColorUtil {
 //                    testName,
 //                    Utilities.bitmapToBytes(bitmap)
 //                )
-//
-//
 //            }
 
             returnResult(context, id, error, bitmap, testName, resultDetail)
@@ -469,6 +470,7 @@ object ColorUtil {
         }
 
         intent.putExtra(App.TEST_RESULT, result)
+        intent.putExtra(TEST_VALUE, result)
 
         val db = AppDatabase.getDatabase(context)
 
@@ -505,6 +507,19 @@ object ColorUtil {
                 )
             )
         }
+
+        val path = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES).toString() +
+                File.separator + "captures" + File.separator
+
+        val basePath = File(path)
+        if (!basePath.exists())
+            Timber.d(if (basePath.mkdirs()) "Success" else "Failed")
+
+        db.resultDao().updateResult(
+            intent.getStringExtra(App.TEST_ID_KEY)!!,
+            intent.getStringExtra(App.TEST_NAME_KEY)!!,
+            intent.getStringExtra(App.TEST_RESULT)!!
+        )
 
         val localBroadcastManager = LocalBroadcastManager.getInstance(context)
         localBroadcastManager.sendBroadcast(intent)
