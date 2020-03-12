@@ -87,10 +87,10 @@ class AboutActivity : BaseActivity() {
      */
     private fun switchLayoutForDiagnosticOrUserMode() {
         if (isDiagnosticMode()) {
-            findViewById<View>(R.id.layoutDiagnostics).visibility = View.VISIBLE
+            layoutDiagnostics.visibility = View.VISIBLE
         } else {
-            if (findViewById<View>(R.id.layoutDiagnostics).visibility == View.VISIBLE) {
-                findViewById<View>(R.id.layoutDiagnostics).visibility = View.GONE
+            if (layoutDiagnostics.visibility == View.VISIBLE) {
+                layoutDiagnostics.visibility = View.GONE
             }
         }
     }

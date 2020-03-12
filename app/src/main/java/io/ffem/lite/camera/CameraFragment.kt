@@ -33,7 +33,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.view.PreviewView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -44,6 +43,7 @@ import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.preference.isDiagnosticMode
 import io.ffem.lite.preference.useFlashMode
+import kotlinx.android.synthetic.main.fragment_camera.*
 import kotlinx.android.synthetic.main.preview_overlay.*
 import timber.log.Timber
 import java.util.concurrent.Executor
@@ -64,8 +64,6 @@ class CameraFragment : Fragment() {
     private lateinit var mainExecutor: Executor
 
     private lateinit var cameraControl: CameraControl
-    //    private lateinit var cameraInfo: CameraInfo
-    private lateinit var previewView: PreviewView
 
     private var displayId: Int = -1
     private var lensFacing: Int = CameraSelector.LENS_FACING_BACK
@@ -154,8 +152,6 @@ class CameraFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         container = view as ConstraintLayout
 
-        previewView = container.findViewById(R.id.previewView)
-
         // Wait for the views to be properly laid out
         previewView.post {
 
@@ -167,7 +163,6 @@ class CameraFragment : Fragment() {
 
             // Bind use cases
             bindCameraUseCases()
-
         }
     }
 
@@ -210,25 +205,10 @@ class CameraFragment : Fragment() {
                 .setTargetRotation(rotation)
                 .build()
 
-            // Default PreviewSurfaceProvider
             preview?.setSurfaceProvider(previewView.previewSurfaceProvider)
 
             barcodeAnalyzer = BarcodeAnalyzer(context!!)
             barcodeAnalyzer.reset()
-
-//            imageAnalyzer = ImageAnalysis(analyzerConfig).apply {
-//                val googlePlayServicesAvailable = GoogleApiAvailability.getInstance()
-//                    .isGooglePlayServicesAvailable(context)
-//                if (googlePlayServicesAvailable == ConnectionResult.SUCCESS) {
-//                    setAnalyzer(Executors.newSingleThreadExecutor(), barcodeAnalyzer!!)
-//                } else {
-//                    activity?.finish()
-//                }
-//            }
-//
-            // Use a worker thread for image analysis to prevent preview glitches
-//            val analyzerThread = HandlerThread("BarcodeReader").apply { start() }
-//            setCallbackHandler(Handler(analyzerThread.looper))
 
             // ImageAnalysis
             analysis = ImageAnalysis.Builder()
@@ -244,34 +224,18 @@ class CameraFragment : Fragment() {
             cameraProvider.unbindAll()
 
             try {
-                // A variable number of use-cases can be passed here.
                 val camera = cameraProvider.bindToLifecycle(
                     this as LifecycleOwner, cameraSelector, preview, analysis
                 )
                 cameraControl = camera.cameraControl
-//                cameraInfo = camera.cameraInfo
-
                 cameraControl.enableTorch(useFlashMode())
 
-//                logCameraInfo()
             } catch (e: Exception) {
                 Timber.e(e)
             }
 
         }, mainExecutor)
     }
-
-//    private fun logCameraInfo() {
-//        Timber.i(
-//            "flash unit present: ${cameraInfo.hasFlashUnit()}, sensor rotation: ${cameraInfo.sensorRotationDegrees}°"
-//        )
-//        Timber.i(
-//            "zoom: ratio min: ${cameraInfo.minZoomRatio.value}f, ratio max: ${cameraInfo.maxZoomRatio.value}f, ratio current: ${cameraInfo.zoomRatio.value}f"
-//        )
-//        Timber.i(
-//            "zoom: ${cameraInfo.linearZoom.value}f linear"
-//        )
-//    }
 
     /**
      *  [androidx.camera.core.AspectRatio]. Currently it has values of 4:3 & 16:9.
@@ -297,7 +261,7 @@ class CameraFragment : Fragment() {
     private fun updateCameraUi() {
 
         // Remove previous UI if any
-        container.findViewById<ConstraintLayout>(R.id.camera_ui_container)?.let {
+        camera_ui_container.let {
             container.removeView(it)
         }
 

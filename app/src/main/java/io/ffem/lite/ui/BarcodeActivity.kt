@@ -14,7 +14,6 @@ import android.os.Bundle
 import android.os.Environment.DIRECTORY_PICTURES
 import android.os.Handler
 import android.view.View
-import android.widget.FrameLayout
 import androidx.databinding.DataBindingUtil
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import io.ffem.lite.BuildConfig
@@ -27,6 +26,7 @@ import io.ffem.lite.databinding.ActivityBarcodeBinding
 import io.ffem.lite.model.TestResult
 import io.ffem.lite.util.ColorUtil
 import io.ffem.lite.util.PreferencesUtil
+import kotlinx.android.synthetic.main.activity_barcode.*
 import java.io.File
 import java.util.*
 import kotlin.math.round
@@ -50,7 +50,6 @@ class BarcodeActivity : BaseActivity() {
 
     private lateinit var broadcastManager: LocalBroadcastManager
     private lateinit var b: ActivityBarcodeBinding
-    private lateinit var container: FrameLayout
 
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -126,7 +125,6 @@ class BarcodeActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
 
         b = DataBindingUtil.setContentView(this, R.layout.activity_barcode)
-        container = findViewById(R.id.fragment_container)
 
         broadcastManager = LocalBroadcastManager.getInstance(this)
 
@@ -180,8 +178,8 @@ class BarcodeActivity : BaseActivity() {
         super.onResume()
         // Before setting full screen flags, we must wait a bit to let UI settle; otherwise, we may
         // be trying to set app to immersive mode before it's ready and the flags do not stick
-        container.postDelayed({
-            container.systemUiVisibility = FLAGS_FULLSCREEN
+        layout_container.postDelayed({
+            layout_container.systemUiVisibility = FLAGS_FULLSCREEN
         }, IMMERSIVE_FLAG_TIMEOUT)
     }
 
@@ -194,15 +192,5 @@ class BarcodeActivity : BaseActivity() {
 
     companion object {
         private const val IMMERSIVE_FLAG_TIMEOUT = 500L
-
-//        /** Use external media if it is available, our app's file directory otherwise */
-//        fun getOutputDirectory(context: Context): File {
-//            val appContext = context.applicationContext
-//            val mediaDir = context.externalMediaDirs.firstOrNull()?.let {
-//                File(it, appContext.resources.getString(R.string.app_name)).apply { mkdirs() }
-//            }
-//            return if (mediaDir != null && mediaDir.exists())
-//                mediaDir else appContext.filesDir
-//        }
     }
 }

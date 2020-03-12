@@ -6,12 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.ImageButton
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import io.ffem.lite.R
+import kotlinx.android.synthetic.main.fragment_notices_dialog.*
 
 class NoticesDialogFragment : DialogFragment() {
 
@@ -24,14 +23,14 @@ class NoticesDialogFragment : DialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_notices_dialog, container, false)
+        return inflater.inflate(R.layout.fragment_notices_dialog, container, false)
+    }
 
-        val linearLayout = view.findViewById<LinearLayout>(R.id.about_container)
-        makeEverythingClickable(linearLayout)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        makeEverythingClickable(about_container)
 
-        view.findViewById<ImageButton>(R.id.home_button).setOnClickListener { dismiss() }
-
-        return view
+        home_button.setOnClickListener { dismiss() }
+        super.onViewCreated(view, savedInstanceState)
     }
 
     private fun makeEverythingClickable(vg: ViewGroup) {

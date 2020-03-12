@@ -5,12 +5,11 @@ import android.os.Build
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.WindowManager
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import io.ffem.lite.R
 import io.ffem.lite.preference.isDiagnosticMode
+import kotlinx.android.synthetic.main.app_bar_layout.*
 
 abstract class BaseActivity : AppCompatActivity() {
 
@@ -39,7 +38,6 @@ abstract class BaseActivity : AppCompatActivity() {
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
         if (toolbar != null) {
             try {
                 setSupportActionBar(toolbar)
@@ -65,18 +63,16 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     override fun setTitle(title: CharSequence?) {
-        val textTitle = findViewById<TextView>(R.id.textToolbarTitle)
-        if (textTitle != null && title != null) {
+        if (textToolbarTitle != null && title != null) {
             mTitle = title.toString()
-            textTitle.text = title
+            textToolbarTitle.text = title
         }
     }
 
     override fun setTitle(titleId: Int) {
-        val textTitle = findViewById<TextView>(R.id.textToolbarTitle)
-        if (textTitle != null && titleId != 0) {
+        if (textToolbarTitle != null && titleId != 0) {
             mTitle = getString(titleId)
-            textTitle.setText(titleId)
+            textToolbarTitle.setText(titleId)
         }
     }
 
