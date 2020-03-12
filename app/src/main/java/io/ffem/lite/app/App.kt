@@ -11,6 +11,7 @@ import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.model.CalibrationValue
 import io.ffem.lite.model.TestConfig
+import io.ffem.lite.model.TestInfo
 import io.ffem.lite.preference.isDiagnosticMode
 import io.ffem.lite.util.FileUtil
 import timber.log.Timber
@@ -133,6 +134,21 @@ class App : BaseApplication() {
                 }
             }
             return testName
+        }
+
+        fun getTestInfo(id: String): TestInfo? {
+            if (!::testConfig.isInitialized) {
+                val input = app.resources.openRawResource(R.raw.calibration)
+                val content = FileUtil.readTextFile(input)
+                testConfig = Gson().fromJson(content, TestConfig::class.java)
+            }
+
+            for (test in testConfig.tests) {
+                if (test.uuid == id) {
+                    return test
+                }
+            }
+            return null
         }
 
         fun getCalibration(id: String): List<CalibrationValue> {
