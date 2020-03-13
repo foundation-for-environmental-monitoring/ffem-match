@@ -12,7 +12,7 @@ import io.ffem.lite.app.App
 import io.ffem.lite.app.App.Companion.TEST_ID_KEY
 import io.ffem.lite.app.App.Companion.TEST_NAME_KEY
 import io.ffem.lite.preference.isDiagnosticMode
-import kotlinx.android.synthetic.main.activity_result.*
+import kotlinx.android.synthetic.main.activity_image_view.*
 import java.io.File
 
 class ImageViewActivity : BaseActivity() {
@@ -23,7 +23,7 @@ class ImageViewActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_result)
+        setContentView(R.layout.activity_image_view)
 
         val id = intent.getStringExtra(TEST_ID_KEY)!!
         val name = intent.getStringExtra(TEST_NAME_KEY)!!
