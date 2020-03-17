@@ -21,8 +21,11 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.app.App
+import io.ffem.lite.app.App.Companion.TEST_INFO_KEY
+import io.ffem.lite.app.App.Companion.getTestInfo
 import io.ffem.lite.app.App.Companion.getTestName
 import io.ffem.lite.model.ImageEdgeType
+import io.ffem.lite.model.TestInfo
 import io.ffem.lite.util.ColorUtil.fixBoundary
 import io.ffem.lite.util.ColorUtil.isBarcodeValid
 import io.ffem.lite.util.ColorUtil.isTilted
@@ -104,8 +107,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
         if (capturePhoto) {
             done = true
-//            bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height)
-            savePhoto(bitmap, "Unknown", true)
+            savePhoto(bitmap, TestInfo(), true)
             endProcessing(image, true)
             return
         }
@@ -199,8 +201,8 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                         )
 
                                         detector.detectInImage(
-                                            FirebaseVisionImage.fromBitmap(rightBarcodeBitmap)
-                                        )
+                                                FirebaseVisionImage.fromBitmap(rightBarcodeBitmap)
+                                            )
                                             .addOnFailureListener(fun(_: Exception) {
 //                                                sendMessage(context.getString(R.string.color_card_not_found) + "...")
                                                 endProcessing(image, true)
@@ -302,8 +304,8 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         rightBoundingBox: Rect, leftBoundingBox: Rect
     ) {
         if (!rightBarcode.rawValue.isNullOrEmpty()) {
-            val testName = getTestName(rightBarcode.displayValue!!)
-            if (testName.isEmpty()) {
+            val testInfo = getTestInfo(rightBarcode.displayValue!!)
+            if (testInfo == null) {
                 sendMessage(context.getString(R.string.invalid_barcode))
                 endProcessing(image, false)
                 return
@@ -326,7 +328,8 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                 bitmap, cropLeft, cropTop, cropWidth, cropHeight
             )
 
-            savePhoto(finalBitmap, testName, false)
+            testInfo.fileName = UUID.randomUUID().toString()
+            savePhoto(finalBitmap, testInfo, false)
 
             finalBitmap.recycle()
 
@@ -337,14 +340,13 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         }
     }
 
-    private fun savePhoto(bitmap: Bitmap, testName: String, saveCopy: Boolean) {
+    private fun savePhoto(bitmap: Bitmap, testInfo: TestInfo, saveCopy: Boolean) {
 
         val bitmapRotated = Utilities.rotateImage(bitmap, 270)
 
-        val testId = UUID.randomUUID().toString()
-        val filePath = Utilities.savePicture(
-            context.applicationContext, testId,
-            testName, Utilities.bitmapToBytes(bitmapRotated), false
+        Utilities.savePicture(
+            context.applicationContext, testInfo.fileName,
+            testInfo.name!!, Utilities.bitmapToBytes(bitmapRotated), false
         )
 
         if (saveCopy) {
@@ -354,9 +356,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         bitmapRotated.recycle()
 
         val intent = Intent(App.CAPTURED_EVENT)
-        intent.putExtra(App.FILE_PATH_KEY, filePath)
-        intent.putExtra(App.TEST_ID_KEY, testId)
-        intent.putExtra(App.TEST_NAME_KEY, testName)
+        intent.putExtra(TEST_INFO_KEY, testInfo)
         localBroadcastManager.sendBroadcast(
             intent
         )

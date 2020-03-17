@@ -9,8 +9,8 @@ import android.view.View.GONE
 import androidx.core.content.ContextCompat
 import io.ffem.lite.R
 import io.ffem.lite.app.App
-import io.ffem.lite.app.App.Companion.TEST_ID_KEY
-import io.ffem.lite.app.App.Companion.TEST_NAME_KEY
+import io.ffem.lite.app.App.Companion.TEST_INFO_KEY
+import io.ffem.lite.model.TestInfo
 import io.ffem.lite.preference.isDiagnosticMode
 import kotlinx.android.synthetic.main.activity_image_view.*
 import java.io.File
@@ -25,15 +25,14 @@ class ImageViewActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_image_view)
 
-        val id = intent.getStringExtra(TEST_ID_KEY)!!
-        val name = intent.getStringExtra(TEST_NAME_KEY)!!
+        val testInfo = intent.getParcelableExtra<TestInfo>(TEST_INFO_KEY)
 
         val path = getExternalFilesDir(DIRECTORY_PICTURES).toString() +
                 File.separator + "captures" + File.separator
 
-        val fileName = name.replace(" ", "")
-        localPath = path + id + "_" + fileName + "_swatch" + ".jpg"
-        serverPath = path + id + "_" + fileName + ".jpg"
+        val fileName = testInfo!!.name!!.replace(" ", "")
+        localPath = path + testInfo.fileName + "_" + fileName + "_swatch" + ".jpg"
+        serverPath = path + testInfo.fileName + "_" + fileName + ".jpg"
 
         textResultTitle.text = App.getVersionName()
 

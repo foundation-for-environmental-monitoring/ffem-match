@@ -16,9 +16,9 @@ import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOption
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import io.ffem.lite.R
 import io.ffem.lite.app.App
-import io.ffem.lite.app.App.Companion.TEST_VALUE
+import io.ffem.lite.app.App.Companion.TEST_VALUE_KEY
 import io.ffem.lite.app.App.Companion.getCalibration
-import io.ffem.lite.app.App.Companion.getTestName
+import io.ffem.lite.app.App.Companion.getTestInfo
 import io.ffem.lite.app.AppDatabase
 import io.ffem.lite.camera.MAX_ANGLE
 import io.ffem.lite.camera.Utilities
@@ -169,38 +169,27 @@ object ColorUtil {
             bitmap.width, bitmap.height / 2
         )
 
-//        val leftBarcodeBitmap = ImageUtil.toBlackAndWhite(leftBarcodeBitmapColor, IMAGE_THRESHOLD)
-//        leftBarcodeBitmapColor.recycle()
-
         detector.detectInImage(FirebaseVisionImage.fromBitmap(leftBarcodeBitmap))
             .addOnFailureListener(
                 fun(_: Exception) {
-                    returnResult(context, id)
+                    returnResult(context)
                 }
             )
             .addOnSuccessListener(
                 fun(result: List<FirebaseVisionBarcode>) {
                     if (result.isEmpty()) {
-                        returnResult(context, id, R.string.bad_lighting, bitmap)
+                        returnResult(context, null, R.string.bad_lighting, bitmap)
                     }
                     for (leftBarcode in result) {
                         if (!leftBarcode.rawValue.isNullOrEmpty()) {
-//                            if (leftBarcode.boundingBox!!.width() > bitmap.width * .44) {
                             try {
-                                val testName = getTestName(result[0].displayValue!!)
+                                val testInfo = getTestInfo(result[0].displayValue!!)
 
                                 val leftBoundingBox = fixBoundary(
                                     leftBarcode,
                                     leftBarcodeBitmap,
                                     ImageEdgeType.WhiteTop
                                 )
-
-//                                Timber.d(
-//                                    "%s %s %s %s", leftBoundingBox.left,
-//                                    leftBoundingBox.top,
-//                                    leftBoundingBox.right,
-//                                    leftBoundingBox.bottom
-//                                )
 
                                 if (!isBarcodeValid(
                                         leftBarcodeBitmap,
@@ -216,20 +205,15 @@ object ColorUtil {
                                     bitmap.width, bitmap.height / 2
                                 )
 
-//                                val rightBarcodeBitmap =
-//                                    ImageUtil.toBlackAndWhite(rightBarcodeBitmapColor, IMAGE_THRESHOLD)
-//                                rightBarcodeBitmapColor.recycle()
-
                                 detector.detectInImage(
                                         FirebaseVisionImage.fromBitmap(rightBarcodeBitmap)
                                     )
                                     .addOnFailureListener(fun(_: Exception) {
                                         returnResult(
                                             context,
-                                            id,
+                                            testInfo,
                                             R.string.bad_lighting,
-                                            bitmap,
-                                            testName
+                                            bitmap
                                         )
                                     })
                                     .addOnSuccessListener(
@@ -237,10 +221,9 @@ object ColorUtil {
                                             if (result.isEmpty()) {
                                                 returnResult(
                                                     context,
-                                                    id,
+                                                    testInfo,
                                                     R.string.bad_lighting,
-                                                    bitmap,
-                                                    testName
+                                                    bitmap
                                                 )
                                                 return
                                             }
@@ -256,8 +239,8 @@ object ColorUtil {
 
                                                 if (isTilted(leftBoundingBox, rightBoundingBox)) {
                                                     returnResult(
-                                                        context, id,
-                                                        R.string.image_tilted, bitmap, testName
+                                                        context, testInfo,
+                                                        R.string.image_tilted, bitmap
                                                     )
                                                     return
                                                 }
@@ -269,8 +252,8 @@ object ColorUtil {
                                                     )
                                                 ) {
                                                     returnResult(
-                                                        context, id,
-                                                        R.string.bad_lighting, bitmap, testName
+                                                        context, testInfo,
+                                                        R.string.bad_lighting, bitmap
                                                     )
                                                     return
                                                 }
@@ -284,13 +267,10 @@ object ColorUtil {
                                         }
                                     )
                             } catch (ignored: Exception) {
-                                returnResult(context, id)
+                                returnResult(context)
                             }
-//                            } else {
-//                                returnResult(context, id)
-//                            }
                         } else {
-                            returnResult(context, id)
+                            returnResult(context)
                             return
                         }
                     }
@@ -312,11 +292,9 @@ object ColorUtil {
     ) {
 
         if (!rightBarcode.rawValue.isNullOrEmpty()) {
-//                if (barcode2.boundingBox!!.width() > bitmap.width * .44) {
-
-            val testName = getTestName(rightBarcode.displayValue!!)
-            if (testName.isEmpty()) {
-                returnResult(context, id, R.string.invalid_barcode, bitmap)
+            val testInfo = getTestInfo(rightBarcode.displayValue!!)
+            if (testInfo == null) {
+                returnResult(context, testInfo, R.string.invalid_barcode, bitmap)
                 return
             }
 
@@ -422,27 +400,13 @@ object ColorUtil {
 
             Utilities.savePicture(
                 context.applicationContext, id,
-                testName, Utilities.bitmapToBytes(croppedBitmap), true
+                testInfo.name!!, Utilities.bitmapToBytes(croppedBitmap), true
             )
             croppedBitmap.recycle()
 
-//            val db = AppDatabase.getDatabase(context)
-//            if (db.resultDao().getResult(id) == null) {
-//                Utilities.savePicture(
-//                    context,
-//                    id,
-//                    testName,
-//                    Utilities.bitmapToBytes(bitmap)
-//                )
-//            }
-
-            returnResult(context, id, error, bitmap, testName, resultDetail)
-//                } else {
-//                    returnResult(context, id)
-//                }
-
+            returnResult(context, testInfo, error, bitmap, resultDetail)
         } else {
-            returnResult(context, id)
+            returnResult(context)
             return
         }
 
@@ -450,15 +414,12 @@ object ColorUtil {
 
     private fun returnResult(
         context: Context,
-        id: String,
+        testInfo: TestInfo? = null,
         error: Int = R.string.error,
         bitmap: Bitmap? = null,
-        testName: String = "Unknown",
         resultDetail: ResultDetail = ResultDetail((-1).toDouble(), 0)
     ) {
         val intent = Intent(App.LOCAL_RESULT_EVENT)
-        intent.putExtra(App.TEST_ID_KEY, id)
-        intent.putExtra(App.TEST_NAME_KEY, testName)
 
         var result = (round(resultDetail.result * 100) / 100.0).toString()
         if (resultDetail.result < 0) {
@@ -469,28 +430,27 @@ object ColorUtil {
             }
         }
 
-        intent.putExtra(App.TEST_RESULT, result)
-        intent.putExtra(TEST_VALUE, result)
+        testInfo!!.result = result
 
         val db = AppDatabase.getDatabase(context)
 
         val testImageNumber = PreferencesUtil
             .getString(context, R.string.testImageNumberKey, "")
 
-        if (db.resultDao().getResult(id) == null) {
+        if (db.resultDao().getResult(testInfo.fileName) == null) {
             if (bitmap != null) {
                 val bitmapRotated = Utilities.rotateImage(bitmap, 270)
                 Utilities.savePicture(
                     context,
-                    id,
-                    testName,
+                    testInfo.fileName,
+                    testInfo.name!!,
                     Utilities.bitmapToBytes(bitmapRotated),
                     false
                 )
 
                 db.resultDao().insert(
                     TestResult(
-                        id, 0, testName,
+                        testInfo.fileName, testInfo.uuid!!, 0, testInfo.name!!,
                         Date().time, Date().time, "",
                         testImageNumber, context.getString(R.string.outbox)
                     )
@@ -502,7 +462,7 @@ object ColorUtil {
 
             db.resultDao().insert(
                 TestResult(
-                    id, 0, testName,
+                    testInfo.fileName, testInfo.uuid!!, 0, testInfo.name!!,
                     Date().time, Date().time, "", testImageNumber, ""
                 )
             )
@@ -516,10 +476,13 @@ object ColorUtil {
             Timber.d(if (basePath.mkdirs()) "Success" else "Failed")
 
         db.resultDao().updateResult(
-            intent.getStringExtra(App.TEST_ID_KEY)!!,
-            intent.getStringExtra(App.TEST_NAME_KEY)!!,
-            intent.getStringExtra(App.TEST_RESULT)!!
+            testInfo.fileName,
+            testInfo.name!!,
+            testInfo.result
         )
+
+        intent.putExtra(App.TEST_INFO_KEY, testInfo)
+        intent.putExtra(TEST_VALUE_KEY, result)
 
         val localBroadcastManager = LocalBroadcastManager.getInstance(context)
         localBroadcastManager.sendBroadcast(intent)
@@ -724,31 +687,6 @@ object ColorUtil {
                 valid = !isDark(pixels)
             }
 
-//            var margin3 = 0
-//            if (isLeft == ImageEdgeType.WhiteTop) {
-//                margin3 = 10
-//            }
-
-//            if (valid) {
-//                val top1 = max(0, top - margin2)
-//                rect = Rect(left, top1, right, top1 + margin1)
-//                pixels = getBitmapPixels(bwBitmap, rect)
-//                valid = !isDark(pixels)
-//            }
-//
-//            margin3 = if (isLeft == ImageEdgeType.WhiteDown) {
-//                10
-//            } else {
-//                0
-//            }
-
-//            if (valid) {
-//                val top1 = min(bwBitmap.height -  margin1, bottom)
-//                rect = Rect(left, top1, right, top1 + margin1)
-//                pixels = getBitmapPixels(bwBitmap, rect)
-//                valid = !isDark(pixels)
-//            }
-
             bwBitmap.recycle()
         } catch (ex: Exception) {
             valid = false
@@ -917,10 +855,9 @@ object ColorUtil {
         swatches: List<Swatch>
     ): ResultDetail {
 
+        //Find the color within the generated gradient that matches the photoColor
         val colorCompareInfo: ColorCompareInfo =
             getNearestColorFromSwatches(photoColor.color, swatches)
-
-        //Find the color within the generated gradient that matches the photoColor
 
         //set the result
         val resultDetail = ResultDetail((-1).toDouble(), photoColor.color)

@@ -4,6 +4,7 @@
       "name": "Fluoride",
       "type": "water",
       "uuid": "f0f3c1dd-89af-49f1-83e7-bcc31cb61159",
+      "unit": "mg/l",
       "values": [
         {
           "value": -1

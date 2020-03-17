@@ -19,10 +19,12 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.app.App
-import io.ffem.lite.app.App.Companion.TEST_VALUE
+import io.ffem.lite.app.App.Companion.TEST_INFO_KEY
+import io.ffem.lite.app.App.Companion.TEST_VALUE_KEY
 import io.ffem.lite.app.App.Companion.getTestInfo
 import io.ffem.lite.app.AppDatabase
 import io.ffem.lite.databinding.ActivityBarcodeBinding
+import io.ffem.lite.model.TestInfo
 import io.ffem.lite.model.TestResult
 import io.ffem.lite.util.ColorUtil
 import io.ffem.lite.util.PreferencesUtil
@@ -50,6 +52,7 @@ class BarcodeActivity : BaseActivity() {
 
     private lateinit var broadcastManager: LocalBroadcastManager
     private lateinit var b: ActivityBarcodeBinding
+    private var testInfo: TestInfo? = null
 
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -57,49 +60,36 @@ class BarcodeActivity : BaseActivity() {
                 val sound = MediaActionSound()
                 sound.play(MediaActionSound.SHUTTER_CLICK)
             }
-
             saveImageData(intent)
-
-            setResult(Activity.RESULT_OK, intent)
-
-            Handler().postDelayed({
-                finish()
-            }, 2000)
         }
     }
 
     private val resultBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            setResult(Activity.RESULT_OK, intent)
-            Handler().postDelayed({
-                finish()
-            }, 2000)
+            testInfo = intent.getParcelableExtra(TEST_INFO_KEY)
+            if (testInfo != null) {
+                val resultIntent = Intent()
+                resultIntent.putExtra(TEST_VALUE_KEY, testInfo!!.result)
+                setResult(Activity.RESULT_OK, resultIntent)
+            }
+            finish()
         }
     }
 
     private fun saveImageData(data: Intent) {
-        val id = data.getStringExtra(App.TEST_ID_KEY)
+        val testInfo = data.getParcelableExtra<TestInfo>(TEST_INFO_KEY) ?: return
 
-        val testName = data.getStringExtra(App.TEST_NAME_KEY)
+        val testImageNumber = PreferencesUtil
+            .getString(this, R.string.testImageNumberKey, "")
 
-        if (testName.isNullOrEmpty()) {
-            return
-        }
-
-        if (id != null) {
-
-            val testImageNumber = PreferencesUtil
-                .getString(this, R.string.testImageNumberKey, "")
-
-            val db = AppDatabase.getDatabase(baseContext)
-            db.resultDao().insert(
-                TestResult(
-                    id, 0, testName, Date().time,
-                    Date().time, "", testImageNumber, getString(R.string.outbox)
-                )
+        val db = AppDatabase.getDatabase(baseContext)
+        db.resultDao().insert(
+            TestResult(
+                testInfo.fileName, testInfo.uuid!!, 0, testInfo.name!!, Date().time,
+                Date().time, "", testImageNumber, getString(R.string.outbox)
             )
-            analyzeImage()
-        }
+        )
+        analyzeImage()
     }
 
     private fun analyzeImage() {
@@ -154,11 +144,8 @@ class BarcodeActivity : BaseActivity() {
                 val random = Random()
                 val maxValue = testInfo.values[testInfo.values.size / 2].value
 
-                resultIntent.putExtra(App.TEST_ID_KEY, testInfo.uuid)
-                resultIntent.putExtra(App.TEST_NAME_KEY, testInfo.name)
-
                 val result = (round(random.nextDouble() * maxValue * 100) / 100.0).toString()
-                resultIntent.putExtra(TEST_VALUE, result)
+                resultIntent.putExtra(TEST_VALUE_KEY, result)
 
                 val pd = ProgressDialog(this)
                 pd.setMessage("Sending dummy result...")

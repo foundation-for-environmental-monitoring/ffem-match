@@ -33,19 +33,14 @@ class App : BaseApplication() {
     companion object {
 
         const val ERROR_MESSAGE = "error_message"
+
         const val LOCAL_RESULT_EVENT = "result_event"
         const val CAPTURED_EVENT = "captured_event"
-
         const val ERROR_EVENT = "error_event"
 
         const val PERMISSIONS_MISSING_KEY = "permissions_missing"
-
-        // Keys
-        const val FILE_PATH_KEY = "file_path"
-        const val TEST_ID_KEY = "test_id"
-        const val TEST_RESULT = "test_result"
-        const val TEST_NAME_KEY = "test_name"
-        const val TEST_VALUE = "value"
+        const val TEST_INFO_KEY = "test_info"
+        const val TEST_VALUE_KEY = "value"
 
         private lateinit var testConfig: TestConfig
 
@@ -144,7 +139,7 @@ class App : BaseApplication() {
             }
 
             for (test in testConfig.tests) {
-                if (test.uuid == id) {
+                if (test.uuid == id || test.uuid!!.substring(30) == id) {
                     return test
                 }
             }

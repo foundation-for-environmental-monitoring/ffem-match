@@ -36,12 +36,12 @@ import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.app.App.Companion.LOCAL_RESULT_EVENT
 import io.ffem.lite.app.App.Companion.PERMISSIONS_MISSING_KEY
-import io.ffem.lite.app.App.Companion.TEST_ID_KEY
-import io.ffem.lite.app.App.Companion.TEST_NAME_KEY
-import io.ffem.lite.app.App.Companion.TEST_RESULT
+import io.ffem.lite.app.App.Companion.TEST_INFO_KEY
+import io.ffem.lite.app.App.Companion.getTestInfo
 import io.ffem.lite.app.App.Companion.getVersionName
 import io.ffem.lite.app.AppDatabase
 import io.ffem.lite.helper.ApkHelper.isNonStoreVersion
+import io.ffem.lite.model.TestInfo
 import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.preference.SettingsActivity
 import io.ffem.lite.preference.useDummyImage
@@ -89,10 +89,12 @@ class ResultListActivity : BaseActivity() {
             if (!basePath.exists())
                 Timber.d(if (basePath.mkdirs()) "Success" else "Failed")
 
+            val testInfo = intent.getParcelableExtra<TestInfo>(TEST_INFO_KEY)
+
             db.resultDao().updateResult(
-                intent.getStringExtra(TEST_ID_KEY)!!,
-                intent.getStringExtra(TEST_NAME_KEY)!!,
-                intent.getStringExtra(TEST_RESULT)!!
+                testInfo!!.fileName,
+                testInfo.name!!,
+                testInfo.result
             )
 
             refreshList()
@@ -104,8 +106,8 @@ class ResultListActivity : BaseActivity() {
             {
                 val item = adapter.getItemAt(position)
                 val intent = Intent(baseContext, ImageViewActivity::class.java)
-                intent.putExtra(TEST_ID_KEY, item.id)
-                intent.putExtra(TEST_NAME_KEY, item.name)
+                val testInfo = getTestInfo(item.uuid)
+                intent.putExtra(TEST_INFO_KEY, testInfo)
                 startActivity(intent)
             }, 350
         )
