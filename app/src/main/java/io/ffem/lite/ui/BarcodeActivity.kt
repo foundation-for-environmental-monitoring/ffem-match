@@ -16,6 +16,7 @@ import android.os.Handler
 import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.navigation.Navigation
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.app.App
@@ -23,6 +24,7 @@ import io.ffem.lite.app.App.Companion.TEST_INFO_KEY
 import io.ffem.lite.app.App.Companion.TEST_VALUE_KEY
 import io.ffem.lite.app.App.Companion.getTestInfo
 import io.ffem.lite.app.AppDatabase
+import io.ffem.lite.camera.CameraFragmentDirections
 import io.ffem.lite.databinding.ActivityBarcodeBinding
 import io.ffem.lite.model.TestInfo
 import io.ffem.lite.model.TestResult
@@ -67,12 +69,19 @@ class BarcodeActivity : BaseActivity() {
     private val resultBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             testInfo = intent.getParcelableExtra(TEST_INFO_KEY)
-            if (testInfo != null) {
-                val resultIntent = Intent()
-                resultIntent.putExtra(TEST_VALUE_KEY, testInfo!!.result)
-                setResult(Activity.RESULT_OK, resultIntent)
-            }
-            finish()
+//            if (testInfo != null) {
+//                val resultIntent = Intent()
+//                resultIntent.putExtra(TEST_VALUE_KEY, testInfo!!.result)
+//                setResult(Activity.RESULT_OK, resultIntent)
+//            }
+//            finish()
+
+            // Display the result screen
+            Navigation.findNavController(this@BarcodeActivity, R.id.fragment_container)
+                .navigate(
+                    CameraFragmentDirections
+                        .actionCameraFragmentToResultFragment()
+                )
         }
     }
 
