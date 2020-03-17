@@ -76,12 +76,14 @@ class BarcodeActivity : BaseActivity() {
 //            }
 //            finish()
 
-            // Display the result screen
-            Navigation.findNavController(this@BarcodeActivity, R.id.fragment_container)
-                .navigate(
-                    CameraFragmentDirections
-                        .actionCameraFragmentToResultFragment()
-                )
+            if (testInfo != null) {
+                // Display the result screen
+                Navigation.findNavController(this@BarcodeActivity, R.id.fragment_container)
+                    .navigate(
+                        CameraFragmentDirections
+                            .actionCameraFragmentToResultFragment(testInfo!!)
+                    )
+            }
         }
     }
 
