@@ -69,12 +69,6 @@ class BarcodeActivity : BaseActivity() {
     private val resultBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             testInfo = intent.getParcelableExtra(TEST_INFO_KEY)
-//            if (testInfo != null) {
-//                val resultIntent = Intent()
-//                resultIntent.putExtra(TEST_VALUE_KEY, testInfo!!.result)
-//                setResult(Activity.RESULT_OK, resultIntent)
-//            }
-//            finish()
 
             if (testInfo != null) {
                 // Display the result screen
@@ -85,6 +79,15 @@ class BarcodeActivity : BaseActivity() {
                     )
             }
         }
+    }
+
+    fun submitResult(@Suppress("UNUSED_PARAMETER") view: View) {
+        if (testInfo != null) {
+            val resultIntent = Intent()
+            resultIntent.putExtra(TEST_VALUE_KEY, testInfo!!.result)
+            setResult(Activity.RESULT_OK, resultIntent)
+        }
+        finish()
     }
 
     private fun saveImageData(data: Intent) {
