@@ -28,6 +28,14 @@
             app:destination="@id/permissions_fragment"
             app:popUpTo="@id/camera_fragment"
             app:popUpToInclusive="true" />
-
+        <action
+            android:id="@+id/action_camera_fragment_to_resultFragment"
+            app:destination="@id/resultFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/resultFragment"
+        android:name="io.ffem.lite.ui.ResultFragment"
+        android:label="fragment_result"
+        tools:layout="@layout/fragment_result"></fragment>
 </navigation>
