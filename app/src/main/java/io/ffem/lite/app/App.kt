@@ -40,6 +40,8 @@ class App : BaseApplication() {
 
         const val PERMISSIONS_MISSING_KEY = "permissions_missing"
         const val TEST_INFO_KEY = "test_info"
+        const val TEST_ID_KEY = "test_id"
+        const val TEST_NAME_KEY = "test_name"
         const val TEST_VALUE_KEY = "value"
 
         private lateinit var testConfig: TestConfig
