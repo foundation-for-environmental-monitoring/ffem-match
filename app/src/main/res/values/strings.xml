@@ -48,4 +48,7 @@
     <string name="invalid_barcode">Invalid barcode</string>
     <string name="no_match">No match</string>
     <string name="invalid_image">Invalid image</string>
+
+    <string name="submitResult">Submit Result</string>
+    <string name="result">Result</string>
 </resources>
