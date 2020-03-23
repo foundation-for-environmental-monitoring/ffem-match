@@ -22,6 +22,7 @@ import io.ffem.lite.common.TestUtil.childAtPosition
 import io.ffem.lite.util.PreferencesUtil
 import org.hamcrest.Matchers
 import org.hamcrest.Matchers.allOf
+import org.hamcrest.Matchers.not
 import org.hamcrest.core.IsInstanceOf
 import org.junit.*
 import org.junit.runner.RunWith
@@ -222,6 +223,19 @@ class SampleImageTest {
         if (expectedScanError == -1) {
 
             Thread.sleep(9000)
+
+            onView(withText(name)).check(matches(isDisplayed()))
+
+            if (name == pH) {
+                onView(withId(R.id.text_unit)).check(matches(not(isDisplayed())))
+            } else {
+                onView(allOf(withId(R.id.text_unit), withText("mg/l")))
+                    .check(matches(isDisplayed()))
+            }
+
+            onView(withText(R.string.submitResult)).perform(click())
+
+            Thread.sleep(1000)
 
             onView(
                 allOf(

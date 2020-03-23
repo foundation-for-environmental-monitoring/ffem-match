@@ -127,10 +127,6 @@ class CameraFragment : Fragment() {
         super.onPause()
         messageHandler.removeCallbacksAndMessages(runnable)
         broadcastManager.unregisterReceiver(broadcastReceiver2)
-
-        if (!activity!!.isFinishing) {
-            activity?.finish()
-        }
     }
 
     override fun onDestroyView() {
