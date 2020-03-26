@@ -43,6 +43,7 @@ import io.ffem.lite.app.App.Companion.getVersionName
 import io.ffem.lite.app.AppDatabase
 import io.ffem.lite.helper.ApkHelper.isNonStoreVersion
 import io.ffem.lite.model.TestInfo
+import io.ffem.lite.model.TestResult
 import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.preference.SettingsActivity
 import io.ffem.lite.preference.useDummyImage
@@ -61,8 +62,8 @@ const val PERMISSION_REQUEST = 103
 const val SNACK_BAR_LINE_SPACING = 1.4f
 
 @BindingAdapter("android:resultSize")
-fun TextView.bindTextSize(result: String) {
-    if (result.toDoubleOrNull() == null) {
+fun TextView.bindTextSize(result: Double) {
+    if (result < 0) {
         textSize = 14f
         setPadding(0, 10, 0, 0)
         setTextColor(Color.rgb(200, 50, 50))
@@ -70,6 +71,15 @@ fun TextView.bindTextSize(result: String) {
         textSize = 30f
         setPadding(0, 0, 0, 0)
         setTextColor(Color.rgb(20, 20, 20))
+    }
+}
+
+@BindingAdapter("android:result")
+fun getResultString(view: TextView, result: TestResult) {
+    if (result.value < 0) {
+        view.text = view.context.resources.getStringArray(R.array.error_array)[result.error.ordinal]
+    } else {
+        view.text = result.value.toString()
     }
 }
 
@@ -95,7 +105,8 @@ class ResultListActivity : BaseActivity() {
             db.resultDao().updateResult(
                 testInfo!!.fileName,
                 testInfo.name!!,
-                testInfo.result
+                testInfo.result,
+                testInfo.error.ordinal
             )
 
             refreshList()

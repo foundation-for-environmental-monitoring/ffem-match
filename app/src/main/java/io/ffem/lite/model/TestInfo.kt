@@ -1,53 +1,26 @@
 package io.ffem.lite.model
 
-import android.os.Parcel
+import android.content.Context
 import android.os.Parcelable
+import io.ffem.lite.R
+import kotlinx.android.parcel.Parcelize
 
-class TestInfo() : Parcelable {
-
-    var name: String? = null
-
-    @Suppress("unused")
-    var type: String? = null
-    var uuid: String? = null
-    var unit: String? = null
-    var values: List<CalibrationValue> = ArrayList()
-
-    @Transient
-    var result: String = ""
-
-    @Transient
+@Parcelize
+data class TestInfo(
+    var name: String? = null,
+    var type: String? = null,
+    var uuid: String? = null,
+    var unit: String? = null,
+    var values: List<CalibrationValue> = ArrayList(),
+    var result: Double = -1.0,
+    var error: ErrorType = ErrorType.NO_ERROR,
     var fileName: String = ""
-
-    constructor(parcel: Parcel) : this() {
-        name = parcel.readString()
-        type = parcel.readString()
-        uuid = parcel.readString()
-        unit = parcel.readString()
-        result = parcel.readString()!!
-        fileName = parcel.readString()!!
-    }
-
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(name)
-        parcel.writeString(type)
-        parcel.writeString(uuid)
-        parcel.writeString(unit)
-        parcel.writeString(result)
-        parcel.writeString(fileName)
-    }
-
-    override fun describeContents(): Int {
-        return 0
-    }
-
-    companion object CREATOR : Parcelable.Creator<TestInfo> {
-        override fun createFromParcel(parcel: Parcel): TestInfo {
-            return TestInfo(parcel)
-        }
-
-        override fun newArray(size: Int): Array<TestInfo?> {
-            return arrayOfNulls(size)
+) : Parcelable {
+    fun getResultString(context: Context): String {
+        return if (result < 0) {
+            context.resources.getStringArray(R.array.error_array)[error.ordinal]
+        } else {
+            result.toString()
         }
     }
 }

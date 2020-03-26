@@ -19,6 +19,8 @@ import io.ffem.lite.app.AppDatabase
 import io.ffem.lite.common.TestHelper.clearPreferences
 import io.ffem.lite.common.TestUtil.checkResult
 import io.ffem.lite.common.TestUtil.childAtPosition
+import io.ffem.lite.model.ErrorType
+import io.ffem.lite.model.ErrorType.*
 import io.ffem.lite.util.PreferencesUtil
 import org.hamcrest.Matchers
 import org.hamcrest.Matchers.allOf
@@ -87,7 +89,7 @@ class SampleImageTest {
 
     @Test
     fun image_004_pH_NoMatch() {
-        startTest(pH, 4, expectedResultError = R.string.no_match)
+        startTest(pH, 4, expectedResultError = NO_MATCH)
     }
 
     @Test
@@ -97,7 +99,7 @@ class SampleImageTest {
 
     @Test
     fun image_006_Chlorine_NoMatch() {
-        startTest(residualChlorine, 6, expectedResultError = R.string.no_match)
+        startTest(residualChlorine, 6, expectedResultError = NO_MATCH)
     }
 
     @Test
@@ -117,7 +119,7 @@ class SampleImageTest {
 
     @Test
     fun image_010_Chlorine_CalibrationError() {
-        startTest(residualChlorine, 10, expectedResultError = R.string.calibration_error)
+        startTest(residualChlorine, 10, expectedResultError = CALIBRATION_ERROR)
     }
 
     @Test
@@ -147,7 +149,7 @@ class SampleImageTest {
 
     @Test
     fun image_016_Chlorine_CalibrationError() {
-        startTest(residualChlorine, 16, expectedResultError = R.string.calibration_error)
+        startTest(residualChlorine, 16, expectedResultError = CALIBRATION_ERROR)
     }
 
     @Test
@@ -182,19 +184,19 @@ class SampleImageTest {
 
     @Test
     fun image_023_FluorideHighRange_NoMatch() {
-        startTest(fluorideHighRange, 23, expectedResultError = R.string.no_match)
+        startTest(fluorideHighRange, 23, expectedResultError = NO_MATCH)
     }
 
 //    @Test
 //    fun imageX_Waiting() {
-//        startTest(pH, 500, scanError = R.string.place_color_card)
+//        startTest(pH, 500, expectedScanError = R.string.place_color_card)
 //    }
 
     private fun startTest(
         name: String,
         imageNumber: Int,
         expectedResult: String = "",
-        expectedResultError: Int = -1,
+        expectedResultError: ErrorType = NO_ERROR,
         expectedScanError: Int = -1
     ) {
 
@@ -229,8 +231,12 @@ class SampleImageTest {
             if (name == pH) {
                 onView(withId(R.id.text_unit)).check(matches(not(isDisplayed())))
             } else {
-                onView(allOf(withId(R.id.text_unit), withText("mg/l")))
-                    .check(matches(isDisplayed()))
+                if (expectedResultError > NO_ERROR) {
+                    onView(withId(R.id.text_unit)).check(matches(not(isDisplayed())))
+                } else {
+                    onView(allOf(withId(R.id.text_unit), withText("mg/l")))
+                        .check(matches(isDisplayed()))
+                }
             }
 
             onView(withText(R.string.submitResult)).perform(click())
@@ -273,11 +279,14 @@ class SampleImageTest {
 
             SystemClock.sleep(3000)
 
-            if (expectedResultError == -1) {
+            if (expectedResultError == NO_ERROR) {
                 val floatValue = expectedResult.toFloat()
                 textView.check(matches(checkResult(floatValue)))
             } else {
-                textView.check(matches(withText(expectedResultError)))
+                val context = InstrumentationRegistry.getInstrumentation().targetContext
+                val errorText =
+                    context.resources.getStringArray(R.array.error_array)[expectedResultError.ordinal]
+                textView.check(matches(withText(errorText)))
             }
 
             textView.perform(click())

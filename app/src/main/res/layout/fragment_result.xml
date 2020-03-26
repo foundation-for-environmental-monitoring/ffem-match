@@ -42,11 +42,18 @@
         android:layout_width="wrap_content"
         android:layout_height="100dp"
         android:layout_gravity="center"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="0dp"
+        android:layout_marginEnd="16dp"
         android:gravity="center_vertical"
+        android:maxLines="1"
         android:textIsSelectable="false"
         android:textSize="60sp"
-        tools:text="20.59" />
+        app:autoSizeMaxTextSize="60sp"
+        app:autoSizeMinTextSize="10sp"
+        app:autoSizeStepGranularity="1sp"
+        app:autoSizeTextType="uniform"
+        tools:text="20473.59" />
 
     <TextView
         android:id="@+id/text_unit"
@@ -64,10 +71,13 @@
     <Button
         android:id="@+id/button_submit"
         android:layout_width="wrap_content"
-        android:layout_height="60dp"
-        android:onClick="submitResult"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
+        android:minWidth="230dp"
+        android:minHeight="60dp"
+        android:onClick="submitResult"
         android:text="@string/submitResult"
+        android:textSize="20sp"
         android:theme="?primaryButtonStyle" />
 </LinearLayout>

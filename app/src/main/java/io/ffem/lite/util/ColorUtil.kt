@@ -23,6 +23,7 @@ import io.ffem.lite.app.AppDatabase
 import io.ffem.lite.camera.MAX_ANGLE
 import io.ffem.lite.camera.Utilities
 import io.ffem.lite.model.*
+import io.ffem.lite.model.ErrorType.*
 import io.ffem.lite.preference.getCalibrationColorDistanceTolerance
 import io.ffem.lite.preference.getColorDistanceTolerance
 import timber.log.Timber
@@ -178,7 +179,7 @@ object ColorUtil {
             .addOnSuccessListener(
                 fun(result: List<FirebaseVisionBarcode>) {
                     if (result.isEmpty()) {
-                        returnResult(context, null, R.string.bad_lighting, bitmap)
+                        returnResult(context, null, BAD_LIGHTING, bitmap)
                     }
                     for (leftBarcode in result) {
                         if (!leftBarcode.rawValue.isNullOrEmpty()) {
@@ -206,13 +207,13 @@ object ColorUtil {
                                 )
 
                                 detector.detectInImage(
-                                        FirebaseVisionImage.fromBitmap(rightBarcodeBitmap)
-                                    )
+                                    FirebaseVisionImage.fromBitmap(rightBarcodeBitmap)
+                                )
                                     .addOnFailureListener(fun(_: Exception) {
                                         returnResult(
                                             context,
                                             testInfo,
-                                            R.string.bad_lighting,
+                                            BAD_LIGHTING,
                                             bitmap
                                         )
                                     })
@@ -222,7 +223,7 @@ object ColorUtil {
                                                 returnResult(
                                                     context,
                                                     testInfo,
-                                                    R.string.bad_lighting,
+                                                    BAD_LIGHTING,
                                                     bitmap
                                                 )
                                                 return
@@ -240,7 +241,7 @@ object ColorUtil {
                                                 if (isTilted(leftBoundingBox, rightBoundingBox)) {
                                                     returnResult(
                                                         context, testInfo,
-                                                        R.string.image_tilted, bitmap
+                                                        IMAGE_TILTED, bitmap
                                                     )
                                                     return
                                                 }
@@ -253,7 +254,7 @@ object ColorUtil {
                                                 ) {
                                                     returnResult(
                                                         context, testInfo,
-                                                        R.string.bad_lighting, bitmap
+                                                        BAD_LIGHTING, bitmap
                                                     )
                                                     return
                                                 }
@@ -294,7 +295,7 @@ object ColorUtil {
         if (!rightBarcode.rawValue.isNullOrEmpty()) {
             val testInfo = getTestInfo(rightBarcode.displayValue!!)
             if (testInfo == null) {
-                returnResult(context, testInfo, R.string.invalid_barcode, bitmap)
+                returnResult(context, testInfo, INVALID_BARCODE, bitmap)
                 return
             }
 
@@ -390,12 +391,15 @@ object ColorUtil {
 
             croppedBitmap2.recycle()
 
-            var error = -1
+            var error = NO_ERROR
             var resultDetail = ResultDetail(-1.0, 0)
             try {
                 resultDetail = extractColors(croppedBitmap, rightBarcode.displayValue!!)
+                if (resultDetail.result < 0) {
+                    error = NO_MATCH
+                }
             } catch (e: Exception) {
-                error = R.string.calibration_error
+                error = CALIBRATION_ERROR
             }
 
             Utilities.savePicture(
@@ -409,28 +413,20 @@ object ColorUtil {
             returnResult(context)
             return
         }
-
     }
 
     private fun returnResult(
         context: Context,
         testInfo: TestInfo? = null,
-        error: Int = R.string.error,
+        error: ErrorType = NO_ERROR,
         bitmap: Bitmap? = null,
         resultDetail: ResultDetail = ResultDetail((-1).toDouble(), 0)
     ) {
         val intent = Intent(App.LOCAL_RESULT_EVENT)
 
-        var result = (round(resultDetail.result * 100) / 100.0).toString()
-        if (resultDetail.result < 0) {
-            result = if (error == -1) {
-                "No match"
-            } else {
-                context.getString(error)
-            }
-        }
-
+        val result = (round(resultDetail.result * 100) / 100.0)
         testInfo!!.result = result
+        testInfo.error = error
 
         val db = AppDatabase.getDatabase(context)
 
@@ -451,8 +447,7 @@ object ColorUtil {
                 db.resultDao().insert(
                     TestResult(
                         testInfo.fileName, testInfo.uuid!!, 0, testInfo.name!!,
-                        Date().time, Date().time, "",
-                        testImageNumber, context.getString(R.string.outbox)
+                        Date().time, -1.0, NO_ERROR, testImageNumber
                     )
                 )
 
@@ -463,7 +458,7 @@ object ColorUtil {
             db.resultDao().insert(
                 TestResult(
                     testInfo.fileName, testInfo.uuid!!, 0, testInfo.name!!,
-                    Date().time, Date().time, "", testImageNumber, ""
+                    Date().time, -1.0, NO_ERROR, testImageNumber
                 )
             )
         }
@@ -478,7 +473,8 @@ object ColorUtil {
         db.resultDao().updateResult(
             testInfo.fileName,
             testInfo.name!!,
-            testInfo.result
+            testInfo.result,
+            testInfo.error.ordinal
         )
 
         intent.putExtra(App.TEST_INFO_KEY, testInfo)

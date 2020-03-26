@@ -8,9 +8,6 @@ import androidx.room.Query
 @Dao
 abstract class ResultDao {
 
-    @Query("SELECT * FROM results WHERE value = ''")
-    abstract fun getPendingResults(): List<TestResult>
-
     @Query("SELECT * FROM results ORDER BY date DESC")
     abstract fun getResults(): List<TestResult>
 
@@ -20,8 +17,8 @@ abstract class ResultDao {
     @Insert(onConflict = REPLACE)
     abstract fun insert(result: TestResult)
 
-    @Query("UPDATE results SET name= :name, value = :result WHERE id = :id")
-    abstract fun updateResult(id: String, name: String, result: String)
+    @Query("UPDATE results SET name= :name, value = :result, error = :error WHERE id = :id")
+    abstract fun updateResult(id: String, name: String, result: Double, error: Int)
 
     @Query("DELETE FROM results")
     abstract fun deleteAll()

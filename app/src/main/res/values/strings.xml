@@ -6,7 +6,6 @@
 
     <string name="testing">Testing</string>
     <string name="place_color_card">Place the color card within the view finder above</string>
-    <string name="outbox">In outbox</string>
     <string name="version">Version</string>
     <string name="about">About</string>
     <string name="settings">Settings</string>
@@ -41,7 +40,6 @@
     <string name="correct_camera_tilt">Camera tilted. Set position correctly over the card</string>
     <string name="bad_lighting">Bad lighting</string>
     <string name="image_tilted">Tilted image</string>
-    <string name="error">Error</string>
     <string name="calibration_error">Calibration error</string>
     <string name="color_card_not_found">Barcode not found. Check lighting</string>
     <string name="capture_photo">Capture photo</string>
@@ -51,4 +49,13 @@
 
     <string name="submitResult">Submit Result</string>
     <string name="result">Result</string>
+
+    <string-array name="error_array">
+        <item />
+        <item>@string/no_match</item>
+        <item>@string/calibration_error</item>
+        <item>@string/bad_lighting</item>
+        <item>@string/image_tilted</item>
+        <item>@string/invalid_barcode</item>
+    </string-array>
 </resources>

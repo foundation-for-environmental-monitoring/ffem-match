@@ -16,7 +16,7 @@ import android.os.Handler
 import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.navigation.Navigation
+import androidx.navigation.Navigation.findNavController
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.app.App
@@ -26,6 +26,7 @@ import io.ffem.lite.app.App.Companion.getTestInfo
 import io.ffem.lite.app.AppDatabase
 import io.ffem.lite.camera.CameraFragmentDirections
 import io.ffem.lite.databinding.ActivityBarcodeBinding
+import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.TestInfo
 import io.ffem.lite.model.TestResult
 import io.ffem.lite.util.ColorUtil
@@ -72,11 +73,17 @@ class BarcodeActivity : BaseActivity() {
 
             if (testInfo != null) {
                 // Display the result screen
-                Navigation.findNavController(this@BarcodeActivity, R.id.fragment_container)
-                    .navigate(
-                        CameraFragmentDirections
-                            .actionCameraFragmentToResultFragment(testInfo!!)
-                    )
+                if (findNavController(
+                        this@BarcodeActivity,
+                        R.id.fragment_container
+                    ).currentDestination?.id == R.id.camera_fragment
+                ) {
+                    findNavController(this@BarcodeActivity, R.id.fragment_container)
+                        .navigate(
+                            CameraFragmentDirections
+                                .actionCameraFragmentToResultFragment(testInfo!!)
+                        )
+                }
             }
         }
     }
@@ -100,28 +107,22 @@ class BarcodeActivity : BaseActivity() {
         db.resultDao().insert(
             TestResult(
                 testInfo.fileName, testInfo.uuid!!, 0, testInfo.name!!, Date().time,
-                Date().time, "", testImageNumber, getString(R.string.outbox)
+                -1.0, ErrorType.NO_ERROR, testImageNumber
             )
         )
-        analyzeImage()
+        analyzeImage(testInfo.fileName, testInfo.name!!)
     }
 
-    private fun analyzeImage() {
-        val db = AppDatabase.getDatabase(baseContext)
-        db.resultDao().getPendingResults().forEach {
-            val path = getExternalFilesDir(DIRECTORY_PICTURES).toString() +
-                    File.separator + "captures" + File.separator
+    private fun analyzeImage(fileId: String, name: String) {
+        val path = getExternalFilesDir(DIRECTORY_PICTURES).toString() +
+                File.separator + "captures" + File.separator
 
-            val fileName = it.name.replace(" ", "")
-            val filePath = "$path${it.id}" + "_" + "$fileName.jpg"
+        val testName = name.replace(" ", "")
+        val filePath = "$path${fileId}" + "_" + "$testName.jpg"
+        val bitmap = BitmapFactory.decodeFile(File(filePath).path)
 
-            val file = File(filePath)
-
-            val bitmap = BitmapFactory.decodeFile(file.path)
-
-            if (bitmap != null) {
-                ColorUtil.extractImage(this, it.id, bitmap)
-            }
+        if (bitmap != null) {
+            ColorUtil.extractImage(this, fileId, bitmap)
         }
     }
 

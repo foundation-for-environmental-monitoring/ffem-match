@@ -78,7 +78,7 @@
             android:clickable="false"
             android:focusable="false"
             android:resultSize="@{result.value}"
-            android:text="@{result.value}"
+            android:result="@{result}"
             android:textIsSelectable="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
