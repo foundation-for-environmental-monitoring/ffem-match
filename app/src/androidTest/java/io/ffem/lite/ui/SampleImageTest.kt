@@ -21,6 +21,7 @@ import io.ffem.lite.common.TestUtil.checkResult
 import io.ffem.lite.common.TestUtil.childAtPosition
 import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.ErrorType.*
+import io.ffem.lite.model.toLocalString
 import io.ffem.lite.util.PreferencesUtil
 import org.hamcrest.Matchers
 import org.hamcrest.Matchers.allOf
@@ -284,9 +285,7 @@ class SampleImageTest {
                 textView.check(matches(checkResult(floatValue)))
             } else {
                 val context = InstrumentationRegistry.getInstrumentation().targetContext
-                val errorText =
-                    context.resources.getStringArray(R.array.error_array)[expectedResultError.ordinal]
-                textView.check(matches(withText(errorText)))
+                textView.check(matches(withText(expectedResultError.toLocalString(context))))
             }
 
             textView.perform(click())

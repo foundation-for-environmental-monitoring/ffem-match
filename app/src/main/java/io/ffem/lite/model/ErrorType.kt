@@ -1,8 +1,9 @@
 package io.ffem.lite.model
 
+import android.content.Context
 import androidx.room.TypeConverter
+import java.util.*
 
-// Should match error_array in string resources
 enum class ErrorType {
     NO_ERROR,
     NO_MATCH,
@@ -10,6 +11,15 @@ enum class ErrorType {
     BAD_LIGHTING,
     IMAGE_TILTED,
     INVALID_BARCODE
+}
+
+fun ErrorType.toLocalString(context: Context): String {
+    val resourceId =
+        context.resources.getIdentifier(
+            this.toString().toLowerCase(Locale.ROOT),
+            "string", context.packageName
+        )
+    return context.getString(resourceId)
 }
 
 class ErrorTypeConverter {

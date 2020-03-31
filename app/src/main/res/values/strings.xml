@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">ffem Lite</string>
     <string name="app_slogan">Water Quality System</string>
     <string name="copyrightMessage">Copyright © ffem</string>
@@ -38,24 +38,19 @@
     <string name="settings_not_clickable">Settings not clickable</string>
     <string name="try_moving_well_lit">Bad lighting. Try moving to a well lit area</string>
     <string name="correct_camera_tilt">Camera tilted. Set position correctly over the card</string>
-    <string name="bad_lighting">Bad lighting</string>
-    <string name="image_tilted">Tilted image</string>
-    <string name="calibration_error">Calibration error</string>
     <string name="color_card_not_found">Barcode not found. Check lighting</string>
     <string name="capture_photo">Capture photo</string>
-    <string name="invalid_barcode">Invalid barcode</string>
-    <string name="no_match">No match</string>
+
     <string name="invalid_image">Invalid image</string>
 
     <string name="submitResult">Submit Result</string>
     <string name="result">Result</string>
 
-    <string-array name="error_array">
-        <item />
-        <item>@string/no_match</item>
-        <item>@string/calibration_error</item>
-        <item>@string/bad_lighting</item>
-        <item>@string/image_tilted</item>
-        <item>@string/invalid_barcode</item>
-    </string-array>
+    <!-- ErrorType -->
+    <string name="no_error" tools:keep="@string/no_error">No error</string>
+    <string name="no_match" tools:keep="@string/no_match">No match</string>
+    <string name="calibration_error" tools:keep="@string/calibration_error">Calibration error</string>
+    <string name="bad_lighting" tools:keep="@string/bad_lighting">Bad lighting</string>
+    <string name="image_tilted" tools:keep="@string/image_tilted">Tilted image</string>
+    <string name="invalid_barcode">Invalid barcode</string>
 </resources>

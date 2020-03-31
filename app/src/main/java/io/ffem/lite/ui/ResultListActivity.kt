@@ -44,6 +44,7 @@ import io.ffem.lite.app.AppDatabase
 import io.ffem.lite.helper.ApkHelper.isNonStoreVersion
 import io.ffem.lite.model.TestInfo
 import io.ffem.lite.model.TestResult
+import io.ffem.lite.model.toLocalString
 import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.preference.SettingsActivity
 import io.ffem.lite.preference.useDummyImage
@@ -77,7 +78,7 @@ fun TextView.bindTextSize(result: Double) {
 @BindingAdapter("android:result")
 fun getResultString(view: TextView, result: TestResult) {
     if (result.value < 0) {
-        view.text = view.context.resources.getStringArray(R.array.error_array)[result.error.ordinal]
+        view.text = result.error.toLocalString(view.context)
     } else {
         view.text = result.value.toString()
     }

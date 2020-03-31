@@ -2,7 +2,6 @@ package io.ffem.lite.model
 
 import android.content.Context
 import android.os.Parcelable
-import io.ffem.lite.R
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -16,9 +15,10 @@ data class TestInfo(
     var error: ErrorType = ErrorType.NO_ERROR,
     var fileName: String = ""
 ) : Parcelable {
+
     fun getResultString(context: Context): String {
         return if (result < 0) {
-            context.resources.getStringArray(R.array.error_array)[error.ordinal]
+            error.toLocalString(context)
         } else {
             result.toString()
         }
