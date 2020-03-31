@@ -69,6 +69,10 @@ android {
         buildConfigField "String", "TEST_LANGUAGE", "\"en\""
         buildConfigField "java.util.Date", "BUILD_TIME", "new java.util.Date(" + 0L + ")"
     }
+
+    testOptions {
+        unitTests.includeAndroidResources = true
+    }
 }
 
 dependencies {
@@ -131,6 +135,10 @@ dependencies {
         exclude group: 'com.android.support'
         exclude group: 'javax.inject'
     }
+
+    // Robolectric
+    testImplementation 'org.robolectric:robolectric:4.3.1'
+    testImplementation "com.github.nimbl3:robolectric.shadows-supportv4:4.1-SNAPSHOT"
 
     // UIAutomator
     androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
