@@ -53,4 +53,9 @@
     <string name="bad_lighting" tools:keep="@string/bad_lighting">Bad lighting</string>
     <string name="image_tilted" tools:keep="@string/image_tilted">Tilted image</string>
     <string name="invalid_barcode">Invalid barcode</string>
+
+    <!-- RiskType-->
+    <string name="low">Low</string>
+    <string name="medium">Medium</string>
+    <string name="high">High</string>
 </resources>

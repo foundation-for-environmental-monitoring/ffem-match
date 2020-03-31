@@ -23,4 +23,27 @@ data class TestInfo(
             result.toString()
         }
     }
+
+    fun getRisk(context: Context): String {
+        var riskValue = RiskType.LOW
+        val count = values.size / 2
+
+        // Evaluate the risk level based on the result
+        if (result >= values[count].value + 1) {
+            riskValue = RiskType.HIGH
+        } else {
+            for (i in 0 until count) {
+                val calibrationValue = values[i]
+                if (result >= calibrationValue.value) {
+                    if (calibrationValue.risk != null) {
+                        riskValue = calibrationValue.risk!!
+                    }
+                } else {
+                    break
+                }
+            }
+        }
+
+        return riskValue.toLocalString(context)
+    }
 }
