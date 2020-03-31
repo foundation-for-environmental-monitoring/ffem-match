@@ -10,13 +10,15 @@
           "value": -1
         },
         {
-          "value": 0
+          "value": 0,
+          "risk": 0
         },
         {
           "value": 0.5
         },
         {
-          "value": 1.0
+          "value": 1.0,
+          "risk": 1
         },
         {
           "value": 1.5
