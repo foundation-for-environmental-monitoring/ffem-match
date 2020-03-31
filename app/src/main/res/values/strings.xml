@@ -58,4 +58,6 @@
     <string name="low">Low</string>
     <string name="medium">Medium</string>
     <string name="high">High</string>
+
+    <string name="risk_value">Risk: %s</string>
 </resources>

@@ -24,6 +24,7 @@ class ResultFragment : Fragment() {
         text_result.text = testInfo.getResultString(view.context)
         if (testInfo.error == ErrorType.NO_ERROR) {
             text_unit.text = testInfo.unit
+            text_risk.text = getString(R.string.risk_value, testInfo.getRisk(context!!))
         }
         super.onViewCreated(view, savedInstanceState)
     }
