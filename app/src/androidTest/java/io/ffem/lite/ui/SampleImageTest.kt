@@ -21,7 +21,9 @@ import io.ffem.lite.common.TestUtil.checkResult
 import io.ffem.lite.common.TestUtil.childAtPosition
 import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.ErrorType.*
+import io.ffem.lite.model.RiskType
 import io.ffem.lite.model.toLocalString
+import io.ffem.lite.model.toQuantityLocalString
 import io.ffem.lite.util.PreferencesUtil
 import org.hamcrest.Matchers
 import org.hamcrest.Matchers.allOf
@@ -70,17 +72,21 @@ class SampleImageTest {
 
     @Test
     fun image_000_Chlorine_0_Point_5() {
-        startTest(residualChlorine, 0, "0.5")
+        startTest(residualChlorine, 0, "0.5", risk = RiskType.LOW)
     }
 
     @Test
     fun image_001_Chlorine_0() {
-        startTest(residualChlorine, 1, "0.0")
+        startTest(residualChlorine, 1, "0.0", risk = RiskType.MEDIUM)
     }
 
     @Test
     fun image_002_InvalidBarcode() {
-        startTest(residualChlorine, 2, expectedScanError = R.string.invalid_barcode)
+        startTest(
+            residualChlorine,
+            2,
+            expectedScanError = R.string.invalid_barcode
+        )
     }
 
     @Test
@@ -95,7 +101,11 @@ class SampleImageTest {
 
     @Test
     fun image_005_Waiting() {
-        startTest(residualChlorine, 5, expectedScanError = R.string.place_color_card)
+        startTest(
+            residualChlorine,
+            5,
+            expectedScanError = R.string.place_color_card
+        )
     }
 
     @Test
@@ -105,77 +115,117 @@ class SampleImageTest {
 
     @Test
     fun image_007_Chlorine_Point_5() {
-        startTest(residualChlorine, 7, "0.5")
+        startTest(residualChlorine, 7, "0.5", risk = RiskType.LOW)
     }
 
     @Test
     fun image_008_Chlorine_1_Point_5() {
-        startTest(residualChlorine, 8, "1.5")
+        startTest(residualChlorine, 8, "1.5", risk = RiskType.HIGH)
     }
 
     @Test
     fun image_009_BadLight() {
-        startTest(residualChlorine, 9, expectedScanError = R.string.place_color_card)
+        startTest(
+            residualChlorine,
+            9,
+            expectedScanError = R.string.place_color_card
+        )
     }
 
     @Test
     fun image_010_Chlorine_CalibrationError() {
-        startTest(residualChlorine, 10, expectedResultError = CALIBRATION_ERROR)
+        startTest(
+            residualChlorine,
+            10,
+            expectedResultError = CALIBRATION_ERROR
+        )
     }
 
     @Test
     fun image_011_Tilted() {
-        startTest(residualChlorine, 11, expectedScanError = R.string.correct_camera_tilt)
+        startTest(
+            residualChlorine,
+            11,
+            expectedScanError = R.string.correct_camera_tilt
+        )
     }
 
     @Test
     fun image_012_Waiting() {
-        startTest(residualChlorine, 12, expectedScanError = R.string.place_color_card)
+        startTest(
+            residualChlorine,
+            12,
+            expectedScanError = R.string.place_color_card
+        )
     }
 
     @Test
     fun image_013_Waiting() {
-        startTest(residualChlorine, 13, expectedScanError = R.string.place_color_card)
+        startTest(
+            residualChlorine,
+            13,
+            expectedScanError = R.string.place_color_card
+        )
     }
 
     @Test
     fun image_014_pH_6_Point_5() {
-        startTest(pH, 14, "6.5")
+        startTest(pH, 14, "6.5", risk = RiskType.LOW)
     }
 
     @Test
     fun image_015_Chlorine_4_Point_3() {
-        startTest(residualChlorine, 15, "0.43")
+        startTest(residualChlorine, 15, "0.43", risk = RiskType.LOW)
     }
 
     @Test
     fun image_016_Chlorine_CalibrationError() {
-        startTest(residualChlorine, 16, expectedResultError = CALIBRATION_ERROR)
+        startTest(
+            residualChlorine,
+            16,
+            expectedResultError = CALIBRATION_ERROR
+        )
     }
 
     @Test
     fun image_017_BadLighting() {
-        startTest(residualChlorine, 17, expectedScanError = R.string.place_color_card)
+        startTest(
+            residualChlorine,
+            17,
+            expectedScanError = R.string.place_color_card
+        )
     }
 
     @Test
     fun image_018_Waiting() {
-        startTest(residualChlorine, 18, expectedScanError = R.string.place_color_card)
+        startTest(
+            residualChlorine,
+            18,
+            expectedScanError = R.string.place_color_card
+        )
     }
 
     @Test
     fun image_019_Chlorine_3_Point_0() {
-        startTest(residualChlorine, 19, "3.0")
+        startTest(residualChlorine, 19, "3.0", risk = RiskType.HIGH)
     }
 
     @Test
     fun image_020_Waiting() {
-        startTest(residualChlorine, 20, expectedScanError = R.string.place_color_card)
+        startTest(
+            residualChlorine,
+            20,
+            expectedScanError = R.string.place_color_card
+        )
     }
 
     @Test
     fun image_021_Waiting() {
-        startTest(residualChlorine, 21, expectedScanError = R.string.place_color_card)
+        startTest(
+            residualChlorine,
+            21,
+            expectedScanError = R.string.place_color_card
+        )
     }
 
     @Test
@@ -198,7 +248,8 @@ class SampleImageTest {
         imageNumber: Int,
         expectedResult: String = "",
         expectedResultError: ErrorType = NO_ERROR,
-        expectedScanError: Int = -1
+        expectedScanError: Int = -1,
+        risk: RiskType = RiskType.LOW
     ) {
 
         PreferencesUtil.setString(
@@ -237,6 +288,15 @@ class SampleImageTest {
                 } else {
                     onView(allOf(withId(R.id.text_unit), withText("mg/l")))
                         .check(matches(isDisplayed()))
+                    if (name == residualChlorine) {
+                        onView(withText("Quantity: " + risk.toQuantityLocalString(mActivityTestRule.activity))).check(
+                            matches(isDisplayed())
+                        )
+                    } else {
+                        onView(withText("Risk: " + risk.toLocalString(mActivityTestRule.activity))).check(
+                            matches(isDisplayed())
+                        )
+                    }
                 }
             }
 
