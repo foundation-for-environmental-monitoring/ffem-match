@@ -6,7 +6,8 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
-import com.google.gson.Gson
+import com.google.gson.*
+import com.google.gson.reflect.TypeToken
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.model.CalibrationValue
@@ -15,6 +16,7 @@ import io.ffem.lite.model.TestInfo
 import io.ffem.lite.preference.isDiagnosticMode
 import io.ffem.lite.util.FileUtil
 import timber.log.Timber
+import java.lang.reflect.Type
 
 class App : BaseApplication() {
 
@@ -116,11 +118,31 @@ class App : BaseApplication() {
             context.startActivity(i)
         }
 
+        private val gson: Gson =
+            GsonBuilder().registerTypeAdapter(object :
+                TypeToken<MutableList<CalibrationValue>>() {}.type, CalibrationValuesDeserializer())
+                .create()
+
+        // Append a reversed list of calibration point values to the calibration values list
+        // to represent the colors on the right side of color card
+        internal class CalibrationValuesDeserializer : JsonDeserializer<List<CalibrationValue>> {
+            override fun deserialize(
+                json: JsonElement?, typeOfT: Type?, context: JsonDeserializationContext?
+            ): List<CalibrationValue> {
+                val values = ArrayList<CalibrationValue>()
+                json!!.asJsonArray.mapTo(values) {
+                    CalibrationValue(value = it.asJsonObject.get("value").asFloat)
+                }
+                values.addAll(values.reversed().map { CalibrationValue(value = it.value) })
+                return values
+            }
+        }
+
         fun getTestName(id: String): String {
             if (!::testConfig.isInitialized) {
                 val input = app.resources.openRawResource(R.raw.calibration)
                 val content = FileUtil.readTextFile(input)
-                testConfig = Gson().fromJson(content, TestConfig::class.java)
+                testConfig = gson.fromJson(content, TestConfig::class.java)
             }
 
             var testName = ""
@@ -137,7 +159,7 @@ class App : BaseApplication() {
             if (!::testConfig.isInitialized) {
                 val input = app.resources.openRawResource(R.raw.calibration)
                 val content = FileUtil.readTextFile(input)
-                testConfig = Gson().fromJson(content, TestConfig::class.java)
+                testConfig = gson.fromJson(content, TestConfig::class.java)
             }
 
             for (test in testConfig.tests) {
@@ -152,7 +174,7 @@ class App : BaseApplication() {
             if (!::testConfig.isInitialized) {
                 val input = app.resources.openRawResource(R.raw.calibration)
                 val content = FileUtil.readTextFile(input)
-                testConfig = Gson().fromJson(content, TestConfig::class.java)
+                testConfig = gson.fromJson(content, TestConfig::class.java)
             }
 
             var calibration: List<CalibrationValue> = testConfig.tests[0].values

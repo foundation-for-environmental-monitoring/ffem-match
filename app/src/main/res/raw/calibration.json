@@ -10,39 +10,45 @@
           "value": -1
         },
         {
-          "value": 0,
-          "risk": 0
+          "value": 0
         },
         {
           "value": 0.5
-        },
-        {
-          "value": 1.0,
-          "risk": 1
-        },
-        {
-          "value": 1.5
-        },
-        {
-          "value": 2
-        },
-        {
-          "value": 2
-        },
-        {
-          "value": 1.5
         },
         {
           "value": 1.0
         },
         {
-          "value": 0.5
+          "value": 1.5
         },
+        {
+          "value": 2
+        }
+      ]
+    },
+    {
+      "name": "Fluoride - High Range",
+      "type": "water",
+      "uuid": "93cec3c4-b3e4-4924-b722-b6cb9742737a",
+      "unit": "mg/l",
+      "values": [
         {
           "value": 0
         },
         {
-          "value": -1
+          "value": 1
+        },
+        {
+          "value": 2
+        },
+        {
+          "value": 3
+        },
+        {
+          "value": 4
+        },
+        {
+          "value": 5
         }
       ]
     },
@@ -71,27 +77,6 @@
         },
         {
           "value": 10
-        },
-        {
-          "value": 10
-        },
-        {
-          "value": 9
-        },
-        {
-          "value": 8
-        },
-        {
-          "value": 7
-        },
-        {
-          "value": 6
-        },
-        {
-          "value": 5
-        },
-        {
-          "value": 4
         }
       ]
     },
@@ -118,68 +103,6 @@
         },
         {
           "value": 2.5
-        },
-        {
-          "value": 2.5
-        },
-        {
-          "value": 2
-        },
-        {
-          "value": 1.5
-        },
-        {
-          "value": 1
-        },
-        {
-          "value": 0.5
-        },
-        {
-          "value": 0
-        }
-      ]
-    },
-    {
-      "name": "Fluoride - High Range",
-      "type": "water",
-      "uuid": "93cec3c4-b3e4-4924-b722-b6cb9742737a",
-      "unit": "mg/l",
-      "values": [
-        {
-          "value": 0
-        },
-        {
-          "value": 1
-        },
-        {
-          "value": 2
-        },
-        {
-          "value": 3
-        },
-        {
-          "value": 4
-        },
-        {
-          "value": 5
-        },
-        {
-          "value": 5
-        },
-        {
-          "value": 4
-        },
-        {
-          "value": 3
-        },
-        {
-          "value": 2
-        },
-        {
-          "value": 1
-        },
-        {
-          "value": 0
         }
       ]
     }
