@@ -24,3 +24,12 @@ fun RiskType.toLocalString(context: Context): String {
         )
     return context.getString(resourceId)
 }
+
+fun RiskType.toQuantityLocalString(context: Context): String {
+    val resourceId =
+        context.resources.getIdentifier(
+            this.toString().toLowerCase(Locale.ROOT) + "_qty",
+            "string", context.packageName
+        )
+    return context.getString(resourceId)
+}

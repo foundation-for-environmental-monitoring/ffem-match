@@ -10,6 +10,8 @@ data class TestInfo(
     var type: String? = null,
     var uuid: String? = null,
     var unit: String? = null,
+    var riskAsQty: Boolean = false,
+    var risks: List<RiskValue> = ArrayList(),
     var values: List<CalibrationValue> = ArrayList(),
     var result: Double = -1.0,
     var error: ErrorType = ErrorType.NO_ERROR,
@@ -25,25 +27,23 @@ data class TestInfo(
     }
 
     fun getRisk(context: Context): String {
-        var riskValue = RiskType.LOW
-        val count = values.size / 2
+        var riskType = RiskType.HIGH
 
         // Evaluate the risk level based on the result
-        if (result >= values[count].value + 1) {
-            riskValue = RiskType.HIGH
-        } else {
-            for (i in 0 until count) {
-                val calibrationValue = values[i]
-                if (result >= calibrationValue.value) {
-                    if (calibrationValue.risk != null) {
-                        riskValue = calibrationValue.risk!!
-                    }
-                } else {
-                    break
+        for (element in risks) {
+            if (result >= element.value) {
+                if (element.risk != null) {
+                    riskType = element.risk!!
                 }
+            } else {
+                break
             }
         }
 
-        return riskValue.toLocalString(context)
+        return if (riskAsQty) {
+            riskType.toQuantityLocalString(context)
+        } else {
+            riskType.toLocalString(context)
+        }
     }
 }

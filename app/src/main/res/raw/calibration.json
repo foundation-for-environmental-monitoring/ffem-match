@@ -138,6 +138,7 @@
       "type": "water",
       "uuid": "f1d64b11-64c4-4a34-806e-ad0d47bcc96b",
       "unit": "mg/l",
+      "riskAsQty": true,
       "risks": [
         {
           "value": 0,

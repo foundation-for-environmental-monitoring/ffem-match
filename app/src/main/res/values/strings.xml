@@ -60,4 +60,10 @@
     <string name="high">High</string>
 
     <string name="risk_value">Risk: %s</string>
+
+    <string name="low_qty">Sufficient</string>
+    <string name="medium_qty">Insufficient</string>
+    <string name="high_qty">Too high</string>
+
+    <string name="risk_qty_value">Quantity: %s</string>
 </resources>
