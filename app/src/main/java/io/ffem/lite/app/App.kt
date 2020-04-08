@@ -131,7 +131,7 @@ class App : BaseApplication() {
             ): List<CalibrationValue> {
                 val values = ArrayList<CalibrationValue>()
                 json!!.asJsonArray.mapTo(values) {
-                    CalibrationValue(value = it.asJsonObject.get("value").asFloat)
+                    CalibrationValue(value = it.asJsonObject.get("value").asDouble)
                 }
                 values.addAll(values.reversed().map { CalibrationValue(value = it.value) })
                 return values

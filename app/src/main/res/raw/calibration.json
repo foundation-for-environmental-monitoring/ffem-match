@@ -5,6 +5,20 @@
       "type": "water",
       "uuid": "f0f3c1dd-89af-49f1-83e7-bcc31cb61159",
       "unit": "mg/l",
+      "risks": [
+        {
+          "value": 0,
+          "risk": 0
+        },
+        {
+          "value": 1,
+          "risk": 1
+        },
+        {
+          "value": 2.01,
+          "risk": 2
+        }
+      ],
       "values": [
         {
           "value": -1
@@ -31,6 +45,20 @@
       "type": "water",
       "uuid": "93cec3c4-b3e4-4924-b722-b6cb9742737a",
       "unit": "mg/l",
+      "risks": [
+        {
+          "value": 0,
+          "risk": 0
+        },
+        {
+          "value": 1,
+          "risk": 1
+        },
+        {
+          "value": 2.01,
+          "risk": 2
+        }
+      ],
       "values": [
         {
           "value": 0
@@ -56,6 +84,31 @@
       "name": "pH",
       "type": "water",
       "uuid": "ff96e965-13a3-4507-9edf-7aa7fc084354",
+      "risks": [
+        {
+          "value": 0,
+          "risk": 2
+        },
+        {
+          "value": 6,
+          "risk": 1
+        },
+        {
+          "value": 6.5,
+          "risk": 0
+        },
+        {
+          "value": 7
+        },
+        {
+          "value": 8.5,
+          "risk": 1
+        },
+        {
+          "value": 9,
+          "risk": 2
+        }
+      ],
       "values": [
         {
           "value": 4
@@ -85,6 +138,20 @@
       "type": "water",
       "uuid": "f1d64b11-64c4-4a34-806e-ad0d47bcc96b",
       "unit": "mg/l",
+      "risks": [
+        {
+          "value": 0,
+          "risk": 1
+        },
+        {
+          "value": 0.2,
+          "risk": 0
+        },
+        {
+          "value": 0.81,
+          "risk": 2
+        }
+      ],
       "values": [
         {
           "value": 0

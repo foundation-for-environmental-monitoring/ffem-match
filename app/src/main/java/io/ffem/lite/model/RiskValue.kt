@@ -4,7 +4,7 @@ import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class CalibrationValue(
+data class RiskValue(
     var value: Double = 0.0,
-    var color: Int = 0
+    var risk: RiskType? = null
 ) : Parcelable

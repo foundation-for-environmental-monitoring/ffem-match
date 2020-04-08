@@ -704,7 +704,7 @@ object ColorUtil {
         return pixel.red < 90 || pixel.green < 90
     }
 
-    private fun getCalibrationColor(pointValue: Float, calibration: List<CalibrationValue>): Int {
+    private fun getCalibrationColor(pointValue: Double, calibration: List<CalibrationValue>): Int {
         var red = 0
         var green = 0
         var blue = 0
