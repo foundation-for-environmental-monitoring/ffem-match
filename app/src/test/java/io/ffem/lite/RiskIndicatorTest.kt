@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Context
 import android.os.Build
 import io.ffem.lite.app.App.Companion.getTestInfo
+import io.ffem.lite.model.RiskType
+import io.ffem.lite.model.RiskType.*
 import io.ffem.lite.model.TestInfo
 import io.ffem.lite.ui.ResultListActivity
 import org.junit.Assert
@@ -19,48 +21,170 @@ import org.robolectric.annotation.Config
 class RiskIndicatorTest {
 
     @Test
-    fun testRiskIndicatorForFluoride() {
+    fun fluorideRiskIndicator() {
 
         val testInfo = getTestInfo(FLUORIDE_ID)!!
 
-        assertLowRisk(testInfo, 0.0)
-
-        assertHighRisk(testInfo, 3.0)
-
-        assertMediumRisk(testInfo, 2.0)
-
-        assertLowRisk(testInfo, 0.9)
-
-        assertMediumRisk(testInfo, 2.99)
-
-        assertLowRisk(testInfo, 0.99)
-
-        assertMediumRisk(testInfo, 1.00)
-
-        assertLowRisk(testInfo, 0.5)
-
-        assertMediumRisk(testInfo, 1.1)
-
-        assertHighRisk(testInfo, 4.1)
-
-        assertMediumRisk(testInfo, 1.5)
-
-        assertMediumRisk(testInfo, 1.99)
+        assertFluorideRisk(testInfo)
     }
 
-    private fun assertLowRisk(testInfo: TestInfo, result: Double) {
-        testInfo.result = result
-        Assert.assertEquals(low, testInfo.getRisk(context))
+    @Test
+    fun fluorideHighRangeRiskIndicator() {
+
+        val testInfo = getTestInfo(FLUORIDE_HIGH_RANGE_ID)!!
+
+        assertFluorideRisk(testInfo)
     }
 
-    private fun assertMediumRisk(testInfo: TestInfo, result: Double) {
-        testInfo.result = result
-        Assert.assertEquals(medium, testInfo.getRisk(context))
+    private fun assertFluorideRisk(testInfo: TestInfo) {
+
+        Assert.assertEquals(12, testInfo.values.size)
+
+        Assert.assertEquals(3, testInfo.risks.size)
+
+        assertRisk(testInfo, 0.0, LOW)
+
+        assertRisk(testInfo, 3.0, HIGH)
+
+        assertRisk(testInfo, 2.0, MEDIUM)
+
+        assertRisk(testInfo, 2.01, HIGH)
+
+        assertRisk(testInfo, 2.009, MEDIUM)
+
+        assertRisk(testInfo, 0.9, LOW)
+
+        assertRisk(testInfo, 2.99, HIGH)
+
+        assertRisk(testInfo, 0.99, LOW)
+
+        assertRisk(testInfo, 1.00, MEDIUM)
+
+        assertRisk(testInfo, 0.5, LOW)
+
+        assertRisk(testInfo, 1.1, MEDIUM)
+
+        assertRisk(testInfo, 4.1, HIGH)
+
+        assertRisk(testInfo, 1.5, MEDIUM)
+
+        assertRisk(testInfo, 1.99, MEDIUM)
     }
 
-    private fun assertHighRisk(testInfo: TestInfo, result: Double) {
+
+    @Test
+    fun residualChlorineRiskIndicator() {
+
+        val testInfo = getTestInfo(RESIDUAL_CHLORINE_ID)!!
+
+        Assert.assertEquals(12, testInfo.values.size)
+
+        Assert.assertEquals(3, testInfo.risks.size)
+
+        assertRisk(testInfo, 0.0, MEDIUM)
+
+        assertRisk(testInfo, 3.0, HIGH)
+
+        assertRisk(testInfo, 2.0, HIGH)
+
+        assertRisk(testInfo, 0.8, LOW)
+
+        assertRisk(testInfo, 0.801, LOW)
+
+        assertRisk(testInfo, 0.81, HIGH)
+
+        assertRisk(testInfo, 0.9, HIGH)
+
+        assertRisk(testInfo, 2.99, HIGH)
+
+        assertRisk(testInfo, 0.99, HIGH)
+
+        assertRisk(testInfo, 1.00, HIGH)
+
+        assertRisk(testInfo, 0.5, LOW)
+
+        assertRisk(testInfo, 1.1, HIGH)
+
+        assertRisk(testInfo, 4.1, HIGH)
+
+        assertRisk(testInfo, 1.5, HIGH)
+
+        assertRisk(testInfo, 1.99, HIGH)
+    }
+
+    @Test
+    fun pHRiskIndicator() {
+
+        val testInfo = getTestInfo(PH_ID)!!
+
+        Assert.assertEquals(14, testInfo.values.size)
+
+        Assert.assertEquals(6, testInfo.risks.size)
+
+        assertRisk(testInfo, 0.0, HIGH)
+
+        assertRisk(testInfo, 3.0, HIGH)
+
+        assertRisk(testInfo, 2.0, HIGH)
+
+        assertRisk(testInfo, 0.9, HIGH)
+
+        assertRisk(testInfo, 6.3, MEDIUM)
+
+        assertRisk(testInfo, 6.5, LOW)
+
+        assertRisk(testInfo, 6.6, LOW)
+
+        assertRisk(testInfo, 8.6, MEDIUM)
+
+        assertRisk(testInfo, 7.0, LOW)
+
+        assertRisk(testInfo, 8.5, MEDIUM)
+
+        assertRisk(testInfo, 9.0, HIGH)
+
+        assertRisk(testInfo, 10.5, HIGH)
+
+        assertRisk(testInfo, 5.8, HIGH)
+    }
+
+    private fun assertRisk(testInfo: TestInfo, result: Double, risk: RiskType) {
         testInfo.result = result
-        Assert.assertEquals(high, testInfo.getRisk(context))
+        when (risk) {
+            LOW -> {
+                if (testInfo.riskAsQty) {
+                    Assert.assertEquals(
+                        context.getString(R.string.low_qty),
+                        testInfo.getRisk(context)
+                    )
+                } else {
+                    Assert.assertEquals(context.getString(R.string.low), testInfo.getRisk(context))
+                }
+            }
+            MEDIUM -> {
+                if (testInfo.riskAsQty) {
+                    Assert.assertEquals(
+                        context.getString(R.string.medium_qty),
+                        testInfo.getRisk(context)
+                    )
+                } else {
+                    Assert.assertEquals(
+                        context.getString(R.string.medium),
+                        testInfo.getRisk(context)
+                    )
+                }
+            }
+            else -> {
+                if (testInfo.riskAsQty) {
+                    Assert.assertEquals(
+                        context.getString(R.string.high_qty),
+                        testInfo.getRisk(context)
+                    )
+                } else {
+                    Assert.assertEquals(context.getString(R.string.high), testInfo.getRisk(context))
+                }
+            }
+        }
     }
 
     companion object {
@@ -68,10 +192,9 @@ class RiskIndicatorTest {
             Robolectric.buildActivity(ResultListActivity::class.java).create().start()
         val context: Context = (controller.get() as Activity)
 
-        val low = context.getString(R.string.low)
-        val medium = context.getString(R.string.medium)
-        val high = context.getString(R.string.high)
-
         const val FLUORIDE_ID = "f0f3c1dd-89af-49f1-83e7-bcc31cb61159"
+        const val FLUORIDE_HIGH_RANGE_ID = "93cec3c4-b3e4-4924-b722-b6cb9742737a"
+        const val PH_ID = "ff96e965-13a3-4507-9edf-7aa7fc084354"
+        const val RESIDUAL_CHLORINE_ID = "f1d64b11-64c4-4a34-806e-ad0d47bcc96b"
     }
 }
