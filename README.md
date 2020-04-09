@@ -1,2 +1,2 @@
 # ffem-lite
-Smartphone-based water quality testing using machine learning.
+Smartphone-based water quality testing using a colour card.
