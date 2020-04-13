@@ -1,7 +1,6 @@
 package io.ffem.lite.ui
 
 import android.graphics.drawable.ColorDrawable
-import android.os.Build
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.WindowManager
@@ -25,9 +24,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
         setTheme(R.style.AppTheme_Main)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        }
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
 
         val typedValue = TypedValue()
         theme.resolveAttribute(android.R.attr.windowBackground, typedValue, true)
@@ -88,9 +85,7 @@ abstract class BaseActivity : AppCompatActivity() {
                     )
                 )
             }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                window.statusBarColor = ContextCompat.getColor(this, R.color.diagnostic_status)
-            }
+            window.statusBarColor = ContextCompat.getColor(this, R.color.diagnostic_status)
         } else {
 
             val typedValue = TypedValue()
@@ -101,13 +96,10 @@ abstract class BaseActivity : AppCompatActivity() {
                 supportActionBar!!.setBackgroundDrawable(ColorDrawable(color))
             }
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            theme.resolveAttribute(R.attr.colorPrimaryDark, typedValue, true)
+            color = typedValue.data
 
-                theme.resolveAttribute(R.attr.colorPrimaryDark, typedValue, true)
-                color = typedValue.data
-
-                window.statusBarColor = color
-            }
+            window.statusBarColor = color
         }
     }
 }
