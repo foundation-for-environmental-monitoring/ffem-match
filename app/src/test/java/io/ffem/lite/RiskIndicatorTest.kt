@@ -119,7 +119,7 @@ class RiskIndicatorTest {
 
         Assert.assertEquals(14, testInfo.values.size)
 
-        Assert.assertEquals(6, testInfo.risks.size)
+        Assert.assertEquals(5, testInfo.risks.size)
 
         assertRisk(testInfo, 0.0, HIGH)
 
@@ -149,7 +149,7 @@ class RiskIndicatorTest {
     }
 
     private fun assertRisk(testInfo: TestInfo, result: Double, risk: RiskType) {
-        testInfo.result = result
+        testInfo.resultDetail.result = result
         when (risk) {
             LOW -> {
                 if (testInfo.riskAsQty) {
