@@ -72,21 +72,17 @@ class SampleImageTest {
 
     @Test
     fun image_000_Chlorine_0_Point_5() {
-        startTest(residualChlorine, 0, "0.5", risk = RiskType.LOW)
+        startTest(residualChlorine, 0, 0.5, 0.25, risk = RiskType.LOW)
     }
 
     @Test
     fun image_001_Chlorine_0() {
-        startTest(residualChlorine, 1, "0.0", risk = RiskType.MEDIUM)
+        startTest(residualChlorine, 1, 0.0, 0.3, risk = RiskType.MEDIUM)
     }
 
     @Test
     fun image_002_InvalidBarcode() {
-        startTest(
-            residualChlorine,
-            2,
-            expectedScanError = R.string.invalid_barcode
-        )
+        startTest(residualChlorine, 2, expectedScanError = R.string.invalid_barcode)
     }
 
     @Test
@@ -115,12 +111,12 @@ class SampleImageTest {
 
     @Test
     fun image_007_Chlorine_Point_5() {
-        startTest(residualChlorine, 7, "0.5", risk = RiskType.LOW)
+        startTest(residualChlorine, 7, 0.5, 0.25, risk = RiskType.LOW)
     }
 
     @Test
     fun image_008_Chlorine_1_Point_5() {
-        startTest(residualChlorine, 8, "1.5", risk = RiskType.HIGH)
+        startTest(residualChlorine, 8, 1.5, 0.25, risk = RiskType.HIGH)
     }
 
     @Test
@@ -134,11 +130,7 @@ class SampleImageTest {
 
     @Test
     fun image_010_Chlorine_CalibrationError() {
-        startTest(
-            residualChlorine,
-            10,
-            expectedResultError = CALIBRATION_ERROR
-        )
+        startTest(residualChlorine, 10, expectedResultError = CALIBRATION_ERROR)
     }
 
     @Test
@@ -170,21 +162,17 @@ class SampleImageTest {
 
     @Test
     fun image_014_pH_6_Point_5() {
-        startTest(pH, 14, "6.5", risk = RiskType.LOW)
+        startTest(pH, 14, 6.4, 0.5, risk = RiskType.MEDIUM)
     }
 
     @Test
     fun image_015_Chlorine_4_Point_3() {
-        startTest(residualChlorine, 15, "0.43", risk = RiskType.LOW)
+        startTest(residualChlorine, 15, 0.43, 0.25, risk = RiskType.LOW)
     }
 
     @Test
     fun image_016_Chlorine_CalibrationError() {
-        startTest(
-            residualChlorine,
-            16,
-            expectedResultError = CALIBRATION_ERROR
-        )
+        startTest(residualChlorine, 16, expectedResultError = CALIBRATION_ERROR)
     }
 
     @Test
@@ -207,7 +195,7 @@ class SampleImageTest {
 
     @Test
     fun image_019_Chlorine_3_Point_0() {
-        startTest(residualChlorine, 19, "3.0", risk = RiskType.HIGH)
+        startTest(residualChlorine, 19, 3.0, 0.28, risk = RiskType.HIGH)
     }
 
     @Test
@@ -246,7 +234,8 @@ class SampleImageTest {
     private fun startTest(
         name: String,
         imageNumber: Int,
-        expectedResult: String = "",
+        expectedResult: Double = -1.0,
+        expectedMarginOfError: Double = -1.0,
         expectedResultError: ErrorType = NO_ERROR,
         expectedScanError: Int = -1,
         risk: RiskType = RiskType.LOW
@@ -280,27 +269,48 @@ class SampleImageTest {
 
             onView(withText(name)).check(matches(isDisplayed()))
 
-            if (name == pH) {
-                onView(withId(R.id.text_unit)).check(matches(not(isDisplayed())))
+            if (expectedResultError > NO_ERROR) {
+                onView(withText(expectedResultError.toLocalString(context))).check(
+                    matches(isDisplayed())
+                )
+                onView(withText(R.string.close)).perform(click())
             } else {
-                if (expectedResultError > NO_ERROR) {
+
+                onView(withText(name)).check(matches(isDisplayed()))
+
+                val resultTextView = onView(withId(R.id.text_result))
+                resultTextView.check(matches(checkResult(expectedResult)))
+
+                if (name == pH) {
                     onView(withId(R.id.text_unit)).check(matches(not(isDisplayed())))
                 } else {
                     onView(allOf(withId(R.id.text_unit), withText("mg/l")))
                         .check(matches(isDisplayed()))
-                    if (name == residualChlorine) {
-                        onView(withText("Quantity: " + risk.toQuantityLocalString(mActivityTestRule.activity))).check(
-                            matches(isDisplayed())
-                        )
-                    } else {
-                        onView(withText("Risk: " + risk.toLocalString(mActivityTestRule.activity))).check(
-                            matches(isDisplayed())
-                        )
-                    }
                 }
-            }
 
-            onView(withText(R.string.submitResult)).perform(click())
+                onView(
+                    allOf(
+                        withId(R.id.text_error_margin), withText(
+                            String.format
+                                (
+                                mActivityTestRule.activity.getString(R.string.margin_of_error),
+                                expectedMarginOfError
+                            )
+                        )
+                    )
+                ).check(matches(isDisplayed()))
+
+                if (name == residualChlorine) {
+                    onView(withText("Quantity: " + risk.toQuantityLocalString(mActivityTestRule.activity))).check(
+                        matches(isDisplayed())
+                    )
+                } else {
+                    onView(withText("Risk: " + risk.toLocalString(mActivityTestRule.activity))).check(
+                        matches(isDisplayed())
+                    )
+                }
+                onView(withText(R.string.submitResult)).perform(click())
+            }
 
             Thread.sleep(1000)
 
@@ -341,8 +351,7 @@ class SampleImageTest {
             SystemClock.sleep(3000)
 
             if (expectedResultError == NO_ERROR) {
-                val floatValue = expectedResult.toFloat()
-                textView.check(matches(checkResult(floatValue)))
+                textView.check(matches(checkResult(expectedResult)))
             } else {
                 val context = InstrumentationRegistry.getInstrumentation().targetContext
                 textView.check(matches(withText(expectedResultError.toLocalString(context))))
@@ -443,6 +452,7 @@ class SampleImageTest {
 
         @JvmStatic
         var initialized = false
+        lateinit var context: Context
 
         @JvmStatic
         @AfterClass
@@ -465,6 +475,7 @@ class SampleImageTest {
         @BeforeClass
         fun initialize() {
             BuildConfig.TEST_RUNNING.set(true)
+            context = InstrumentationRegistry.getInstrumentation().targetContext
         }
     }
 }

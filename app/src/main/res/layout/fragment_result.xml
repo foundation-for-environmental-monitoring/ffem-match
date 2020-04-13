@@ -30,12 +30,17 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:gravity="center"
+        android:maxLines="1"
         android:paddingStart="@dimen/activity_horizontal_margin"
         android:paddingEnd="@dimen/activity_horizontal_margin"
         android:paddingBottom="3dp"
         android:textIsSelectable="false"
         android:textSize="32sp"
-        tools:text="Fluoride" />
+        app:autoSizeMaxTextSize="32sp"
+        app:autoSizeMinTextSize="15sp"
+        app:autoSizeStepGranularity="1sp"
+        app:autoSizeTextType="uniform"
+        tools:text="Fluoride - High Range" />
 
     <TextView
         android:id="@+id/text_result"
@@ -49,10 +54,6 @@
         android:maxLines="1"
         android:textIsSelectable="false"
         android:textSize="60sp"
-        app:autoSizeMaxTextSize="60sp"
-        app:autoSizeMinTextSize="10sp"
-        app:autoSizeStepGranularity="1sp"
-        app:autoSizeTextType="uniform"
         tools:text="20473.59" />
 
     <TextView
@@ -91,6 +92,7 @@
         tools:text="Margin of error: \u00B1 0.5" />
 
     <Button
+        android:id="@+id/button_submit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"

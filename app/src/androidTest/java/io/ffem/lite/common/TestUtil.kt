@@ -28,12 +28,11 @@ object TestUtil {
         }
     }
 
-    fun checkResult(value: Float): Matcher<View?>? {
+    fun checkResult(value: Double): Matcher<View?>? {
         return object : TypeSafeMatcher<View?>() {
             override fun matchesSafely(item: View?): Boolean {
                 if (item !is TextView) return false
-                val convertedValue =
-                    java.lang.Float.valueOf(item.text.toString())
+                val convertedValue = item.text.toString().toDouble()
                 val delta = abs(convertedValue - value)
                 return delta < 0.20f
             }

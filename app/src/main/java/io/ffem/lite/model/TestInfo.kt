@@ -52,7 +52,7 @@ data class TestInfo(
     fun getMarginOfError(): Double {
 
         val margin = max(
-            (resultDetail.distance + resultDetail.calibrationDistance) / 100,
+            (resultDetail.distance + resultDetail.calibrationDistance) / 200,
             (values[values.size / 2 - 1].value - values[values.size / 2 - 2].value) / 2
         )
 

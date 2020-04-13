@@ -1,5 +1,6 @@
 package io.ffem.lite.ui
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -22,6 +23,12 @@ class ResultFragment : Fragment() {
         val testInfo = ResultFragmentArgs.fromBundle(arguments!!).testInfo
         text_title.text = testInfo.name
         text_result.text = testInfo.getResultString(view.context)
+        if (testInfo.resultDetail.result < 0) {
+            text_result.textSize = 17f
+            text_result.setTextColor(Color.RED)
+            button_submit.setText(R.string.close)
+        }
+
         if (testInfo.error == ErrorType.NO_ERROR) {
             text_unit.text = testInfo.unit
             if (testInfo.riskAsQty) {
