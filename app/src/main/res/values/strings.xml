@@ -66,4 +66,6 @@
     <string name="high_qty">Too high</string>
 
     <string name="risk_qty_value">Quantity: %s</string>
+    <string name="margin_of_error">Margin of error: ± %.2f</string>
+
 </resources>

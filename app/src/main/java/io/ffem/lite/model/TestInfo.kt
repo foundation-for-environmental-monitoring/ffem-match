@@ -3,6 +3,8 @@ package io.ffem.lite.model
 import android.content.Context
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
+import kotlin.math.max
+import kotlin.math.round
 
 @Parcelize
 data class TestInfo(
@@ -13,16 +15,16 @@ data class TestInfo(
     var riskAsQty: Boolean = false,
     var risks: List<RiskValue> = ArrayList(),
     var values: List<CalibrationValue> = ArrayList(),
-    var result: Double = -1.0,
+    var resultDetail: ResultDetail = ResultDetail(),
     var error: ErrorType = ErrorType.NO_ERROR,
     var fileName: String = ""
 ) : Parcelable {
 
     fun getResultString(context: Context): String {
-        return if (result < 0) {
+        return if (resultDetail.result < 0) {
             error.toLocalString(context)
         } else {
-            result.toString()
+            resultDetail.result.toString()
         }
     }
 
@@ -31,7 +33,7 @@ data class TestInfo(
 
         // Evaluate the risk level based on the result
         for (element in risks) {
-            if (result >= element.value) {
+            if (resultDetail.result >= element.value) {
                 if (element.risk != null) {
                     riskType = element.risk!!
                 }
@@ -45,5 +47,15 @@ data class TestInfo(
         } else {
             riskType.toLocalString(context)
         }
+    }
+
+    fun getMarginOfError(): Double {
+
+        val margin = max(
+            (resultDetail.distance + resultDetail.calibrationDistance) / 100,
+            (values[values.size / 2 - 1].value - values[values.size / 2 - 2].value) / 2
+        )
+
+        return (round(margin * 100) / 100.0)
     }
 }

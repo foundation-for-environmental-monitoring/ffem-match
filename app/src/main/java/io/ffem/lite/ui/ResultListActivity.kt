@@ -106,7 +106,7 @@ class ResultListActivity : BaseActivity() {
             db.resultDao().updateResult(
                 testInfo!!.fileName,
                 testInfo.name!!,
-                testInfo.result,
+                testInfo.resultDetail.result,
                 testInfo.error.ordinal
             )
 
@@ -183,11 +183,7 @@ class ResultListActivity : BaseActivity() {
                     intent.data = marketUrl
                     intent.setPackage("com.android.vending")
                     startActivity(intent)
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        finishAndRemoveTask()
-                    } else {
-                        finish()
-                    }
+                    finishAndRemoveTask()
                 }
 
                 val alertDialog = builder.create()

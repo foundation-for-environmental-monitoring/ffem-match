@@ -392,7 +392,7 @@ object ColorUtil {
             croppedBitmap2.recycle()
 
             var error = NO_ERROR
-            var resultDetail = ResultDetail(-1.0, 0)
+            var resultDetail = ResultDetail()
             try {
                 resultDetail = extractColors(croppedBitmap, rightBarcode.displayValue!!)
                 if (resultDetail.result < 0) {
@@ -420,12 +420,11 @@ object ColorUtil {
         testInfo: TestInfo? = null,
         error: ErrorType = NO_ERROR,
         bitmap: Bitmap? = null,
-        resultDetail: ResultDetail = ResultDetail((-1).toDouble(), 0)
+        resultDetail: ResultDetail = ResultDetail()
     ) {
         val intent = Intent(App.LOCAL_RESULT_EVENT)
 
-        val result = (round(resultDetail.result * 100) / 100.0)
-        testInfo!!.result = result
+        testInfo!!.resultDetail = resultDetail
         testInfo.error = error
 
         val db = AppDatabase.getDatabase(context)
@@ -473,12 +472,12 @@ object ColorUtil {
         db.resultDao().updateResult(
             testInfo.fileName,
             testInfo.name!!,
-            testInfo.result,
+            testInfo.resultDetail.result,
             testInfo.error.ordinal
         )
 
         intent.putExtra(App.TEST_INFO_KEY, testInfo)
-        intent.putExtra(TEST_VALUE_KEY, result)
+        intent.putExtra(TEST_VALUE_KEY, resultDetail.result)
 
         val localBroadcastManager = LocalBroadcastManager.getInstance(context)
         localBroadcastManager.sendBroadcast(intent)
@@ -559,15 +558,10 @@ object ColorUtil {
                 break
             }
 
-            swatches.add(
-                Swatch(
-                    cal.value.toDouble(),
-                    getCalibrationColor(cal.value, calibration)
-                )
-            )
+            swatches.add(getCalibrationColor(cal.value, calibration))
         }
 
-        return analyzeColor(swatches.size, colorInfo, generateGradient(swatches))
+        return analyzeColor(colorInfo, generateGradient(swatches))
     }
 
     fun isTilted(
@@ -704,7 +698,10 @@ object ColorUtil {
         return pixel.red < 90 || pixel.green < 90
     }
 
-    private fun getCalibrationColor(pointValue: Double, calibration: List<CalibrationValue>): Int {
+    private fun getCalibrationColor(
+        pointValue: Double,
+        calibration: List<CalibrationValue>
+    ): Swatch {
         var red = 0
         var green = 0
         var blue = 0
@@ -719,12 +716,14 @@ object ColorUtil {
             }
         }
 
+        var distance = 0.0
         val maxAllowedDistance = getCalibrationColorDistanceTolerance()
         for (i in filteredCalibrations) {
             for (j in filteredCalibrations) {
                 if (getColorDistance(i.color, j.color) > maxAllowedDistance) {
                     throw Exception()
                 }
+                distance += getColorDistance(i.color, j.color)
             }
         }
 
@@ -735,8 +734,9 @@ object ColorUtil {
             blue += i.color.blue
         }
 
-        return Color.rgb(
-            red / count, green / count, blue / count
+        return Swatch(
+            pointValue, Color.rgb(red / count, green / count, blue / count),
+            distance / filteredCalibrations.size
         )
     }
 
@@ -806,14 +806,15 @@ object ColorUtil {
 
             for (j in 0 until steps) {
                 val color = getGradientColor(startColor, endColor, steps, j)
-                list.add(Swatch(startValue + j * increment, color))
+                list.add(Swatch(startValue + j * increment, color, swatches[i].distance))
             }
         }
 
         list.add(
             Swatch(
                 swatches[swatches.size - 1].value,
-                swatches[swatches.size - 1].color
+                swatches[swatches.size - 1].color,
+                swatches[swatches.size - 1].distance
             )
         )
 
@@ -846,7 +847,6 @@ object ColorUtil {
      */
     @Suppress("SameParameterValue")
     private fun analyzeColor(
-        steps: Int,
         photoColor: ColorInfo,
         swatches: List<Swatch>
     ): ResultDetail {
@@ -856,13 +856,18 @@ object ColorUtil {
             getNearestColorFromSwatches(photoColor.color, swatches)
 
         //set the result
-        val resultDetail = ResultDetail((-1).toDouble(), photoColor.color)
+        val resultDetail = ResultDetail(color = photoColor.color)
         if (colorCompareInfo.result > -1) {
-            resultDetail.result = colorCompareInfo.result
+            resultDetail.result = (round(colorCompareInfo.result * 100) / 100.0)
         }
-        resultDetail.calibrationSteps = steps
         resultDetail.matchedColor = colorCompareInfo.matchedColor
         resultDetail.distance = colorCompareInfo.distance
+
+        var calibrationDistance = 0.0
+        for (swatch in swatches) {
+            calibrationDistance += swatch.distance
+        }
+        resultDetail.calibrationDistance = calibrationDistance / swatches.size
 
         return resultDetail
     }

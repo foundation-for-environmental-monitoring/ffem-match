@@ -29,6 +29,8 @@ class ResultFragment : Fragment() {
             } else {
                 text_risk.text = getString(R.string.risk_value, testInfo.getRisk(context!!))
             }
+            text_error_margin.text =
+                String.format(getString(R.string.margin_of_error), testInfo.getMarginOfError())
         }
         super.onViewCreated(view, savedInstanceState)
     }

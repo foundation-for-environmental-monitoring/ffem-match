@@ -91,7 +91,7 @@ class BarcodeActivity : BaseActivity() {
     fun submitResult(@Suppress("UNUSED_PARAMETER") view: View) {
         if (testInfo != null) {
             val resultIntent = Intent()
-            resultIntent.putExtra(TEST_VALUE_KEY, testInfo!!.result)
+            resultIntent.putExtra(TEST_VALUE_KEY, testInfo!!.resultDetail.result)
             setResult(Activity.RESULT_OK, resultIntent)
         }
         finish()

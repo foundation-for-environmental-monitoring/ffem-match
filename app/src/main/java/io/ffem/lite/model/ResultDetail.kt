@@ -1,7 +1,13 @@
 package io.ffem.lite.model
 
-class ResultDetail(var result: Double, val color: Int) {
-    var matchedColor = 0
-    var distance = 0.0
-    var calibrationSteps = 0
-}
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
+class ResultDetail(
+    var result: Double = -1.0,
+    var distance: Double = 0.0,
+    var calibrationDistance: Double = 0.0,
+    val color: Int = 0,
+    var matchedColor: Int = 0
+) : Parcelable
