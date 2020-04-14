@@ -13,10 +13,14 @@ import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
+import androidx.test.uiautomator.By
+import androidx.test.uiautomator.UiDevice
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.app.AppDatabase
+import io.ffem.lite.common.TestHelper
 import io.ffem.lite.common.TestHelper.clearPreferences
+import io.ffem.lite.common.TestUtil
 import io.ffem.lite.common.TestUtil.checkResult
 import io.ffem.lite.common.TestUtil.childAtPosition
 import io.ffem.lite.model.ErrorType
@@ -34,10 +38,14 @@ import org.junit.runner.RunWith
 import org.junit.runners.MethodSorters
 import java.io.File
 
-const val pH = "pH"
-const val residualChlorine = "Residual Chlorine"
-const val fluoride: String = "Fluoride"
-const val fluorideHighRange: String = "Fluoride - High Range"
+const val TIME_DELAY = 9000L
+
+val fluoride = SampleImageTest.Companion.TestDetails("Fluoride", "Water Tests 1", 0)
+val fluorideHighRange =
+    SampleImageTest.Companion.TestDetails("Fluoride - High Range", "Water Tests 1", 1)
+val pH = SampleImageTest.Companion.TestDetails("pH", "Water Tests 2", 0)
+val residualChlorine =
+    SampleImageTest.Companion.TestDetails("Residual Chlorine", "Water Tests 2", 1)
 
 fun clearData(context: Context) {
     val db = AppDatabase.getDatabase(context)
@@ -68,6 +76,25 @@ class SampleImageTest {
             clearData(mActivityTestRule.activity)
             initialized = true
         }
+    }
+
+    private fun startTest(
+        testDetails: TestDetails,
+        imageNumber: Int,
+        expectedResult: Double = -1.0,
+        expectedMarginOfError: Double = -1.0,
+        expectedResultError: ErrorType = NO_ERROR,
+        expectedScanError: Int = -1,
+        risk: RiskType = RiskType.LOW
+    ) {
+        startInternalTest(
+            testDetails, imageNumber, expectedResult, expectedMarginOfError,
+            expectedResultError, expectedScanError, risk
+        )
+        startCollectIntegrationTest(
+            testDetails, imageNumber, expectedResult, expectedMarginOfError,
+            expectedResultError, expectedScanError, risk
+        )
     }
 
     @Test
@@ -231,8 +258,8 @@ class SampleImageTest {
 //        startTest(pH, 500, expectedScanError = R.string.place_color_card)
 //    }
 
-    private fun startTest(
-        name: String,
+    private fun startInternalTest(
+        testDetails: TestDetails,
         imageNumber: Int,
         expectedResult: Double = -1.0,
         expectedMarginOfError: Double = -1.0,
@@ -246,7 +273,7 @@ class SampleImageTest {
             R.string.testImageNumberKey, imageNumber.toString()
         )
 
-        Thread.sleep(2000)
+        SystemClock.sleep(2000)
 
         val floatingActionButton = onView(
             allOf(
@@ -265,9 +292,9 @@ class SampleImageTest {
 
         if (expectedScanError == -1) {
 
-            Thread.sleep(9000)
+            SystemClock.sleep(TIME_DELAY)
 
-            onView(withText(name)).check(matches(isDisplayed()))
+            onView(withText(testDetails.name)).check(matches(isDisplayed()))
 
             if (expectedResultError > NO_ERROR) {
                 onView(withText(expectedResultError.toLocalString(context))).check(
@@ -276,12 +303,12 @@ class SampleImageTest {
                 onView(withText(R.string.close)).perform(click())
             } else {
 
-                onView(withText(name)).check(matches(isDisplayed()))
+                onView(withText(testDetails.name)).check(matches(isDisplayed()))
 
                 val resultTextView = onView(withId(R.id.text_result))
                 resultTextView.check(matches(checkResult(expectedResult)))
 
-                if (name == pH) {
+                if (testDetails == pH) {
                     onView(withId(R.id.text_unit)).check(matches(not(isDisplayed())))
                 } else {
                     onView(allOf(withId(R.id.text_unit), withText("mg/l")))
@@ -304,7 +331,7 @@ class SampleImageTest {
                 marginOfErrorView.check(matches(checkResult(expectedMarginOfError)))
 
 
-                if (name == residualChlorine) {
+                if (testDetails == residualChlorine) {
                     onView(withText("Quantity: " + risk.toQuantityLocalString(mActivityTestRule.activity))).check(
                         matches(isDisplayed())
                     )
@@ -316,11 +343,11 @@ class SampleImageTest {
                 onView(withText(R.string.submitResult)).perform(click())
             }
 
-            Thread.sleep(1000)
+            SystemClock.sleep(1000)
 
             onView(
                 allOf(
-                    withId(R.id.text_title), withText("$name ($imageNumber)"),
+                    withId(R.id.text_title), withText("${testDetails.name} ($imageNumber)"),
                     childAtPosition(
                         allOf(
                             withId(R.id.layout),
@@ -333,7 +360,7 @@ class SampleImageTest {
                     ),
                     isDisplayed()
                 )
-            ).check(matches(withText("$name ($imageNumber)")))
+            ).check(matches(withText("${testDetails.name} ($imageNumber)")))
 
             val textView = onView(
                 allOf(
@@ -446,7 +473,83 @@ class SampleImageTest {
             appCompatImageButton.perform(click())
         } else {
 
-            Thread.sleep(9000)
+            SystemClock.sleep(TIME_DELAY)
+
+            onView(withText(expectedScanError)).check(matches(isDisplayed()))
+        }
+    }
+
+    private fun startCollectIntegrationTest(
+        testDetails: TestDetails,
+        imageNumber: Int,
+        expectedResult: Double = -1.0,
+        expectedMarginOfError: Double = -1.0,
+        expectedResultError: ErrorType = NO_ERROR,
+        expectedScanError: Int = -1,
+        risk: RiskType = RiskType.LOW
+    ) {
+
+        PreferencesUtil.setString(
+            mActivityTestRule.activity,
+            R.string.testImageNumberKey, imageNumber.toString()
+        )
+
+        SystemClock.sleep(2000)
+
+        TestHelper.gotoSurveyForm()
+
+        TestHelper.nextSurveyPage(3, testDetails.group)
+        TestHelper.clickLaunchButton(testDetails.buttonIndex)
+
+        if (expectedScanError == -1) {
+
+            SystemClock.sleep(TIME_DELAY)
+
+            onView(withText(testDetails.name)).check(matches(isDisplayed()))
+
+            if (expectedResultError > NO_ERROR) {
+                onView(withText(expectedResultError.toLocalString(context))).check(
+                    matches(isDisplayed())
+                )
+                onView(withText(R.string.close)).perform(click())
+            } else {
+
+                onView(withText(testDetails.name)).check(matches(isDisplayed()))
+
+                val resultTextView = onView(withId(R.id.text_result))
+
+                resultTextView.check(matches(checkResult(expectedResult)))
+                val convertedValue = TestUtil.getText(resultTextView).toDouble()
+
+                if (testDetails == pH) {
+                    onView(withId(R.id.text_unit)).check(matches(not(isDisplayed())))
+                } else {
+                    onView(allOf(withId(R.id.text_unit), withText("mg/l")))
+                        .check(matches(isDisplayed()))
+                }
+
+                val marginOfErrorView = onView(withId(R.id.text_error_margin))
+                marginOfErrorView.check(matches(checkResult(expectedMarginOfError)))
+
+                if (testDetails == residualChlorine) {
+                    onView(withText("Quantity: " + risk.toQuantityLocalString(mActivityTestRule.activity))).check(
+                        matches(isDisplayed())
+                    )
+                } else {
+                    onView(withText("Risk: " + risk.toLocalString(mActivityTestRule.activity))).check(
+                        matches(isDisplayed())
+                    )
+                }
+                onView(withText(R.string.submitResult)).perform(click())
+
+                SystemClock.sleep(1000)
+
+                Assert.assertNotNull(TestHelper.mDevice.findObject(By.text(convertedValue.toString())))
+            }
+
+        } else {
+
+            SystemClock.sleep(TIME_DELAY)
 
             onView(withText(expectedScanError)).check(matches(isDisplayed()))
         }
@@ -480,6 +583,17 @@ class SampleImageTest {
         fun initialize() {
             BuildConfig.TEST_RUNNING.set(true)
             context = InstrumentationRegistry.getInstrumentation().targetContext
+
+            if (!TestHelper.isDeviceInitialized()) {
+                TestHelper.mDevice =
+                    UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+            }
         }
+
+        data class TestDetails(
+            var name: String,
+            var group: String,
+            var buttonIndex: Int
+        )
     }
 }
