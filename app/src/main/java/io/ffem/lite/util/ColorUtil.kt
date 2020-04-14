@@ -16,6 +16,7 @@ import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOption
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import io.ffem.lite.R
 import io.ffem.lite.app.App
+import io.ffem.lite.app.App.Companion.TEST_ID_KEY
 import io.ffem.lite.app.App.Companion.TEST_VALUE_KEY
 import io.ffem.lite.app.App.Companion.getCalibration
 import io.ffem.lite.app.App.Companion.getTestInfo
@@ -294,7 +295,8 @@ object ColorUtil {
 
         if (!rightBarcode.rawValue.isNullOrEmpty()) {
             val testInfo = getTestInfo(rightBarcode.displayValue!!)
-            if (testInfo == null) {
+            val requestedTestId = PreferencesUtil.getString(context, TEST_ID_KEY, "")
+            if (testInfo == null || (requestedTestId!!.isNotEmpty() && testInfo.uuid != requestedTestId)) {
                 returnResult(context, testInfo, INVALID_BARCODE, bitmap)
                 return
             }

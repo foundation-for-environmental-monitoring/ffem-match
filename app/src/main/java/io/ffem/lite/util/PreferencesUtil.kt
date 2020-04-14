@@ -87,6 +87,13 @@ object PreferencesUtil {
         return sharedPreferences.getString(getKey(context, keyId), defaultValue)!!
     }
 
+    @JvmStatic
+    fun getString(context: Context?, keyId: String?, defaultValue: String?): String? {
+        val sharedPreferences = PreferenceManager
+            .getDefaultSharedPreferences(context)
+        return sharedPreferences.getString(keyId, defaultValue)
+    }
+
     /**
      * Sets a string value to preferences.
      *
@@ -97,6 +104,14 @@ object PreferencesUtil {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         val editor = sharedPreferences.edit()
         editor.putString(getKey(context, keyId), value)
+        editor.apply()
+    }
+
+    fun setString(context: Context?, keyId: String?, value: String?) {
+        val sharedPreferences = PreferenceManager
+            .getDefaultSharedPreferences(context)
+        val editor = sharedPreferences.edit()
+        editor.putString(keyId, value)
         editor.apply()
     }
 
@@ -117,6 +132,20 @@ object PreferencesUtil {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         val editor = sharedPreferences.edit()
         editor.putLong(key, value)
+        editor.apply()
+    }
+
+    /**
+     * Removes the key from the preferences.
+     *
+     * @param context the context
+     * @param key     the key id
+     */
+    fun removeKey(context: Context, key: String) {
+        val sharedPreferences = PreferenceManager
+            .getDefaultSharedPreferences(context)
+        val editor = sharedPreferences.edit()
+        editor.remove(key)
         editor.apply()
     }
 }

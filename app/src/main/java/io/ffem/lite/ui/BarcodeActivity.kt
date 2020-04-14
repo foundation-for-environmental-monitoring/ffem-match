@@ -20,6 +20,7 @@ import androidx.navigation.Navigation.findNavController
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.app.App
+import io.ffem.lite.app.App.Companion.TEST_ID_KEY
 import io.ffem.lite.app.App.Companion.TEST_INFO_KEY
 import io.ffem.lite.app.App.Companion.TEST_VALUE_KEY
 import io.ffem.lite.app.App.Companion.getTestInfo
@@ -91,7 +92,11 @@ class BarcodeActivity : BaseActivity() {
     fun submitResult(@Suppress("UNUSED_PARAMETER") view: View) {
         if (testInfo != null) {
             val resultIntent = Intent()
-            resultIntent.putExtra(TEST_VALUE_KEY, testInfo!!.resultDetail.result)
+            if (testInfo!!.resultDetail.result >= 0) {
+                resultIntent.putExtra(TEST_VALUE_KEY, testInfo!!.resultDetail.result)
+            } else {
+                resultIntent.putExtra(TEST_VALUE_KEY, "")
+            }
             setResult(Activity.RESULT_OK, resultIntent)
         }
         finish()
@@ -143,8 +148,14 @@ class BarcodeActivity : BaseActivity() {
             IntentFilter(App.LOCAL_RESULT_EVENT)
         )
 
-        if (intent.getBooleanExtra(DEBUG_MODE, false)) {
-            sendDummyResultForDebugging(intent.getStringExtra(TEST_ID))
+        if (BuildConfig.APPLICATION_ID == intent.action) {
+            val uuid = intent.getStringExtra(TEST_ID)
+            if (intent.getBooleanExtra(DEBUG_MODE, false)) {
+                sendDummyResultForDebugging(uuid)
+            }
+            PreferencesUtil.setString(this, TEST_ID_KEY, uuid)
+        } else {
+            PreferencesUtil.removeKey(this, TEST_ID_KEY)
         }
     }
 
