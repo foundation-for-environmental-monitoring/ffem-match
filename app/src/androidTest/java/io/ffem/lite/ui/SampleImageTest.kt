@@ -288,17 +288,21 @@ class SampleImageTest {
                         .check(matches(isDisplayed()))
                 }
 
-                onView(
-                    allOf(
-                        withId(R.id.text_error_margin), withText(
-                            String.format
-                                (
-                                mActivityTestRule.activity.getString(R.string.margin_of_error),
-                                expectedMarginOfError
-                            )
-                        )
-                    )
-                ).check(matches(isDisplayed()))
+//                onView(
+//                    allOf(
+//                        withId(R.id.text_error_margin), withText(
+//                            String.format
+//                                (
+//                                mActivityTestRule.activity.getString(R.string.margin_of_error),
+//                                expectedMarginOfError
+//                            )
+//                        )
+//                    )
+//                ).check(matches(isDisplayed()))
+
+                val marginOfErrorView = onView(withId(R.id.text_error_margin))
+                marginOfErrorView.check(matches(checkResult(expectedMarginOfError)))
+
 
                 if (name == residualChlorine) {
                     onView(withText("Quantity: " + risk.toQuantityLocalString(mActivityTestRule.activity))).check(

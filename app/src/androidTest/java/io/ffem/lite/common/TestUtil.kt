@@ -32,7 +32,11 @@ object TestUtil {
         return object : TypeSafeMatcher<View?>() {
             override fun matchesSafely(item: View?): Boolean {
                 if (item !is TextView) return false
-                val convertedValue = item.text.toString().toDouble()
+                var text = item.text.toString()
+                if (text.contains(" ")) {
+                    text = text.subSequence(text.lastIndexOf(" "), text.length - 1).toString()
+                }
+                val convertedValue = text.toDouble()
                 val delta = abs(convertedValue - value)
                 return delta < 0.20f
             }
