@@ -79,8 +79,12 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         try {
             @Suppress("ConstantConditionIf")
             bitmap = if (BuildConfig.TEST_RUNNING.get()) {
-                val imageNumber = (PreferencesUtil
-                    .getString(context, R.string.testImageNumberKey, "").toFloat().toInt())
+
+                var imageNumber = BuildConfig.TEST_IMAGE
+                if (imageNumber == -1) {
+                    imageNumber = (PreferencesUtil
+                        .getString(context, R.string.testImageNumberKey, "").toFloat().toInt())
+                }
 
                 val drawable = ContextCompat.getDrawable(
                     context, context.resources.getIdentifier(
@@ -201,8 +205,8 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                         )
 
                                         detector.detectInImage(
-                                                FirebaseVisionImage.fromBitmap(rightBarcodeBitmap)
-                                            )
+                                            FirebaseVisionImage.fromBitmap(rightBarcodeBitmap)
+                                        )
                                             .addOnFailureListener(fun(_: Exception) {
 //                                                sendMessage(context.getString(R.string.color_card_not_found) + "...")
                                                 endProcessing(image, true)

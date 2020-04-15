@@ -46,6 +46,7 @@ val fluorideHighRange =
 val pH = SampleImageTest.Companion.TestDetails("pH", "Water Tests 2", 0)
 val residualChlorine =
     SampleImageTest.Companion.TestDetails("Residual Chlorine", "Water Tests 2", 1)
+val invalidTest = SampleImageTest.Companion.TestDetails("Residual Chlorine", "Water Tests 1", 2)
 
 fun clearData(context: Context) {
     val db = AppDatabase.getDatabase(context)
@@ -253,6 +254,46 @@ class SampleImageTest {
         startTest(fluorideHighRange, 23, expectedResultError = NO_MATCH)
     }
 
+    @Test
+    fun invalidTest() {
+        startCollectIntegrationValidityTest(invalidTest, 0, INVALID_BARCODE)
+    }
+
+    @Test
+    fun invalidCardTest() {
+        startCollectIntegrationValidityTest(fluoride, 0, INVALID_BARCODE)
+    }
+
+    private fun startCollectIntegrationValidityTest(
+        testDetails: TestDetails,
+        imageNumber: Int,
+        expectedResultError: ErrorType = NO_ERROR
+    ) {
+
+        PreferencesUtil.setString(
+            mActivityTestRule.activity,
+            R.string.testImageNumberKey, imageNumber.toString()
+        )
+
+        SystemClock.sleep(2000)
+
+        TestHelper.gotoSurveyForm()
+
+        TestHelper.nextSurveyPage(3, testDetails.group)
+        TestHelper.clickLaunchButton(testDetails.buttonIndex)
+
+        SystemClock.sleep(TIME_DELAY)
+
+        onView(withText(testDetails.name)).check(matches(isDisplayed()))
+
+        if (expectedResultError > NO_ERROR) {
+            onView(withText(expectedResultError.toLocalString(context))).check(
+                matches(isDisplayed())
+            )
+            onView(withText(R.string.close)).perform(click())
+        }
+    }
+
 //    @Test
 //    fun imageX_Waiting() {
 //        startTest(pH, 500, expectedScanError = R.string.place_color_card)
@@ -332,11 +373,11 @@ class SampleImageTest {
 
 
                 if (testDetails == residualChlorine) {
-                    onView(withText("Quantity: " + risk.toQuantityLocalString(mActivityTestRule.activity))).check(
+                    onView(withText(risk.toQuantityLocalString(mActivityTestRule.activity))).check(
                         matches(isDisplayed())
                     )
                 } else {
-                    onView(withText("Risk: " + risk.toLocalString(mActivityTestRule.activity))).check(
+                    onView(withText(risk.toLocalString(mActivityTestRule.activity))).check(
                         matches(isDisplayed())
                     )
                 }
@@ -532,11 +573,11 @@ class SampleImageTest {
                 marginOfErrorView.check(matches(checkResult(expectedMarginOfError)))
 
                 if (testDetails == residualChlorine) {
-                    onView(withText("Quantity: " + risk.toQuantityLocalString(mActivityTestRule.activity))).check(
+                    onView(withText(risk.toQuantityLocalString(mActivityTestRule.activity))).check(
                         matches(isDisplayed())
                     )
                 } else {
-                    onView(withText("Risk: " + risk.toLocalString(mActivityTestRule.activity))).check(
+                    onView(withText(risk.toLocalString(mActivityTestRule.activity))).check(
                         matches(isDisplayed())
                     )
                 }
