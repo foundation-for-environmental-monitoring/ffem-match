@@ -1,13 +1,18 @@
 package io.ffem.lite.ui
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import io.ffem.lite.R
+import io.ffem.lite.app.App
+import io.ffem.lite.app.App.Companion.getTestInfo
 import io.ffem.lite.model.ErrorType
+import io.ffem.lite.model.RiskType
+import io.ffem.lite.model.toLocalString
+import io.ffem.lite.util.PreferencesUtil
 import kotlinx.android.synthetic.main.fragment_result.*
 
 class ResultFragment : Fragment() {
@@ -21,24 +26,44 @@ class ResultFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val testInfo = ResultFragmentArgs.fromBundle(arguments!!).testInfo
-        text_title.text = testInfo.name
-        text_result.text = testInfo.getResultString(view.context)
-        if (testInfo.resultDetail.result < 0) {
-            text_result.textSize = 17f
-            text_result.setTextColor(Color.RED)
+
+        if (testInfo.error == ErrorType.NO_ERROR) {
+            text_name.text = testInfo.name
+            text_result.text = testInfo.getResultString(view.context)
+            text_unit.text = testInfo.unit
+            text_risk.text = testInfo.getRisk(context!!)
+            when {
+                testInfo.getRiskType() == RiskType.HIGH -> {
+                    text_risk.setTextColor(resources.getColor(R.color.high_risk, null))
+                }
+                testInfo.getRiskType() == RiskType.MEDIUM -> {
+                    text_risk.setTextColor(resources.getColor(R.color.medium_risk, null))
+                }
+                testInfo.getRiskType() == RiskType.LOW -> {
+                    text_risk.setTextColor(resources.getColor(R.color.low_risk, null))
+                }
+            }
+            text_error_margin.text = String.format("%.2f", testInfo.getMarginOfError())
+            lyt_error_message.visibility = GONE
+        } else {
+            val requestedTestId = PreferencesUtil.getString(context, App.TEST_ID_KEY, "")
+            if (testInfo.uuid != requestedTestId) {
+                val requestedTest = getTestInfo(requestedTestId!!)
+                if (requestedTest != null) {
+                    text_name2.text = requestedTest.name
+                } else {
+                    text_name2.text = testInfo.name
+                }
+            } else {
+                text_name2.text = testInfo.name
+            }
+
+            text_error.text = testInfo.error.toLocalString(view.context)
+            lyt_result.visibility = GONE
+            lyt_result_details.visibility = GONE
             button_submit.setText(R.string.close)
         }
 
-        if (testInfo.error == ErrorType.NO_ERROR) {
-            text_unit.text = testInfo.unit
-            if (testInfo.riskAsQty) {
-                text_risk.text = getString(R.string.risk_qty_value, testInfo.getRisk(context!!))
-            } else {
-                text_risk.text = getString(R.string.risk_value, testInfo.getRisk(context!!))
-            }
-            text_error_margin.text =
-                String.format(getString(R.string.margin_of_error), testInfo.getMarginOfError())
-        }
         super.onViewCreated(view, savedInstanceState)
     }
 }

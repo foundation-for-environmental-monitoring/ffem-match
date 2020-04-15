@@ -20,6 +20,10 @@
     <color name="black">#000</color>
     <color name="yellow">#ffeb3b</color>
 
+    <color name="low_risk">#005C1D</color>
+    <color name="medium_risk">#B52A00</color>
+    <color name="high_risk">#9A0101</color>
+
     <!-- Diagnostic -->
     <color name="diagnostic">#910228</color>
     <color name="diagnostic_status">#830023</color>

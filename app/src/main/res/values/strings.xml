@@ -60,13 +60,13 @@
     <string name="medium">Medium</string>
     <string name="high">High</string>
 
-    <string name="risk_value">Risk: %s</string>
-
     <string name="low_qty">Sufficient</string>
     <string name="medium_qty">Insufficient</string>
     <string name="high_qty">Too high</string>
 
-    <string name="risk_qty_value">Quantity: %s</string>
-    <string name="margin_of_error">Margin of error: ± %.2f</string>
+    <string name="margin_of_error">Margin of error: ±</string>
+    <string name="check_color_card">Check that the correct color card is being used. Also ensure that the card is placed in a well lit place.</string>
+    <string name="details">Details</string>
+    <string name="risk">Risk:</string>
 
 </resources>

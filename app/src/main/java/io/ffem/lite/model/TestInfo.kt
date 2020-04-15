@@ -29,6 +29,16 @@ data class TestInfo(
     }
 
     fun getRisk(context: Context): String {
+        val riskType = getRiskType()
+
+        return if (riskAsQty) {
+            riskType.toQuantityLocalString(context)
+        } else {
+            riskType.toLocalString(context)
+        }
+    }
+
+    fun getRiskType(): RiskType {
         var riskType = RiskType.HIGH
 
         // Evaluate the risk level based on the result
@@ -42,11 +52,7 @@ data class TestInfo(
             }
         }
 
-        return if (riskAsQty) {
-            riskType.toQuantityLocalString(context)
-        } else {
-            riskType.toLocalString(context)
-        }
+        return riskType
     }
 
     fun getMarginOfError(): Double {

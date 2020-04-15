@@ -17,6 +17,7 @@ import io.ffem.lite.R
 import timber.log.Timber
 
 const val EXTERNAL_SURVEY_PACKAGE_NAME = "io.ffem.collect"
+const val TEST_SURVEY_NAME = "ffem Lite Testing"
 const val NEXT = "next"
 
 object TestHelper {
@@ -67,7 +68,7 @@ object TestHelper {
             Timber.e(e)
         }
         mDevice.waitForIdle()
-        clickListViewItem("Lite Automated Testing")
+        clickListViewItem(TEST_SURVEY_NAME)
         mDevice.waitForIdle()
         val goToStartButton: UiObject? = mDevice.findObject(
             UiSelector()
@@ -169,8 +170,11 @@ object TestHelper {
                 if (tab != null) {
                     break
                 }
-                tab = mDevice.findObject(By.text("Fluoride"))
-                if (tab != null) {
+
+                val buttonText = "Back"
+                findButtonInScrollable(buttonText)
+                val button = mDevice.findObject(UiSelector().text(buttonText))
+                if (button == null) {
                     for (ii in 0 until times) {
                         mDevice.waitForIdle()
                         swipeLeft()
