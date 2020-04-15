@@ -295,9 +295,14 @@ object ColorUtil {
 
         if (!rightBarcode.rawValue.isNullOrEmpty()) {
             val testInfo = getTestInfo(rightBarcode.displayValue!!)
-            val requestedTestId = PreferencesUtil.getString(context, TEST_ID_KEY, "")
-            if (testInfo == null || (requestedTestId!!.isNotEmpty() && testInfo.uuid != requestedTestId)) {
+            if (testInfo == null) {
                 returnResult(context, testInfo, INVALID_BARCODE, bitmap)
+                return
+            }
+
+            val requestedTestId = PreferencesUtil.getString(context, TEST_ID_KEY, "")
+            if ((requestedTestId!!.isNotEmpty() && testInfo.uuid != requestedTestId)) {
+                returnResult(context, testInfo, WRONG_CARD, bitmap)
                 return
             }
 

@@ -10,7 +10,8 @@ enum class ErrorType {
     CALIBRATION_ERROR,
     BAD_LIGHTING,
     IMAGE_TILTED,
-    INVALID_BARCODE
+    INVALID_BARCODE,
+    WRONG_CARD
 }
 
 fun ErrorType.toLocalString(context: Context): String {

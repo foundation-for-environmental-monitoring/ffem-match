@@ -20,6 +20,7 @@ import io.ffem.lite.R
 import io.ffem.lite.app.AppDatabase
 import io.ffem.lite.common.TestHelper
 import io.ffem.lite.common.TestHelper.clearPreferences
+import io.ffem.lite.common.TestHelper.mDevice
 import io.ffem.lite.common.TestUtil
 import io.ffem.lite.common.TestUtil.checkResult
 import io.ffem.lite.common.TestUtil.childAtPosition
@@ -256,18 +257,18 @@ class SampleImageTest {
 
     @Test
     fun invalidTest() {
-        startCollectIntegrationValidityTest(invalidTest, 0, INVALID_BARCODE)
+        startCollectIntegrationValidityTest(invalidTest, 1, WRONG_CARD)
     }
 
     @Test
     fun invalidCardTest() {
-        startCollectIntegrationValidityTest(fluoride, 0, INVALID_BARCODE)
+        startCollectIntegrationValidityTest(fluoride, 0, WRONG_CARD)
     }
 
     private fun startCollectIntegrationValidityTest(
         testDetails: TestDetails,
         imageNumber: Int,
-        expectedResultError: ErrorType = NO_ERROR
+        @Suppress("SameParameterValue") expectedResultError: ErrorType = NO_ERROR
     ) {
 
         PreferencesUtil.setString(
@@ -517,6 +518,8 @@ class SampleImageTest {
             SystemClock.sleep(TIME_DELAY)
 
             onView(withText(expectedScanError)).check(matches(isDisplayed()))
+
+            mDevice.pressBack()
         }
     }
 
@@ -585,7 +588,7 @@ class SampleImageTest {
 
                 SystemClock.sleep(1000)
 
-                Assert.assertNotNull(TestHelper.mDevice.findObject(By.text(convertedValue.toString())))
+                Assert.assertNotNull(mDevice.findObject(By.text(convertedValue.toString())))
             }
 
         } else {
@@ -626,8 +629,7 @@ class SampleImageTest {
             context = InstrumentationRegistry.getInstrumentation().targetContext
 
             if (!TestHelper.isDeviceInitialized()) {
-                TestHelper.mDevice =
-                    UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+                mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
             }
         }
 

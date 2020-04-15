@@ -53,7 +53,8 @@
     <string name="calibration_error" tools:keep="@string/calibration_error">Calibration error</string>
     <string name="bad_lighting" tools:keep="@string/bad_lighting">Bad lighting</string>
     <string name="image_tilted" tools:keep="@string/image_tilted">Tilted image</string>
-    <string name="invalid_barcode">Invalid barcode</string>
+    <string name="invalid_barcode">Invalid color card</string>
+    <string name="wrong_card" tools:keep="@string/wrong_card">Wrong color card</string>
 
     <!-- RiskType-->
     <string name="low">Low</string>
