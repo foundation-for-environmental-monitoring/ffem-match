@@ -12,5 +12,13 @@
             app:allowDividerAbove="true"
             app:allowDividerBelow="true"
             app:iconSpaceReserved="false" />
+        <EditTextPreference
+            android:defaultValue="-1"
+            android:dialogMessage="Enter the sample image number. Enter blank to revert to camera image"
+            android:inputType="number"
+            android:key="@string/testImageNumberKey"
+            android:selectAllOnFocus="true"
+            android:title="Test Image Number"
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
 </androidx.preference.PreferenceScreen>

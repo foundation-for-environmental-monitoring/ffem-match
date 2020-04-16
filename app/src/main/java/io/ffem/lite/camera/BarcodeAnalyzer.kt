@@ -26,10 +26,11 @@ import io.ffem.lite.app.App.Companion.getTestInfo
 import io.ffem.lite.app.App.Companion.getTestName
 import io.ffem.lite.model.ImageEdgeType
 import io.ffem.lite.model.TestInfo
+import io.ffem.lite.preference.getSampleTestImageNumber
+import io.ffem.lite.preference.isDiagnosticMode
 import io.ffem.lite.util.ColorUtil.fixBoundary
 import io.ffem.lite.util.ColorUtil.isBarcodeValid
 import io.ffem.lite.util.ColorUtil.isTilted
-import io.ffem.lite.util.PreferencesUtil
 import io.ffem.lite.util.getBitmapPixels
 import io.ffem.lite.util.isNotBright
 import java.util.*
@@ -76,31 +77,27 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
         localBroadcastManager = LocalBroadcastManager.getInstance(context)
 
-        try {
-            @Suppress("ConstantConditionIf")
-            bitmap = if (BuildConfig.TEST_RUNNING.get()) {
-
-                var imageNumber = BuildConfig.TEST_IMAGE
-                if (imageNumber == -1) {
-                    imageNumber = (PreferencesUtil
-                        .getString(context, R.string.testImageNumberKey, "").toFloat().toInt())
-                }
-
-                val drawable = ContextCompat.getDrawable(
-                    context, context.resources.getIdentifier(
-                        "test_${java.lang.String.format("%03d", imageNumber)}",
-                        "drawable", context.packageName
+        if (BuildConfig.DEBUG && (isDiagnosticMode() || BuildConfig.INSTRUMENTED_TEST_RUNNING.get())) {
+            val imageNumber = getSampleTestImageNumber()
+            if (imageNumber > -1) {
+                try {
+                    val drawable = ContextCompat.getDrawable(
+                        context, context.resources.getIdentifier(
+                            "test_${java.lang.String.format(Locale.ROOT, "%03d", imageNumber)}",
+                            "drawable", context.packageName
+                        )
                     )
-                )
-
-                (drawable as BitmapDrawable).bitmap
+                    bitmap = (drawable as BitmapDrawable).bitmap
+                } catch (ex: Exception) {
+                    sendMessage(context.getString(R.string.sample_image_not_found))
+                    endProcessing(image, true)
+                    return
+                }
             } else {
-                mediaImage.bitmap
+                bitmap = mediaImage.bitmap
             }
-        } catch (ex: Exception) {
-            sendMessage(context.getString(R.string.place_color_card))
-            endProcessing(image, true)
-            return
+        } else {
+            bitmap = mediaImage.bitmap
         }
 
         bitmap = Bitmap.createBitmap(

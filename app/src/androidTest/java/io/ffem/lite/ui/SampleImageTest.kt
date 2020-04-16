@@ -625,7 +625,7 @@ class SampleImageTest {
         @JvmStatic
         @BeforeClass
         fun initialize() {
-            BuildConfig.TEST_RUNNING.set(true)
+            BuildConfig.INSTRUMENTED_TEST_RUNNING.set(true)
             context = InstrumentationRegistry.getInstrumentation().targetContext
 
             if (!TestHelper.isDeviceInitialized()) {
