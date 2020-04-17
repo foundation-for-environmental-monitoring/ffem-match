@@ -10,6 +10,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.graphics.PorterDuff
 import android.media.MediaActionSound
 import android.os.Bundle
 import android.os.Environment.DIRECTORY_PICTURES
@@ -202,9 +203,9 @@ class BarcodeActivity : BaseActivity() {
 
         if (isTestRunning() || BuildConfig.INSTRUMENTED_TEST_RUNNING.get()) {
             val toast: Toast = Toast.makeText(this, R.string.dummy_image_message, Toast.LENGTH_LONG)
-            toast.setGravity(Gravity.TOP, 0, 110)
-            val v = toast.view.findViewById<View>(android.R.id.message) as TextView
-            v.setTextColor(Color.RED)
+            toast.setGravity(Gravity.CENTER, 0, -200)
+            (toast.view.findViewById<View>(android.R.id.message) as TextView).setTextColor(Color.WHITE)
+            toast.view.background.setColorFilter(Color.RED, PorterDuff.Mode.SRC_IN)
             toast.show()
         }
     }
