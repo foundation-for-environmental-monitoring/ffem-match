@@ -9,11 +9,16 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.media.MediaActionSound
 import android.os.Bundle
 import android.os.Environment.DIRECTORY_PICTURES
 import android.os.Handler
+import android.view.Gravity
 import android.view.View
+import android.widget.TextView
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.Navigation.findNavController
@@ -30,6 +35,7 @@ import io.ffem.lite.databinding.ActivityBarcodeBinding
 import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.TestInfo
 import io.ffem.lite.model.TestResult
+import io.ffem.lite.preference.isTestRunning
 import io.ffem.lite.util.ColorUtil
 import io.ffem.lite.util.PreferencesUtil
 import kotlinx.android.synthetic.main.activity_barcode.*
@@ -60,7 +66,7 @@ class BarcodeActivity : BaseActivity() {
 
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (!BuildConfig.TEST_RUNNING.get()) {
+            if (!isTestRunning() && !BuildConfig.INSTRUMENTED_TEST_RUNNING.get()) {
                 val sound = MediaActionSound()
                 sound.play(MediaActionSound.SHUTTER_CLICK)
             }
@@ -194,6 +200,14 @@ class BarcodeActivity : BaseActivity() {
         layout_container.postDelayed({
             layout_container.systemUiVisibility = FLAGS_FULLSCREEN
         }, IMMERSIVE_FLAG_TIMEOUT)
+
+        if (isTestRunning() || BuildConfig.INSTRUMENTED_TEST_RUNNING.get()) {
+            val toast: Toast = Toast.makeText(this, R.string.dummy_image_message, Toast.LENGTH_LONG)
+            toast.setGravity(Gravity.CENTER, 0, -200)
+            (toast.view.findViewById<View>(android.R.id.message) as TextView).setTextColor(Color.WHITE)
+            toast.view.background.setColorFilter(Color.RED, PorterDuff.Mode.SRC_IN)
+            toast.show()
+        }
     }
 
     override fun onDestroy() {

@@ -119,7 +119,6 @@ class CameraFragment : Fragment() {
                     CameraFragmentDirections.actionCameraToPermissions()
                 )
         }
-
         broadcastManager.registerReceiver(broadcastReceiver2, IntentFilter(App.ERROR_EVENT))
     }
 

@@ -1,5 +1,6 @@
 package io.ffem.lite.preference
 
+import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.util.MAX_COLOR_DISTANCE_CALIBRATION
@@ -7,6 +8,18 @@ import io.ffem.lite.util.MAX_COLOR_DISTANCE_RGB
 import io.ffem.lite.util.PreferencesUtil
 import java.util.*
 import java.util.concurrent.TimeUnit
+
+fun getSampleTestImageNumber(): Int {
+    return try {
+        PreferencesUtil.getString(App.app, R.string.testImageNumberKey, "").toInt()
+    } catch (e: Exception) {
+        -1
+    }
+}
+
+fun isTestRunning(): Boolean {
+    return getSampleTestImageNumber() > -1 && BuildConfig.DEBUG && isDiagnosticMode()
+}
 
 fun isDiagnosticMode(): Boolean {
     return PreferencesUtil.getBoolean(App.app, R.string.diagnosticModeKey, false)

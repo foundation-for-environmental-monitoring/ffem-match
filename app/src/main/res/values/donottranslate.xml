@@ -10,6 +10,8 @@
     <string name="data">Data</string>
     <string name="delete_data">Delete all data and photos</string>
     <string name="delete">Delete</string>
+    <string name="dummy_image_message">Analyzing debug sample image</string>
+    <string name="sample_image_not_found">Sample image not found</string>
 
     <!--Software Notices-->
     <string name="apache_software"><a href="https://source.android.com/setup/licenses">Android&#160;Open&#160;Source&#160;Project</a>&#160;&#160;&#8226;&#160;&#160;<a href="https://github.com/joel-costigliola/assertj-core">AssertJ</a>&#160;&#160;&#8226;&#160;&#160;<a href="https://github.com/google/gson">Gson</a>&#160;&#160;&#8226;&#160;&#160;<a href="https://github.com/JakeWharton/timber">Timber</a>&#160;&#160;&#8226;&#160;&#160;<a href="https://github.com/marlonlom/timeago">TimeAgo</a></string>

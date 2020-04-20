@@ -69,5 +69,7 @@
     <string name="check_color_card">Check that the correct color card is being used. Also ensure that the card is placed in a well lit place.</string>
     <string name="details">Details</string>
     <string name="risk">Risk:</string>
+    <string name="no_image_selected">Using camera. Sample image not selected</string>
+    <string name="test_mode_image_selected">Test Mode. Sample Image: %s</string>
 
 </resources>
