@@ -1,19 +1,22 @@
-package io.ffem.lite.ui
+package io.ffem.lite.internal
 
 
 import android.os.SystemClock
+import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
-import androidx.test.rule.ActivityTestRule
+import androidx.test.rule.GrantPermissionRule
 import io.ffem.lite.R
 import io.ffem.lite.common.TestHelper.enterDiagnosticMode
 import io.ffem.lite.common.TestHelper.leaveDiagnosticMode
 import io.ffem.lite.common.TestUtil.childAtPosition
 import io.ffem.lite.preference.isDiagnosticMode
+import io.ffem.lite.ui.ResultListActivity
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.core.IsInstanceOf
@@ -26,9 +29,16 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class DiagnosticsTest {
 
+    @get:Rule
+    val mActivityTestRule = activityScenarioRule<ResultListActivity>()
+
     @Rule
     @JvmField
-    var mActivityTestRule = ActivityTestRule(ResultListActivity::class.java)
+    var mGrantPermissionRule: GrantPermissionRule =
+        GrantPermissionRule.grant(
+            "android.permission.CAMERA",
+            "android.permission.WRITE_EXTERNAL_STORAGE"
+        )
 
     @Test
     fun deleteDataTest() {
@@ -36,7 +46,7 @@ class DiagnosticsTest {
 
         Thread.sleep(400)
 
-        navigateUp()
+        Espresso.pressBack()
 
         Thread.sleep(400)
 
@@ -70,7 +80,7 @@ class DiagnosticsTest {
 
         Thread.sleep(400)
 
-        navigateUp()
+        Espresso.pressBack()
 
         Thread.sleep(400)
 
@@ -127,7 +137,7 @@ class DiagnosticsTest {
         )
         appCompatButton.perform(scrollTo(), click())
 
-        navigateUp()
+        Espresso.pressBack()
 
         pressBack()
 
@@ -267,21 +277,6 @@ class DiagnosticsTest {
             )
         )
         appCompatButton2.perform(click())
-    }
-
-    private fun navigateUp() {
-        onView(
-            allOf(
-                withContentDescription("Navigate up"),
-                childAtPosition(
-                    allOf(
-                        withId(R.id.toolbar)
-                    ),
-                    1
-                ),
-                isDisplayed()
-            )
-        ).perform(click())
     }
 
     private fun startDiagnosticMode() {

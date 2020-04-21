@@ -25,13 +25,13 @@ class ResultFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val testInfo = ResultFragmentArgs.fromBundle(arguments!!).testInfo
+        val testInfo = ResultFragmentArgs.fromBundle(requireArguments()).testInfo
 
         if (testInfo.error == ErrorType.NO_ERROR) {
             text_name.text = testInfo.name
             text_result.text = testInfo.getResultString(view.context)
             text_unit.text = testInfo.unit
-            text_risk.text = testInfo.getRisk(context!!)
+            text_risk.text = testInfo.getRisk(requireContext())
             when {
                 testInfo.getRiskType() == RiskType.HIGH -> {
                     text_risk.setTextColor(resources.getColor(R.color.high_risk, null))

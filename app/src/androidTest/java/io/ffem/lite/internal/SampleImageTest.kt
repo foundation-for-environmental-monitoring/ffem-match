@@ -1,0 +1,440 @@
+package io.ffem.lite.internal
+
+
+import android.content.Context
+import android.os.Environment
+import android.os.SystemClock
+import androidx.test.core.app.ApplicationProvider
+import androidx.test.espresso.Espresso
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.ext.junit.rules.activityScenarioRule
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.filters.LargeTest
+import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.rule.GrantPermissionRule
+import io.ffem.lite.BuildConfig
+import io.ffem.lite.R
+import io.ffem.lite.common.TestHelper.clearPreferences
+import io.ffem.lite.common.TestUtil.checkResult
+import io.ffem.lite.common.TestUtil.childAtPosition
+import io.ffem.lite.common.clearData
+import io.ffem.lite.common.pH
+import io.ffem.lite.common.residualChlorine
+import io.ffem.lite.common.testDataList
+import io.ffem.lite.model.ErrorType.NO_ERROR
+import io.ffem.lite.model.toLocalString
+import io.ffem.lite.model.toQuantityLocalString
+import io.ffem.lite.ui.ResultListActivity
+import io.ffem.lite.util.PreferencesUtil
+import org.hamcrest.Matchers
+import org.hamcrest.Matchers.allOf
+import org.hamcrest.Matchers.not
+import org.hamcrest.core.IsInstanceOf
+import org.junit.*
+import org.junit.runner.RunWith
+import org.junit.runners.MethodSorters
+import java.io.File
+
+const val TIME_DELAY = 9000L
+
+@LargeTest
+@RunWith(AndroidJUnit4::class)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+class SampleImageTest {
+
+    @get:Rule
+    val mActivityTestRule = activityScenarioRule<ResultListActivity>()
+
+    @Rule
+    @JvmField
+    var mGrantPermissionRule: GrantPermissionRule =
+        GrantPermissionRule.grant(
+            "android.permission.CAMERA",
+            "android.permission.WRITE_EXTERNAL_STORAGE"
+        )
+
+    @Before
+    fun setUp() {
+        if (!initialized) {
+            clearPreferences()
+            clearData()
+            initialized = true
+        }
+    }
+
+    @Test
+    fun image_000_Chlorine_0_Point_5() {
+        startInternalTest(0)
+    }
+
+    @Test
+    fun image_001_Chlorine_0() {
+        startInternalTest(1)
+    }
+
+    @Test
+    fun image_002_InvalidBarcode() {
+        startInternalTest(2)
+    }
+
+    @Test
+    fun image_003_InvalidBarcode() {
+        startInternalTest(3)
+    }
+
+    @Test
+    fun image_004_pH_NoMatch() {
+        startInternalTest(4)
+    }
+
+    @Test
+    fun image_005_Waiting() {
+        startInternalTest(5)
+    }
+
+    @Test
+    fun image_006_Chlorine_NoMatch() {
+        startInternalTest(6)
+    }
+
+    @Test
+    fun image_007_Chlorine_Point_5() {
+        startInternalTest(7)
+    }
+
+    @Test
+    fun image_008_Chlorine_1_Point_5() {
+        startInternalTest(8)
+    }
+
+    @Test
+    fun image_009_BadLight() {
+        startInternalTest(9)
+    }
+
+    @Test
+    fun image_010_Chlorine_CalibrationError() {
+        startInternalTest(10)
+    }
+
+    @Test
+    fun image_011_Tilted() {
+        startInternalTest(11)
+    }
+
+    @Test
+    fun image_012_Waiting() {
+        startInternalTest(12)
+    }
+
+    @Test
+    fun image_013_Waiting() {
+        startInternalTest(13)
+    }
+
+    @Test
+    fun image_014_pH_6_Point_5() {
+        startInternalTest(14)
+    }
+
+    @Test
+    fun image_015_Chlorine_4_Point_3() {
+        startInternalTest(15)
+    }
+
+    @Test
+    fun image_016_Chlorine_CalibrationError() {
+        startInternalTest(16)
+    }
+
+    @Test
+    fun image_017_BadLighting() {
+        startInternalTest(17)
+    }
+
+    @Test
+    fun image_018_Waiting() {
+        startInternalTest(18)
+    }
+
+    @Test
+    fun image_019_Chlorine_3_Point_0() {
+        startInternalTest(19)
+    }
+
+    @Test
+    fun image_020_Waiting() {
+        startInternalTest(20)
+    }
+
+    @Test
+    fun image_021_Waiting() {
+        startInternalTest(21)
+    }
+
+    @Test
+    fun image_022_Waiting() {
+        startInternalTest(22)
+    }
+
+    @Test
+    fun image_023_FluorideHighRange_NoMatch() {
+        startInternalTest(23)
+    }
+
+    @Test
+    fun imageX_Waiting() {
+        startInternalTest(500)
+    }
+
+    private fun startInternalTest(imageNumber: Int) {
+        val testData = testDataList[imageNumber]!!
+
+        PreferencesUtil.setString(
+            ApplicationProvider.getApplicationContext(),
+            R.string.testImageNumberKey, imageNumber.toString()
+        )
+
+        SystemClock.sleep(2000)
+
+        val floatingActionButton = onView(
+            allOf(
+                withId(R.id.fab), withContentDescription(R.string.start_test),
+                childAtPosition(
+                    childAtPosition(
+                        withId(android.R.id.content),
+                        0
+                    ),
+                    1
+                ),
+                isDisplayed()
+            )
+        )
+        floatingActionButton.perform(click())
+
+        if (testData.expectedScanError == -1) {
+
+            SystemClock.sleep(TIME_DELAY)
+
+            onView(withText(testData.testDetails.name)).check(matches(isDisplayed()))
+
+            if (testData.expectedResultError > NO_ERROR) {
+                onView(withText(testData.expectedResultError.toLocalString(context))).check(
+                    matches(isDisplayed())
+                )
+                onView(withText(R.string.close)).perform(click())
+            } else {
+
+                onView(withText(testData.testDetails.name)).check(matches(isDisplayed()))
+
+                val resultTextView = onView(withId(R.id.text_result))
+                resultTextView.check(matches(checkResult(testData.expectedResult)))
+
+                if (testData.testDetails == pH) {
+                    onView(withId(R.id.text_unit)).check(matches(not(isDisplayed())))
+                } else {
+                    onView(allOf(withId(R.id.text_unit), withText("mg/l")))
+                        .check(matches(isDisplayed()))
+                }
+
+//                onView(
+//                    allOf(
+//                        withId(R.id.text_error_margin), withText(
+//                            String.format
+//                                (
+//                                mActivityTestRule.activity.getString(R.string.margin_of_error),
+//                                expectedMarginOfError
+//                            )
+//                        )
+//                    )
+//                ).check(matches(isDisplayed()))
+
+                val marginOfErrorView = onView(withId(R.id.text_error_margin))
+                marginOfErrorView.check(matches(checkResult(testData.expectedMarginOfError)))
+
+
+                if (testData.testDetails == residualChlorine) {
+                    onView(withText(testData.risk.toQuantityLocalString(ApplicationProvider.getApplicationContext()))).check(
+                        matches(isDisplayed())
+                    )
+                } else {
+                    onView(withText(testData.risk.toLocalString(ApplicationProvider.getApplicationContext()))).check(
+                        matches(isDisplayed())
+                    )
+                }
+                onView(withText(R.string.submitResult)).perform(click())
+            }
+
+            SystemClock.sleep(1000)
+
+            onView(
+                allOf(
+                    withId(R.id.text_title),
+                    withText("${testData.testDetails.name} (${imageNumber})"),
+                    childAtPosition(
+                        allOf(
+                            withId(R.id.layout),
+                            childAtPosition(
+                                IsInstanceOf.instanceOf(android.view.ViewGroup::class.java),
+                                0
+                            )
+                        ),
+                        0
+                    ),
+                    isDisplayed()
+                )
+            ).check(matches(withText("${testData.testDetails.name} (${imageNumber})")))
+
+            val textView = onView(
+                allOf(
+                    withId(R.id.textResultValue),
+                    childAtPosition(
+                        childAtPosition(
+                            allOf(
+                                withId(R.id.list_results),
+                                withContentDescription("List of results")
+                            ),
+                            0
+                        ),
+                        1
+                    ),
+                    isDisplayed()
+                )
+            )
+
+            SystemClock.sleep(3000)
+
+            if (testData.expectedResultError == NO_ERROR) {
+                textView.check(matches(checkResult(testData.expectedResult)))
+            } else {
+                val context = InstrumentationRegistry.getInstrumentation().targetContext
+                textView.check(matches(withText(testData.expectedResultError.toLocalString(context))))
+            }
+
+            textView.perform(click())
+
+            SystemClock.sleep(2000)
+
+            val imageView = onView(
+                allOf(
+                    withId(R.id.image), withContentDescription("Analyzed image"),
+                    childAtPosition(
+                        childAtPosition(
+                            withId(android.R.id.content),
+                            0
+                        ),
+                        2
+                    ),
+                    isDisplayed()
+                )
+            )
+            imageView.check(matches(isDisplayed()))
+
+            val appCompatButton = onView(
+                allOf(
+                    withId(R.id.imageModeButton), withText("View Full"),
+                    childAtPosition(
+                        childAtPosition(
+                            withId(android.R.id.content),
+                            0
+                        ),
+                        1
+                    ),
+                    isDisplayed()
+                )
+            )
+            appCompatButton.perform(click())
+
+            SystemClock.sleep(2000)
+
+            val imageView2 = onView(
+                allOf(
+                    withId(R.id.image), withContentDescription("Analyzed image"),
+                    childAtPosition(
+                        childAtPosition(
+                            withId(android.R.id.content),
+                            0
+                        ),
+                        2
+                    ),
+                    isDisplayed()
+                )
+            )
+            imageView2.check(matches(isDisplayed()))
+
+            val appCompatButton2 = onView(
+                allOf(
+                    withId(R.id.imageModeButton), withText("View Extracts"),
+                    childAtPosition(
+                        childAtPosition(
+                            withId(android.R.id.content),
+                            0
+                        ),
+                        1
+                    ),
+                    isDisplayed()
+                )
+            )
+            appCompatButton2.perform(click())
+
+            val appCompatImageButton = onView(
+                allOf(
+                    withContentDescription("Navigate up"),
+                    childAtPosition(
+                        allOf(
+                            withId(R.id.app_bar),
+                            childAtPosition(
+                                withClassName(Matchers.`is`("androidx.constraintlayout.widget.ConstraintLayout")),
+                                0
+                            )
+                        ),
+                        0
+                    ),
+                    isDisplayed()
+                )
+            )
+            appCompatImageButton.perform(click())
+        } else {
+
+            SystemClock.sleep(TIME_DELAY)
+
+            onView(withText(testData.expectedScanError)).check(matches(isDisplayed()))
+
+            Espresso.pressBack()
+        }
+    }
+
+    companion object {
+
+        @JvmStatic
+        var initialized = false
+        lateinit var context: Context
+
+        @JvmStatic
+        @AfterClass
+        fun teardown() {
+            val context = InstrumentationRegistry.getInstrumentation().targetContext
+            val folder = File(
+                context.getExternalFilesDir(
+                    Environment.DIRECTORY_PICTURES
+                ).toString() + File.separator + "captures"
+            )
+            if (folder.exists() && folder.isDirectory) {
+                folder.listFiles()?.forEach {
+                    it.delete()
+                }
+            }
+            clearData()
+        }
+
+        @JvmStatic
+        @BeforeClass
+        fun initialize() {
+            BuildConfig.INSTRUMENTED_TEST_RUNNING.set(true)
+            context = InstrumentationRegistry.getInstrumentation().targetContext
+        }
+    }
+}

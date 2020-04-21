@@ -12,6 +12,10 @@ import org.hamcrest.Matcher
 import org.hamcrest.TypeSafeMatcher
 import kotlin.math.abs
 
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.CLASS)
+annotation class RequiresExternalApp
+
 object TestUtil {
 
     fun childAtPosition(

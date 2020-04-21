@@ -202,7 +202,7 @@ class CameraFragment : Fragment() {
 
             preview?.setSurfaceProvider(previewView.createSurfaceProvider(null))
 
-            barcodeAnalyzer = BarcodeAnalyzer(context!!)
+            barcodeAnalyzer = BarcodeAnalyzer(requireContext())
             barcodeAnalyzer.reset()
 
             // ImageAnalysis
@@ -213,7 +213,7 @@ class CameraFragment : Fragment() {
                 .setImageQueueDepth(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build()
 
-            analysis?.setAnalyzer(mainExecutor, BarcodeAnalyzer(context!!))
+            analysis?.setAnalyzer(mainExecutor, BarcodeAnalyzer(requireContext()))
 
             // Must unbind use cases before rebinding them.
             cameraProvider.unbindAll()

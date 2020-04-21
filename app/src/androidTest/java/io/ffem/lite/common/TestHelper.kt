@@ -7,18 +7,24 @@ import android.os.SystemClock
 import android.widget.ScrollView
 import android.widget.TextView
 import androidx.preference.PreferenceManager
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.rule.ActivityTestRule
 import androidx.test.uiautomator.*
 import io.ffem.lite.R
+import io.ffem.lite.app.AppDatabase
 import timber.log.Timber
 
 const val EXTERNAL_SURVEY_PACKAGE_NAME = "io.ffem.collect"
 const val TEST_SURVEY_NAME = "ffem Lite Testing"
 const val NEXT = "next"
+
+fun clearData() {
+    val db = AppDatabase.getDatabase(ApplicationProvider.getApplicationContext())
+    db.resultDao().deleteAll()
+}
 
 object TestHelper {
 
@@ -43,8 +49,9 @@ object TestHelper {
         onView(withId(R.id.fabDisableDiagnostics)).perform(click())
     }
 
-    fun clearPreferences(activityTestRule: ActivityTestRule<*>) {
-        val prefs = PreferenceManager.getDefaultSharedPreferences(activityTestRule.activity)
+    fun clearPreferences() {
+        val prefs =
+            PreferenceManager.getDefaultSharedPreferences(ApplicationProvider.getApplicationContext())
         prefs.edit().clear().apply()
     }
 
