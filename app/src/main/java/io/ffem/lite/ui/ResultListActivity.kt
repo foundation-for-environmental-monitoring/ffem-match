@@ -27,10 +27,6 @@ import androidx.databinding.BindingAdapter
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.play.core.appupdate.AppUpdateManager
-import com.google.android.play.core.appupdate.AppUpdateManagerFactory
-import com.google.android.play.core.install.model.AppUpdateType.IMMEDIATE
-import com.google.android.play.core.install.model.UpdateAvailability
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.app.App
@@ -56,7 +52,6 @@ import timber.log.Timber
 import java.io.File
 import java.util.*
 
-const val APP_UPDATE_REQUEST = 101
 const val READ_REQUEST_CODE = 102
 const val PERMISSION_REQUEST = 103
 
@@ -84,10 +79,9 @@ fun getResultString(view: TextView, result: TestResult) {
     }
 }
 
-class ResultListActivity : BaseActivity() {
+class ResultListActivity : AppUpdateActivity() {
 
     private var appIsClosing: Boolean = false
-    private lateinit var appUpdateManager: AppUpdateManager
     private lateinit var toastLong: Toast
     private lateinit var toastShort: Toast
     private lateinit var broadcastManager: LocalBroadcastManager
@@ -140,8 +134,6 @@ class ResultListActivity : BaseActivity() {
 
         broadcastManager = LocalBroadcastManager.getInstance(this)
 
-        appUpdateManager = AppUpdateManagerFactory.create(this)
-
         @SuppressLint("ShowToast")
         toastLong = Toast.makeText(
             applicationContext,
@@ -192,8 +184,6 @@ class ResultListActivity : BaseActivity() {
             }
         }
 
-        checkForUpdate()
-
         db = AppDatabase.getDatabase(baseContext)
 
         val resultList = db.resultDao().getResults()
@@ -210,23 +200,23 @@ class ResultListActivity : BaseActivity() {
         list_results.adapter = adapter
     }
 
-    private fun checkForUpdate() {
-
-        val appUpdateInfoTask = appUpdateManager.appUpdateInfo
-
-        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
-            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
-                && appUpdateInfo.isUpdateTypeAllowed(IMMEDIATE)
-            ) {
-                appUpdateManager.startUpdateFlowForResult(
-                    appUpdateInfo,
-                    IMMEDIATE,
-                    this,
-                    APP_UPDATE_REQUEST
-                )
-            }
-        }
-    }
+//    private fun checkForUpdate() {
+//
+//        val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+//
+//        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+//            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+//                && appUpdateInfo.isUpdateTypeAllowed(IMMEDIATE)
+//            ) {
+//                appUpdateManager.startUpdateFlowForResult(
+//                    appUpdateInfo,
+//                    IMMEDIATE,
+//                    this,
+//                    APP_UPDATE_REQUEST
+//                )
+//            }
+//        }
+//    }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
@@ -244,23 +234,23 @@ class ResultListActivity : BaseActivity() {
             IntentFilter(LOCAL_RESULT_EVENT)
         )
 
-        if (!appIsClosing) {
-
-            appUpdateManager
-                .appUpdateInfo
-                .addOnSuccessListener { appUpdateInfo ->
-                    if (appUpdateInfo.updateAvailability() ==
-                        UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS
-                    ) {
-                        appUpdateManager.startUpdateFlowForResult(
-                            appUpdateInfo,
-                            IMMEDIATE,
-                            this,
-                            APP_UPDATE_REQUEST
-                        )
-                    }
-                }
-        }
+//        if (!appIsClosing) {
+//
+//            appUpdateManager
+//                .appUpdateInfo
+//                .addOnSuccessListener { appUpdateInfo ->
+//                    if (appUpdateInfo.updateAvailability() ==
+//                        UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS
+//                    ) {
+//                        appUpdateManager.startUpdateFlowForResult(
+//                            appUpdateInfo,
+//                            IMMEDIATE,
+//                            this,
+//                            APP_UPDATE_REQUEST
+//                        )
+//                    }
+//                }
+//        }
 
         list_results.adapter = adapter
     }
