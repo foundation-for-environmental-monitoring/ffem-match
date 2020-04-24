@@ -24,7 +24,7 @@
             app:iconSpaceReserved="false" />
 
         <PreferenceCategory
-            android:key="preferenceCategoryDiagnostics"
+            android:key="preferenceCategoryCamera"
             android:title="@string/camera"
             app:iconSpaceReserved="false">
             <SwitchPreferenceCompat

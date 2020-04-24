@@ -99,7 +99,7 @@ class BarcodeActivity : BaseActivity() {
         if (testInfo != null) {
             val resultIntent = Intent()
             if (testInfo!!.resultDetail.result >= 0) {
-                resultIntent.putExtra(TEST_VALUE_KEY, testInfo!!.resultDetail.result)
+                resultIntent.putExtra(TEST_VALUE_KEY, testInfo!!.resultDetail.result.toString())
             } else {
                 resultIntent.putExtra(TEST_VALUE_KEY, "")
             }

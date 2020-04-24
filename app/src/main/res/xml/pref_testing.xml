@@ -1,7 +1,7 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory
-        android:key="preferenceCategoryDiagnostics"
+        android:key="preferenceCategoryTesting"
         android:title="@string/testing"
         app:allowDividerAbove="true"
         app:allowDividerBelow="true"
@@ -13,7 +13,6 @@
             app:allowDividerBelow="true"
             app:iconSpaceReserved="false" />
         <EditTextPreference
-            android:defaultValue="-1"
             android:dialogMessage="Enter the sample image number. Enter blank to revert to camera image"
             android:inputType="number"
             android:key="@string/testImageNumberKey"

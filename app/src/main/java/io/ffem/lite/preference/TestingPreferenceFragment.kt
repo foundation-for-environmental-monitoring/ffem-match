@@ -29,10 +29,15 @@ class TestingPreferenceFragment : PreferenceFragmentCompat() {
             }
     }
 
-    private fun getSampleImageSummary(newValue: Any, testImagePreference: EditTextPreference) {
+    private fun getSampleImageSummary(newValue: Any?, testImagePreference: EditTextPreference) {
+        var value = ""
+        if (newValue != null) {
+            value = newValue.toString()
+        }
+
         try {
-            if (newValue.toString().toInt() > -1 && newValue.toString().toInt() < 50) {
-                testImagePreference.summary = getString(R.string.test_mode_image_selected, newValue)
+            if (value.toInt() > -1 && value.toInt() < 50) {
+                testImagePreference.summary = getString(R.string.test_mode_image_selected, value)
             } else {
                 testImagePreference.summary = getString(R.string.no_image_selected)
             }
