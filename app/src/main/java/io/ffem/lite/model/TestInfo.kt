@@ -13,6 +13,7 @@ data class TestInfo(
     var uuid: String? = null,
     var unit: String? = null,
     var riskAsQty: Boolean = false,
+    var minMarginError: Double = 0.0,
     var risks: List<RiskValue> = ArrayList(),
     var values: List<CalibrationValue> = ArrayList(),
     var resultDetail: ResultDetail = ResultDetail(),
@@ -59,7 +60,7 @@ data class TestInfo(
 
         val margin = max(
             (resultDetail.distance + resultDetail.calibrationDistance) / 200,
-            (values[values.size / 2 - 1].value - values[values.size / 2 - 2].value) / 2
+            minMarginError
         )
 
         return (round(margin * 100) / 100.0)

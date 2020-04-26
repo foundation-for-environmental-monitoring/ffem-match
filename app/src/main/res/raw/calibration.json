@@ -5,6 +5,7 @@
       "type": "water",
       "uuid": "f0f3c1dd-89af-49f1-83e7-bcc31cb61159",
       "unit": "mg/l",
+      "minMarginError": 0.25,
       "risks": [
         {
           "value": 0,
@@ -45,6 +46,7 @@
       "type": "water",
       "uuid": "93cec3c4-b3e4-4924-b722-b6cb9742737a",
       "unit": "mg/l",
+      "minMarginError": 0.3,
       "risks": [
         {
           "value": 0,
@@ -84,6 +86,7 @@
       "name": "pH",
       "type": "water",
       "uuid": "ff96e965-13a3-4507-9edf-7aa7fc084354",
+      "minMarginError": 0.5,
       "risks": [
         {
           "value": 0,
@@ -136,6 +139,7 @@
       "uuid": "f1d64b11-64c4-4a34-806e-ad0d47bcc96b",
       "unit": "mg/l",
       "riskAsQty": true,
+      "minMarginError": 0.25,
       "risks": [
         {
           "value": 0,
