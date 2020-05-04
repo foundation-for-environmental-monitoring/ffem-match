@@ -263,20 +263,12 @@ class DiagnosticsTest {
         )
         textView7.check(matches(withText("Result")))
 
-        val appCompatButton2 = onView(
+        onView(
             allOf(
                 withId(R.id.button_submit), withText("Submit Result"),
-                childAtPosition(
-                    childAtPosition(
-                        withId(R.id.fragment_container),
-                        0
-                    ),
-                    4
-                ),
                 isDisplayed()
             )
-        )
-        appCompatButton2.perform(click())
+        ).perform(click())
     }
 
     private fun startDiagnosticMode() {

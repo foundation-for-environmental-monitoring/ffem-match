@@ -7,6 +7,7 @@ import android.os.SystemClock
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -29,7 +30,6 @@ import io.ffem.lite.model.toLocalString
 import io.ffem.lite.model.toQuantityLocalString
 import io.ffem.lite.ui.ResultListActivity
 import io.ffem.lite.util.PreferencesUtil
-import org.hamcrest.Matchers
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.not
 import org.hamcrest.core.IsInstanceOf
@@ -307,83 +307,23 @@ class SampleImageTest {
 
             val imageView = onView(
                 allOf(
-                    withId(R.id.image), withContentDescription("Analyzed image"),
-                    childAtPosition(
-                        childAtPosition(
-                            withId(android.R.id.content),
-                            0
-                        ),
-                        2
-                    ),
+                    withId(R.id.image_extract), withContentDescription("Analyzed image"),
                     isDisplayed()
                 )
             )
             imageView.check(matches(isDisplayed()))
 
-            val appCompatButton = onView(
-                allOf(
-                    withId(R.id.imageModeButton), withText("View Full"),
-                    childAtPosition(
-                        childAtPosition(
-                            withId(android.R.id.content),
-                            0
-                        ),
-                        1
-                    ),
-                    isDisplayed()
-                )
-            )
-            appCompatButton.perform(click())
-
-            SystemClock.sleep(2000)
+            onView(withId(R.id.resultScrollView))
+                .perform(ViewActions.swipeUp())
 
             val imageView2 = onView(
                 allOf(
-                    withId(R.id.image), withContentDescription("Analyzed image"),
-                    childAtPosition(
-                        childAtPosition(
-                            withId(android.R.id.content),
-                            0
-                        ),
-                        2
-                    ),
+                    withId(R.id.image_full), withContentDescription("Analyzed image"),
                     isDisplayed()
                 )
             )
             imageView2.check(matches(isDisplayed()))
 
-            val appCompatButton2 = onView(
-                allOf(
-                    withId(R.id.imageModeButton), withText("View Extracts"),
-                    childAtPosition(
-                        childAtPosition(
-                            withId(android.R.id.content),
-                            0
-                        ),
-                        1
-                    ),
-                    isDisplayed()
-                )
-            )
-            appCompatButton2.perform(click())
-
-            val appCompatImageButton = onView(
-                allOf(
-                    withContentDescription("Navigate up"),
-                    childAtPosition(
-                        allOf(
-                            withId(R.id.app_bar),
-                            childAtPosition(
-                                withClassName(Matchers.`is`("androidx.constraintlayout.widget.ConstraintLayout")),
-                                0
-                            )
-                        ),
-                        0
-                    ),
-                    isDisplayed()
-                )
-            )
-            appCompatImageButton.perform(click())
         } else {
 
             SystemClock.sleep(TIME_DELAY)

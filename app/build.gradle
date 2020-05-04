@@ -16,8 +16,8 @@ android {
         applicationId "io.ffem.lite"
         minSdkVersion 23
         targetSdkVersion 29
-        versionCode 40
-        versionName "Alpha 0.29"
+        versionCode 41
+        versionName "Alpha 0.30"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -111,8 +111,8 @@ dependencies {
     // Gson
     implementation 'com.google.code.gson:gson:2.8.6'
 
-    implementation 'com.google.firebase:firebase-ml-vision:24.0.2'
-    implementation 'com.google.firebase:firebase-ml-vision-barcode-model:16.1.0'
+    implementation 'com.google.firebase:firebase-ml-vision:24.0.3'
+    implementation 'com.google.firebase:firebase-ml-vision-barcode-model:16.1.1'
 
     // Navigation library
     def nav_version = "2.2.2"

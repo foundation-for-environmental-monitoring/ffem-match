@@ -11,8 +11,6 @@
     <string name="settings">Settings</string>
     <string name="ok">OK</string>
     <string name="close">Close</string>
-    <string name="show_server_image">View Full</string>
-    <string name="show_local_image">View Extracts</string>
     <string name="camera">Camera</string>
 
     <!-- Software notices -->
@@ -46,6 +44,8 @@
 
     <string name="submitResult">Submit Result</string>
     <string name="result">Result</string>
+    <string name="analyzed_photo">Analyzed Photo</string>
+    <string name="color_extracts">Color Extracts</string>
 
     <!-- ErrorType -->
     <string name="no_error" tools:keep="@string/no_error">No error</string>
@@ -53,7 +53,7 @@
     <string name="calibration_error" tools:keep="@string/calibration_error">Calibration error</string>
     <string name="bad_lighting" tools:keep="@string/bad_lighting">Bad lighting</string>
     <string name="image_tilted" tools:keep="@string/image_tilted">Tilted image</string>
-    <string name="invalid_barcode">Invalid color card</string>
+    <string name="invalid_barcode">Wrong color card</string>
     <string name="wrong_card" tools:keep="@string/wrong_card">Wrong color card</string>
 
     <!-- RiskType-->
@@ -66,7 +66,7 @@
     <string name="high_qty">Too high</string>
 
     <string name="margin_of_error">Margin of error: ±</string>
-    <string name="check_color_card">Check that the correct color card is being used. Also ensure that the card is placed in a well lit place.</string>
+    <string name="check_color_card">Check that the correct color card is being used. Also ensure that the card is placed in a well lit area with indirect lighting.</string>
     <string name="details">Details</string>
     <string name="risk">Risk:</string>
     <string name="no_image_selected">Using camera. Sample image not selected</string>

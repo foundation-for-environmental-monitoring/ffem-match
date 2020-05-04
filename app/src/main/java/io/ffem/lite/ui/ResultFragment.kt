@@ -1,19 +1,27 @@
 package io.ffem.lite.ui
 
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.app.App.Companion.getTestInfo
 import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.RiskType
+import io.ffem.lite.model.TestInfo
 import io.ffem.lite.model.toLocalString
+import io.ffem.lite.preference.isDiagnosticMode
 import io.ffem.lite.util.PreferencesUtil
+import kotlinx.android.synthetic.main.app_bar_layout.*
 import kotlinx.android.synthetic.main.fragment_result.*
+import java.io.File
 
 class ResultFragment : Fragment() {
 
@@ -25,11 +33,59 @@ class ResultFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val testInfo = ResultFragmentArgs.fromBundle(requireArguments()).testInfo
+        requireActivity().setTitle(R.string.result)
+        var testInfo = requireArguments().getParcelable<TestInfo>(App.TEST_INFO_KEY)
+        if (testInfo == null) {
+            testInfo = ResultFragmentArgs.fromBundle(requireArguments()).testInfo
+            if (isDiagnosticMode()) {
+                toolbar.setBackgroundColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.diagnostic
+                    )
+                )
+            } else {
+                toolbar.setBackgroundColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.colorPrimary
+                    )
+                )
+            }
+            button_submit.visibility = VISIBLE
+        } else {
+            toolbar.visibility = GONE
+            button_submit.visibility = GONE
+        }
+        displayResult(testInfo)
 
-        if (testInfo.error == ErrorType.NO_ERROR) {
+        super.onViewCreated(view, savedInstanceState)
+    }
+
+    private fun displayResult(testInfo: TestInfo?) {
+
+        val path =
+            requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES).toString() +
+                    File.separator + "captures" + File.separator
+
+        val fileName = testInfo!!.name!!.replace(" ", "")
+        val localPath =
+            File(path + testInfo.fileName + "_" + fileName + "_swatch" + ".jpg")
+        val serverPath = File(path + testInfo.fileName + "_" + fileName + ".jpg")
+
+        if (serverPath.exists()) {
+            image_full.setImageURI(Uri.fromFile(serverPath))
+        }
+
+        if (localPath.exists()) {
+            image_extract.setImageURI(Uri.fromFile(localPath))
+            image_extract.refreshDrawableState()
+        }
+
+        if (testInfo.error == ErrorType.NO_ERROR && testInfo.resultDetail.result >= 0) {
             text_name.text = testInfo.name
-            text_result.text = testInfo.getResultString(view.context)
+            text_name2.text = ""
+            text_result.text = testInfo.getResultString(requireContext())
             text_unit.text = testInfo.unit
             text_risk.text = testInfo.getRisk(requireContext())
             when {
@@ -45,8 +101,13 @@ class ResultFragment : Fragment() {
             }
             text_error_margin.text = String.format("%.2f", testInfo.getMarginOfError())
             lyt_error_message.visibility = GONE
+            lyt_result.visibility = VISIBLE
+            lyt_result_details.visibility = VISIBLE
+            button_submit.setText(R.string.submitResult)
+
         } else {
             val requestedTestId = PreferencesUtil.getString(context, App.TEST_ID_KEY, "")
+            text_name.text = ""
             if (testInfo.uuid != requestedTestId) {
                 val requestedTest = getTestInfo(requestedTestId!!)
                 if (requestedTest != null) {
@@ -58,12 +119,15 @@ class ResultFragment : Fragment() {
                 text_name2.text = testInfo.name
             }
 
-            text_error.text = testInfo.error.toLocalString(view.context)
+            text_error.text = testInfo.error.toLocalString(requireContext())
+            lyt_error_message.visibility = VISIBLE
             lyt_result.visibility = GONE
             lyt_result_details.visibility = GONE
+            if (testInfo.error > ErrorType.CALIBRATION_ERROR) {
+                lyt_color_extracts.visibility = GONE
+                lyt_analyzed_photo.visibility = GONE
+            }
             button_submit.setText(R.string.close)
         }
-
-        super.onViewCreated(view, savedInstanceState)
     }
 }
