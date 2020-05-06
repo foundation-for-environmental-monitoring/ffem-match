@@ -5,6 +5,7 @@ import android.view.View
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 
 class TestingPreferenceFragment : PreferenceFragmentCompat() {
@@ -20,13 +21,18 @@ class TestingPreferenceFragment : PreferenceFragmentCompat() {
     private fun setupTestImagePreference() {
         val testImagePreference =
             findPreference<Preference>(getString(R.string.testImageNumberKey)) as EditTextPreference
-        getSampleImageSummary(testImagePreference.text, testImagePreference)
-        testImagePreference.onPreferenceChangeListener =
-            Preference.OnPreferenceChangeListener { _: Preference?, newValue: Any ->
-                testImagePreference.text = newValue.toString()
-                getSampleImageSummary(newValue, testImagePreference)
-                false
-            }
+        @Suppress("ConstantConditionIf")
+        if (BuildConfig.DEBUG) {
+            getSampleImageSummary(testImagePreference.text, testImagePreference)
+            testImagePreference.onPreferenceChangeListener =
+                Preference.OnPreferenceChangeListener { _: Preference?, newValue: Any ->
+                    testImagePreference.text = newValue.toString()
+                    getSampleImageSummary(newValue, testImagePreference)
+                    false
+                }
+        } else {
+            testImagePreference.isVisible = false
+        }
     }
 
     private fun getSampleImageSummary(newValue: Any?, testImagePreference: EditTextPreference) {

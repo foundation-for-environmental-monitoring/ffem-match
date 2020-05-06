@@ -409,6 +409,7 @@ object ColorUtil {
                 error = CALIBRATION_ERROR
             }
 
+            testInfo.fileName = id
             Utilities.savePicture(
                 context.applicationContext, id,
                 testInfo.name!!, Utilities.bitmapToBytes(croppedBitmap), true
@@ -430,25 +431,36 @@ object ColorUtil {
         resultDetail: ResultDetail = ResultDetail()
     ) {
         val intent = Intent(App.LOCAL_RESULT_EVENT)
+        if (testInfo != null) {
+            testInfo.resultDetail = resultDetail
+            testInfo.error = error
 
-        testInfo!!.resultDetail = resultDetail
-        testInfo.error = error
+            val db = AppDatabase.getDatabase(context)
 
-        val db = AppDatabase.getDatabase(context)
+            val testImageNumber = PreferencesUtil
+                .getString(context, R.string.testImageNumberKey, "")
 
-        val testImageNumber = PreferencesUtil
-            .getString(context, R.string.testImageNumberKey, "")
+            if (db.resultDao().getResult(testInfo.fileName) == null) {
+                if (bitmap != null) {
+                    val bitmapRotated = Utilities.rotateImage(bitmap, 270)
+                    Utilities.savePicture(
+                        context,
+                        testInfo.fileName,
+                        testInfo.name!!,
+                        Utilities.bitmapToBytes(bitmapRotated),
+                        false
+                    )
 
-        if (db.resultDao().getResult(testInfo.fileName) == null) {
-            if (bitmap != null) {
-                val bitmapRotated = Utilities.rotateImage(bitmap, 270)
-                Utilities.savePicture(
-                    context,
-                    testInfo.fileName,
-                    testInfo.name!!,
-                    Utilities.bitmapToBytes(bitmapRotated),
-                    false
-                )
+                    db.resultDao().insert(
+                        TestResult(
+                            testInfo.fileName, testInfo.uuid!!, 0, testInfo.name!!,
+                            Date().time, -1.0, NO_ERROR, testImageNumber
+                        )
+                    )
+
+                    bitmap.recycle()
+                    bitmapRotated.recycle()
+                }
 
                 db.resultDao().insert(
                     TestResult(
@@ -456,35 +468,25 @@ object ColorUtil {
                         Date().time, -1.0, NO_ERROR, testImageNumber
                     )
                 )
-
-                bitmap.recycle()
-                bitmapRotated.recycle()
             }
 
-            db.resultDao().insert(
-                TestResult(
-                    testInfo.fileName, testInfo.uuid!!, 0, testInfo.name!!,
-                    Date().time, -1.0, NO_ERROR, testImageNumber
-                )
+            val path = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES).toString() +
+                    File.separator + "captures" + File.separator
+
+            val basePath = File(path)
+            if (!basePath.exists())
+                Timber.d(if (basePath.mkdirs()) "Success" else "Failed")
+
+            db.resultDao().updateResult(
+                testInfo.fileName,
+                testInfo.name!!,
+                testInfo.resultDetail.result,
+                testInfo.error.ordinal
             )
+
+            intent.putExtra(App.TEST_INFO_KEY, testInfo)
+            intent.putExtra(TEST_VALUE_KEY, resultDetail.result)
         }
-
-        val path = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES).toString() +
-                File.separator + "captures" + File.separator
-
-        val basePath = File(path)
-        if (!basePath.exists())
-            Timber.d(if (basePath.mkdirs()) "Success" else "Failed")
-
-        db.resultDao().updateResult(
-            testInfo.fileName,
-            testInfo.name!!,
-            testInfo.resultDetail.result,
-            testInfo.error.ordinal
-        )
-
-        intent.putExtra(App.TEST_INFO_KEY, testInfo)
-        intent.putExtra(TEST_VALUE_KEY, resultDetail.result)
 
         val localBroadcastManager = LocalBroadcastManager.getInstance(context)
         localBroadcastManager.sendBroadcast(intent)

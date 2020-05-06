@@ -96,12 +96,14 @@ class ResultListActivity : AppUpdateActivity() {
 
             val testInfo = intent.getParcelableExtra<TestInfo>(TEST_INFO_KEY)
 
-            db.resultDao().updateResult(
-                testInfo!!.fileName,
-                testInfo.name!!,
-                testInfo.resultDetail.result,
-                testInfo.error.ordinal
-            )
+            if (testInfo != null) {
+                db.resultDao().updateResult(
+                    testInfo.fileName,
+                    testInfo.name!!,
+                    testInfo.resultDetail.result,
+                    testInfo.error.ordinal
+                )
+            }
 
             refreshList()
         }
