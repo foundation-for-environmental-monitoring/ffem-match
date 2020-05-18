@@ -1,8 +1,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">ffem Lite</string>
     <string name="app_slogan">Water Quality System</string>
-    <string name="copyrightMessage">Copyright © ffem</string>
-    <string name="legalInformation">Legal Information</string>
+    <string name="copyright">Copyright © ffem</string>
+    <string name="legal_info">Legal Information</string>
 
     <string name="testing">Testing</string>
     <string name="place_color_card">Place the color card within the view finder above</string>
@@ -24,9 +24,9 @@
     <string name="camera_storage_permission">Camera &amp; storage permissions are required</string>
 
     <!-- App Expiry -->
-    <string name="versionExpired">Version expired</string>
-    <string name="thisVersionHasExpired">This version of the app has expired.</string>
-    <string name="uninstallAndInstallFromStore">Please uninstall and then install the latest version from Play Store.</string>
+    <string name="version_expired">Version expired</string>
+    <string name="version_has_expired">This version of the app has expired.</string>
+    <string name="uninstall_install_from_store">Please uninstall and then install the latest version from Play Store.</string>
 
     <!-- Content Descriptions -->
     <string name="result_list">List of results</string>
@@ -42,7 +42,7 @@
 
     <string name="invalid_image">Invalid image</string>
 
-    <string name="submitResult">Submit Result</string>
+    <string name="submit_result">Submit Result</string>
     <string name="result">Result</string>
     <string name="analyzed_photo">Analyzed Photo</string>
     <string name="color_extracts">Color Extracts</string>

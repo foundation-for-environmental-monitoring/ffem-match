@@ -201,7 +201,7 @@
             android:minWidth="230dp"
             android:minHeight="60dp"
             android:onClick="submitResult"
-            android:text="@string/submitResult"
+            android:text="@string/submit_result"
             android:textSize="18sp"
             android:theme="?primaryButtonStyle" />
 

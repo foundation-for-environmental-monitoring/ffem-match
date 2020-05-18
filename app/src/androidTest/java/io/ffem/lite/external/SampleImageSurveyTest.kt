@@ -282,7 +282,7 @@ class SampleImageSurveyTest : BaseTest() {
                         matches(isDisplayed())
                     )
                 }
-                onView(withText(R.string.submitResult)).perform(click())
+                onView(withText(R.string.submit_result)).perform(click())
 
                 SystemClock.sleep(1000)
 

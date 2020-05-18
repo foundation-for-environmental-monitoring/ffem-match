@@ -166,13 +166,13 @@ class ResultListActivity : AppUpdateActivity() {
                 val marketUrl =
                     Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
                 val message = String.format(
-                    "%s%n%n%s", getString(R.string.thisVersionHasExpired),
-                    getString(R.string.uninstallAndInstallFromStore)
+                    "%s%n%n%s", getString(R.string.version_has_expired),
+                    getString(R.string.uninstall_install_from_store)
                 )
 
                 val builder: AlertDialog.Builder = AlertDialog.Builder(this)
 
-                builder.setTitle(R.string.versionExpired)
+                builder.setTitle(R.string.version_expired)
                     .setMessage(message)
                     .setCancelable(false)
 
