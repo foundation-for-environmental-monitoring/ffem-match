@@ -21,6 +21,7 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.app.App
+import io.ffem.lite.app.App.Companion.DEFAULT_TEST_UUID
 import io.ffem.lite.app.App.Companion.TEST_INFO_KEY
 import io.ffem.lite.app.App.Companion.getTestInfo
 import io.ffem.lite.app.App.Companion.getTestName
@@ -108,7 +109,9 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
         if (capturePhoto) {
             done = true
-            savePhoto(bitmap, TestInfo(), true)
+            val testInfo = getTestInfo(DEFAULT_TEST_UUID)!!
+            testInfo.fileName = UUID.randomUUID().toString()
+            savePhoto(bitmap, testInfo, true)
             endProcessing(image, true)
             return
         }

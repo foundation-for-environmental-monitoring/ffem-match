@@ -16,6 +16,7 @@ import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOption
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import io.ffem.lite.R
 import io.ffem.lite.app.App
+import io.ffem.lite.app.App.Companion.DEFAULT_TEST_UUID
 import io.ffem.lite.app.App.Companion.TEST_ID_KEY
 import io.ffem.lite.app.App.Companion.TEST_VALUE_KEY
 import io.ffem.lite.app.App.Companion.getCalibration
@@ -180,7 +181,7 @@ object ColorUtil {
             .addOnSuccessListener(
                 fun(result: List<FirebaseVisionBarcode>) {
                     if (result.isEmpty()) {
-                        returnResult(context, null, BAD_LIGHTING, bitmap)
+                        returnResult(context, getTestInfo(DEFAULT_TEST_UUID), BAD_LIGHTING, bitmap)
                     }
                     for (leftBarcode in result) {
                         if (!leftBarcode.rawValue.isNullOrEmpty()) {

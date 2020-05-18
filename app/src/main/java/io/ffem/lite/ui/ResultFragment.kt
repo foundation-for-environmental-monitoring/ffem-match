@@ -69,16 +69,16 @@ class ResultFragment : Fragment() {
                     File.separator + "captures" + File.separator
 
         val fileName = testInfo!!.name!!.replace(" ", "")
-        val localPath =
+        val extractImagePath =
             File(path + testInfo.fileName + "_" + fileName + "_swatch" + ".jpg")
-        val serverPath = File(path + testInfo.fileName + "_" + fileName + ".jpg")
+        val analyzedImagePath = File(path + testInfo.fileName + "_" + fileName + ".jpg")
 
-        if (serverPath.exists()) {
-            image_full.setImageURI(Uri.fromFile(serverPath))
+        if (analyzedImagePath.exists()) {
+            image_full.setImageURI(Uri.fromFile(analyzedImagePath))
         }
 
-        if (localPath.exists()) {
-            image_extract.setImageURI(Uri.fromFile(localPath))
+        if (extractImagePath.exists()) {
+            image_extract.setImageURI(Uri.fromFile(extractImagePath))
             image_extract.refreshDrawableState()
         }
 
@@ -103,7 +103,7 @@ class ResultFragment : Fragment() {
             lyt_error_message.visibility = GONE
             lyt_result.visibility = VISIBLE
             lyt_result_details.visibility = VISIBLE
-            button_submit.setText(R.string.submitResult)
+            button_submit.setText(R.string.submit_result)
 
         } else {
             val requestedTestId = PreferencesUtil.getString(context, App.TEST_ID_KEY, "")
@@ -123,8 +123,10 @@ class ResultFragment : Fragment() {
             lyt_error_message.visibility = VISIBLE
             lyt_result.visibility = GONE
             lyt_result_details.visibility = GONE
-            if (testInfo.error > ErrorType.CALIBRATION_ERROR) {
+            if (!extractImagePath.exists()) {
                 lyt_color_extracts.visibility = GONE
+            }
+            if (!analyzedImagePath.exists()) {
                 lyt_analyzed_photo.visibility = GONE
             }
             button_submit.setText(R.string.close)

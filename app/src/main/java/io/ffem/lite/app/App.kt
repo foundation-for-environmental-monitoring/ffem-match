@@ -45,6 +45,8 @@ class App : BaseApplication() {
         const val TEST_ID_KEY = "test_id"
         const val TEST_VALUE_KEY = "value"
 
+        const val DEFAULT_TEST_UUID = "d1b25de4-5605-498e-99f1-8412d7e19db2"
+
         private lateinit var testConfig: TestConfig
 
         /**
