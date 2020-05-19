@@ -271,6 +271,184 @@ class DiagnosticsTest {
         ).perform(click())
     }
 
+    @Test
+    fun testManualCapture() {
+        startDiagnosticMode()
+
+        Thread.sleep(400)
+
+        Espresso.pressBack()
+
+        Thread.sleep(400)
+
+        onView(withId(R.id.scrollViewSettings))
+            .perform(swipeUp())
+
+        Thread.sleep(400)
+
+        pressBack()
+
+        onView(withText("Test Image Number")).perform(click())
+
+        Thread.sleep(400)
+
+        onView(
+            allOf(
+                withId(android.R.id.edit),
+                childAtPosition(
+                    childAtPosition(
+                        withClassName(`is`("android.widget.ScrollView")),
+                        0
+                    ),
+                    1
+                )
+            )
+        ).perform(scrollTo(), replaceText(""))
+
+        val appCompatEditText2 = onView(
+            allOf(
+                withId(android.R.id.edit), withText(""),
+                childAtPosition(
+                    childAtPosition(
+                        withClassName(`is`("android.widget.ScrollView")),
+                        0
+                    ),
+                    1
+                ),
+                isDisplayed()
+            )
+        )
+        appCompatEditText2.perform(closeSoftKeyboard())
+
+        val appCompatButton = onView(
+            allOf(
+                withId(android.R.id.button1), withText("OK"),
+                childAtPosition(
+                    childAtPosition(
+                        withId(R.id.buttonPanel),
+                        0
+                    ),
+                    3
+                )
+            )
+        )
+        appCompatButton.perform(scrollTo(), click())
+
+        Espresso.pressBack()
+
+        pressBack()
+
+        val floatingActionButton = onView(
+            allOf(
+                withId(R.id.fab), withContentDescription("Start test"),
+                childAtPosition(
+                    childAtPosition(
+                        withId(android.R.id.content),
+                        0
+                    ),
+                    1
+                ),
+                isDisplayed()
+            )
+        )
+        floatingActionButton.perform(click())
+
+        SystemClock.sleep(TIME_DELAY / 4)
+
+        val appCompatImageButton3 = onView(
+            allOf(
+                withId(R.id.capture_button), withContentDescription("Capture photo"),
+                childAtPosition(
+                    allOf(
+                        withId(R.id.camera_ui_container),
+                        childAtPosition(
+                            withClassName(`is`("androidx.constraintlayout.widget.ConstraintLayout")),
+                            1
+                        )
+                    ),
+                    2
+                ),
+                isDisplayed()
+            )
+        )
+        appCompatImageButton3.perform(click())
+
+        SystemClock.sleep(TIME_DELAY / 4)
+
+        val textView = onView(
+            allOf(
+                withId(R.id.text_name2), withText("Unknown"),
+                childAtPosition(
+                    childAtPosition(
+                        withId(R.id.lyt_error_message),
+                        0
+                    ),
+                    0
+                ),
+                isDisplayed()
+            )
+        )
+        textView.check(matches(withText("Unknown")))
+
+        val textView2 = onView(
+            allOf(
+                withId(R.id.text_error), withText("BAD LIGHTING"),
+                childAtPosition(
+                    childAtPosition(
+                        withId(R.id.lyt_error_message),
+                        0
+                    ),
+                    1
+                ),
+                isDisplayed()
+            )
+        )
+        textView2.check(matches(withText("BAD LIGHTING")))
+
+        val textView3 = onView(
+            allOf(
+                withText("Analyzed Photo"),
+                childAtPosition(
+                    childAtPosition(
+                        withId(R.id.lyt_analyzed_photo),
+                        0
+                    ),
+                    0
+                ),
+                isDisplayed()
+            )
+        )
+        textView3.check(matches(withText("Analyzed Photo")))
+
+        val imageView = onView(
+            allOf(
+                withId(R.id.image_full), withContentDescription("Analyzed image"),
+                childAtPosition(
+                    childAtPosition(
+                        withId(R.id.lyt_analyzed_photo),
+                        0
+                    ),
+                    1
+                ),
+                isDisplayed()
+            )
+        )
+        imageView.check(matches(isDisplayed()))
+
+        onView(
+            allOf(
+                withId(R.id.button_submit), withText("Close"),
+                childAtPosition(
+                    childAtPosition(
+                        withId(R.id.resultScrollView),
+                        0
+                    ),
+                    4
+                )
+            )
+        ).perform(scrollTo(), click())
+    }
+
     private fun startDiagnosticMode() {
         if (isDiagnosticMode()) {
             Thread.sleep(400)
