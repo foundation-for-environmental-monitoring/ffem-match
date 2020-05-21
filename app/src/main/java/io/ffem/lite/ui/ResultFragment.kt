@@ -19,6 +19,7 @@ import io.ffem.lite.model.TestInfo
 import io.ffem.lite.model.toLocalString
 import io.ffem.lite.preference.isDiagnosticMode
 import io.ffem.lite.util.PreferencesUtil
+import io.ffem.lite.util.toLocalString
 import kotlinx.android.synthetic.main.app_bar_layout.*
 import kotlinx.android.synthetic.main.fragment_result.*
 import java.io.File
@@ -83,7 +84,7 @@ class ResultFragment : Fragment() {
         }
 
         if (testInfo.error == ErrorType.NO_ERROR && testInfo.resultDetail.result >= 0) {
-            text_name.text = testInfo.name
+            text_name.text = testInfo.name!!.toLocalString()
             text_name2.text = ""
             text_result.text = testInfo.getResultString(requireContext())
             text_unit.text = testInfo.unit
@@ -111,12 +112,12 @@ class ResultFragment : Fragment() {
             if (testInfo.uuid != requestedTestId) {
                 val requestedTest = getTestInfo(requestedTestId!!)
                 if (requestedTest != null) {
-                    text_name2.text = requestedTest.name
+                    text_name2.text = requestedTest.name!!.toLocalString()
                 } else {
-                    text_name2.text = testInfo.name
+                    text_name2.text = testInfo.name!!.toLocalString()
                 }
             } else {
-                text_name2.text = testInfo.name
+                text_name2.text = testInfo.name!!.toLocalString()
             }
 
             text_error.text = testInfo.error.toLocalString(requireContext())

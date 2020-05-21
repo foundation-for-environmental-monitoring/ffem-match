@@ -15,11 +15,6 @@
 
     <!-- Software notices -->
     <string name="software_notices">Software Notices</string>
-    <string name="apache_license_2">Apache License 2.0</string>
-    <string name="mit_license">MIT License</string>
-    <string name="cca_license">CC BY 4.0 International</string>
-    <string name="eclipse_public_license">Eclipse Public License 1.0</string>
-
     <string name="storage_permission">Storage permissions are required</string>
     <string name="camera_storage_permission">Camera &amp; storage permissions are required</string>
 
@@ -77,5 +72,13 @@
     <string name="update_download_fail">Unable to download update</string>
     <string name="restart">Restart</string>
     <string name="retry">Retry</string>
+
+    <string name="unknown">Unknown</string>
+    <string name="fluoride">Fluoride</string>
+    <string name="fluoride_high_range">Fluoride - High Range</string>
+    <string name="iron">Iron</string>
+    <string name="nitrate">Nitrate</string>
+    <string name="ph">pH</string>
+    <string name="residual_chlorine">Residual Chlorine</string>
 
 </resources>

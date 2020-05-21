@@ -9,6 +9,8 @@
 
         <import type="io.ffem.lite.preference.AppPreferencesKt" />
 
+        <import type="io.ffem.lite.util.ExtensionUtilKt" />
+
         <import type="com.github.marlonlom.utilities.timeago.TimeAgo" />
 
         <variable
@@ -39,7 +41,7 @@
                 android:layout_height="wrap_content"
                 android:clickable="false"
                 android:focusable="false"
-                android:text="@{result.testImageNumber.isEmpty() ? result.name : result.name +` (` + result.testImageNumber + `)`}"
+                android:text="@{result.testImageNumber.isEmpty() ? ExtensionUtilKt.toLocalString(result.name) : ExtensionUtilKt.toLocalString(result.name) +` (` + result.testImageNumber + `)`}"
                 android:textIsSelectable="false"
                 android:textSize="18sp"
                 tools:text="Contaminant" />
