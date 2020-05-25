@@ -6,7 +6,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import com.google.android.play.core.appupdate.testing.FakeAppUpdateManager
-import com.google.android.play.core.install.model.AppUpdateType
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.common.TestHelper
 import io.ffem.lite.common.TestHelper.mDevice
@@ -43,7 +42,6 @@ class UpdateTest {
 
     @Test
     fun mainActivity_Update_Completes() {
-        fakeAppUpdateManager.partiallyAllowedUpdateType = AppUpdateType.IMMEDIATE
         fakeAppUpdateManager.setUpdateAvailable(BuildConfig.VERSION_CODE + 1)
 
         ActivityScenario.launch(ResultListActivity::class.java)
@@ -63,7 +61,6 @@ class UpdateTest {
 
     @Test
     fun mainActivity_Update_DownloadFails() {
-        fakeAppUpdateManager.partiallyAllowedUpdateType = AppUpdateType.IMMEDIATE
         fakeAppUpdateManager.setUpdateAvailable(BuildConfig.VERSION_CODE + 1)
 
         ActivityScenario.launch(ResultListActivity::class.java)
