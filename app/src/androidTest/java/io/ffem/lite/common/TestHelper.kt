@@ -123,7 +123,8 @@ object TestHelper {
     }
 
     fun clickLaunchButton(index: Int) {
-        var buttonText = "Launch"
+        var buttonText =
+            ApplicationProvider.getApplicationContext<Context>().getString(R.string.launch)
         findButtonInScrollable(buttonText)
         var buttons: List<UiObject2?>? = mDevice.findObjects(By.text(buttonText))
         if (buttons?.size == 0) {
