@@ -80,5 +80,6 @@
     <string name="nitrate" tools:keep="@string/nitrate">Nitrate</string>
     <string name="ph" tools:keep="@string/ph">pH</string>
     <string name="residual_chlorine" tools:keep="@string/residual_chlorine">Residual Chlorine</string>
+    <string name="launch">Launch</string>
 
 </resources>

@@ -2,8 +2,8 @@
 <resources>
     <string name= "app_name">ffem ಲೈಟ್</string>)
     <string name= "app_slogan">ನೀರಿನ ಗುಣಮಟ್ಟದ ವ್ಯವಸ್ಥೆ</string>)
-    <string name= "copyrightMessage">ಕೃತಿಸ್ವಾಮ್ಯ © ffem</string>)
-    <string name= "legalInformation">ಕಾನೂನು ಮಾಹಿತಿ</string>)
+    <string name= "copyright">ಕೃತಿಸ್ವಾಮ್ಯ © ffem</string>)
+    <string name= "legal_info">ಕಾನೂನು ಮಾಹಿತಿ</string>)
     <string name= "testing">ಪರೀಕ್ಷೆ</string>)
     <string name= "place_color_card">ಮೇಲಿನ ವೀಕ್ಷಣೆ ಶೋಧಕದೊಳಗೆ ಬಣ್ಣ ಕಾರ್ಡ್ ಇರಿಸಿ</string>)
     <string name= "version">ಆವೃತ್ತಿ</string>)
@@ -15,9 +15,9 @@
     <string name= "software_notices">ಸಾಫ್ಟ್‌ವೇರ್ ಪ್ರಕಟಣೆಗಳು</string>)
     <string name= "storage_permission">ಶೇಖರಣಾ ಅನುಮತಿಗಳು ಅಗತ್ಯವಿದೆ</string>)
     <string name= "camera_storage_permission">ಕ್ಯಾಮೆರಾ ಮತ್ತು ಶೇಖರಣಾ ಅನುಮತಿಗಳು ಅಗತ್ಯವಿದೆ</string>)
-    <string name= "versionExpired">ಆವೃತ್ತಿ ಅವಧಿ ಮೀರಿದೆ</string>)
-    <string name= "thisVersionHasExpired">ಅಪ್ಲಿಕೇಶನ್‌ನ ಈ ಆವೃತ್ತಿ ಅವಧಿ ಮೀರಿದೆ.</string>)
-    <string name= "uninstallAndInstallFromStore">ದಯವಿಟ್ಟು ಅಸ್ಥಾಪಿಸಿ ಮತ್ತು ನಂತರ ಪ್ಲೇ ಸ್ಟೋರ್‌ನಿಂದ ಇತ್ತೀಚಿನ ಆವೃತ್ತಿಯನ್ನು ಸ್ಥಾಪಿಸಿ.</string>)
+    <string name= "version_expired">ಆವೃತ್ತಿ ಅವಧಿ ಮೀರಿದೆ</string>)
+    <string name= "version_has_expired">ಅಪ್ಲಿಕೇಶನ್‌ನ ಈ ಆವೃತ್ತಿ ಅವಧಿ ಮೀರಿದೆ.</string>)
+    <string name= "uninstall_install_from_store">ದಯವಿಟ್ಟು ಅಸ್ಥಾಪಿಸಿ ಮತ್ತು ನಂತರ ಪ್ಲೇ ಸ್ಟೋರ್‌ನಿಂದ ಇತ್ತೀಚಿನ ಆವೃತ್ತಿಯನ್ನು ಸ್ಥಾಪಿಸಿ.</string>)
     <string name= "result_list">ಫಲಿತಾಂಶಗಳ ಪಟ್ಟಿ</string>)
     <string name= "start_test">ಪರೀಕ್ಷೆಯನ್ನು ಪ್ರಾರಂಭಿಸಿ</string>)
     <string name= "analyzed_image">ವಿಶ್ಲೇಷಿಸಿದ ಚಿತ್ರ</string>)
@@ -27,7 +27,7 @@
     <string name= "color_card_not_found">ಬಾರ್‌ಕೋಡ್ ಕಂಡುಬಂದಿಲ್ಲ. ಬೆಳಕನ್ನು ಪರಿಶೀಲಿಸಿ</string>)
     <string name= "capture_photo">ಫೋಟೋ ಸೆರೆಹಿಡಿಯಿರಿ</string>)
     <string name= "invalid_image">ಅಮಾನ್ಯ ಚಿತ್ರ</string>)
-    <string name= "submitResult">ಫಲಿತಾಂಶವನ್ನು ಸಲ್ಲಿಸಿ</string>)
+    <string name= "submit_result">ಫಲಿತಾಂಶವನ್ನು ಸಲ್ಲಿಸಿ</string>)
     <string name= "result">ಫಲಿತಾಂಶ</string>)
     <string name= "analyzed_photo">ವಿಶ್ಲೇಷಿಸಿದ ಫೋಟೋ</string>)
     <string name= "color_extracts">ಬಣ್ಣ ಸಾರಗಳು</string>)
@@ -61,5 +61,8 @@
     <string name= "iron">ಕಬ್ಬಿಣ</string>)
     <string name= "nitrate">ನೈಟ್ರೇಟ್</string>)
     <string name= "residual_chlorine">ಉಳಿದ ಕ್ಲೋರಿನ್</string>)
+    <string name= "unknown">ಅಜ್ಞಾತ</string>)
+    <string name= "launch">Launch</string>
+
 
 </resources>
