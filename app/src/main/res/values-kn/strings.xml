@@ -61,5 +61,10 @@
     <string name="iron">ಕಬ್ಬಿಣ</string>
     <string name="nitrate">ನೈಟ್ರೇಟ್</string>
     <string name="residual_chlorine">ಉಳಿದ ಕ್ಲೋರಿನ್</string>
-    <string name="launch">Launch</string>
+    <string name="launch">ಪ್ರಾರಂಭಿಸಿ</string>
+    <string name="back">ಹಿಂದೆ</string>
+    <string name="next">ಮುಂದೆ</string>
+    <string name="water_tests_1">ನೀರಿನ ಪರೀಕ್ಷೆಗಳು 1</string>
+    <string name="water_tests_2">ನೀರಿನ ಪರೀಕ್ಷೆಗಳು 2</string>
+    <string name="view_hierarchy">ಪ್ರಾಂಪ್ಟ್‌ಗೆ ಹೋಗಿ</string>
 </resources>
