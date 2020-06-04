@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="app_name">ffem Lite</string>)
+
     <!--Diagnostic-->
     <string name="diagnostics">Diagnostics</string>
     <string name="diagnosticModeEnabled">Diagnostic mode enabled</string>
@@ -14,7 +16,7 @@
     <string name="sample_image_not_found">Sample image not found</string>
 
     <!--Software Notices-->
-    <string name="apache_software"><a href="https://source.android.com/setup/licenses">Android&#160;Open&#160;Source&#160;Project</a>&#160;&#160;&#8226;&#160;&#160;<a href="https://github.com/joel-costigliola/assertj-core">AssertJ</a>&#160;&#160;&#8226;&#160;&#160;<a href="https://github.com/google/gson">Gson</a>&#160;&#160;&#8226;&#160;&#160;<a href="https://github.com/JakeWharton/timber">Timber</a>&#160;&#160;&#8226;&#160;&#160;<a href="https://github.com/marlonlom/timeago">TimeAgo</a></string>
+    <string name="apache_software"><a href="https://source.android.com/setup/licenses">Android&#160;Open&#160;Source&#160;Project</a>&#160;&#160;&#8226;&#160;&#160;<a href="https://github.com/joel-costigliola/assertj-core">AssertJ</a>&#160;&#160;&#8226;&#160;&#160;<a href="https://github.com/google/gson">Gson</a>&#160;&#160;&#8226;&#160;&#160;<a href="https://github.com/JakeWharton/timber">Timber</a></string>
     <string name="mit_software"><a href="http://robolectric.org/">Robolectric</a></string>
     <string name="cca_software"><a href="https://design.google.com/icons/">Material Icons</a></string>
     <string name="eclipse_software"><a href="https://github.com/junit-team/junit4">Junit 4</a></string>

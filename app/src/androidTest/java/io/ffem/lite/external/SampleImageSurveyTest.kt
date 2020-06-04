@@ -4,34 +4,35 @@ package io.ffem.lite.external
 import android.content.Context
 import android.os.Environment
 import android.os.SystemClock
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
-import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.common.*
 import io.ffem.lite.common.TestHelper.clearPreferences
+import io.ffem.lite.common.TestHelper.clickLaunchButton
+import io.ffem.lite.common.TestHelper.gotoSurveyForm
+import io.ffem.lite.common.TestHelper.isDeviceInitialized
 import io.ffem.lite.common.TestHelper.mDevice
-import io.ffem.lite.common.TestUtil.checkResult
+import io.ffem.lite.common.TestHelper.nextSurveyPage
+import io.ffem.lite.common.TestHelper.startSurveyApp
 import io.ffem.lite.internal.TIME_DELAY
 import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.ErrorType.NO_ERROR
 import io.ffem.lite.model.ErrorType.WRONG_CARD
 import io.ffem.lite.model.toLocalString
-import io.ffem.lite.model.toQuantityLocalString
 import io.ffem.lite.ui.ResultListActivity
 import io.ffem.lite.util.PreferencesUtil
-import org.hamcrest.Matchers.allOf
-import org.hamcrest.Matchers.not
+import io.ffem.lite.util.toLocalString
 import org.junit.*
 import org.junit.runner.RunWith
 import org.junit.runners.MethodSorters
@@ -205,95 +206,26 @@ class SampleImageSurveyTest : BaseTest() {
     ) {
 
         PreferencesUtil.setString(
-            ApplicationProvider.getApplicationContext(),
-            R.string.testImageNumberKey, imageNumber.toString()
+            context, R.string.testImageNumberKey, imageNumber.toString()
         )
 
         SystemClock.sleep(2000)
 
-        TestHelper.gotoSurveyForm()
+        startSurveyApp()
+        gotoSurveyForm()
 
-        TestHelper.nextSurveyPage(3, testDetails.group)
-        TestHelper.clickLaunchButton(testDetails.buttonIndex)
+        nextSurveyPage(3, context.getString(testDetails.group))
+        clickLaunchButton(testDetails.buttonIndex)
 
         SystemClock.sleep(TIME_DELAY)
 
-        onView(withText(testDetails.name)).check(matches(isDisplayed()))
+        onView(withText(testDetails.name.toLocalString())).check(matches(isDisplayed()))
 
         if (expectedResultError > NO_ERROR) {
             onView(withText(expectedResultError.toLocalString(context))).check(
                 matches(isDisplayed())
             )
             onView(withText(R.string.close)).perform(click())
-        }
-    }
-
-    private fun startTest(imageNumber: Int) {
-        val testData = testDataList[imageNumber]!!
-
-        PreferencesUtil.setString(
-            ApplicationProvider.getApplicationContext(),
-            R.string.testImageNumberKey, imageNumber.toString()
-        )
-
-        SystemClock.sleep(2000)
-
-        TestHelper.gotoSurveyForm()
-
-        TestHelper.nextSurveyPage(3, testData.testDetails.group)
-        TestHelper.clickLaunchButton(testData.testDetails.buttonIndex)
-
-        if (testData.expectedScanError == -1) {
-
-            SystemClock.sleep(TIME_DELAY)
-
-            onView(withText(testData.testDetails.name)).check(matches(isDisplayed()))
-
-            if (testData.expectedResultError > NO_ERROR) {
-                onView(withText(testData.expectedResultError.toLocalString(context))).check(
-                    matches(isDisplayed())
-                )
-                onView(withText(R.string.close)).perform(click())
-            } else {
-
-                onView(withText(testData.testDetails.name)).check(matches(isDisplayed()))
-
-                val resultTextView = onView(withId(R.id.text_result))
-
-                resultTextView.check(matches(checkResult(testData.expectedResult)))
-                val convertedValue = TestUtil.getText(resultTextView).toDouble()
-
-                if (testData.testDetails == pH) {
-                    onView(withId(R.id.text_unit)).check(matches(not(isDisplayed())))
-                } else {
-                    onView(allOf(withId(R.id.text_unit), withText("mg/l")))
-                        .check(matches(isDisplayed()))
-                }
-
-                val marginOfErrorView = onView(withId(R.id.text_error_margin))
-                marginOfErrorView.check(matches(checkResult(testData.expectedMarginOfError)))
-
-                if (testData.testDetails == residualChlorine) {
-                    onView(withText(testData.risk.toQuantityLocalString(ApplicationProvider.getApplicationContext()))).check(
-                        matches(isDisplayed())
-                    )
-                } else {
-                    onView(withText(testData.risk.toLocalString(ApplicationProvider.getApplicationContext()))).check(
-                        matches(isDisplayed())
-                    )
-                }
-                onView(withText(R.string.submit_result)).perform(click())
-
-                SystemClock.sleep(1000)
-
-                Assert.assertNotNull(mDevice.findObject(By.text(convertedValue.toString())))
-            }
-
-        } else {
-
-            SystemClock.sleep(TIME_DELAY)
-
-            onView(withText(testData.expectedScanError)).check(matches(isDisplayed()))
         }
     }
 
@@ -326,7 +258,7 @@ class SampleImageSurveyTest : BaseTest() {
             BuildConfig.INSTRUMENTED_TEST_RUNNING.set(true)
             context = InstrumentationRegistry.getInstrumentation().targetContext
 
-            if (!TestHelper.isDeviceInitialized()) {
+            if (!isDeviceInitialized()) {
                 mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
             }
         }

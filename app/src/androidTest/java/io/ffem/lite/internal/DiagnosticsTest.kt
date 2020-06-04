@@ -15,8 +15,10 @@ import io.ffem.lite.R
 import io.ffem.lite.common.TestHelper.enterDiagnosticMode
 import io.ffem.lite.common.TestHelper.leaveDiagnosticMode
 import io.ffem.lite.common.TestUtil.childAtPosition
+import io.ffem.lite.common.residualChlorine
 import io.ffem.lite.preference.isDiagnosticMode
 import io.ffem.lite.ui.ResultListActivity
+import io.ffem.lite.util.toLocalString
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.core.IsInstanceOf
@@ -61,7 +63,7 @@ class DiagnosticsTest {
 
         val appCompatButton2 = onView(
             allOf(
-                withId(android.R.id.button1), withText("Delete"),
+                withId(android.R.id.button1), withText(R.string.delete),
                 childAtPosition(
                     childAtPosition(
                         withId(R.id.buttonPanel),
@@ -125,7 +127,7 @@ class DiagnosticsTest {
 
         val appCompatButton = onView(
             allOf(
-                withId(android.R.id.button1), withText("OK"),
+                withId(android.R.id.button1), withText(R.string.ok),
                 childAtPosition(
                     childAtPosition(
                         withId(R.id.buttonPanel),
@@ -143,7 +145,7 @@ class DiagnosticsTest {
 
         val floatingActionButton = onView(
             allOf(
-                withId(R.id.fab), withContentDescription("Start test"),
+                withId(R.id.fab), withContentDescription(R.string.start_test),
                 childAtPosition(
                     childAtPosition(
                         withId(android.R.id.content),
@@ -160,7 +162,7 @@ class DiagnosticsTest {
 
         val textView = onView(
             allOf(
-                withId(R.id.text_name), withText("Residual Chlorine"),
+                withId(R.id.text_name), withText(residualChlorine.name.toLocalString()),
                 childAtPosition(
                     childAtPosition(
                         withId(R.id.lyt_result),
@@ -171,7 +173,7 @@ class DiagnosticsTest {
                 isDisplayed()
             )
         )
-        textView.check(matches(withText("Residual Chlorine")))
+        textView.check(matches(withText(residualChlorine.name.toLocalString())))
 
         val textView2 = onView(
             allOf(
@@ -205,7 +207,7 @@ class DiagnosticsTest {
 
         val textView4 = onView(
             allOf(
-                withId(R.id.text_risk), withText("Insufficient"),
+                withId(R.id.text_risk), withText(R.string.medium_qty),
                 childAtPosition(
                     childAtPosition(
                         IsInstanceOf.instanceOf(android.widget.LinearLayout::class.java),
@@ -216,11 +218,11 @@ class DiagnosticsTest {
                 isDisplayed()
             )
         )
-        textView4.check(matches(withText("Insufficient")))
+        textView4.check(matches(withText(R.string.medium_qty)))
 
         val textView5 = onView(
             allOf(
-                withText("Margin of error: ±"),
+                withText(R.string.margin_of_error),
                 childAtPosition(
                     childAtPosition(
                         IsInstanceOf.instanceOf(android.widget.LinearLayout::class.java),
@@ -231,7 +233,7 @@ class DiagnosticsTest {
                 isDisplayed()
             )
         )
-        textView5.check(matches(withText("Margin of error: ±")))
+        textView5.check(matches(withText(R.string.margin_of_error)))
 
         val textView6 = onView(
             allOf(
@@ -250,7 +252,7 @@ class DiagnosticsTest {
 
         val textView7 = onView(
             allOf(
-                withText("Result"),
+                withText(R.string.result),
                 childAtPosition(
                     childAtPosition(
                         IsInstanceOf.instanceOf(android.widget.LinearLayout::class.java),
@@ -261,11 +263,11 @@ class DiagnosticsTest {
                 isDisplayed()
             )
         )
-        textView7.check(matches(withText("Result")))
+        textView7.check(matches(withText(R.string.result)))
 
         onView(
             allOf(
-                withId(R.id.button_submit), withText("Submit Result"),
+                withId(R.id.button_submit), withText(R.string.submit_result),
                 isDisplayed()
             )
         ).perform(click())
@@ -322,7 +324,7 @@ class DiagnosticsTest {
 
         val appCompatButton = onView(
             allOf(
-                withId(android.R.id.button1), withText("OK"),
+                withId(android.R.id.button1), withText(R.string.ok),
                 childAtPosition(
                     childAtPosition(
                         withId(R.id.buttonPanel),
@@ -340,7 +342,7 @@ class DiagnosticsTest {
 
         val floatingActionButton = onView(
             allOf(
-                withId(R.id.fab), withContentDescription("Start test"),
+                withId(R.id.fab), withContentDescription(R.string.start_test),
                 childAtPosition(
                     childAtPosition(
                         withId(android.R.id.content),
@@ -357,7 +359,7 @@ class DiagnosticsTest {
 
         val appCompatImageButton3 = onView(
             allOf(
-                withId(R.id.capture_button), withContentDescription("Capture photo"),
+                withId(R.id.capture_button), withContentDescription(R.string.capture_photo),
                 childAtPosition(
                     allOf(
                         withId(R.id.camera_ui_container),
@@ -377,7 +379,7 @@ class DiagnosticsTest {
 
         val textView = onView(
             allOf(
-                withId(R.id.text_name2), withText("Unknown"),
+                withId(R.id.text_name2), withText(R.string.unknown),
                 childAtPosition(
                     childAtPosition(
                         withId(R.id.lyt_error_message),
@@ -388,11 +390,11 @@ class DiagnosticsTest {
                 isDisplayed()
             )
         )
-        textView.check(matches(withText("Unknown")))
+        textView.check(matches(withText(R.string.unknown)))
 
         val textView2 = onView(
             allOf(
-                withId(R.id.text_error), withText("BAD LIGHTING"),
+                withId(R.id.text_error), withText(R.string.bad_lighting),
                 childAtPosition(
                     childAtPosition(
                         withId(R.id.lyt_error_message),
@@ -403,11 +405,11 @@ class DiagnosticsTest {
                 isDisplayed()
             )
         )
-        textView2.check(matches(withText("BAD LIGHTING")))
+        textView2.check(matches(withText(R.string.bad_lighting)))
 
         val textView3 = onView(
             allOf(
-                withText("Analyzed Photo"),
+                withText(R.string.analyzed_photo),
                 childAtPosition(
                     childAtPosition(
                         withId(R.id.lyt_analyzed_photo),
@@ -418,11 +420,11 @@ class DiagnosticsTest {
                 isDisplayed()
             )
         )
-        textView3.check(matches(withText("Analyzed Photo")))
+        textView3.check(matches(withText(R.string.analyzed_photo)))
 
         val imageView = onView(
             allOf(
-                withId(R.id.image_full), withContentDescription("Analyzed image"),
+                withId(R.id.image_full), withContentDescription(R.string.analyzed_image),
                 childAtPosition(
                     childAtPosition(
                         withId(R.id.lyt_analyzed_photo),
@@ -437,7 +439,7 @@ class DiagnosticsTest {
 
         onView(
             allOf(
-                withId(R.id.button_submit), withText("Close"),
+                withId(R.id.button_submit), withText(R.string.close),
                 childAtPosition(
                     childAtPosition(
                         withId(R.id.resultScrollView),
@@ -455,7 +457,7 @@ class DiagnosticsTest {
 
             val actionMenuItemView = onView(
                 allOf(
-                    withId(R.id.action_settings), withContentDescription("Settings"),
+                    withId(R.id.action_settings), withContentDescription(R.string.settings),
                     childAtPosition(
                         childAtPosition(
                             withId(R.id.toolbar),
@@ -478,7 +480,7 @@ class DiagnosticsTest {
         } else {
             val actionMenuItemView = onView(
                 allOf(
-                    withId(R.id.action_settings), withContentDescription("Settings"),
+                    withId(R.id.action_settings), withContentDescription(R.string.settings),
                     childAtPosition(
                         childAtPosition(
                             withId(R.id.toolbar),
