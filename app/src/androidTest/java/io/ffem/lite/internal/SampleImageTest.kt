@@ -30,6 +30,7 @@ import io.ffem.lite.model.toLocalString
 import io.ffem.lite.model.toQuantityLocalString
 import io.ffem.lite.ui.ResultListActivity
 import io.ffem.lite.util.PreferencesUtil
+import io.ffem.lite.util.toLocalString
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.not
 import org.hamcrest.core.IsInstanceOf
@@ -219,7 +220,7 @@ class SampleImageTest {
 
             SystemClock.sleep(TIME_DELAY)
 
-            onView(withText(testData.testDetails.name)).check(matches(isDisplayed()))
+            onView(withText(testData.testDetails.name.toLocalString())).check(matches(isDisplayed()))
 
             if (testData.expectedResultError > NO_ERROR) {
                 onView(withText(testData.expectedResultError.toLocalString(context))).check(
@@ -228,7 +229,11 @@ class SampleImageTest {
                 onView(withText(R.string.close)).perform(click())
             } else {
 
-                onView(withText(testData.testDetails.name)).check(matches(isDisplayed()))
+                onView(withText(testData.testDetails.name.toLocalString())).check(
+                    matches(
+                        isDisplayed()
+                    )
+                )
 
                 val resultTextView = onView(withId(R.id.text_result))
                 resultTextView.check(matches(checkResult(testData.expectedResult)))
@@ -260,7 +265,7 @@ class SampleImageTest {
             onView(
                 allOf(
                     withId(R.id.text_title),
-                    withText("${testData.testDetails.name} (${imageNumber})"),
+                    withText("${testData.testDetails.name.toLocalString()} (${imageNumber})"),
                     childAtPosition(
                         allOf(
                             withId(R.id.layout),
@@ -273,7 +278,7 @@ class SampleImageTest {
                     ),
                     isDisplayed()
                 )
-            ).check(matches(withText("${testData.testDetails.name} (${imageNumber})")))
+            ).check(matches(withText("${testData.testDetails.name.toLocalString()} (${imageNumber})")))
 
             val textView = onView(
                 allOf(
@@ -282,7 +287,7 @@ class SampleImageTest {
                         childAtPosition(
                             allOf(
                                 withId(R.id.list_results),
-                                withContentDescription("List of results")
+                                withContentDescription(R.string.result_list)
                             ),
                             0
                         ),
@@ -307,7 +312,7 @@ class SampleImageTest {
 
             val imageView = onView(
                 allOf(
-                    withId(R.id.image_extract), withContentDescription("Analyzed image"),
+                    withId(R.id.image_extract), withContentDescription(R.string.analyzed_image),
                     isDisplayed()
                 )
             )
@@ -318,7 +323,7 @@ class SampleImageTest {
 
             val imageView2 = onView(
                 allOf(
-                    withId(R.id.image_full), withContentDescription("Analyzed image"),
+                    withId(R.id.image_full), withContentDescription(R.string.analyzed_image),
                     isDisplayed()
                 )
             )

@@ -4,11 +4,12 @@ import io.ffem.lite.R
 import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.RiskType
 
-val fluoride = TestDetails("Fluoride", "Water Tests 1", 0)
-val fluorideHighRange = TestDetails("Fluoride - High Range", "Water Tests 1", 1)
-val pH = TestDetails("pH", "Water Tests 2", 0)
-val residualChlorine = TestDetails("Residual Chlorine", "Water Tests 2", 1)
-val invalidTest = TestDetails("Residual Chlorine", "Water Tests 1", 2)
+val fluoride = TestDetails("Fluoride", "bcc31cb61159", R.string.water_tests_1, 0)
+val fluorideHighRange =
+    TestDetails("Fluoride - High Range", "b6cb9742737a", R.string.water_tests_1, 1)
+val pH = TestDetails("pH", "7aa7fc084354", R.string.water_tests_2, 0)
+val residualChlorine = TestDetails("Residual Chlorine", "ad0d47bcc96b", R.string.water_tests_2, 1)
+val invalidTest = TestDetails("Residual Chlorine", "ad0d47bcc96b", R.string.water_tests_2, 2)
 
 val testDataList = mutableMapOf(
     0 to TestData(residualChlorine, 0.5, 0.25, risk = RiskType.LOW),
@@ -49,6 +50,7 @@ data class TestData(
 
 data class TestDetails(
     var name: String,
-    var group: String,
+    var id: String,
+    var group: Int,
     var buttonIndex: Int
 )

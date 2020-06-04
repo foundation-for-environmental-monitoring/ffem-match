@@ -3,6 +3,7 @@ package io.ffem.lite.common
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.os.Environment
 import android.os.SystemClock
 import android.widget.ScrollView
 import android.widget.TextView
@@ -13,13 +14,17 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.*
+import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.app.AppDatabase
+import org.junit.Assert
 import timber.log.Timber
+import java.io.File
+import java.util.*
+
 
 const val EXTERNAL_SURVEY_PACKAGE_NAME = "io.ffem.collect"
 const val TEST_SURVEY_NAME = "ffem Lite Testing"
-const val NEXT = "next"
 
 fun clearData() {
     val db = AppDatabase.getDatabase(ApplicationProvider.getApplicationContext())
@@ -29,6 +34,8 @@ fun clearData() {
 object TestHelper {
 
     lateinit var mDevice: UiDevice
+    var screenshotCount = -1
+    var screenshotEnabled = false
 
     private val isEmulator: Boolean
         get() = (Build.FINGERPRINT.startsWith("generic")
@@ -55,7 +62,7 @@ object TestHelper {
         prefs.edit().clear().apply()
     }
 
-    fun gotoSurveyForm() {
+    fun startSurveyApp() {
         val context: Context? = InstrumentationRegistry.getInstrumentation().context
         val intent =
             context!!.packageManager.getLaunchIntentForPackage(EXTERNAL_SURVEY_PACKAGE_NAME)
@@ -63,6 +70,10 @@ object TestHelper {
         context.startActivity(intent)
         mDevice.waitForIdle()
         Thread.sleep(1000)
+    }
+
+    fun gotoSurveyForm() {
+
         val addButton: UiObject? = mDevice.findObject(
             UiSelector()
                 .resourceId("$EXTERNAL_SURVEY_PACKAGE_NAME:id/enter_data")
@@ -75,8 +86,10 @@ object TestHelper {
             Timber.e(e)
         }
         mDevice.waitForIdle()
+        Thread.sleep(1000)
         clickListViewItem(TEST_SURVEY_NAME)
         mDevice.waitForIdle()
+        Thread.sleep(1000)
         val goToStartButton: UiObject? = mDevice.findObject(
             UiSelector()
                 .resourceId("$EXTERNAL_SURVEY_PACKAGE_NAME:id/jumpBeginningButton")
@@ -138,7 +151,8 @@ object TestHelper {
 
     private fun clickNextButton() {
         try {
-            var buttonText = NEXT
+            var buttonText =
+                ApplicationProvider.getApplicationContext<Context>().getString(R.string.next)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 buttonText = buttonText.toUpperCase()
             }
@@ -179,7 +193,8 @@ object TestHelper {
                     break
                 }
 
-                val buttonText = "Back"
+                val buttonText =
+                    ApplicationProvider.getApplicationContext<Context>().getString(R.string.back)
                 findButtonInScrollable(buttonText)
                 val button = mDevice.findObject(UiSelector().text(buttonText))
                 if (button == null) {
@@ -202,5 +217,47 @@ object TestHelper {
 
     fun isDeviceInitialized(): Boolean {
         return ::mDevice.isInitialized
+    }
+
+    fun takeScreenshot(name: String) {
+        takeScreenshot(name, screenshotCount++)
+    }
+
+    fun takeScreenshot(name: String, page: Int) {
+        if (screenshotEnabled && BuildConfig.TAKE_SCREENSHOTS
+            && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1
+        ) {
+            val folder = File(
+                InstrumentationRegistry.getInstrumentation().targetContext.getExternalFilesDir(
+                    Environment.DIRECTORY_PICTURES
+                )
+                    .toString() + "/screenshots/"
+            )
+            val path = File(
+                folder, name + "-" + Locale.getDefault().language.substring(0, 2) + "-" +
+                        String.format("%02d", page + 1) + ".png"
+            )
+
+            if (!folder.exists()) {
+                folder.mkdirs()
+            }
+
+            mDevice.takeScreenshot(path, 0.1f, 30)
+        }
+    }
+
+    fun selectMenuItem() {
+        val menuButton = mDevice.findObject(
+            By.desc(
+                ApplicationProvider
+                    .getApplicationContext<Context>().getString(R.string.view_hierarchy)
+            )
+        )
+        if (menuButton != null && menuButton.isClickable) {
+            menuButton.click()
+            menuButton.recycle()
+        } else {
+            Assert.fail()
+        }
     }
 }
