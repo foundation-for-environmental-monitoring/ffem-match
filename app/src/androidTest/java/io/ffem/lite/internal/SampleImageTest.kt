@@ -187,6 +187,11 @@ class SampleImageTest {
     }
 
     @Test
+    fun image_024_Fluoride_0_Point_5() {
+        startInternalTest(24)
+    }
+
+    @Test
     fun imageX_Waiting() {
         startInternalTest(500)
     }
