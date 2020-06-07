@@ -21,6 +21,7 @@ import io.ffem.lite.common.*
 import io.ffem.lite.common.TestHelper.clearPreferences
 import io.ffem.lite.common.TestHelper.clickLaunchButton
 import io.ffem.lite.common.TestHelper.gotoSurveyForm
+import io.ffem.lite.common.TestHelper.gotoSurveySelection
 import io.ffem.lite.common.TestHelper.isDeviceInitialized
 import io.ffem.lite.common.TestHelper.mDevice
 import io.ffem.lite.common.TestHelper.nextSurveyPage
@@ -51,8 +52,7 @@ class SampleImageSurveyTest : BaseTest() {
     @JvmField
     var mGrantPermissionRule: GrantPermissionRule =
         GrantPermissionRule.grant(
-            "android.permission.CAMERA",
-            "android.permission.WRITE_EXTERNAL_STORAGE"
+            "android.permission.CAMERA"
         )
 
     @Before
@@ -212,6 +212,7 @@ class SampleImageSurveyTest : BaseTest() {
         SystemClock.sleep(2000)
 
         startSurveyApp()
+        gotoSurveySelection()
         gotoSurveyForm()
 
         nextSurveyPage(3, context.getString(testDetails.group))

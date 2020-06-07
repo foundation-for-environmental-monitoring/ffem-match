@@ -72,8 +72,7 @@ object TestHelper {
         Thread.sleep(1000)
     }
 
-    fun gotoSurveyForm() {
-
+    fun gotoSurveySelection() {
         val addButton: UiObject? = mDevice.findObject(
             UiSelector()
                 .resourceId("$EXTERNAL_SURVEY_PACKAGE_NAME:id/enter_data")
@@ -87,6 +86,9 @@ object TestHelper {
         }
         mDevice.waitForIdle()
         Thread.sleep(1000)
+    }
+
+    fun gotoSurveyForm() {
         clickListViewItem(TEST_SURVEY_NAME)
         mDevice.waitForIdle()
         Thread.sleep(1000)
@@ -97,6 +99,24 @@ object TestHelper {
         try {
             if (goToStartButton!!.exists() && goToStartButton.isEnabled) {
                 goToStartButton.click()
+            }
+        } catch (e: UiObjectNotFoundException) {
+            Timber.e(e)
+        }
+        mDevice.waitForIdle()
+    }
+
+    fun gotoFormSubmit() {
+        clickListViewItem(TEST_SURVEY_NAME)
+        mDevice.waitForIdle()
+        Thread.sleep(1000)
+        val gotoEndButton: UiObject? = mDevice.findObject(
+            UiSelector()
+                .resourceId("$EXTERNAL_SURVEY_PACKAGE_NAME:id/jumpEndButton")
+        )
+        try {
+            if (gotoEndButton!!.exists() && gotoEndButton.isEnabled) {
+                gotoEndButton.click()
             }
         } catch (e: UiObjectNotFoundException) {
             Timber.e(e)

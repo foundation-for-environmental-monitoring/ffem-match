@@ -30,8 +30,7 @@ import io.ffem.lite.app.App
 
 private const val PERMISSIONS_REQUEST_CODE = 10
 private val PERMISSIONS_REQUIRED = arrayOf(
-    Manifest.permission.CAMERA,
-    Manifest.permission.WRITE_EXTERNAL_STORAGE
+    Manifest.permission.CAMERA
 )
 
 /**

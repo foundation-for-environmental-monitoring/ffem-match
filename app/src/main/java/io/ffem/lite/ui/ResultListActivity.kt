@@ -270,8 +270,7 @@ class ResultListActivity : AppUpdateActivity() {
     fun onStartClick(@Suppress("UNUSED_PARAMETER") view: View) {
         if (useDummyImage()) {
             val permissions = arrayOf(
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                Manifest.permission.READ_EXTERNAL_STORAGE
             )
 
             if (!isHasPermission(*permissions))
@@ -299,12 +298,12 @@ class ResultListActivity : AppUpdateActivity() {
             if (requestCode == READ_REQUEST_CODE) {
                 data?.data?.also { uri ->
 
-                    val fiePath = FileUtil.getPath(this, uri)
-                    if (fiePath != null) {
-                        val filePtah = File(fiePath)
-                        if (filePtah.exists()) {
+                    val fileUrl = FileUtil.getPath(this, uri)
+                    if (fileUrl != null) {
+                        val filePath = File(fileUrl)
+                        if (filePath.exists()) {
                             val bitmapFromFile =
-                                BitmapFactory.decodeFile(filePtah.absolutePath)
+                                BitmapFactory.decodeFile(filePath.absolutePath)
 
                             var imageNumber = uri.pathSegments[uri.pathSegments.size - 1]
                                 .substringAfterLast("_", "")
@@ -337,7 +336,7 @@ class ResultListActivity : AppUpdateActivity() {
         } else {
             if (data != null) {
                 if (data.getBooleanExtra(PERMISSIONS_MISSING_KEY, false)) {
-                    showSnackbar(getString(R.string.camera_storage_permission))
+                    showSnackbar(getString(R.string.camera_permission))
                 }
             }
         }

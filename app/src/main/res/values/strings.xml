@@ -14,8 +14,8 @@
 
     <!-- Software notices -->
     <string name="software_notices">Software Notices</string>
-    <string name="storage_permission">Storage permissions are required</string>
-    <string name="camera_storage_permission">Camera &amp; storage permissions are required</string>
+    <string name="storage_permission">Storage permission is required</string>
+    <string name="camera_permission">Camera permission is required</string>
 
     <!-- App Expiry -->
     <string name="version_expired">Version expired</string>

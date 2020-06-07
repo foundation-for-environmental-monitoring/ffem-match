@@ -5,7 +5,6 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Rect
 import android.graphics.drawable.BitmapDrawable
-import android.provider.MediaStore
 import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
@@ -111,7 +110,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
             done = true
             val testInfo = getTestInfo(DEFAULT_TEST_UUID)!!
             testInfo.fileName = UUID.randomUUID().toString()
-            savePhoto(bitmap, testInfo, true)
+            savePhoto(bitmap, testInfo)
             endProcessing(image, true)
             return
         }
@@ -333,7 +332,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
             )
 
             testInfo.fileName = UUID.randomUUID().toString()
-            savePhoto(finalBitmap, testInfo, false)
+            savePhoto(finalBitmap, testInfo)
 
             finalBitmap.recycle()
 
@@ -344,7 +343,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         }
     }
 
-    private fun savePhoto(bitmap: Bitmap, testInfo: TestInfo, saveCopy: Boolean) {
+    private fun savePhoto(bitmap: Bitmap, testInfo: TestInfo) {
 
         val bitmapRotated = Utilities.rotateImage(bitmap, 270)
 
@@ -352,10 +351,6 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
             context.applicationContext, testInfo.fileName,
             testInfo.name!!, Utilities.bitmapToBytes(bitmapRotated), false
         )
-
-        if (saveCopy) {
-            saveBitmap(context, bitmap)
-        }
 
         bitmapRotated.recycle()
 
@@ -376,19 +371,6 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
     fun takePhoto() {
         capturePhoto = true
-    }
-
-    private fun saveBitmap(
-        context: Context, bitmap: Bitmap
-    ) {
-        try {
-            val filename = "lite_" + System.currentTimeMillis()
-            @Suppress("DEPRECATION")
-            MediaStore.Images.Media.insertImage(
-                context.contentResolver, bitmap, filename, "ffem Lite"
-            )
-        } catch (ignored: Exception) {
-        }
     }
 
     fun reset() {

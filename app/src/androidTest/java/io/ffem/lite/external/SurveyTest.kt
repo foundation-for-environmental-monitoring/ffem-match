@@ -11,6 +11,14 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.uiautomator.By
 import io.ffem.lite.R
 import io.ffem.lite.common.*
+import io.ffem.lite.common.TestHelper.clickLaunchButton
+import io.ffem.lite.common.TestHelper.gotoFormSubmit
+import io.ffem.lite.common.TestHelper.gotoSurveyForm
+import io.ffem.lite.common.TestHelper.gotoSurveySelection
+import io.ffem.lite.common.TestHelper.mDevice
+import io.ffem.lite.common.TestHelper.nextSurveyPage
+import io.ffem.lite.common.TestHelper.selectMenuItem
+import io.ffem.lite.common.TestHelper.startSurveyApp
 import io.ffem.lite.common.TestHelper.takeScreenshot
 import io.ffem.lite.internal.TIME_DELAY
 import io.ffem.lite.model.ErrorType
@@ -36,19 +44,23 @@ fun startTest(imageNumber: Int) {
 
     SystemClock.sleep(1000)
 
-    TestHelper.startSurveyApp()
+    startSurveyApp()
 
-    SystemClock.sleep(3000)
-
-    takeScreenshot(screenshotName)
-
-    TestHelper.gotoSurveyForm()
-
-    TestHelper.nextSurveyPage(3, context.getString(testData.testDetails.group))
+    SystemClock.sleep(7000)
 
     takeScreenshot(screenshotName)
 
-    TestHelper.clickLaunchButton(testData.testDetails.buttonIndex)
+    gotoSurveySelection()
+
+    takeScreenshot(screenshotName)
+
+    gotoSurveyForm()
+
+    nextSurveyPage(3, context.getString(testData.testDetails.group))
+
+    takeScreenshot(screenshotName)
+
+    clickLaunchButton(testData.testDetails.buttonIndex)
 
     SystemClock.sleep(1000)
 
@@ -75,6 +87,10 @@ fun startTest(imageNumber: Int) {
             takeScreenshot(screenshotName)
 
             Espresso.onView(ViewMatchers.withText(R.string.close)).perform(ViewActions.click())
+
+            SystemClock.sleep(1000)
+
+            takeScreenshot(screenshotName)
 
             SystemClock.sleep(1000)
 
@@ -144,9 +160,17 @@ fun startTest(imageNumber: Int) {
 
             takeScreenshot(screenshotName)
 
-            Assert.assertNotNull(TestHelper.mDevice.findObject(By.text(convertedValue.toString())))
+            Assert.assertNotNull(mDevice.findObject(By.text(convertedValue.toString())))
 
-            TestHelper.selectMenuItem()
+            selectMenuItem()
+
+            SystemClock.sleep(1000)
+
+            takeScreenshot(screenshotName)
+
+            SystemClock.sleep(1000)
+
+            gotoFormSubmit()
 
             SystemClock.sleep(1000)
 
