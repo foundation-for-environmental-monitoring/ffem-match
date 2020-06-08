@@ -87,4 +87,5 @@
     <string name="water_tests_1">Water Tests 1</string>
     <string name="water_tests_2">Water Tests 2</string>
     <string name="view_hierarchy">Go To Prompt</string>
+    <string name="sampleresult">SampleResult:</string>
 </resources>
