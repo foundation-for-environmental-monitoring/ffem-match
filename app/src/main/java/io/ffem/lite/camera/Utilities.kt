@@ -22,7 +22,7 @@ object Utilities {
         name: String,
         bytes: ByteArray,
         isExtract: Boolean
-    ): String {
+    ) {
         try {
             val path = context.getExternalFilesDir(DIRECTORY_PICTURES).toString() +
                     separator + "captures" + separator
@@ -36,17 +36,21 @@ object Utilities {
             if (isExtract) {
                 fileName += "_swatch"
             }
-            val filePath = "$path$id" + "_" + "$fileName.jpg"
-            val stream = FileOutputStream(filePath)
+            val filePath = File("$path$id")
+
+            if (!filePath.exists())
+                Timber.d(if (filePath.mkdirs()) "Success" else "Failed")
+
+            val stream = FileOutputStream(filePath.path + separator + "$fileName.jpg")
             stream.write(bytes)
             stream.flush()
             stream.fd.sync()
             stream.close()
 
             if (name != "Unknown") {
-                val unknown = File("$path$id" + "_" + "Unknown.jpg")
+                val unknown = File("$path$id" + separator + "Unknown.jpg")
                 if (unknown.exists()) {
-                    val newName = File("$path$id" + "_" + "$fixedName.jpg")
+                    val newName = File("$path$id$separator$fixedName.jpg")
                     unknown.renameTo(newName)
                 }
             }
@@ -60,13 +64,9 @@ object Utilities {
                     e.printStackTrace()
                 }
             }
-
-            return filePath
         } catch (e: IOException) {
             e.printStackTrace()
         }
-
-        return ""
     }
 
     /**
