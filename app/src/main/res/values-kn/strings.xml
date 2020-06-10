@@ -45,7 +45,6 @@
     <string name="margin_of_error">ದೋಷದ ಅಂಚು: ±</string>
     <string name="check_color_card">ಸರಿಯಾದ ಬಣ್ಣ ಕಾರ್ಡ್ ಬಳಸಲಾಗಿದೆಯೇ ಎಂದು ಪರಿಶೀಲಿಸಿ. ಕಾರ್ಡ್ ಅನ್ನು ಪರೋಕ್ಷ ಬೆಳಕಿನೊಂದಿಗೆ ಚೆನ್ನಾಗಿ ಬೆಳಗಿದ ಪ್ರದೇಶದಲ್ಲಿ ಇರಿಸಲಾಗಿದೆಯೆ ಎಂದು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ.</string>
     <string name="details">ವಿವರಗಳು</string>
-    <string name="risk">ಅಪಾಯ:</string>
     <string name="no_image_selected">ಕ್ಯಾಮೆರಾ ಬಳಸುವುದು. ಮಾದರಿ ಚಿತ್ರವನ್ನು ಆಯ್ಕೆ ಮಾಡಿಲ್ಲ</string>
     <string name="test_mode_image_selected">ಪರೀಕ್ಷಾ ಮೋಡ್. ಮಾದರಿ ಚಿತ್ರ: %s</string>
     <string name="update_ready">ನವೀಕರಣವನ್ನು ಸ್ಥಾಪಿಸಲು ಸಿದ್ಧವಾಗಿದೆ</string>

@@ -45,7 +45,6 @@
     <string name="margin_of_error">गलती की सम्भावना: ±</string>
     <string name="check_color_card">जांचें कि सही रंग कार्ड का उपयोग किया जा रहा है। यह भी सुनिश्चित करें कि कार्ड को अप्रत्यक्ष प्रकाश वाले क्षेत्र में रखा गया है।</string>
     <string name="details">विवरण</string>
-    <string name="risk">जोखिम</string>
     <string name="no_image_selected">कैमरा का उपयोग करना।  फोटो चयनित नहीं है</string>
     <string name="test_mode_image_selected">परीक्षण कि  विधि :  सैंपल इमेज : %s</string>
     <string name="update_ready">अपडेट इंस्टॉल के लिए तैयार है</string>

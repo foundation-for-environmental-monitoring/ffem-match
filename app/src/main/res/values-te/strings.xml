@@ -45,7 +45,6 @@
     <string name="margin_of_error">లోపం యొక్క మార్జిన్: ±</string>
     <string name="check_color_card">సరైన రంగు కార్డు ఉపయోగించబడుతోందో లేదో తనిఖీ చేయండి. కార్డు పరోక్ష లైటింగ్‌తో బాగా వెలిగించిన ప్రదేశంలో ఉంచబడిందని కూడా నిర్ధారించుకోండి.</string>
     <string name="details">వివరాలు</string>
-    <string name="risk">ప్రమాదం:</string>
     <string name="no_image_selected">కెమెరా ఉపయోగించి. నమూనా చిత్రం ఎంచుకోబడలేదు</string>
     <string name="test_mode_image_selected">పరీక్ష మోడ్. నమూనా చిత్రం: %s</string>
     <string name="update_ready">నవీకరణ ఇన్‌స్టాల్ చేయడానికి సిద్ధంగా ఉంది</string>
