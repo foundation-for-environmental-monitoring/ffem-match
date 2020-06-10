@@ -2,7 +2,10 @@ package io.ffem.lite.model
 
 import android.content.Context
 import android.os.Parcelable
+import io.ffem.lite.util.getStringByLocale
 import kotlinx.android.parcel.Parcelize
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.math.max
 import kotlin.math.round
 
@@ -29,14 +32,12 @@ data class TestInfo(
         }
     }
 
-    fun getRisk(context: Context): String {
-        val riskType = getRiskType()
+    fun getRiskEnglish(context: Context): String {
+        return getStringByLocale(context, getRiskType().toResourceId(context, riskAsQty), Locale.US)
+    }
 
-        return if (riskAsQty) {
-            riskType.toQuantityLocalString(context)
-        } else {
-            riskType.toLocalString(context)
-        }
+    fun getRisk(context: Context): String {
+        return context.getString(getRiskType().toResourceId(context, riskAsQty))
     }
 
     fun getRiskType(): RiskType {

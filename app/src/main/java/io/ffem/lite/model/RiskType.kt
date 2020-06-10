@@ -16,20 +16,14 @@ enum class RiskType {
     HIGH;
 }
 
-fun RiskType.toLocalString(context: Context): String {
-    val resourceId =
-        context.resources.getIdentifier(
-            this.toString().toLowerCase(Locale.ROOT),
-            "string", context.packageName
-        )
-    return context.getString(resourceId)
-}
+fun RiskType.toResourceId(context: Context, riskAsQty: Boolean): Int {
+    var riskTypeString = toString().toLowerCase(Locale.ROOT)
 
-fun RiskType.toQuantityLocalString(context: Context): String {
-    val resourceId =
-        context.resources.getIdentifier(
-            this.toString().toLowerCase(Locale.ROOT) + "_qty",
-            "string", context.packageName
-        )
-    return context.getString(resourceId)
+    if (riskAsQty) {
+        riskTypeString = toString().toLowerCase(Locale.ROOT) + "_qty"
+    }
+
+    return context.resources.getIdentifier(
+        riskTypeString, "string", context.packageName
+    )
 }
