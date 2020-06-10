@@ -141,7 +141,7 @@ class App : BaseApplication() {
 
         fun getTestName(id: String): String {
             if (!::testConfig.isInitialized) {
-                val input = app.resources.openRawResource(R.raw.calibration)
+                val input = app.resources.openRawResource(R.raw.tests)
                 val content = FileUtil.readTextFile(input)
                 testConfig = gson.fromJson(content, TestConfig::class.java)
             }
@@ -158,7 +158,7 @@ class App : BaseApplication() {
 
         fun getTestInfo(id: String): TestInfo? {
             if (!::testConfig.isInitialized) {
-                val input = app.resources.openRawResource(R.raw.calibration)
+                val input = app.resources.openRawResource(R.raw.tests)
                 val content = FileUtil.readTextFile(input)
                 testConfig = gson.fromJson(content, TestConfig::class.java)
             }
@@ -173,7 +173,7 @@ class App : BaseApplication() {
 
         fun getCalibration(id: String): List<CalibrationValue> {
             if (!::testConfig.isInitialized) {
-                val input = app.resources.openRawResource(R.raw.calibration)
+                val input = app.resources.openRawResource(R.raw.tests)
                 val content = FileUtil.readTextFile(input)
                 testConfig = gson.fromJson(content, TestConfig::class.java)
             }

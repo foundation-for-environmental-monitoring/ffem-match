@@ -23,7 +23,7 @@ import io.ffem.lite.common.TestHelper.takeScreenshot
 import io.ffem.lite.internal.TIME_DELAY
 import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.toLocalString
-import io.ffem.lite.model.toQuantityLocalString
+import io.ffem.lite.model.toResourceId
 import io.ffem.lite.ui.ResultListActivity
 import io.ffem.lite.util.PreferencesUtil
 import io.ffem.lite.util.toLocalString
@@ -122,34 +122,22 @@ fun startTest(imageNumber: Int) {
                         ViewMatchers.withId(R.id.text_unit),
                         ViewMatchers.withText("mg/l")
                     )
-                )
-                    .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+                ).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
             }
 
             val marginOfErrorView = Espresso.onView(ViewMatchers.withId(R.id.text_error_margin))
             marginOfErrorView.check(ViewAssertions.matches(TestUtil.checkResult(testData.expectedMarginOfError)))
 
-            if (testData.testDetails == residualChlorine) {
-                Espresso.onView(
-                    ViewMatchers.withText(
-                        testData.risk.toQuantityLocalString(
-                            ApplicationProvider.getApplicationContext()
-                        )
+            Espresso.onView(
+                ViewMatchers.withText(
+                    testData.risk.toResourceId(
+                        ApplicationProvider.getApplicationContext(),
+                        testData.testDetails == residualChlorine
                     )
-                ).check(
-                    ViewAssertions.matches(ViewMatchers.isDisplayed())
                 )
-            } else {
-                Espresso.onView(
-                    ViewMatchers.withText(
-                        testData.risk.toLocalString(
-                            ApplicationProvider.getApplicationContext()
-                        )
-                    )
-                ).check(
-                    ViewAssertions.matches(ViewMatchers.isDisplayed())
-                )
-            }
+            ).check(
+                ViewAssertions.matches(ViewMatchers.isDisplayed())
+            )
 
             takeScreenshot(screenshotName)
 

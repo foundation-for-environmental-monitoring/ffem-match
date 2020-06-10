@@ -83,7 +83,7 @@ object AppPreferences {
     fun checkDiagnosticModeExpiry() {
         if (isDiagnosticMode()) {
             val lastCheck = PreferencesUtil.getLong(App.app, R.string.diagnosticEnableTimeKey)
-            if (TimeUnit.MILLISECONDS.toMinutes(Calendar.getInstance().timeInMillis - lastCheck) > 30) {
+            if (TimeUnit.MILLISECONDS.toMinutes(Calendar.getInstance().timeInMillis - lastCheck) > 20) {
                 disableDiagnosticMode()
             } else {
                 PreferencesUtil.setLong(

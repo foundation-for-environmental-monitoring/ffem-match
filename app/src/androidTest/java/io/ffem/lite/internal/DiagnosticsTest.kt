@@ -177,13 +177,6 @@ class DiagnosticsTest {
         val textView2 = onView(
             allOf(
                 withId(R.id.text_result), withText("0.0"),
-                childAtPosition(
-                    childAtPosition(
-                        IsInstanceOf.instanceOf(android.widget.LinearLayout::class.java),
-                        1
-                    ),
-                    0
-                ),
                 isDisplayed()
             )
         )
@@ -192,13 +185,6 @@ class DiagnosticsTest {
         val textView3 = onView(
             allOf(
                 withId(R.id.text_unit), withText("mg/l"),
-                childAtPosition(
-                    childAtPosition(
-                        IsInstanceOf.instanceOf(android.widget.LinearLayout::class.java),
-                        1
-                    ),
-                    1
-                ),
                 isDisplayed()
             )
         )
@@ -207,13 +193,6 @@ class DiagnosticsTest {
         val textView4 = onView(
             allOf(
                 withId(R.id.text_risk), withText(R.string.medium_qty),
-                childAtPosition(
-                    childAtPosition(
-                        IsInstanceOf.instanceOf(android.widget.LinearLayout::class.java),
-                        1
-                    ),
-                    1
-                ),
                 isDisplayed()
             )
         )

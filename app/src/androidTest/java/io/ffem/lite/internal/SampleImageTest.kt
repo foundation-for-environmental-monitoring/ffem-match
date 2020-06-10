@@ -27,7 +27,7 @@ import io.ffem.lite.common.residualChlorine
 import io.ffem.lite.common.testDataList
 import io.ffem.lite.model.ErrorType.NO_ERROR
 import io.ffem.lite.model.toLocalString
-import io.ffem.lite.model.toQuantityLocalString
+import io.ffem.lite.model.toResourceId
 import io.ffem.lite.ui.ResultListActivity
 import io.ffem.lite.util.PreferencesUtil
 import io.ffem.lite.util.toLocalString
@@ -252,15 +252,17 @@ class SampleImageTest {
                 val marginOfErrorView = onView(withId(R.id.text_error_margin))
                 marginOfErrorView.check(matches(checkResult(testData.expectedMarginOfError)))
 
-                if (testData.testDetails == residualChlorine) {
-                    onView(withText(testData.risk.toQuantityLocalString(ApplicationProvider.getApplicationContext()))).check(
-                        matches(isDisplayed())
+                onView(
+                    withText(
+                        testData.risk.toResourceId(
+                            ApplicationProvider.getApplicationContext(),
+                            testData.testDetails == residualChlorine
+                        )
                     )
-                } else {
-                    onView(withText(testData.risk.toLocalString(ApplicationProvider.getApplicationContext()))).check(
-                        matches(isDisplayed())
-                    )
-                }
+                ).check(
+                    matches(isDisplayed())
+                )
+
                 onView(withText(R.string.submit_result)).perform(click())
             }
 
