@@ -40,6 +40,7 @@ import io.ffem.lite.util.ColorUtil
 import io.ffem.lite.util.PreferencesUtil
 import kotlinx.android.synthetic.main.activity_barcode.*
 import java.io.File
+import java.io.File.separator
 import java.util.*
 import kotlin.math.round
 
@@ -100,6 +101,11 @@ class BarcodeActivity : BaseActivity() {
             val resultIntent = Intent()
             if (testInfo!!.resultDetail.result >= 0) {
                 resultIntent.putExtra(TEST_VALUE_KEY, testInfo!!.resultDetail.result.toString())
+                resultIntent.putExtra(
+                    testInfo!!.name + "_Result",
+                    testInfo!!.resultDetail.result.toString()
+                )
+                resultIntent.putExtra(testInfo!!.name + "_Risk", testInfo!!.getRiskEnglish(this))
             } else {
                 resultIntent.putExtra(TEST_VALUE_KEY, "")
             }
@@ -121,15 +127,36 @@ class BarcodeActivity : BaseActivity() {
                 -1.0, ErrorType.NO_ERROR, testImageNumber
             )
         )
+
+        deleteExcessData(db)
+
         analyzeImage(testInfo.fileName, testInfo.name!!)
+    }
+
+    private fun deleteExcessData(db: AppDatabase) {
+        // Keep only last 20 results to save drive space
+        for (i in 0..1) {
+            if (db.resultDao().getCount() > 20) {
+                val result = db.resultDao().getOldestResult()
+
+                val path = getExternalFilesDir(DIRECTORY_PICTURES).toString() +
+                        separator + "captures"
+                val directory = File("$path$separator${result.id}$separator")
+                if (directory.exists() && directory.isDirectory) {
+                    directory.deleteRecursively()
+                }
+
+                db.resultDao().deleteResult(result.id)
+            }
+        }
     }
 
     private fun analyzeImage(fileId: String, name: String) {
         val path = getExternalFilesDir(DIRECTORY_PICTURES).toString() +
-                File.separator + "captures" + File.separator
+                separator + "captures" + separator
 
         val testName = name.replace(" ", "")
-        val filePath = "$path${fileId}" + "_" + "$testName.jpg"
+        val filePath = "$path${fileId}" + separator + "$testName.jpg"
         val bitmap = BitmapFactory.decodeFile(File(filePath).path)
 
         if (bitmap != null) {

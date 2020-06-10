@@ -33,11 +33,8 @@ class DataPreferenceFragment : PreferenceFragmentCompat() {
                             Environment.DIRECTORY_PICTURES
                         ).toString() + File.separator + "captures"
                     )
-                    if (folder.exists() && folder.isDirectory) {
-                        folder.listFiles()?.forEach {
-                            it.delete()
-                        }
-                    }
+
+                    folder.deleteRecursively()
 
                     val db = AppDatabase.getDatabase(view.context)
                     db.resultDao().deleteAll()
