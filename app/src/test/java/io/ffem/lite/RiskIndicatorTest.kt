@@ -46,11 +46,11 @@ class RiskIndicatorTest {
 
         assertRisk(testInfo, 3.0, HIGH)
 
-        assertRisk(testInfo, 2.0, MEDIUM)
+        assertRisk(testInfo, 2.0, HIGH)
 
         assertRisk(testInfo, 2.01, HIGH)
 
-        assertRisk(testInfo, 2.009, MEDIUM)
+        assertRisk(testInfo, 1.3, MEDIUM)
 
         assertRisk(testInfo, 0.9, LOW)
 
@@ -66,9 +66,9 @@ class RiskIndicatorTest {
 
         assertRisk(testInfo, 4.1, HIGH)
 
-        assertRisk(testInfo, 1.5, MEDIUM)
+        assertRisk(testInfo, 1.5, HIGH)
 
-        assertRisk(testInfo, 1.99, MEDIUM)
+        assertRisk(testInfo, 1.99, HIGH)
     }
 
 
