@@ -174,7 +174,7 @@ class RiskIndicatorTest {
                     )
                 }
             }
-            else -> {
+            HIGH -> {
                 if (testInfo.riskAsQty) {
                     Assert.assertEquals(
                         context.getString(R.string.high_qty),
