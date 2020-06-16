@@ -12,6 +12,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.media.MediaActionSound
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment.DIRECTORY_PICTURES
 import android.os.Handler
@@ -106,6 +107,7 @@ class BarcodeActivity : BaseActivity() {
                     testInfo!!.resultDetail.result.toString()
                 )
                 resultIntent.putExtra(testInfo!!.name + "_Risk", testInfo!!.getRiskEnglish(this))
+                resultIntent.putExtra("meta_device", Build.BRAND + ", " + Build.MODEL)
             } else {
                 resultIntent.putExtra(TEST_VALUE_KEY, "")
             }
