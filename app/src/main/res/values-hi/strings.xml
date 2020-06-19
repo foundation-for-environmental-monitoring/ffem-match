@@ -66,4 +66,6 @@
     <string name="water_tests_1">पानी टेस्ट 1</string>
     <string name="water_tests_2">पानी टेस्ट 2</string>
     <string name="view_hierarchy">प्रॉम्प्ट पर जाएं</string>
+    <string name="calibrate">कैलिब्रेट</string>
+    <string name="calibrate_summary">मानक का उपयोग करते हुए कैलिब्रेट करें</string>
 </resources>
