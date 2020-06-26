@@ -30,6 +30,7 @@ import com.google.android.material.snackbar.Snackbar
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.app.App
+import io.ffem.lite.app.App.Companion.IS_CALIBRATION
 import io.ffem.lite.app.App.Companion.LOCAL_RESULT_EVENT
 import io.ffem.lite.app.App.Companion.PERMISSIONS_MISSING_KEY
 import io.ffem.lite.app.App.Companion.TEST_INFO_KEY
@@ -205,25 +206,15 @@ class ResultListActivity : AppUpdateActivity() {
         )
 
         list_results.adapter = adapter
-    }
 
-//    private fun checkForUpdate() {
-//
-//        val appUpdateInfoTask = appUpdateManager.appUpdateInfo
-//
-//        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
-//            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
-//                && appUpdateInfo.isUpdateTypeAllowed(IMMEDIATE)
-//            ) {
-//                appUpdateManager.startUpdateFlowForResult(
-//                    appUpdateInfo,
-//                    IMMEDIATE,
-//                    this,
-//                    APP_UPDATE_REQUEST
-//                )
-//            }
-//        }
-//    }
+        if (resultList.isNotEmpty()) {
+            if (R.id.list_results == switcher.nextView.id) {
+                switcher.showNext()
+            }
+        } else if (R.id.text_empty == switcher.nextView.id) {
+            switcher.showNext()
+        }
+    }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
@@ -241,25 +232,15 @@ class ResultListActivity : AppUpdateActivity() {
             IntentFilter(LOCAL_RESULT_EVENT)
         )
 
-//        if (!appIsClosing) {
-//
-//            appUpdateManager
-//                .appUpdateInfo
-//                .addOnSuccessListener { appUpdateInfo ->
-//                    if (appUpdateInfo.updateAvailability() ==
-//                        UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS
-//                    ) {
-//                        appUpdateManager.startUpdateFlowForResult(
-//                            appUpdateInfo,
-//                            IMMEDIATE,
-//                            this,
-//                            APP_UPDATE_REQUEST
-//                        )
-//                    }
-//                }
-//        }
-
         list_results.adapter = adapter
+
+        if (adapter.itemCount > 0) {
+            if (R.id.list_results == switcher.nextView.id) {
+                switcher.showNext()
+            }
+        } else if (R.id.text_empty == switcher.nextView.id) {
+            switcher.showNext()
+        }
     }
 
     override fun onPause() {
@@ -268,6 +249,7 @@ class ResultListActivity : AppUpdateActivity() {
     }
 
     fun onStartClick(@Suppress("UNUSED_PARAMETER") view: View) {
+        PreferencesUtil.setBoolean(this, IS_CALIBRATION, false)
         if (useDummyImage()) {
             val permissions = arrayOf(
                 Manifest.permission.READ_EXTERNAL_STORAGE

@@ -68,4 +68,5 @@
     <string name="view_hierarchy">प्रॉम्प्ट पर जाएं</string>
     <string name="calibrate">कैलिब्रेट</string>
     <string name="calibrate_summary">मानक का उपयोग करते हुए कैलिब्रेट करें</string>
+    <string name="no_data">डेटा प्रदर्शित करने के लिए उपलब्ध नहीं हैं। एक नई परीक्षा शुरू करें</string>
 </resources>

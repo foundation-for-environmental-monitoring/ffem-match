@@ -1,5 +1,6 @@
 package io.ffem.lite.common
 
+import android.os.SystemClock
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -73,5 +74,9 @@ object TestUtil {
         })
 
         return text
+    }
+
+    fun sleep(millis: Long) {
+        SystemClock.sleep(millis)
     }
 }

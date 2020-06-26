@@ -19,13 +19,14 @@ import io.ffem.lite.app.App
 import io.ffem.lite.app.App.Companion.DEFAULT_TEST_UUID
 import io.ffem.lite.app.App.Companion.TEST_ID_KEY
 import io.ffem.lite.app.App.Companion.TEST_VALUE_KEY
-import io.ffem.lite.app.App.Companion.getCalibration
+import io.ffem.lite.app.App.Companion.getCardColors
 import io.ffem.lite.app.App.Companion.getTestInfo
 import io.ffem.lite.app.AppDatabase
 import io.ffem.lite.camera.MAX_ANGLE
 import io.ffem.lite.camera.Utilities
 import io.ffem.lite.model.*
 import io.ffem.lite.model.ErrorType.*
+import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.preference.getCalibrationColorDistanceTolerance
 import io.ffem.lite.preference.getColorDistanceTolerance
 import timber.log.Timber
@@ -402,7 +403,14 @@ object ColorUtil {
             var error = NO_ERROR
             var resultDetail = ResultDetail()
             try {
-                resultDetail = extractColors(croppedBitmap, rightBarcode.displayValue!!)
+                val db = AppDatabase.getDatabase(context)
+                var calibration: Calibration? = null
+                if (!AppPreferences.isCalibration()) {
+                    calibration = db.resultDao().getCalibration(testInfo.uuid)
+                }
+                resultDetail =
+                    extractColors(croppedBitmap, rightBarcode.displayValue!!, calibration)
+
                 if (resultDetail.result < 0) {
                     error = NO_MATCH
                 }
@@ -452,23 +460,18 @@ object ColorUtil {
                         false
                     )
 
+                    bitmap.recycle()
+                    bitmapRotated.recycle()
+                }
+
+                if (!AppPreferences.isCalibration()) {
                     db.resultDao().insert(
                         TestResult(
                             testInfo.fileName, testInfo.uuid!!, 0, testInfo.name!!,
                             Date().time, -1.0, NO_ERROR, testImageNumber
                         )
                     )
-
-                    bitmap.recycle()
-                    bitmapRotated.recycle()
                 }
-
-                db.resultDao().insert(
-                    TestResult(
-                        testInfo.fileName, testInfo.uuid!!, 0, testInfo.name!!,
-                        Date().time, -1.0, NO_ERROR, testImageNumber
-                    )
-                )
             }
 
             val path = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES).toString() +
@@ -478,12 +481,23 @@ object ColorUtil {
             if (!basePath.exists())
                 Timber.d(if (basePath.mkdirs()) "Success" else "Failed")
 
-            db.resultDao().updateResult(
-                testInfo.fileName,
-                testInfo.name!!,
-                testInfo.resultDetail.result,
-                testInfo.error.ordinal
-            )
+            if (AppPreferences.isCalibration()) {
+                db.resultDao().insertCalibration(
+                    Calibration(
+                        testInfo.uuid!!,
+                        Color.red(resultDetail.calibrationColor) - Color.red(resultDetail.color),
+                        Color.green(resultDetail.calibrationColor) - Color.green(resultDetail.color),
+                        Color.blue(resultDetail.calibrationColor) - Color.blue(resultDetail.color)
+                    )
+                )
+            } else {
+                db.resultDao().updateResult(
+                    testInfo.fileName,
+                    testInfo.name!!,
+                    testInfo.resultDetail.result,
+                    testInfo.error.ordinal
+                )
+            }
 
             intent.putExtra(App.TEST_INFO_KEY, testInfo)
             intent.putExtra(TEST_VALUE_KEY, resultDetail.result)
@@ -493,7 +507,11 @@ object ColorUtil {
         localBroadcastManager.sendBroadcast(intent)
     }
 
-    private fun extractColors(image: Bitmap, barcodeValue: String): ResultDetail {
+    private fun extractColors(
+        image: Bitmap,
+        barcodeValue: String,
+        calibration: Calibration?
+    ): ResultDetail {
 
         val bitmap = ImageUtil.toBlackAndWhite(
             image, IMAGE_THRESHOLD, ImageEdgeType.WhiteTop, 0, image.width
@@ -505,9 +523,9 @@ object ColorUtil {
         paint.strokeWidth = 2f
         paint.isAntiAlias = true
 
-        val calibration: List<CalibrationValue> = getCalibration(barcodeValue)
+        val cardColors: List<CalibrationValue> = getCardColors(barcodeValue)
 
-        val intervals = calibration.size / 2
+        val intervals = cardColors.size / 2
         val commonTop = bitmap.height / intervals
         val padding = commonTop / 7
         var calibrationIndex = 0
@@ -525,7 +543,7 @@ object ColorUtil {
 
             val pixels = getBitmapPixels(image, rectangle)
 
-            val cal = calibration[calibrationIndex]
+            val cal = cardColors[calibrationIndex]
             calibrationIndex++
             cal.color = getAverageColor(pixels)
 
@@ -544,7 +562,7 @@ object ColorUtil {
 
             val pixels = getBitmapPixels(image, rectangle)
 
-            val cal = calibration[calibrationIndex]
+            val cal = cardColors[calibrationIndex]
             calibrationIndex++
             cal.color = getAverageColor(pixels)
 
@@ -556,22 +574,33 @@ object ColorUtil {
         val y1 = ((bitmap.height) / 2) + (bitmap.height * 0.1).toInt()
         val rectangle = Rect(x1 - 20, y1 - 27, x1 + 20, y1 + 35)
         val pixels = getBitmapPixels(image, rectangle)
-        val colorInfo = ColorInfo(getAverageColor(pixels))
 
+        var cuvetteColor = getAverageColor(pixels)
+        if (calibration != null) {
+            cuvetteColor = Color.rgb(
+                cuvetteColor.red + calibration.red,
+                cuvetteColor.green + calibration.green,
+                cuvetteColor.blue + calibration.blue
+            )
+        }
+
+        val colorInfo = ColorInfo(cuvetteColor)
         val canvas = Canvas(image)
         canvas.drawRect(rectangle, paint)
 
         val swatches: ArrayList<Swatch> = ArrayList()
 
-        for (cal in calibration) {
-            if (swatches.size >= calibration.size / 2) {
+        for (cal in cardColors) {
+            if (swatches.size >= cardColors.size / 2) {
                 break
             }
-
-            swatches.add(getCalibrationColor(cal.value, calibration))
+            swatches.add(getCalibrationColor(cal.value, cardColors))
         }
 
-        return analyzeColor(colorInfo, generateGradient(swatches))
+        val resultDetail = analyzeColor(colorInfo, generateGradient(swatches))
+
+        resultDetail.calibrationColor = swatches[1].color
+        return resultDetail
     }
 
     fun isTilted(

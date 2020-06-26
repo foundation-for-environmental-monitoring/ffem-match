@@ -12,8 +12,10 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.ffem.lite.R
 import io.ffem.lite.app.App
+import io.ffem.lite.app.App.Companion.IS_CALIBRATION
 import io.ffem.lite.ui.AboutActivity
 import io.ffem.lite.ui.BarcodeActivity
+import io.ffem.lite.util.PreferencesUtil
 
 const val PERMISSION_REQUEST = 103
 
@@ -37,6 +39,7 @@ class OtherPreferenceFragment : PreferenceFragmentCompat() {
                         askPermission(permissions = *permissions, requestCode = PERMISSION_REQUEST)
 
                 } else {
+                    PreferencesUtil.setBoolean(requireContext(), IS_CALIBRATION, true)
                     val intent = Intent(requireContext(), BarcodeActivity::class.java)
                     startActivityForResult(intent, 100)
                 }

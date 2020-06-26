@@ -45,9 +45,7 @@ class PermissionsFragment : Fragment() {
             requestPermissions(PERMISSIONS_REQUIRED, PERMISSIONS_REQUEST_CODE)
         } else {
             // If permissions have already been granted, proceed
-            Navigation.findNavController(requireActivity(), R.id.fragment_container).navigate(
-                PermissionsFragmentDirections.actionPermissionsToCamera()
-            )
+            navigateAction()
         }
     }
 
@@ -57,9 +55,7 @@ class PermissionsFragment : Fragment() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == PERMISSIONS_REQUEST_CODE) {
             if (permissionsGranted(grantResults)) {
-                Navigation.findNavController(requireActivity(), R.id.fragment_container).navigate(
-                    PermissionsFragmentDirections.actionPermissionsToCamera()
-                )
+                navigateAction()
             } else {
                 val activity = requireActivity()
                 val intent = Intent()
@@ -70,13 +66,18 @@ class PermissionsFragment : Fragment() {
         }
     }
 
+    private fun navigateAction() {
+        Navigation.findNavController(requireActivity(), R.id.fragment_container).navigate(
+            PermissionsFragmentDirections.actionPermissionsToCamera()
+        )
+    }
+
     private fun permissionsGranted(grantResults: IntArray): Boolean {
         for (element in grantResults) {
             if (element != PackageManager.PERMISSION_GRANTED) {
                 return false
             }
         }
-
         return true
     }
 

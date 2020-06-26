@@ -26,6 +26,7 @@ import androidx.navigation.Navigation.findNavController
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.app.App
+import io.ffem.lite.app.App.Companion.IS_CALIBRATION
 import io.ffem.lite.app.App.Companion.TEST_ID_KEY
 import io.ffem.lite.app.App.Companion.TEST_INFO_KEY
 import io.ffem.lite.app.App.Companion.TEST_VALUE_KEY
@@ -33,9 +34,11 @@ import io.ffem.lite.app.App.Companion.getTestInfo
 import io.ffem.lite.app.AppDatabase
 import io.ffem.lite.camera.CameraFragmentDirections
 import io.ffem.lite.databinding.ActivityBarcodeBinding
+import io.ffem.lite.model.CalibrationValue
 import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.TestInfo
 import io.ffem.lite.model.TestResult
+import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.preference.isTestRunning
 import io.ffem.lite.util.ColorUtil
 import io.ffem.lite.util.PreferencesUtil
@@ -60,7 +63,7 @@ const val TEST_ID = "testId"
 /**
  * Activity to display info about the app.
  */
-class BarcodeActivity : BaseActivity() {
+class BarcodeActivity : BaseActivity(), CalibrationItemFragment.OnCalibrationSelectedListener {
 
     private lateinit var broadcastManager: LocalBroadcastManager
     private lateinit var b: ActivityBarcodeBinding
@@ -87,13 +90,51 @@ class BarcodeActivity : BaseActivity() {
                         R.id.fragment_container
                     ).currentDestination?.id == R.id.camera_fragment
                 ) {
-                    findNavController(this@BarcodeActivity, R.id.fragment_container)
-                        .navigate(
-                            CameraFragmentDirections
-                                .actionCameraFragmentToResultFragment(testInfo!!)
-                        )
+                    if (AppPreferences.isCalibration()) {
+                        findNavController(this@BarcodeActivity, R.id.fragment_container)
+                            .navigate(
+                                CameraFragmentDirections.actionCameraFragmentToCalibrationItemFragment(
+                                    testInfo!!
+                                )
+                            )
+                    } else {
+                        findNavController(this@BarcodeActivity, R.id.fragment_container)
+                            .navigate(
+                                CameraFragmentDirections
+                                    .actionCameraFragmentToResultFragment(testInfo!!)
+                            )
+                    }
                 }
             }
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        b = DataBindingUtil.setContentView(this, R.layout.activity_barcode)
+
+        broadcastManager = LocalBroadcastManager.getInstance(this)
+
+        broadcastManager.registerReceiver(
+            broadcastReceiver,
+            IntentFilter(App.CAPTURED_EVENT)
+        )
+
+        broadcastManager.registerReceiver(
+            resultBroadcastReceiver,
+            IntentFilter(App.LOCAL_RESULT_EVENT)
+        )
+
+        if (BuildConfig.APPLICATION_ID == intent.action) {
+            val uuid = intent.getStringExtra(TEST_ID)
+            if (intent.getBooleanExtra(DEBUG_MODE, false)) {
+                sendDummyResultForDebugging(uuid)
+            }
+            PreferencesUtil.setString(this, TEST_ID_KEY, uuid)
+            PreferencesUtil.setBoolean(this, IS_CALIBRATION, false)
+        } else {
+            PreferencesUtil.removeKey(this, TEST_ID_KEY)
         }
     }
 
@@ -122,15 +163,16 @@ class BarcodeActivity : BaseActivity() {
         val testImageNumber = PreferencesUtil
             .getString(this, R.string.testImageNumberKey, "")
 
-        val db = AppDatabase.getDatabase(baseContext)
-        db.resultDao().insert(
-            TestResult(
-                testInfo.fileName, testInfo.uuid!!, 0, testInfo.name!!, Date().time,
-                -1.0, ErrorType.NO_ERROR, testImageNumber
+        if (!AppPreferences.isCalibration()) {
+            val db = AppDatabase.getDatabase(baseContext)
+            db.resultDao().insert(
+                TestResult(
+                    testInfo.fileName, testInfo.uuid!!, 0, testInfo.name!!, Date().time,
+                    -1.0, ErrorType.NO_ERROR, testImageNumber
+                )
             )
-        )
-
-        deleteExcessData(db)
+            deleteExcessData(db)
+        }
 
         analyzeImage(testInfo.fileName, testInfo.name!!)
     }
@@ -166,32 +208,13 @@ class BarcodeActivity : BaseActivity() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        b = DataBindingUtil.setContentView(this, R.layout.activity_barcode)
-
-        broadcastManager = LocalBroadcastManager.getInstance(this)
-
-        broadcastManager.registerReceiver(
-            broadcastReceiver,
-            IntentFilter(App.CAPTURED_EVENT)
-        )
-
-        broadcastManager.registerReceiver(
-            resultBroadcastReceiver,
-            IntentFilter(App.LOCAL_RESULT_EVENT)
-        )
-
-        if (BuildConfig.APPLICATION_ID == intent.action) {
-            val uuid = intent.getStringExtra(TEST_ID)
-            if (intent.getBooleanExtra(DEBUG_MODE, false)) {
-                sendDummyResultForDebugging(uuid)
-            }
-            PreferencesUtil.setString(this, TEST_ID_KEY, uuid)
-        } else {
-            PreferencesUtil.removeKey(this, TEST_ID_KEY)
-        }
+    override fun onCalibrationSelected(item: CalibrationValue?, testInfo: TestInfo?) {
+        findNavController(this@BarcodeActivity, R.id.fragment_container)
+            .navigate(
+                CalibrationItemFragmentDirections.actionCalibrationItemFragmentToCalibrationFragment(
+                    testInfo!!, item!!
+                )
+            )
     }
 
     /**
