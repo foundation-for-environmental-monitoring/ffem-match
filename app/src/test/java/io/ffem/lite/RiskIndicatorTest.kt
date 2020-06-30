@@ -148,6 +148,40 @@ class RiskIndicatorTest {
         assertRisk(testInfo, 5.8, HIGH)
     }
 
+    @Test
+    fun nitrateRiskIndicator() {
+
+        val testInfo = getTestInfo(NITRATE_ID)!!
+
+        Assert.assertEquals(10, testInfo.values.size)
+
+        Assert.assertEquals(3, testInfo.risks.size)
+
+        assertRisk(testInfo, 50.0, HIGH)
+
+        assertRisk(testInfo, 55.0, HIGH)
+
+        assertRisk(testInfo, 75.0, HIGH)
+
+        assertRisk(testInfo, 30.0, MEDIUM)
+
+        assertRisk(testInfo, 10.0, LOW)
+
+        assertRisk(testInfo, 65.0, HIGH)
+
+        assertRisk(testInfo, 12.0, LOW)
+
+        assertRisk(testInfo, 20.0, LOW)
+
+        assertRisk(testInfo, 35.0, MEDIUM)
+
+        assertRisk(testInfo, 80.0, HIGH)
+
+        assertRisk(testInfo, 100.0, HIGH)
+
+        assertRisk(testInfo, 99.9, HIGH)
+    }
+
     private fun assertRisk(testInfo: TestInfo, result: Double, risk: RiskType) {
         testInfo.resultDetail.result = result
         when (risk) {
@@ -196,5 +230,6 @@ class RiskIndicatorTest {
         const val FLUORIDE_HIGH_RANGE_ID = "93cec3c4-b3e4-4924-b722-b6cb9742737a"
         const val PH_ID = "ff96e965-13a3-4507-9edf-7aa7fc084354"
         const val RESIDUAL_CHLORINE_ID = "f1d64b11-64c4-4a34-806e-ad0d47bcc96b"
+        const val NITRATE_ID= "d69ca7a2-e357-4820-a99b-1b6b24c0fa93"
     }
 }
