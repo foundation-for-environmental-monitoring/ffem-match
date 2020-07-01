@@ -45,7 +45,11 @@ object TestUtil {
                 if (text.contains(" ")) {
                     text = text.subSequence(text.lastIndexOf(" "), text.length - 1).toString()
                 }
-                val convertedValue = text.toDouble()
+                val convertedValue = try {
+                    text.toDouble()
+                } catch (e: Exception) {
+                    return false
+                }
                 val delta = abs(convertedValue - value)
                 return delta < 0.20f
             }

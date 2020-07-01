@@ -32,6 +32,7 @@ import io.ffem.lite.preference.getColorDistanceTolerance
 import timber.log.Timber
 import java.io.File
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.math.*
 
 const val IMAGE_THRESHOLD = 130
@@ -39,6 +40,20 @@ const val MAX_COLOR_DISTANCE_RGB = 60
 const val MAX_COLOR_DISTANCE_CALIBRATION = 80
 const val INTERPOLATION_COUNT = 100.0
 const val MAX_DISTANCE = 999
+
+/**
+ * Computes the Euclidean distance between the two colors
+ *
+ * @param color1 the first color
+ * @param color2 the color to compare with
+ * @return the distance between the two colors
+ */
+fun getColorDistance(color1: Int, color2: Int): Double {
+    val r: Double = (Color.red(color2) - Color.red(color1)).toDouble().pow(2.0)
+    val g: Double = (Color.green(color2) - Color.green(color1)).toDouble().pow(2.0)
+    val b: Double = (Color.blue(color2) - Color.blue(color1)).toDouble().pow(2.0)
+    return sqrt(b + g + r)
+}
 
 fun getBitmapPixels(bitmap: Bitmap, rect: Rect): IntArray {
     val pixels = IntArray(bitmap.width * bitmap.height)
@@ -115,24 +130,45 @@ fun isWhite(pixels: IntArray): Boolean {
 }
 
 fun getAverageColor(pixels: IntArray): Int {
+    var list = pixels.toCollection(ArrayList())
+    for (i in 40 downTo 10 step 3) {
+        list = eliminateOutliers(list, i)
+    }
 
+    // Reject if too few pixels remaining after removing outliers
+    if (list.size < pixels.size / 10) {
+        return Color.TRANSPARENT
+    }
+    return getMean(list)
+}
+
+fun eliminateOutliers(pixels: ArrayList<Int>, distance: Int): ArrayList<Int> {
+    val meanColor = getMean(pixels)
+    val newList = ArrayList<Int>()
+    for (element in pixels) {
+        if (getColorDistance(
+                meanColor,
+                Color.rgb(element.red, element.green, element.blue)
+            ) < distance
+        ) {
+            newList.add(element)
+        }
+    }
+    return newList
+}
+
+fun getMean(pixels: ArrayList<Int>): Int {
     var r = 0
     var g = 0
     var b = 0
-    var total = 0
 
     for (element in pixels) {
         r += element.red
         g += element.green
         b += element.blue
-        total++
     }
 
-    r /= total
-    g /= total
-    b /= total
-
-    return Color.argb(255, r, g, b)
+    return Color.rgb(r / pixels.size, g / pixels.size, b / pixels.size)
 }
 
 object ColorUtil {
@@ -572,15 +608,15 @@ object ColorUtil {
 
         val x1 = ((commonRight - commonLeft) / 2) + commonLeft
         val y1 = ((bitmap.height) / 2) + (bitmap.height * 0.1).toInt()
-        val rectangle = Rect(x1 - 20, y1 - 27, x1 + 20, y1 + 35)
+        val rectangle = Rect(x1 - 17, y1 - 27, x1 + 17, y1 + 35)
         val pixels = getBitmapPixels(image, rectangle)
 
         var cuvetteColor = getAverageColor(pixels)
         if (calibration != null) {
             cuvetteColor = Color.rgb(
-                cuvetteColor.red + calibration.red,
-                cuvetteColor.green + calibration.green,
-                cuvetteColor.blue + calibration.blue
+                cuvetteColor.red + calibration.rDiff,
+                cuvetteColor.green + calibration.gDiff,
+                cuvetteColor.blue + calibration.bDiff
             )
         }
 
@@ -964,20 +1000,5 @@ object ColorUtil {
         } else {
             MAX_COLOR_DISTANCE_RGB.toDouble()
         }
-    }
-
-    /**
-     * Computes the Euclidean distance between the two colors
-     *
-     * @param color1 the first color
-     * @param color2 the color to compare with
-     * @return the distance between the two colors
-     */
-    private fun getColorDistance(color1: Int, color2: Int): Double {
-        val r: Double = (Color.red(color2) - Color.red(color1)).toDouble().pow(2.0)
-        val g: Double = (Color.green(color2) - Color.green(color1)).toDouble().pow(2.0)
-        val b: Double = (Color.blue(color2) - Color.blue(color1)).toDouble().pow(2.0)
-
-        return sqrt(b + g + r)
     }
 }

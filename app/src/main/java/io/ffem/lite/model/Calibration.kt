@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 @Entity
 data class Calibration(
     @PrimaryKey val id: String = "",
-    @ColumnInfo val red: Int,
-    @ColumnInfo val green: Int,
-    @ColumnInfo val blue: Int
+    @ColumnInfo val rDiff: Int,
+    @ColumnInfo val gDiff: Int,
+    @ColumnInfo val bDiff: Int
 )
