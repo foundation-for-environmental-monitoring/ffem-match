@@ -8,7 +8,7 @@ import io.ffem.lite.model.Calibration
 import io.ffem.lite.model.ResultDao
 import io.ffem.lite.model.TestResult
 
-@Database(entities = [Calibration::class, TestResult::class], version = 1)
+@Database(entities = [Calibration::class, TestResult::class], version = 2)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun resultDao(): ResultDao
 
