@@ -74,9 +74,7 @@ class ScreenshotTest : BaseTest() {
                 ).toString() + File.separator + "captures"
             )
             if (folder.exists() && folder.isDirectory) {
-                folder.listFiles()?.forEach {
-                    it.delete()
-                }
+                folder.deleteRecursively()
             }
             clearData()
         }

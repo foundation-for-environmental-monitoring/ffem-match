@@ -44,6 +44,7 @@ class App : BaseApplication() {
         const val TEST_INFO_KEY = "test_info"
         const val TEST_ID_KEY = "test_id"
         const val TEST_VALUE_KEY = "value"
+        const val IS_CALIBRATION = "is_calibration"
 
         const val DEFAULT_TEST_UUID = "d1b25de4-5605-498e-99f1-8412d7e19db2"
 
@@ -171,7 +172,7 @@ class App : BaseApplication() {
             return null
         }
 
-        fun getCalibration(id: String): List<CalibrationValue> {
+        fun getCardColors(id: String): List<CalibrationValue> {
             if (!::testConfig.isInitialized) {
                 val input = app.resources.openRawResource(R.raw.tests)
                 val content = FileUtil.readTextFile(input)

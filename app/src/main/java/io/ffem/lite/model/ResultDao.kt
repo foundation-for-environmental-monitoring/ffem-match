@@ -8,27 +8,33 @@ import androidx.room.Query
 @Dao
 abstract class ResultDao {
 
-    @Query("SELECT * FROM results ORDER BY date DESC")
+    @Query("SELECT * FROM TestResult ORDER BY date DESC")
     abstract fun getResults(): List<TestResult>
 
-    @Query("SELECT * FROM results WHERE id = :id")
+    @Query("SELECT * FROM TestResult WHERE id = :id")
     abstract fun getResult(id: String?): TestResult?
 
     @Insert(onConflict = REPLACE)
     abstract fun insert(result: TestResult)
 
-    @Query("UPDATE results SET name = :name, value = :result, error = :error WHERE id = :id")
+    @Insert(onConflict = REPLACE)
+    abstract fun insertCalibration(calibration: Calibration)
+
+    @Query("SELECT * FROM Calibration WHERE id = :id")
+    abstract fun getCalibration(id: String?): Calibration?
+
+    @Query("UPDATE TestResult SET name = :name, value = :result, error = :error WHERE id = :id")
     abstract fun updateResult(id: String, name: String, result: Double, error: Int)
 
-    @Query("DELETE FROM results")
+    @Query("DELETE FROM TestResult")
     abstract fun deleteAll()
 
-    @Query("SELECT COUNT(*) FROM results")
+    @Query("SELECT COUNT(*) FROM TestResult")
     abstract fun getCount(): Int
 
-    @Query("SELECT * FROM results ORDER BY date ASC LIMIT 1")
+    @Query("SELECT * FROM TestResult ORDER BY date ASC LIMIT 1")
     abstract fun getOldestResult(): TestResult
 
-    @Query("DELETE FROM results WHERE id = :id")
+    @Query("DELETE FROM TestResult WHERE id = :id")
     abstract fun deleteResult(id: String?)
 }

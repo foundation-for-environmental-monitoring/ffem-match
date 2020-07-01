@@ -1,5 +1,6 @@
 package io.ffem.lite.common
 
+import android.os.SystemClock
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -44,7 +45,11 @@ object TestUtil {
                 if (text.contains(" ")) {
                     text = text.subSequence(text.lastIndexOf(" "), text.length - 1).toString()
                 }
-                val convertedValue = text.toDouble()
+                val convertedValue = try {
+                    text.toDouble()
+                } catch (e: Exception) {
+                    return false
+                }
                 val delta = abs(convertedValue - value)
                 return delta < 0.20f
             }
@@ -73,5 +78,9 @@ object TestUtil {
         })
 
         return text
+    }
+
+    fun sleep(millis: Long) {
+        SystemClock.sleep(millis)
     }
 }

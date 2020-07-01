@@ -116,7 +116,7 @@ class CameraFragment : Fragment() {
         if (!PermissionsFragment.hasPermissions(requireContext())) {
             Navigation.findNavController(requireActivity(), R.id.fragment_container)
                 .navigate(
-                    CameraFragmentDirections.actionCameraToPermissions()
+                    CameraFragmentDirections.actionCameraFragmentToPermissionsFragment()
                 )
         }
         broadcastManager.registerReceiver(broadcastReceiver2, IntentFilter(App.ERROR_EVENT))

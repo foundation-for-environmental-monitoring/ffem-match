@@ -9,5 +9,6 @@ class ResultDetail(
     var distance: Double = 0.0,
     var calibrationDistance: Double = 0.0,
     val color: Int = 0,
-    var matchedColor: Int = 0
+    var matchedColor: Int = 0,
+    var calibrationColor: Int = 0
 ) : Parcelable

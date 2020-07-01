@@ -22,15 +22,17 @@
     <fragment
         android:id="@+id/camera_fragment"
         android:name="io.ffem.lite.camera.CameraFragment"
-        android:label="CameraFragment">
-        <action
-            android:id="@+id/action_camera_to_permissions"
-            app:destination="@id/permissions_fragment"
-            app:popUpTo="@id/camera_fragment"
-            app:popUpToInclusive="true" />
+        android:label="CameraFragment"
+        tools:layout="@layout/fragment_camera">
         <action
             android:id="@+id/action_camera_fragment_to_resultFragment"
             app:destination="@id/resultFragment" />
+        <action
+            android:id="@+id/action_camera_fragment_to_calibrationItemFragment"
+            app:destination="@id/calibrationItemFragment" />
+        <action
+            android:id="@+id/action_camera_fragment_to_permissions_fragment"
+            app:destination="@id/permissions_fragment" />
     </fragment>
 
     <fragment
@@ -41,5 +43,29 @@
         <argument
             android:name="testInfo"
             app:argType="io.ffem.lite.model.TestInfo" />
+    </fragment>
+    <fragment
+        android:id="@+id/calibrationItemFragment"
+        android:name="io.ffem.lite.ui.CalibrationItemFragment"
+        android:label="CalibrationItemFragment"
+        tools:layout="@layout/fragment_calibration_list">
+        <argument
+            android:name="testInfo"
+            app:argType="io.ffem.lite.model.TestInfo" />
+        <action
+            android:id="@+id/action_calibrationItemFragment_to_calibrationFragment"
+            app:destination="@id/calibrationFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/calibrationFragment"
+        android:name="io.ffem.lite.ui.CalibrationFragment"
+        android:label="CalibrationFragment"
+        tools:layout="@layout/fragment_calibration_result">
+        <argument
+            android:name="testInfo"
+            app:argType="io.ffem.lite.model.TestInfo" />
+        <argument
+            android:name="calibrationValue"
+            app:argType="io.ffem.lite.model.CalibrationValue" />
     </fragment>
 </navigation>
