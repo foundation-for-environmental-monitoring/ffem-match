@@ -132,7 +132,7 @@ fun isWhite(pixels: IntArray): Boolean {
 fun getAverageColor(pixels: IntArray): Int {
     var list = pixels.toCollection(ArrayList())
     for (i in 40 downTo 10 step 3) {
-        list = eliminateOutliers(list, i)
+        list = removeOutliers(list, i)
     }
 
     // Reject if too few pixels remaining after removing outliers
@@ -142,7 +142,7 @@ fun getAverageColor(pixels: IntArray): Int {
     return getMean(list)
 }
 
-fun eliminateOutliers(pixels: ArrayList<Int>, distance: Int): ArrayList<Int> {
+fun removeOutliers(pixels: ArrayList<Int>, distance: Int): ArrayList<Int> {
     val meanColor = getMean(pixels)
     val newList = ArrayList<Int>()
     for (element in pixels) {
