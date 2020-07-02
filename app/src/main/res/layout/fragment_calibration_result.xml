@@ -147,7 +147,6 @@
             android:layout_marginBottom="32dp"
             android:minWidth="230dp"
             android:minHeight="60dp"
-            android:onClick="submitResult"
             android:text="@string/confirm"
             android:textSize="18sp"
             android:theme="?primaryButtonStyle" />

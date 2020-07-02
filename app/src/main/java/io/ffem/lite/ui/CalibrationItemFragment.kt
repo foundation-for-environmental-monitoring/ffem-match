@@ -87,6 +87,6 @@ class CalibrationItemFragment : Fragment() {
     }
 
     interface OnCalibrationSelectedListener {
-        fun onCalibrationSelected(item: CalibrationValue?, testInfo: TestInfo?)
+        fun onCalibrationSelected(calibrationValue: CalibrationValue?, testInfo: TestInfo?)
     }
 }

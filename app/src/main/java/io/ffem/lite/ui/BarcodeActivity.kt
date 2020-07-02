@@ -42,20 +42,10 @@ import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.preference.isTestRunning
 import io.ffem.lite.util.ColorUtil
 import io.ffem.lite.util.PreferencesUtil
-import kotlinx.android.synthetic.main.activity_barcode.*
 import java.io.File
 import java.io.File.separator
 import java.util.*
 import kotlin.math.round
-
-/** Combination of all flags required to put activity into immersive mode */
-const val FLAGS_FULLSCREEN =
-    View.SYSTEM_UI_FLAG_LOW_PROFILE or
-            View.SYSTEM_UI_FLAG_FULLSCREEN or
-            View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
-            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
-            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
-            View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
 
 const val DEBUG_MODE = "debugMode"
 const val TEST_ID = "testId"
@@ -208,11 +198,12 @@ class BarcodeActivity : BaseActivity(), CalibrationItemFragment.OnCalibrationSel
         }
     }
 
-    override fun onCalibrationSelected(item: CalibrationValue?, testInfo: TestInfo?) {
+    override fun onCalibrationSelected(calibrationValue: CalibrationValue?, testInfo: TestInfo?) {
+        testInfo!!.resultDetail.calibrationColor = calibrationValue!!.color
         findNavController(this@BarcodeActivity, R.id.fragment_container)
             .navigate(
                 CalibrationItemFragmentDirections.actionCalibrationItemFragmentToCalibrationFragment(
-                    testInfo!!, item!!
+                    testInfo, calibrationValue
                 )
             )
     }
@@ -247,11 +238,6 @@ class BarcodeActivity : BaseActivity(), CalibrationItemFragment.OnCalibrationSel
 
     override fun onResume() {
         super.onResume()
-        // Before setting full screen flags, we must wait a bit to let UI settle; otherwise, we may
-        // be trying to set app to immersive mode before it's ready and the flags do not stick
-        layout_container.postDelayed({
-            layout_container.systemUiVisibility = FLAGS_FULLSCREEN
-        }, IMMERSIVE_FLAG_TIMEOUT)
 
         if (isTestRunning() || BuildConfig.INSTRUMENTED_TEST_RUNNING.get()) {
             val toast: Toast = Toast.makeText(this, R.string.dummy_image_message, Toast.LENGTH_LONG)
@@ -267,9 +253,5 @@ class BarcodeActivity : BaseActivity(), CalibrationItemFragment.OnCalibrationSel
         // Unregister the broadcast receivers and listeners
         broadcastManager.unregisterReceiver(broadcastReceiver)
         broadcastManager.unregisterReceiver(resultBroadcastReceiver)
-    }
-
-    companion object {
-        private const val IMMERSIVE_FLAG_TIMEOUT = 500L
     }
 }

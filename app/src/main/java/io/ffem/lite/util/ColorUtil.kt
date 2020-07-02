@@ -518,13 +518,12 @@ object ColorUtil {
                 Timber.d(if (basePath.mkdirs()) "Success" else "Failed")
 
             if (AppPreferences.isCalibration()) {
-                db.resultDao().insertCalibration(
-                    Calibration(
-                        testInfo.uuid!!,
-                        Color.red(resultDetail.calibrationColor) - Color.red(resultDetail.color),
-                        Color.green(resultDetail.calibrationColor) - Color.green(resultDetail.color),
-                        Color.blue(resultDetail.calibrationColor) - Color.blue(resultDetail.color)
-                    )
+                testInfo.resultDetail.calibration = Calibration(
+                    testInfo.uuid!!,
+                    -1.0,
+                    Color.red(resultDetail.calibrationColor) - Color.red(resultDetail.color),
+                    Color.green(resultDetail.calibrationColor) - Color.green(resultDetail.color),
+                    Color.blue(resultDetail.calibrationColor) - Color.blue(resultDetail.color)
                 )
             } else {
                 db.resultDao().updateResult(
@@ -634,8 +633,7 @@ object ColorUtil {
         }
 
         val resultDetail = analyzeColor(colorInfo, generateGradient(swatches))
-
-        resultDetail.calibrationColor = swatches[1].color
+        resultDetail.swatches = swatches
         return resultDetail
     }
 

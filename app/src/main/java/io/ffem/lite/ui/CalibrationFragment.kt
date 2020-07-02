@@ -1,5 +1,6 @@
 package io.ffem.lite.ui
 
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -13,6 +14,8 @@ import androidx.fragment.app.Fragment
 import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.app.App.Companion.getTestInfo
+import io.ffem.lite.app.AppDatabase
+import io.ffem.lite.model.Calibration
 import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.TestInfo
 import io.ffem.lite.model.toLocalString
@@ -58,6 +61,31 @@ class CalibrationFragment : Fragment() {
         toolbar.visibility = VISIBLE
         toolbar.setTitle(R.string.confirm_calibration)
         requireActivity().title = getString(R.string.confirm)
+
+        val calibrationValue =
+            CalibrationFragmentArgs.fromBundle(requireArguments()).calibrationValue.value
+        button_submit.setOnClickListener {
+            val r = testInfo.resultDetail
+            for (s in r.swatches!!) {
+                if (s.value == calibrationValue) {
+                    r.calibrationColor = s.color
+                    break
+                }
+            }
+
+            val db = AppDatabase.getDatabase(requireContext())
+            db.resultDao().insertCalibration(
+                Calibration(
+                    testInfo.uuid!!,
+                    calibrationValue,
+                    Color.red(r.calibrationColor) - Color.red(r.color),
+                    Color.green(r.calibrationColor) - Color.green(r.color),
+                    Color.blue(r.calibrationColor) - Color.blue(r.color)
+                )
+            )
+
+            requireActivity().finish()
+        }
     }
 
     private fun displayResult(testInfo: TestInfo?) {
@@ -81,14 +109,15 @@ class CalibrationFragment : Fragment() {
         }
 
         if (testInfo.error == ErrorType.NO_ERROR && testInfo.resultDetail.result >= 0) {
+            val calibrationValue =
+                CalibrationFragmentArgs.fromBundle(requireArguments()).calibrationValue
             text_name.text = testInfo.name!!.toLocalString()
             text_name2.text = ""
-            text_risk.text =
-                CalibrationFragmentArgs.fromBundle(requireArguments()).calibrationValue.value.toString()
+            text_risk.text = calibrationValue.value.toString()
             lyt_error_message.visibility = GONE
             lyt_result.visibility = VISIBLE
 
-            btn_card_color.setBackgroundColor(testInfo.resultDetail.calibrationColor)
+            btn_card_color.setBackgroundColor(calibrationValue.color)
             btn_calibrated_color.setBackgroundColor(testInfo.resultDetail.color)
 
             button_submit.setText(R.string.confirm)

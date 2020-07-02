@@ -10,5 +10,7 @@ class ResultDetail(
     var calibrationDistance: Double = 0.0,
     val color: Int = 0,
     var matchedColor: Int = 0,
-    var calibrationColor: Int = 0
+    var calibrationColor: Int = 0,
+    var calibration: Calibration = Calibration(),
+    var swatches: ArrayList<Swatch>? = ArrayList()
 ) : Parcelable

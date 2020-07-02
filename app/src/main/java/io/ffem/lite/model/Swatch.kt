@@ -1,3 +1,7 @@
 package io.ffem.lite.model
 
-class Swatch(var value: Double, var color: Int, var distance: Double = 0.0)
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
+class Swatch(var value: Double, var color: Int, var distance: Double = 0.0) : Parcelable

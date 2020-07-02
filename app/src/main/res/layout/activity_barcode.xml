@@ -16,7 +16,8 @@
             android:layout_height="match_parent"
             app:defaultNavHost="true"
             app:navGraph="@navigation/nav_graph"
-            tools:ignore="FragmentTagUsage" />
+            tools:ignore="FragmentTagUsage"
+            tools:layout="@layout/preview_overlay" />
 
     </FrameLayout>
 </layout>

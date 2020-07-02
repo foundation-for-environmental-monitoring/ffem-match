@@ -16,8 +16,8 @@ android {
         applicationId "io.ffem.lite"
         minSdkVersion 23
         targetSdkVersion 29
-        versionCode 47
-        versionName "Alpha 0.34"
+        versionCode 48
+        versionName "Alpha 0.34.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -64,7 +64,7 @@ android {
 
     defaultConfig {
         buildConfigField "java.util.concurrent.atomic.AtomicBoolean", "INSTRUMENTED_TEST_RUNNING",
-                "new java.util.concurrent.atomic.AtomicBoolean(true)"
+                "new java.util.concurrent.atomic.AtomicBoolean(false)"
         buildConfigField "Boolean", "TAKE_SCREENSHOTS", "false"
         buildConfigField "java.util.Date", "BUILD_TIME", "new java.util.Date(" + 0L + ")"
     }
