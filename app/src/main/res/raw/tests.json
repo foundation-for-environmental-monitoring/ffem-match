@@ -212,6 +212,12 @@
           "value": 50
         }
       ]
+    },
+    {
+      "name": "Unknown",
+      "type": "water",
+      "uuid": "d1b25de4-5605-498e-99f1-8412d7e19db2",
+      "unit": "mg/l"
     }
   ]
 }
