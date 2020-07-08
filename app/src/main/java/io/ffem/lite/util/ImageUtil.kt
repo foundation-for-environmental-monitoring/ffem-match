@@ -27,17 +27,17 @@ object ImageUtil {
         )
     }
 
-//    fun toGrayscale(src: Bitmap): Bitmap {
-//        val dest =
-//            Bitmap.createBitmap(src.width, src.height, src.config)
-//        val canvas = Canvas(dest)
-//        val paint = Paint()
-//        val cm = ColorMatrix()
-//        cm.setSaturation(0f)
-//        paint.colorFilter = ColorMatrixColorFilter(cm)
-//        canvas.drawBitmap(src, 0f, 0f, paint)
-//        return dest
-//    }
+    fun toGrayscale(src: Bitmap): Bitmap {
+        val dest =
+            Bitmap.createBitmap(src.width, src.height, src.config)
+        val canvas = Canvas(dest)
+        val paint = Paint()
+        val cm = ColorMatrix()
+        cm.setSaturation(0f)
+        paint.colorFilter = ColorMatrixColorFilter(cm)
+        canvas.drawBitmap(src, 0f, 0f, paint)
+        return dest
+    }
 
     // https://codeday.me/en/qa/20190310/15630.html
     fun toBlackAndWhite(

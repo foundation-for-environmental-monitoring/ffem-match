@@ -131,11 +131,11 @@ class BarcodeActivity : BaseActivity(), CalibrationItemFragment.OnCalibrationSel
     fun submitResult(@Suppress("UNUSED_PARAMETER") view: View) {
         if (testInfo != null) {
             val resultIntent = Intent()
-            if (testInfo!!.resultDetail.result >= 0) {
-                resultIntent.putExtra(TEST_VALUE_KEY, testInfo!!.resultDetail.result.toString())
+            if (testInfo!!.resultInfo.result >= 0) {
+                resultIntent.putExtra(TEST_VALUE_KEY, testInfo!!.resultInfo.result.toString())
                 resultIntent.putExtra(
                     testInfo!!.name + "_Result",
-                    testInfo!!.resultDetail.result.toString()
+                    testInfo!!.resultInfo.result.toString()
                 )
                 resultIntent.putExtra(testInfo!!.name + "_Risk", testInfo!!.getRiskEnglish(this))
                 resultIntent.putExtra("meta_device", Build.BRAND + ", " + Build.MODEL)
@@ -158,7 +158,7 @@ class BarcodeActivity : BaseActivity(), CalibrationItemFragment.OnCalibrationSel
             db.resultDao().insert(
                 TestResult(
                     testInfo.fileName, testInfo.uuid!!, 0, testInfo.name!!, Date().time,
-                    -1.0, ErrorType.NO_ERROR, testImageNumber
+                    -1.0, -1.0, ErrorType.NO_ERROR, testImageNumber
                 )
             )
             deleteExcessData(db)
@@ -199,7 +199,7 @@ class BarcodeActivity : BaseActivity(), CalibrationItemFragment.OnCalibrationSel
     }
 
     override fun onCalibrationSelected(calibrationValue: CalibrationValue?, testInfo: TestInfo?) {
-        testInfo!!.resultDetail.calibrationColor = calibrationValue!!.color
+        testInfo!!.resultInfo.calibrationColor = calibrationValue!!.color
         findNavController(this@BarcodeActivity, R.id.fragment_container)
             .navigate(
                 CalibrationItemFragmentDirections.actionCalibrationItemFragmentToCalibrationFragment(

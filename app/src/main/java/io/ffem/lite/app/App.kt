@@ -166,7 +166,7 @@ class App : BaseApplication() {
 
             for (test in testConfig.tests) {
                 if (test.uuid == id || test.uuid!!.substring(30) == id) {
-                    return test
+                    return test.copy()
                 }
             }
             return null

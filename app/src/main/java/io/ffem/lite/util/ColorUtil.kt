@@ -428,40 +428,80 @@ object ColorUtil {
 
             bwCroppedBitmap2.recycle()
 
-            val croppedBitmap = Bitmap.createBitmap(
+            val extractedBitmap = Bitmap.createBitmap(
                 croppedBitmap2, 0, top,
                 croppedBitmap2.width,
                 max(1, bottom - top)
             )
+            val gsExtractedBitmap = ImageUtil.toGrayscale(extractedBitmap)
+
+            val bwBitmap = ImageUtil.toBlackAndWhite(
+                extractedBitmap, IMAGE_THRESHOLD, ImageEdgeType.WhiteTop, 0, extractedBitmap.width
+            )
 
             croppedBitmap2.recycle()
 
+            testInfo.fileName = id
             var error = NO_ERROR
-            var resultDetail = ResultDetail()
-            try {
-                val db = AppDatabase.getDatabase(context)
-                var calibration: Calibration? = null
-                if (!AppPreferences.isCalibration()) {
-                    calibration = db.resultDao().getCalibration(testInfo.uuid)
-                }
-                resultDetail =
-                    extractColors(croppedBitmap, rightBarcode.displayValue!!, calibration)
+            val db = AppDatabase.getDatabase(context)
+            var calibration: Calibration? = null
+            if (!AppPreferences.isCalibration()) {
+                calibration = db.resultDao().getCalibration(testInfo.uuid)
+            }
 
-                if (resultDetail.result < 0) {
+            try {
+                val extractedColors = extractColors(
+                    gsExtractedBitmap,
+                    bwBitmap,
+                    rightBarcode.displayValue!!,
+                    calibration
+                )
+
+                testInfo.resultInfoGrayscale = analyzeColor(extractedColors)
+
+                if (testInfo.resultInfoGrayscale.result < 0) {
                     error = NO_MATCH
                 }
             } catch (e: Exception) {
                 error = CALIBRATION_ERROR
             }
 
-            testInfo.fileName = id
             Utilities.savePicture(
                 context.applicationContext, id,
-                testInfo.name!!, Utilities.bitmapToBytes(croppedBitmap), true
+                testInfo.name!!, Utilities.bitmapToBytes(gsExtractedBitmap),
+                isExtract = true,
+                isGrayscale = true
             )
-            croppedBitmap.recycle()
+            gsExtractedBitmap.recycle()
 
-            returnResult(context, testInfo, error, bitmap, resultDetail)
+            try {
+                val extractedColors = extractColors(
+                    extractedBitmap,
+                    bwBitmap,
+                    rightBarcode.displayValue!!,
+                    calibration
+                )
+
+                testInfo.resultInfo = analyzeColor(extractedColors)
+
+                if (testInfo.resultInfo.result < 0) {
+                    error = NO_MATCH
+                }
+            } catch (e: Exception) {
+                error = CALIBRATION_ERROR
+            }
+
+            Utilities.savePicture(
+                context.applicationContext, id,
+                testInfo.name!!, Utilities.bitmapToBytes(extractedBitmap),
+                isExtract = true,
+                isGrayscale = false
+            )
+
+            extractedBitmap.recycle()
+            bwBitmap.recycle()
+
+            returnResult(context, testInfo, error, bitmap)
         } else {
             returnResult(context)
             return
@@ -472,12 +512,10 @@ object ColorUtil {
         context: Context,
         testInfo: TestInfo? = null,
         error: ErrorType = NO_ERROR,
-        bitmap: Bitmap? = null,
-        resultDetail: ResultDetail = ResultDetail()
+        bitmap: Bitmap? = null
     ) {
         val intent = Intent(App.LOCAL_RESULT_EVENT)
         if (testInfo != null) {
-            testInfo.resultDetail = resultDetail
             testInfo.error = error
 
             val db = AppDatabase.getDatabase(context)
@@ -493,7 +531,7 @@ object ColorUtil {
                         testInfo.fileName,
                         testInfo.name!!,
                         Utilities.bitmapToBytes(bitmapRotated),
-                        false
+                        isExtract = false, isGrayscale = false
                     )
 
                     bitmap.recycle()
@@ -504,7 +542,7 @@ object ColorUtil {
                     db.resultDao().insert(
                         TestResult(
                             testInfo.fileName, testInfo.uuid!!, 0, testInfo.name!!,
-                            Date().time, -1.0, NO_ERROR, testImageNumber
+                            Date().time, -1.0, -1.0, NO_ERROR, testImageNumber
                         )
                     )
                 }
@@ -518,24 +556,25 @@ object ColorUtil {
                 Timber.d(if (basePath.mkdirs()) "Success" else "Failed")
 
             if (AppPreferences.isCalibration()) {
-                testInfo.resultDetail.calibration = Calibration(
+                testInfo.resultInfo.calibration = Calibration(
                     testInfo.uuid!!,
                     -1.0,
-                    Color.red(resultDetail.calibrationColor) - Color.red(resultDetail.color),
-                    Color.green(resultDetail.calibrationColor) - Color.green(resultDetail.color),
-                    Color.blue(resultDetail.calibrationColor) - Color.blue(resultDetail.color)
+                    Color.red(testInfo.resultInfo.calibrationColor) - Color.red(testInfo.resultInfo.color),
+                    Color.green(testInfo.resultInfo.calibrationColor) - Color.green(testInfo.resultInfo.color),
+                    Color.blue(testInfo.resultInfo.calibrationColor) - Color.blue(testInfo.resultInfo.color)
                 )
             } else {
                 db.resultDao().updateResult(
                     testInfo.fileName,
                     testInfo.name!!,
-                    testInfo.resultDetail.result,
+                    testInfo.resultInfo.result,
+                    testInfo.resultInfoGrayscale.result,
                     testInfo.error.ordinal
                 )
             }
 
             intent.putExtra(App.TEST_INFO_KEY, testInfo)
-            intent.putExtra(TEST_VALUE_KEY, resultDetail.result)
+            intent.putExtra(TEST_VALUE_KEY, testInfo.resultInfo.result)
         }
 
         val localBroadcastManager = LocalBroadcastManager.getInstance(context)
@@ -543,14 +582,11 @@ object ColorUtil {
     }
 
     private fun extractColors(
-        image: Bitmap,
+        bitmap: Bitmap,
+        bwBitmap: Bitmap,
         barcodeValue: String,
         calibration: Calibration?
-    ): ResultDetail {
-
-        val bitmap = ImageUtil.toBlackAndWhite(
-            image, IMAGE_THRESHOLD, ImageEdgeType.WhiteTop, 0, image.width
-        )
+    ): ColorInfo {
 
         val paint = Paint()
         paint.style = Style.STROKE
@@ -561,28 +597,28 @@ object ColorUtil {
         val cardColors: List<CalibrationValue> = getCardColors(barcodeValue)
 
         val intervals = cardColors.size / 2
-        val commonTop = bitmap.height / intervals
+        val commonTop = bwBitmap.height / intervals
         val padding = commonTop / 7
         var calibrationIndex = 0
 
-        val points = getMarkers(bitmap)
+        val points = getMarkers(bwBitmap)
 
         val commonLeft = points.x
         for (i in 0 until intervals) {
             val rectangle = Rect(
                 max(1, commonLeft - padding),
                 max(1, (commonTop * i) + (commonTop / 2) - padding),
-                min(bitmap.width, commonLeft + padding),
-                min(bitmap.height, (commonTop * i) + (commonTop / 2) + padding)
+                min(bwBitmap.width, commonLeft + padding),
+                min(bwBitmap.height, (commonTop * i) + (commonTop / 2) + padding)
             )
 
-            val pixels = getBitmapPixels(image, rectangle)
+            val pixels = getBitmapPixels(bitmap, rectangle)
 
             val cal = cardColors[calibrationIndex]
             calibrationIndex++
             cal.color = getAverageColor(pixels)
 
-            val canvas = Canvas(image)
+            val canvas = Canvas(bitmap)
             canvas.drawRect(rectangle, paint)
         }
 
@@ -591,24 +627,24 @@ object ColorUtil {
             val rectangle = Rect(
                 max(1, commonRight - padding),
                 max(1, (commonTop * i) + (commonTop / 2) - padding),
-                min(bitmap.width, commonRight + padding),
-                min(bitmap.height, (commonTop * i) + (commonTop / 2) + padding)
+                min(bwBitmap.width, commonRight + padding),
+                min(bwBitmap.height, (commonTop * i) + (commonTop / 2) + padding)
             )
 
-            val pixels = getBitmapPixels(image, rectangle)
+            val pixels = getBitmapPixels(bitmap, rectangle)
 
             val cal = cardColors[calibrationIndex]
             calibrationIndex++
             cal.color = getAverageColor(pixels)
 
-            val canvas = Canvas(image)
+            val canvas = Canvas(bitmap)
             canvas.drawRect(rectangle, paint)
         }
 
         val x1 = ((commonRight - commonLeft) / 2) + commonLeft
-        val y1 = ((bitmap.height) / 2) + (bitmap.height * 0.1).toInt()
+        val y1 = ((bwBitmap.height) / 2) + (bwBitmap.height * 0.1).toInt()
         val rectangle = Rect(x1 - 17, y1 - 27, x1 + 17, y1 + 35)
-        val pixels = getBitmapPixels(image, rectangle)
+        val pixels = getBitmapPixels(bitmap, rectangle)
 
         var cuvetteColor = getAverageColor(pixels)
         if (calibration != null) {
@@ -619,11 +655,10 @@ object ColorUtil {
             )
         }
 
-        val colorInfo = ColorInfo(cuvetteColor)
-        val canvas = Canvas(image)
-        canvas.drawRect(rectangle, paint)
-
         val swatches: ArrayList<Swatch> = ArrayList()
+        val colorInfo = ColorInfo(cuvetteColor, swatches)
+        val canvas = Canvas(bitmap)
+        canvas.drawRect(rectangle, paint)
 
         for (cal in cardColors) {
             if (swatches.size >= cardColors.size / 2) {
@@ -631,10 +666,7 @@ object ColorUtil {
             }
             swatches.add(getCalibrationColor(cal.value, cardColors))
         }
-
-        val resultDetail = analyzeColor(colorInfo, generateGradient(swatches))
-        resultDetail.swatches = swatches
-        return resultDetail
+        return colorInfo
     }
 
     fun isTilted(
@@ -916,33 +948,34 @@ object ColorUtil {
      * Analyzes the color and returns a result info.
      *
      * @param photoColor The color to compare
-     * @param swatches   The range of colors to compare against
      */
     @Suppress("SameParameterValue")
     private fun analyzeColor(
-        photoColor: ColorInfo,
-        swatches: List<Swatch>
-    ): ResultDetail {
+        photoColor: ColorInfo
+    ): ResultInfo {
+
+        val gradientList = generateGradient(photoColor.swatches)
 
         //Find the color within the generated gradient that matches the photoColor
         val colorCompareInfo: ColorCompareInfo =
-            getNearestColorFromSwatches(photoColor.color, swatches)
+            getNearestColorFromSwatches(photoColor.color, gradientList)
 
         //set the result
-        val resultDetail = ResultDetail(color = photoColor.color)
+        val resultInfo = ResultInfo(color = photoColor.color)
         if (colorCompareInfo.result > -1) {
-            resultDetail.result = (round(colorCompareInfo.result * 100) / 100.0)
+            resultInfo.result = (round(colorCompareInfo.result * 100) / 100.0)
         }
-        resultDetail.matchedColor = colorCompareInfo.matchedColor
-        resultDetail.distance = colorCompareInfo.distance
+        resultInfo.matchedColor = colorCompareInfo.matchedColor
+        resultInfo.distance = colorCompareInfo.distance
 
         var calibrationDistance = 0.0
-        for (swatch in swatches) {
+        for (swatch in gradientList) {
             calibrationDistance += swatch.distance
         }
-        resultDetail.calibrationDistance = calibrationDistance / swatches.size
+        resultInfo.calibrationDistance = calibrationDistance / gradientList.size
+        resultInfo.swatches = photoColor.swatches
 
-        return resultDetail
+        return resultInfo
     }
 
     /**

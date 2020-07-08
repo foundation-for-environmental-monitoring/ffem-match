@@ -72,6 +72,8 @@ class ResultFragment : Fragment() {
         val fileName = testInfo!!.name!!.replace(" ", "")
         val extractImagePath =
             File(path + testInfo.fileName + File.separator + fileName + "_swatch" + ".jpg")
+        val gsExtractImagePath =
+            File(path + testInfo.fileName + File.separator + fileName + "_swatch_gs" + ".jpg")
         val analyzedImagePath = File(path + testInfo.fileName + File.separator + fileName + ".jpg")
 
         if (analyzedImagePath.exists()) {
@@ -83,11 +85,18 @@ class ResultFragment : Fragment() {
             image_extract.refreshDrawableState()
         }
 
-        if (testInfo.error == ErrorType.NO_ERROR && testInfo.resultDetail.result >= 0) {
+        if (gsExtractImagePath.exists()) {
+            image_extract_gs.setImageURI(Uri.fromFile(gsExtractImagePath))
+            image_extract_gs.refreshDrawableState()
+        }
+
+        if (testInfo.error == ErrorType.NO_ERROR && testInfo.resultInfo.result >= 0) {
             text_name.text = testInfo.name!!.toLocalString()
             text_name2.text = ""
             text_result.text = testInfo.getResultString(requireContext())
+            text_grayscale_result.text = testInfo.getResultGrayscaleString(requireContext())
             text_unit.text = testInfo.unit
+            text_unit2.text = testInfo.unit
             text_risk.text = testInfo.getRisk(requireContext())
             when {
                 testInfo.getRiskType() == RiskType.HIGH -> {
@@ -126,6 +135,9 @@ class ResultFragment : Fragment() {
             lyt_result_details.visibility = GONE
             if (!extractImagePath.exists()) {
                 lyt_color_extracts.visibility = GONE
+            }
+            if (!gsExtractImagePath.exists()) {
+                lyt_color_extracts_gs.visibility = GONE
             }
             if (!analyzedImagePath.exists()) {
                 lyt_analyzed_photo.visibility = GONE

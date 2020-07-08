@@ -21,7 +21,8 @@ object Utilities {
         id: String,
         name: String,
         bytes: ByteArray,
-        isExtract: Boolean
+        isExtract: Boolean,
+        isGrayscale: Boolean
     ) {
         try {
             val path = context.getExternalFilesDir(DIRECTORY_PICTURES).toString() +
@@ -34,7 +35,11 @@ object Utilities {
             val fixedName = name.replace(" ", "")
             var fileName = fixedName
             if (isExtract) {
-                fileName += "_swatch"
+                fileName += if (isGrayscale) {
+                    "_swatch_gs"
+                } else {
+                    "_swatch"
+                }
             }
             val filePath = File("$path$id")
 

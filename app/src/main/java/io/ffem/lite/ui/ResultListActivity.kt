@@ -37,7 +37,7 @@ import io.ffem.lite.app.App.Companion.TEST_INFO_KEY
 import io.ffem.lite.app.App.Companion.getVersionName
 import io.ffem.lite.app.AppDatabase
 import io.ffem.lite.helper.ApkHelper.isNonStoreVersion
-import io.ffem.lite.model.ResultDetail
+import io.ffem.lite.model.ResultInfo
 import io.ffem.lite.model.TestInfo
 import io.ffem.lite.model.TestResult
 import io.ffem.lite.model.toLocalString
@@ -101,7 +101,8 @@ class ResultListActivity : AppUpdateActivity() {
                 db.resultDao().updateResult(
                     testInfo.fileName,
                     testInfo.name!!,
-                    testInfo.resultDetail.result,
+                    testInfo.resultInfo.result,
+                    testInfo.resultInfoGrayscale.result,
                     testInfo.error.ordinal
                 )
             }
@@ -120,7 +121,8 @@ class ResultListActivity : AppUpdateActivity() {
                 val testInfo = App.getTestInfo(item.uuid)
                 testInfo!!.error = item.error
                 testInfo.fileName = item.id
-                testInfo.resultDetail = ResultDetail(result.value)
+                testInfo.resultInfo = ResultInfo(result.value)
+                testInfo.resultInfoGrayscale = ResultInfo(result.valueGrayscale)
 
                 intent.putExtra(TEST_INFO_KEY, testInfo)
                 startActivity(intent)

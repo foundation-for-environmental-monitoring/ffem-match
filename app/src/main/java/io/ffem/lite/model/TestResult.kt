@@ -14,6 +14,7 @@ data class TestResult(
     @ColumnInfo val name: String,
     @ColumnInfo val date: Long,
     @ColumnInfo val value: Double,
+    @ColumnInfo val valueGrayscale: Double,
     @ColumnInfo val error: ErrorType,
     @ColumnInfo val testImageNumber: String
 )

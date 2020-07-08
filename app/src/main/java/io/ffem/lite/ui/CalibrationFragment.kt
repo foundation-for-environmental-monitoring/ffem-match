@@ -65,7 +65,7 @@ class CalibrationFragment : Fragment() {
         val calibrationValue =
             CalibrationFragmentArgs.fromBundle(requireArguments()).calibrationValue.value
         button_submit.setOnClickListener {
-            val r = testInfo.resultDetail
+            val r = testInfo.resultInfo
             for (s in r.swatches!!) {
                 if (s.value == calibrationValue) {
                     r.calibrationColor = s.color
@@ -108,7 +108,7 @@ class CalibrationFragment : Fragment() {
             image_extract.refreshDrawableState()
         }
 
-        if (testInfo.error == ErrorType.NO_ERROR && testInfo.resultDetail.result >= 0) {
+        if (testInfo.error == ErrorType.NO_ERROR && testInfo.resultInfo.result >= 0) {
             val calibrationValue =
                 CalibrationFragmentArgs.fromBundle(requireArguments()).calibrationValue
             text_name.text = testInfo.name!!.toLocalString()
@@ -118,7 +118,7 @@ class CalibrationFragment : Fragment() {
             lyt_result.visibility = VISIBLE
 
             btn_card_color.setBackgroundColor(calibrationValue.color)
-            btn_calibrated_color.setBackgroundColor(testInfo.resultDetail.color)
+            btn_calibrated_color.setBackgroundColor(testInfo.resultInfo.color)
 
             button_submit.setText(R.string.confirm)
 

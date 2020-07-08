@@ -348,8 +348,12 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         val bitmapRotated = Utilities.rotateImage(bitmap, 270)
 
         Utilities.savePicture(
-            context.applicationContext, testInfo.fileName,
-            testInfo.name!!, Utilities.bitmapToBytes(bitmapRotated), false
+            context.applicationContext,
+            testInfo.fileName,
+            testInfo.name!!,
+            Utilities.bitmapToBytes(bitmapRotated),
+            isExtract = false,
+            isGrayscale = false
         )
 
         bitmapRotated.recycle()

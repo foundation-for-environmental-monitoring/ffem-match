@@ -4,7 +4,7 @@ import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-class ResultDetail(
+class ResultInfo(
     var result: Double = -1.0,
     var distance: Double = 0.0,
     var calibrationDistance: Double = 0.0,

@@ -204,7 +204,7 @@ class DiagnosticsTest {
                 childAtPosition(
                     childAtPosition(
                         IsInstanceOf.instanceOf(android.widget.LinearLayout::class.java),
-                        2
+                        3
                     ),
                     0
                 ),
@@ -219,7 +219,7 @@ class DiagnosticsTest {
                 childAtPosition(
                     childAtPosition(
                         IsInstanceOf.instanceOf(android.widget.LinearLayout::class.java),
-                        2
+                        3
                     ),
                     1
                 ),
