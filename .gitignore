@@ -61,5 +61,12 @@ fastlane/screenshots
 fastlane/test_output
 fastlane/readme.md
 
+# LaTeX
+docs/*.aux
+docs/*.dvi
+docs/*.log
+docs/*.pdf
+
+
 .DS_Store
 
