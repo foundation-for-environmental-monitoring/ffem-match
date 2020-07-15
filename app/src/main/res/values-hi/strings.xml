@@ -39,9 +39,12 @@
     <string name="low">कम</string>
     <string name="medium">मध्यम</string>
     <string name="high">ज्यादा</string>
-    <string name="low_qty">पर्याप्त</string>
-    <string name="medium_qty">अपर्याप्त</string>
-    <string name="high_qty">बहुत अधिक</string>
+    <string name="low_quantity">पर्याप्त</string>
+    <string name="medium_quantity">अपर्याप्त</string>
+    <string name="high_quantity">बहुत अधिक</string>
+    <string name="low_safety">सुरक्षित</string>
+    <string name="medium_safety">सुरक्षित</string>
+    <string name="high_safety">असुरक्षित</string>
     <string name="margin_of_error">गलती की सम्भावना: ±</string>
     <string name="check_color_card">जांचें कि सही रंग कार्ड का उपयोग किया जा रहा है। यह भी सुनिश्चित करें कि कार्ड को अप्रत्यक्ष प्रकाश वाले क्षेत्र में रखा गया है।</string>
     <string name="details">विवरण</string>
@@ -69,7 +72,4 @@
     <string name="calibrate">कैलिब्रेट</string>
     <string name="calibrate_summary">मानक का उपयोग करते हुए कैलिब्रेट करें</string>
     <string name="no_data">डेटा प्रदर्शित करने के लिए उपलब्ध नहीं हैं। एक नई परीक्षा शुरू करें</string>
-    <string name="low_safety">सुरक्षित</string>
-    <string name="medium_safety">सुरक्षित</string>
-    <string name="high_safety">असुरक्षित</string>
 </resources>

@@ -199,7 +199,6 @@ class SampleImageSurveyTest : BaseTest() {
         startTest(500)
     }
 
-
     private fun validityTest(
         testDetails: TestDetails,
         imageNumber: Int,

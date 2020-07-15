@@ -14,7 +14,7 @@ import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.app.App.Companion.getTestInfo
 import io.ffem.lite.model.ErrorType
-import io.ffem.lite.model.RiskType
+import io.ffem.lite.model.RiskLevel
 import io.ffem.lite.model.TestInfo
 import io.ffem.lite.model.toLocalString
 import io.ffem.lite.preference.isDiagnosticMode
@@ -99,13 +99,13 @@ class ResultFragment : Fragment() {
             text_unit2.text = testInfo.unit
             text_risk.text = testInfo.getRisk(requireContext())
             when {
-                testInfo.getRiskType() == RiskType.HIGH -> {
+                testInfo.getRiskType() == RiskLevel.HIGH -> {
                     text_risk.setTextColor(resources.getColor(R.color.high_risk, null))
                 }
-                testInfo.getRiskType() == RiskType.MEDIUM -> {
+                testInfo.getRiskType() == RiskLevel.MEDIUM -> {
                     text_risk.setTextColor(resources.getColor(R.color.medium_risk, null))
                 }
-                testInfo.getRiskType() == RiskType.LOW -> {
+                testInfo.getRiskType() == RiskLevel.LOW -> {
                     text_risk.setTextColor(resources.getColor(R.color.low_risk, null))
                 }
             }
