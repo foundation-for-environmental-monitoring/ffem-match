@@ -187,7 +187,7 @@ class RiskIndicatorTest {
 
         val testInfo = getTestInfo(IRON_ID)!!
 
-        Assert.assertEquals(10, testInfo.values.size)
+        Assert.assertEquals(8, testInfo.values.size)
 
         Assert.assertEquals(3, testInfo.risks.size)
 
@@ -197,17 +197,17 @@ class RiskIndicatorTest {
 
         assertRisk(testInfo, 1.0, HIGH)
 
-        assertRisk(testInfo, 0.2, MEDIUM)
+        assertRisk(testInfo, 0.21, MEDIUM)
 
-        assertRisk(testInfo, 0.1, LOW)
+        assertRisk(testInfo, 0.12, LOW)
 
         assertRisk(testInfo, 1.5, HIGH)
 
         assertRisk(testInfo, 0.0, LOW)
 
-        assertRisk(testInfo, 0.09, LOW)
+        assertRisk(testInfo, 0.15, LOW)
 
-        assertRisk(testInfo, 0.29, MEDIUM)
+        assertRisk(testInfo, 0.1, LOW)
 
         assertRisk(testInfo, 0.31, HIGH)
 
