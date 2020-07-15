@@ -93,8 +93,8 @@ class CalibrationTest {
             withText(
                 testData.risk.toResourceId(
                     ApplicationProvider.getApplicationContext(),
-                    testData.testDetails == residualChlorine
-                )
+                    testData.testDetails == residualChlorine,
+                    testData.testDetails == iron)
             )
         ).check(
             matches(isDisplayed())
@@ -179,7 +179,8 @@ class CalibrationTest {
             withText(
                 testData.risk.toResourceId(
                     ApplicationProvider.getApplicationContext(),
-                    testData.testDetails == residualChlorine
+                    testData.testDetails == residualChlorine,
+                    testData.testDetails == iron
                 )
             )
         ).check(

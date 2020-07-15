@@ -214,10 +214,40 @@
       ]
     },
     {
-      "name": "Unknown",
+      "name": "Iron",
       "type": "water",
-      "uuid": "d1b25de4-5605-498e-99f1-8412d7e19db2",
-      "unit": "mg/l"
+      "uuid": "7fd5d20d-73e3-4c95-86ef-352410b1893d",
+      "unit": "mg/l",
+      "minMarginError": 0.15,
+      "riskAsSafety" : true,
+      "risks": [
+        {
+          "value": 0,
+          "risk": 0
+        },
+        {
+          "value": 0.2,
+          "risk": 1
+        },
+        {
+          "value": 0.3,
+          "risk": 2
+        }
+      ],
+      "values": [
+        {
+          "value": 0
+        },
+        {
+          "value": 0.5
+        },
+        {
+          "value": 1.0
+        },
+        {
+          "value": 1.5
+        }
+      ]
     }
   ]
 }

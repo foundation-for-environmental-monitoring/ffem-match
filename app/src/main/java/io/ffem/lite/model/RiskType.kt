@@ -16,11 +16,13 @@ enum class RiskType {
     HIGH;
 }
 
-fun RiskType.toResourceId(context: Context, riskAsQty: Boolean): Int {
+fun RiskType.toResourceId(context: Context, riskAsQty: Boolean, riskAsSafety: Boolean): Int {
     var riskTypeString = toString().toLowerCase(Locale.ROOT)
 
     if (riskAsQty) {
         riskTypeString = toString().toLowerCase(Locale.ROOT) + "_qty"
+    } else if(riskAsSafety) {
+        riskTypeString = toString().toLowerCase(Locale.ROOT) + "_safety"
     }
 
     return context.resources.getIdentifier(
