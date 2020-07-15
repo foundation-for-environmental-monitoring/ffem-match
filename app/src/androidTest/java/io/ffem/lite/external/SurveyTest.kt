@@ -132,7 +132,8 @@ fun startTest(imageNumber: Int) {
                 ViewMatchers.withText(
                     testData.risk.toResourceId(
                         ApplicationProvider.getApplicationContext(),
-                        testData.testDetails == residualChlorine
+                        testData.testDetails == residualChlorine,
+                        testData.testDetails == iron
                     )
                 )
             ).check(

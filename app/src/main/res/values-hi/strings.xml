@@ -69,4 +69,7 @@
     <string name="calibrate">कैलिब्रेट</string>
     <string name="calibrate_summary">मानक का उपयोग करते हुए कैलिब्रेट करें</string>
     <string name="no_data">डेटा प्रदर्शित करने के लिए उपलब्ध नहीं हैं। एक नई परीक्षा शुरू करें</string>
+    <string name="low_safety">सुरक्षित</string>
+    <string name="medium_safety">सुरक्षित</string>
+    <string name="high_safety">असुरक्षित</string>
 </resources>

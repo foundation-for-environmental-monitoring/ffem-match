@@ -1,3 +1,5 @@
+@file:Suppress("SpellCheckingInspection")
+
 package io.ffem.lite.util
 
 import android.content.Context

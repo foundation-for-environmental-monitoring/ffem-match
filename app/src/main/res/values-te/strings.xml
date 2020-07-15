@@ -69,4 +69,7 @@
     <string name="calibrate">క్రమాంకనం</string>
     <string name="calibrate_summary">ప్రమాణాన్ని ఉపయోగించి క్రమాంకనం చేయండి</string>
     <string name="no_data">ప్రదర్శించడానికి డేటా లేదు. క్రొత్త పరీక్షను ప్రారంభించండి</string>
+    <string name="low_safety">సురక్షితంగా</string>
+    <string name="medium_safety">సురక్షితంగా</string>
+    <string name="high_safety">సురక్షితం</string>
 </resources>

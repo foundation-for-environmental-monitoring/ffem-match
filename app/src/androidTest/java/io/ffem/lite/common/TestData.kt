@@ -5,10 +5,10 @@ import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.RiskType
 
 val fluoride = TestDetails("Fluoride", "bcc31cb61159", R.string.water_tests_1, 0)
-val fluorideHighRange =
-    TestDetails("Fluoride - High Range", "b6cb9742737a", R.string.water_tests_1, 1)
+val fluorideHighRange = TestDetails("Fluoride - High Range", "b6cb9742737a", R.string.water_tests_1, 1)
 val pH = TestDetails("pH", "7aa7fc084354", R.string.water_tests_2, 0)
 val residualChlorine = TestDetails("Residual Chlorine", "ad0d47bcc96b", R.string.water_tests_2, 1)
+val iron = TestDetails("Iron", "352410b1893d", R.string.water_tests_2, 2)
 val invalidTest = TestDetails("Residual Chlorine", "ad0d47bcc96b", R.string.water_tests_2, 2)
 
 val testDataList = mutableMapOf(

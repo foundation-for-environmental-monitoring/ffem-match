@@ -1,3 +1,5 @@
+@file:Suppress("KotlinDeprecation")
+
 package io.ffem.lite.update.di
 
 import androidx.test.platform.app.InstrumentationRegistry

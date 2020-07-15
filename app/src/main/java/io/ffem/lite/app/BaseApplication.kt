@@ -1,3 +1,5 @@
+@file:Suppress("Annotator", "Annotator", "Annotator")
+
 package io.ffem.lite.app
 
 import android.annotation.SuppressLint

@@ -62,6 +62,10 @@
     <string name="medium_qty">Insufficient</string>
     <string name="high_qty">Too high</string>
 
+    <string name="low_safety">Safe</string>
+    <string name="medium_safety">Safe</string>
+    <string name="high_safety">Unsafe</string>
+
     <string name="margin_of_error">Margin of error: ±</string>
     <string name="check_color_card">Check that the correct color card is being used. Also ensure that the card is placed in a well lit area with indirect lighting.</string>
     <string name="details">Details</string>

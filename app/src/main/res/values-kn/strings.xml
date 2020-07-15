@@ -69,5 +69,8 @@
     <string name="calibrate">ಮಾಪನಾಂಕ ನಿರ್ಣಯ</string>
     <string name="calibrate_summary">ಸ್ಟ್ಯಾಂಡರ್ಡ್ ಬಳಸಿ ಮಾಪನಾಂಕ ನಿರ್ಣಯಿಸಿ</string>
     <string name="no_data">ಪ್ರದರ್ಶಿಸಲು ಡೇಟಾ ಇಲ್ಲ. ಹೊಸ ಪರೀಕ್ಷೆಯನ್ನು ಪ್ರಾರಂಭಿಸಿ</string>
+    <string name="low_safety">ಸುರಕ್ಷಿತ</string>
+    <string name="medium_safety">ಸುರಕ್ಷಿತ</string>
+    <string name="high_safety">ಅಸುರಕ್ಷಿತ</string>
 </resources>
 

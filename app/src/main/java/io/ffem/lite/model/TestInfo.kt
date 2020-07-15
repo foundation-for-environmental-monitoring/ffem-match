@@ -16,6 +16,7 @@ data class TestInfo(
     var uuid: String? = null,
     var unit: String? = null,
     var riskAsQty: Boolean = false,
+    var riskAsSafety: Boolean = false,
     var minMarginError: Double = 0.0,
     var risks: List<RiskValue> = ArrayList(),
     var values: List<CalibrationValue> = ArrayList(),
@@ -42,11 +43,11 @@ data class TestInfo(
     }
 
     fun getRiskEnglish(context: Context): String {
-        return getStringByLocale(context, getRiskType().toResourceId(context, riskAsQty), Locale.US)
+        return getStringByLocale(context, getRiskType().toResourceId(context, riskAsQty, riskAsSafety), Locale.US)
     }
 
     fun getRisk(context: Context): String {
-        return context.getString(getRiskType().toResourceId(context, riskAsQty))
+        return context.getString(getRiskType().toResourceId(context, riskAsQty, riskAsSafety))
     }
 
     fun getRiskType(): RiskType {

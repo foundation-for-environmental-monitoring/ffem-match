@@ -182,25 +182,56 @@ class RiskIndicatorTest {
         assertRisk(testInfo, 99.9, HIGH)
     }
 
+    @Test
+    fun ironRiskIndicator() {
+
+        val testInfo = getTestInfo(IRON_ID)!!
+
+        Assert.assertEquals(10, testInfo.values.size)
+
+        Assert.assertEquals(3, testInfo.risks.size)
+
+        assertRisk(testInfo, 0.30, HIGH)
+
+        assertRisk(testInfo, 0.5, HIGH)
+
+        assertRisk(testInfo, 1.0, HIGH)
+
+        assertRisk(testInfo, 0.2, MEDIUM)
+
+        assertRisk(testInfo, 0.1, LOW)
+
+        assertRisk(testInfo, 1.5, HIGH)
+
+        assertRisk(testInfo, 0.0, LOW)
+
+        assertRisk(testInfo, 0.09, LOW)
+
+        assertRisk(testInfo, 0.29, MEDIUM)
+
+        assertRisk(testInfo, 0.31, HIGH)
+
+    }
+
     private fun assertRisk(testInfo: TestInfo, result: Double, risk: RiskType) {
         testInfo.resultInfo.result = result
         when (risk) {
             LOW -> {
-                if (testInfo.riskAsQty) {
-                    Assert.assertEquals(
-                        context.getString(R.string.low_qty),
-                        testInfo.getRisk(context)
-                    )
-                } else {
-                    Assert.assertEquals(context.getString(R.string.low), testInfo.getRisk(context))
-                }
+
+                if (testInfo.riskAsQty) { Assert.assertEquals(context.getString(R.string.low_qty), testInfo.getRisk(context))
+
+                } else if(testInfo.riskAsSafety) { Assert.assertEquals(context.getString(R.string.low_safety), testInfo.getRisk(context))
+
+                } else { Assert.assertEquals(context.getString(R.string.low), testInfo.getRisk(context)) }
             }
+
             MEDIUM -> {
                 if (testInfo.riskAsQty) {
                     Assert.assertEquals(
                         context.getString(R.string.medium_qty),
-                        testInfo.getRisk(context)
-                    )
+                        testInfo.getRisk(context))
+                } else if(testInfo.riskAsSafety) { Assert.assertEquals(context.getString(R.string.medium_safety), testInfo.getRisk(context))
+
                 } else {
                     Assert.assertEquals(
                         context.getString(R.string.medium),
@@ -212,8 +243,10 @@ class RiskIndicatorTest {
                 if (testInfo.riskAsQty) {
                     Assert.assertEquals(
                         context.getString(R.string.high_qty),
-                        testInfo.getRisk(context)
-                    )
+                        testInfo.getRisk(context))
+
+                } else if(testInfo.riskAsSafety) { Assert.assertEquals(context.getString(R.string.high_safety), testInfo.getRisk(context))
+
                 } else {
                     Assert.assertEquals(context.getString(R.string.high), testInfo.getRisk(context))
                 }
@@ -231,5 +264,6 @@ class RiskIndicatorTest {
         const val PH_ID = "ff96e965-13a3-4507-9edf-7aa7fc084354"
         const val RESIDUAL_CHLORINE_ID = "f1d64b11-64c4-4a34-806e-ad0d47bcc96b"
         const val NITRATE_ID= "d69ca7a2-e357-4820-a99b-1b6b24c0fa93"
+        const val IRON_ID = "7fd5d20d-73e3-4c95-86ef-352410b1893d"
     }
 }
