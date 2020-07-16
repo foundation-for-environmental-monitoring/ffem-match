@@ -33,9 +33,9 @@ data class TestInfo(
         }
     }
 
-    fun getResultGrayscaleString(context: Context): String {
+    fun getResultGrayscaleString(): String {
         return if (resultInfoGrayscale.result < 0) {
-            error.toLocalString(context)
+            ""
         } else {
             resultInfoGrayscale.result.toString()
         }

@@ -461,11 +461,11 @@ object ColorUtil {
 
                 testInfo.resultInfoGrayscale = analyzeColor(extractedColors)
 
-                if (testInfo.resultInfoGrayscale.result < 0) {
-                    error = NO_MATCH
-                }
+//                if (testInfo.resultInfoGrayscale.result < 0) {
+//                    error = NO_MATCH
+//                }
             } catch (e: Exception) {
-                error = CALIBRATION_ERROR
+//                error = CALIBRATION_ERROR
             }
 
             Utilities.savePicture(

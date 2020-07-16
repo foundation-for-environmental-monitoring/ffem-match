@@ -94,9 +94,14 @@ class ResultFragment : Fragment() {
             text_name.text = testInfo.name!!.toLocalString()
             text_name2.text = ""
             text_result.text = testInfo.getResultString(requireContext())
-            text_grayscale_result.text = testInfo.getResultGrayscaleString(requireContext())
+
+            val grayscaleResult = testInfo.getResultGrayscaleString()
+            text_grayscale_result.text = grayscaleResult
+            if (grayscaleResult.isNotEmpty()) {
+                text_unit2.text = testInfo.unit
+            }
+
             text_unit.text = testInfo.unit
-            text_unit2.text = testInfo.unit
             text_risk.text = testInfo.getRisk(requireContext())
             when {
                 testInfo.getRiskType() == RiskLevel.HIGH -> {
