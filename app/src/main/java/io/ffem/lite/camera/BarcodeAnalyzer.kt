@@ -26,7 +26,7 @@ import io.ffem.lite.app.App.Companion.getTestInfo
 import io.ffem.lite.app.App.Companion.getTestName
 import io.ffem.lite.model.ImageEdgeType
 import io.ffem.lite.model.TestInfo
-import io.ffem.lite.preference.getSampleTestImageNumber
+import io.ffem.lite.preference.getSampleTestImageNumberInt
 import io.ffem.lite.preference.isDiagnosticMode
 import io.ffem.lite.util.ColorUtil.fixBoundary
 import io.ffem.lite.util.ColorUtil.isBarcodeValid
@@ -78,7 +78,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         localBroadcastManager = LocalBroadcastManager.getInstance(context)
 
         if (BuildConfig.DEBUG && (isDiagnosticMode() || BuildConfig.INSTRUMENTED_TEST_RUNNING.get())) {
-            val imageNumber = getSampleTestImageNumber()
+            val imageNumber = getSampleTestImageNumberInt()
             if (imageNumber > -1) {
                 try {
                     val drawable = ContextCompat.getDrawable(

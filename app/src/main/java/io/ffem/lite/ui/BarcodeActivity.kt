@@ -39,6 +39,8 @@ import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.TestInfo
 import io.ffem.lite.model.TestResult
 import io.ffem.lite.preference.AppPreferences
+import io.ffem.lite.preference.getSampleTestImageNumber
+import io.ffem.lite.preference.getSampleTestImageNumberInt
 import io.ffem.lite.preference.isTestRunning
 import io.ffem.lite.util.ColorUtil
 import io.ffem.lite.util.PreferencesUtil
@@ -150,15 +152,12 @@ class BarcodeActivity : BaseActivity(), CalibrationItemFragment.OnCalibrationSel
     private fun saveImageData(data: Intent) {
         val testInfo = data.getParcelableExtra<TestInfo>(TEST_INFO_KEY) ?: return
 
-        val testImageNumber = PreferencesUtil
-            .getString(this, R.string.testImageNumberKey, "")
-
         if (!AppPreferences.isCalibration()) {
             val db = AppDatabase.getDatabase(baseContext)
             db.resultDao().insert(
                 TestResult(
                     testInfo.fileName, testInfo.uuid!!, 0, testInfo.name!!, Date().time,
-                    -1.0, -1.0, ErrorType.NO_ERROR, testImageNumber
+                    -1.0, -1.0, ErrorType.NO_ERROR, getSampleTestImageNumber()
                 )
             )
             deleteExcessData(db)
@@ -239,7 +238,7 @@ class BarcodeActivity : BaseActivity(), CalibrationItemFragment.OnCalibrationSel
     override fun onResume() {
         super.onResume()
 
-        if (isTestRunning() || BuildConfig.INSTRUMENTED_TEST_RUNNING.get()) {
+        if (getSampleTestImageNumberInt() > -1) {
             val toast: Toast = Toast.makeText(this, R.string.dummy_image_message, Toast.LENGTH_LONG)
             toast.setGravity(Gravity.CENTER, 0, -200)
             (toast.view.findViewById<View>(android.R.id.message) as TextView).setTextColor(Color.WHITE)
