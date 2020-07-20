@@ -541,7 +541,7 @@ object ColorUtil {
                     db.resultDao().insert(
                         TestResult(
                             testInfo.fileName, testInfo.uuid!!, 0, testInfo.name!!,
-                            Date().time, -1.0, -1.0, NO_ERROR,
+                            Date().time, -1.0, -1.0, 0.0, NO_ERROR,
                             getSampleTestImageNumber()
                         )
                     )
@@ -569,6 +569,7 @@ object ColorUtil {
                     testInfo.name!!,
                     testInfo.resultInfo.result,
                     testInfo.resultInfoGrayscale.result,
+                    testInfo.getMarginOfError(),
                     testInfo.error.ordinal
                 )
             }

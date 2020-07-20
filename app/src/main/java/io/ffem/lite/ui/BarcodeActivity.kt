@@ -157,7 +157,7 @@ class BarcodeActivity : BaseActivity(), CalibrationItemFragment.OnCalibrationSel
             db.resultDao().insert(
                 TestResult(
                     testInfo.fileName, testInfo.uuid!!, 0, testInfo.name!!, Date().time,
-                    -1.0, -1.0, ErrorType.NO_ERROR, getSampleTestImageNumber()
+                    -1.0, -1.0, 0.0, ErrorType.NO_ERROR, getSampleTestImageNumber()
                 )
             )
             deleteExcessData(db)

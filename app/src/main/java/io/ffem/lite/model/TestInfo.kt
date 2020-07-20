@@ -17,6 +17,7 @@ data class TestInfo(
     var unit: String? = null,
     var riskType: RiskType = RiskType.NORMAL,
     var minMarginError: Double = 0.0,
+    private var marginError: Double = 0.0,
     var risks: List<RiskValue> = ArrayList(),
     var values: List<CalibrationValue> = ArrayList(),
     var resultInfo: ResultInfo = ResultInfo(),
@@ -67,12 +68,15 @@ data class TestInfo(
     }
 
     fun getMarginOfError(): Double {
+        if (marginError < minMarginError) {
+            marginError =
+                max((resultInfo.distance + resultInfo.calibrationDistance) / 200, minMarginError)
+            marginError = (round(marginError * 100) / 100.0)
+        }
+        return marginError
+    }
 
-        val margin = max(
-            (resultInfo.distance + resultInfo.calibrationDistance) / 200,
-            minMarginError
-        )
-
-        return (round(margin * 100) / 100.0)
+    fun setMarginOfError(value: Double) {
+        marginError = value
     }
 }

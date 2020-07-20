@@ -23,12 +23,13 @@ abstract class ResultDao {
     @Query("SELECT * FROM Calibration WHERE id = :id")
     abstract fun getCalibration(id: String?): Calibration?
 
-    @Query("UPDATE TestResult SET name = :name, value = :result, valueGrayscale = :resultGrayscale, error = :error WHERE id = :id")
+    @Query("UPDATE TestResult SET name = :name, value = :result, valueGrayscale = :resultGrayscale, marginOfError = :marginOfError, error = :error WHERE id = :id")
     abstract fun updateResult(
         id: String,
         name: String,
         result: Double,
         resultGrayscale: Double,
+        marginOfError: Double,
         error: Int
     )
 
