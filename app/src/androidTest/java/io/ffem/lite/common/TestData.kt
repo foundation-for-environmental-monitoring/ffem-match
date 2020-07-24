@@ -9,6 +9,7 @@ val fluorideHighRange = TestDetails("Fluoride - High Range", "b6cb9742737a", R.s
 val pH = TestDetails("pH", "7aa7fc084354", R.string.water_tests_2, 0)
 val residualChlorine = TestDetails("Residual Chlorine", "ad0d47bcc96b", R.string.water_tests_2, 1)
 val iron = TestDetails("Iron", "352410b1893d", R.string.water_tests_2, 2)
+val nitrate = TestDetails("Nitrate", "1b6b24c0fa93", R.string.water_tests_2, 3)
 val invalidTest = TestDetails("Residual Chlorine", "ad0d47bcc96b", R.string.water_tests_2, 2)
 
 val testDataList = mutableMapOf(
@@ -37,6 +38,9 @@ val testDataList = mutableMapOf(
     22 to TestData(pH, expectedScanError = R.string.place_color_card),
     23 to TestData(fluorideHighRange, expectedResultError = ErrorType.NO_MATCH),
     24 to TestData(fluoride, 0.5, 0.48, risk = RiskType.LOW),
+    25 to TestData(nitrate, 50.0, 0.80, risk = RiskType.HIGH),
+    26 to TestData(iron, 1.5, 0.15, risk = RiskType.HIGH),
+
     500 to TestData(pH, expectedScanError = R.string.sample_image_not_found)
 )
 

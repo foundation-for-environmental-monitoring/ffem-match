@@ -189,6 +189,18 @@ class SampleImageTest {
 
 
     @Test
+    fun image_025_Nitrate_50_Point_0() {
+        startInternalTest(25)
+    }
+
+
+    @Test
+    fun image_026_Iron_1_Point_5() {
+        startInternalTest(26)
+    }
+
+
+    @Test
     fun imageX_Waiting() {
         startInternalTest(500)
     }

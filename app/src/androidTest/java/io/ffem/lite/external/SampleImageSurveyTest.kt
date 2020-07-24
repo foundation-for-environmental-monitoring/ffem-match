@@ -183,6 +183,22 @@ class SampleImageSurveyTest : BaseTest() {
     fun image_023_FluorideHighRange_NoMatch() {
         startTest(23)
     }
+    @Test
+    fun image_024_Fluoride_0_Point_5() {
+        startTest(24)
+    }
+
+
+    @Test
+    fun image_025_Nitrate_50_Point_0() {
+        startTest(25)
+    }
+
+
+    @Test
+    fun image_026_Iron_1_Point_5() {
+        startTest(26)
+    }
 
     @Test
     fun invalidTest() {
