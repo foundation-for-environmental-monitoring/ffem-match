@@ -38,8 +38,8 @@ val testDataList = mutableMapOf(
     22 to TestData(pH, expectedScanError = R.string.place_color_card),
     23 to TestData(fluorideHighRange, expectedResultError = ErrorType.NO_MATCH),
     24 to TestData(fluoride, 0.5, 0.48, risk = RiskType.LOW),
-    25 to TestData(nitrate, 50.0, 0.80, risk = RiskType.HIGH),
-    26 to TestData(iron, 1.5, 0.15, risk = RiskType.HIGH),
+    25 to TestData(nitrate, 0.0, 0.80, risk = RiskType.LOW),
+    26 to TestData(iron, 0.0, 0.15, risk = RiskType.LOW),
 
     500 to TestData(pH, expectedScanError = R.string.sample_image_not_found)
 )

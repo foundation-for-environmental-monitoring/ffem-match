@@ -189,13 +189,13 @@ class SampleImageTest {
 
 
     @Test
-    fun image_025_Nitrate_50_Point_0() {
+    fun image_025_Nitrate_0() {
         startInternalTest(25)
     }
 
 
     @Test
-    fun image_026_Iron_1_Point_5() {
+    fun image_026_Iron_0() {
         startInternalTest(26)
     }
 
