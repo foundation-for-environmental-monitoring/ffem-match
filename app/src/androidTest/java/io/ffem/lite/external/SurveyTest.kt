@@ -10,7 +10,7 @@ import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.uiautomator.By
 import io.ffem.lite.R
-import io.ffem.lite.common.*
+import io.ffem.lite.common.TestHelper
 import io.ffem.lite.common.TestHelper.clickLaunchButton
 import io.ffem.lite.common.TestHelper.gotoFormSubmit
 import io.ffem.lite.common.TestHelper.gotoSurveyForm
@@ -20,6 +20,9 @@ import io.ffem.lite.common.TestHelper.nextSurveyPage
 import io.ffem.lite.common.TestHelper.selectMenuItem
 import io.ffem.lite.common.TestHelper.startSurveyApp
 import io.ffem.lite.common.TestHelper.takeScreenshot
+import io.ffem.lite.common.TestUtil
+import io.ffem.lite.common.pH
+import io.ffem.lite.common.testDataList
 import io.ffem.lite.internal.TIME_DELAY
 import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.toLocalString
@@ -131,9 +134,7 @@ fun startTest(imageNumber: Int) {
             Espresso.onView(
                 ViewMatchers.withText(
                     testData.risk.toResourceId(
-                        ApplicationProvider.getApplicationContext(),
-                        testData.testDetails == residualChlorine,
-                        testData.testDetails == iron
+                        ApplicationProvider.getApplicationContext(), testData.testDetails.riskType
                     )
                 )
             ).check(

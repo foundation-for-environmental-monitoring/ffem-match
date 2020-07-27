@@ -17,10 +17,13 @@ import androidx.test.rule.GrantPermissionRule
 import androidx.test.uiautomator.UiDevice
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
-import io.ffem.lite.common.*
+import io.ffem.lite.common.TestHelper
 import io.ffem.lite.common.TestHelper.takeScreenshot
+import io.ffem.lite.common.TestUtil
 import io.ffem.lite.common.TestUtil.childAtPosition
 import io.ffem.lite.common.TestUtil.sleep
+import io.ffem.lite.common.clearData
+import io.ffem.lite.common.testDataList
 import io.ffem.lite.model.toResourceId
 import io.ffem.lite.ui.ResultListActivity
 import io.ffem.lite.util.PreferencesUtil
@@ -92,9 +95,8 @@ class CalibrationTest {
         onView(
             withText(
                 testData.risk.toResourceId(
-                    ApplicationProvider.getApplicationContext(),
-                    testData.testDetails == residualChlorine,
-                    testData.testDetails == iron)
+                    ApplicationProvider.getApplicationContext(), testData.testDetails.riskType
+                )
             )
         ).check(
             matches(isDisplayed())
@@ -178,9 +180,7 @@ class CalibrationTest {
         onView(
             withText(
                 testData.risk.toResourceId(
-                    ApplicationProvider.getApplicationContext(),
-                    testData.testDetails == residualChlorine,
-                    testData.testDetails == iron
+                    ApplicationProvider.getApplicationContext(), testData.testDetails.riskType
                 )
             )
         ).check(

@@ -10,16 +10,25 @@ import io.ffem.lite.util.PreferencesUtil
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-fun getSampleTestImageNumber(): Int {
+fun getSampleTestImageNumber(): String {
+    var testImageNumber = ""
+    if (isTestRunning()) {
+        testImageNumber = PreferencesUtil
+            .getString(App.app, R.string.testImageNumberKey, "")
+    }
+    return testImageNumber
+}
+
+fun getSampleTestImageNumberInt(): Int {
     return try {
-        PreferencesUtil.getString(App.app, R.string.testImageNumberKey, "").toInt()
+        getSampleTestImageNumber().toInt()
     } catch (e: Exception) {
         -1
     }
 }
 
 fun isTestRunning(): Boolean {
-    return getSampleTestImageNumber() > -1 && BuildConfig.DEBUG && isDiagnosticMode()
+    return BuildConfig.DEBUG && (isDiagnosticMode() || BuildConfig.INSTRUMENTED_TEST_RUNNING.get())
 }
 
 fun isDiagnosticMode(): Boolean {

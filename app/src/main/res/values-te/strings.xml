@@ -39,9 +39,12 @@
     <string name="low">తక్కువ</string>
     <string name="medium">మీడియం</string>
     <string name="high">అధిక</string>
-    <string name="low_qty">తగిన</string>
-    <string name="medium_qty">సరిపోని</string>
-    <string name="high_qty">చాల ఎక్కువ</string>
+    <string name="low_quantity">తగిన</string>
+    <string name="medium_quantity">సరిపోని</string>
+    <string name="high_quantity">చాల ఎక్కువ</string>
+    <string name="low_safety">సురక్షితంగా</string>
+    <string name="medium_safety">సురక్షితంగా</string>
+    <string name="high_safety">సురక్షితం</string>
     <string name="margin_of_error">లోపం యొక్క మార్జిన్: ±</string>
     <string name="check_color_card">సరైన రంగు కార్డు ఉపయోగించబడుతోందో లేదో తనిఖీ చేయండి. కార్డు పరోక్ష లైటింగ్‌తో బాగా వెలిగించిన ప్రదేశంలో ఉంచబడిందని కూడా నిర్ధారించుకోండి.</string>
     <string name="details">వివరాలు</string>
@@ -69,7 +72,4 @@
     <string name="calibrate">క్రమాంకనం</string>
     <string name="calibrate_summary">ప్రమాణాన్ని ఉపయోగించి క్రమాంకనం చేయండి</string>
     <string name="no_data">ప్రదర్శించడానికి డేటా లేదు. క్రొత్త పరీక్షను ప్రారంభించండి</string>
-    <string name="low_safety">సురక్షితంగా</string>
-    <string name="medium_safety">సురక్షితంగా</string>
-    <string name="high_safety">సురక్షితం</string>
 </resources>

@@ -58,9 +58,9 @@
     <string name="medium">Medium</string>
     <string name="high">High</string>
 
-    <string name="low_qty">Sufficient</string>
-    <string name="medium_qty">Insufficient</string>
-    <string name="high_qty">Too high</string>
+    <string name="low_quantity">Sufficient</string>
+    <string name="medium_quantity">Insufficient</string>
+    <string name="high_quantity">Too high</string>
 
     <string name="low_safety">Safe</string>
     <string name="medium_safety">Safe</string>

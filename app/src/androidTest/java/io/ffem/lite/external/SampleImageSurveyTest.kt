@@ -3,7 +3,6 @@ package io.ffem.lite.external
 
 import android.content.Context
 import android.os.Environment
-import android.os.SystemClock
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -26,6 +25,7 @@ import io.ffem.lite.common.TestHelper.isDeviceInitialized
 import io.ffem.lite.common.TestHelper.mDevice
 import io.ffem.lite.common.TestHelper.nextSurveyPage
 import io.ffem.lite.common.TestHelper.startSurveyApp
+import io.ffem.lite.common.TestUtil.sleep
 import io.ffem.lite.internal.TIME_DELAY
 import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.ErrorType.NO_ERROR
@@ -215,7 +215,6 @@ class SampleImageSurveyTest : BaseTest() {
         startTest(500)
     }
 
-
     private fun validityTest(
         testDetails: TestDetails,
         imageNumber: Int,
@@ -226,16 +225,18 @@ class SampleImageSurveyTest : BaseTest() {
             context, R.string.testImageNumberKey, imageNumber.toString()
         )
 
-        SystemClock.sleep(2000)
+        sleep(2000)
 
         startSurveyApp()
         gotoSurveySelection()
         gotoSurveyForm()
 
         nextSurveyPage(3, context.getString(testDetails.group))
+
+        sleep(2000)
         clickLaunchButton(testDetails.buttonIndex)
 
-        SystemClock.sleep(TIME_DELAY)
+        sleep(TIME_DELAY)
 
         onView(withText(testDetails.name.toLocalString())).check(matches(isDisplayed()))
 

@@ -192,11 +192,11 @@ class DiagnosticsTest {
 
         val textView4 = onView(
             allOf(
-                withId(R.id.text_risk), withText(R.string.medium_qty),
+                withId(R.id.text_risk), withText(R.string.medium_quantity),
                 isDisplayed()
             )
         )
-        textView4.check(matches(withText(R.string.medium_qty)))
+        textView4.check(matches(withText(R.string.medium_quantity)))
 
         val textView5 = onView(
             allOf(

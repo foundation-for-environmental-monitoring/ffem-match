@@ -16,7 +16,6 @@ import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetector
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
-import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.app.App.Companion.DEFAULT_TEST_UUID
 import io.ffem.lite.app.App.Companion.TEST_ID_KEY
@@ -31,6 +30,7 @@ import io.ffem.lite.model.ErrorType.*
 import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.preference.getCalibrationColorDistanceTolerance
 import io.ffem.lite.preference.getColorDistanceTolerance
+import io.ffem.lite.preference.getSampleTestImageNumber
 import timber.log.Timber
 import java.io.File
 import java.util.*
@@ -461,11 +461,11 @@ object ColorUtil {
 
                 testInfo.resultInfoGrayscale = analyzeColor(extractedColors)
 
-                if (testInfo.resultInfoGrayscale.result < 0) {
-                    error = NO_MATCH
-                }
+//                if (testInfo.resultInfoGrayscale.result < 0) {
+//                    error = NO_MATCH
+//                }
             } catch (e: Exception) {
-                error = CALIBRATION_ERROR
+//                error = CALIBRATION_ERROR
             }
 
             Utilities.savePicture(
@@ -522,9 +522,6 @@ object ColorUtil {
 
             val db = AppDatabase.getDatabase(context)
 
-            val testImageNumber = PreferencesUtil
-                .getString(context, R.string.testImageNumberKey, "")
-
             if (db.resultDao().getResult(testInfo.fileName) == null) {
                 if (bitmap != null) {
                     val bitmapRotated = Utilities.rotateImage(bitmap, 270)
@@ -544,7 +541,8 @@ object ColorUtil {
                     db.resultDao().insert(
                         TestResult(
                             testInfo.fileName, testInfo.uuid!!, 0, testInfo.name!!,
-                            Date().time, -1.0, -1.0, NO_ERROR, testImageNumber
+                            Date().time, -1.0, -1.0, 0.0, NO_ERROR,
+                            getSampleTestImageNumber()
                         )
                     )
                 }
@@ -571,6 +569,7 @@ object ColorUtil {
                     testInfo.name!!,
                     testInfo.resultInfo.result,
                     testInfo.resultInfoGrayscale.result,
+                    testInfo.getMarginOfError(),
                     testInfo.error.ordinal
                 )
             }

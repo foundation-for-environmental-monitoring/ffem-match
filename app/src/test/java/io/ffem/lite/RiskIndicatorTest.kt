@@ -4,8 +4,9 @@ import android.app.Activity
 import android.content.Context
 import android.os.Build
 import io.ffem.lite.app.App.Companion.getTestInfo
+import io.ffem.lite.model.RiskLevel
+import io.ffem.lite.model.RiskLevel.*
 import io.ffem.lite.model.RiskType
-import io.ffem.lite.model.RiskType.*
 import io.ffem.lite.model.TestInfo
 import io.ffem.lite.ui.ResultListActivity
 import org.junit.Assert
@@ -15,6 +16,13 @@ import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.android.controller.ActivityController
 import org.robolectric.annotation.Config
+
+const val FLUORIDE_ID = "f0f3c1dd-89af-49f1-83e7-bcc31cb61159"
+const val FLUORIDE_HIGH_RANGE_ID = "93cec3c4-b3e4-4924-b722-b6cb9742737a"
+const val PH_ID = "ff96e965-13a3-4507-9edf-7aa7fc084354"
+const val RESIDUAL_CHLORINE_ID = "f1d64b11-64c4-4a34-806e-ad0d47bcc96b"
+const val NITRATE_ID = "d69ca7a2-e357-4820-a99b-1b6b24c0fa93"
+const val IRON_ID = "7fd5d20d-73e3-4c95-86ef-352410b1893d"
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.O_MR1])
@@ -70,7 +78,6 @@ class RiskIndicatorTest {
 
         assertRisk(testInfo, 1.99, HIGH)
     }
-
 
     @Test
     fun residualChlorineRiskIndicator() {
@@ -210,45 +217,76 @@ class RiskIndicatorTest {
         assertRisk(testInfo, 0.1, LOW)
 
         assertRisk(testInfo, 0.31, HIGH)
-
     }
 
-    private fun assertRisk(testInfo: TestInfo, result: Double, risk: RiskType) {
+    private fun assertRisk(testInfo: TestInfo, result: Double, risk: RiskLevel) {
         testInfo.resultInfo.result = result
         when (risk) {
             LOW -> {
-
-                if (testInfo.riskAsQty) { Assert.assertEquals(context.getString(R.string.low_qty), testInfo.getRisk(context))
-
-                } else if(testInfo.riskAsSafety) { Assert.assertEquals(context.getString(R.string.low_safety), testInfo.getRisk(context))
-
-                } else { Assert.assertEquals(context.getString(R.string.low), testInfo.getRisk(context)) }
+                when (testInfo.riskType) {
+                    RiskType.QUANTITY -> {
+                        Assert.assertEquals(
+                            context.getString(R.string.low_quantity),
+                            testInfo.getRisk(context)
+                        )
+                    }
+                    RiskType.SAFETY -> {
+                        Assert.assertEquals(
+                            context.getString(R.string.low_safety),
+                            testInfo.getRisk(context)
+                        )
+                    }
+                    else -> {
+                        Assert.assertEquals(
+                            context.getString(R.string.low),
+                            testInfo.getRisk(context)
+                        )
+                    }
+                }
             }
 
             MEDIUM -> {
-                if (testInfo.riskAsQty) {
-                    Assert.assertEquals(
-                        context.getString(R.string.medium_qty),
-                        testInfo.getRisk(context))
-                } else if(testInfo.riskAsSafety) { Assert.assertEquals(context.getString(R.string.medium_safety), testInfo.getRisk(context))
-
-                } else {
-                    Assert.assertEquals(
-                        context.getString(R.string.medium),
-                        testInfo.getRisk(context)
-                    )
+                when (testInfo.riskType) {
+                    RiskType.QUANTITY -> {
+                        Assert.assertEquals(
+                            context.getString(R.string.medium_quantity),
+                            testInfo.getRisk(context)
+                        )
+                    }
+                    RiskType.SAFETY -> {
+                        Assert.assertEquals(
+                            context.getString(R.string.medium_safety),
+                            testInfo.getRisk(context)
+                        )
+                    }
+                    else -> {
+                        Assert.assertEquals(
+                            context.getString(R.string.medium),
+                            testInfo.getRisk(context)
+                        )
+                    }
                 }
             }
             HIGH -> {
-                if (testInfo.riskAsQty) {
-                    Assert.assertEquals(
-                        context.getString(R.string.high_qty),
-                        testInfo.getRisk(context))
-
-                } else if(testInfo.riskAsSafety) { Assert.assertEquals(context.getString(R.string.high_safety), testInfo.getRisk(context))
-
-                } else {
-                    Assert.assertEquals(context.getString(R.string.high), testInfo.getRisk(context))
+                when (testInfo.riskType) {
+                    RiskType.QUANTITY -> {
+                        Assert.assertEquals(
+                            context.getString(R.string.high_quantity),
+                            testInfo.getRisk(context)
+                        )
+                    }
+                    RiskType.SAFETY -> {
+                        Assert.assertEquals(
+                            context.getString(R.string.high_safety),
+                            testInfo.getRisk(context)
+                        )
+                    }
+                    else -> {
+                        Assert.assertEquals(
+                            context.getString(R.string.high),
+                            testInfo.getRisk(context)
+                        )
+                    }
                 }
             }
         }
@@ -258,12 +296,5 @@ class RiskIndicatorTest {
         private val controller: ActivityController<*> =
             Robolectric.buildActivity(ResultListActivity::class.java).create().start()
         val context: Context = (controller.get() as Activity)
-
-        const val FLUORIDE_ID = "f0f3c1dd-89af-49f1-83e7-bcc31cb61159"
-        const val FLUORIDE_HIGH_RANGE_ID = "93cec3c4-b3e4-4924-b722-b6cb9742737a"
-        const val PH_ID = "ff96e965-13a3-4507-9edf-7aa7fc084354"
-        const val RESIDUAL_CHLORINE_ID = "f1d64b11-64c4-4a34-806e-ad0d47bcc96b"
-        const val NITRATE_ID= "d69ca7a2-e357-4820-a99b-1b6b24c0fa93"
-        const val IRON_ID = "7fd5d20d-73e3-4c95-86ef-352410b1893d"
     }
 }

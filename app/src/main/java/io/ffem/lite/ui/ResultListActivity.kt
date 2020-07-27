@@ -103,6 +103,7 @@ class ResultListActivity : AppUpdateActivity() {
                     testInfo.name!!,
                     testInfo.resultInfo.result,
                     testInfo.resultInfoGrayscale.result,
+                    testInfo.getMarginOfError(),
                     testInfo.error.ordinal
                 )
             }
@@ -123,6 +124,7 @@ class ResultListActivity : AppUpdateActivity() {
                 testInfo.fileName = item.id
                 testInfo.resultInfo = ResultInfo(result.value)
                 testInfo.resultInfoGrayscale = ResultInfo(result.valueGrayscale)
+                testInfo.setMarginOfError(result.marginOfError)
 
                 intent.putExtra(TEST_INFO_KEY, testInfo)
                 startActivity(intent)

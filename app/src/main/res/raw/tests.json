@@ -138,7 +138,7 @@
       "type": "water",
       "uuid": "f1d64b11-64c4-4a34-806e-ad0d47bcc96b",
       "unit": "mg/l",
-      "riskAsQty": true,
+      "riskType": "quantity",
       "minMarginError": 0.25,
       "risks": [
         {
@@ -219,7 +219,7 @@
       "uuid": "7fd5d20d-73e3-4c95-86ef-352410b1893d",
       "unit": "mg/l",
       "minMarginError": 0.15,
-      "riskAsSafety" : true,
+      "riskType": "safety",
       "risks": [
         {
           "value": 0,
@@ -248,6 +248,12 @@
           "value": 1.5
         }
       ]
+    },
+    {
+      "name": "Unknown",
+      "type": "water",
+      "uuid": "d1b25de4-5605-498e-99f1-8412d7e19db2",
+      "unit": "mg/l"
     }
   ]
 }

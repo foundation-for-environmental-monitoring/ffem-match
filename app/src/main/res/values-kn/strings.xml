@@ -39,9 +39,12 @@
     <string name="low">ಕಡಿಮೆ</string>
     <string name="medium">ಮಾಧ್ಯಮ</string>
     <string name="high">ಹೆಚ್ಚು</string>
-    <string name="low_qty">ಸಾಕಷ್ಟು</string>
-    <string name="medium_qty">ಸಾಕಾಗುವುದಿಲ್ಲ</string>
-    <string name="high_qty">ತುಂಬಾ ಎತ್ತರ</string>
+    <string name="low_quantity">ಸಾಕಷ್ಟು</string>
+    <string name="medium_quantity">ಸಾಕಾಗುವುದಿಲ್ಲ</string>
+    <string name="high_quantity">ತುಂಬಾ ಎತ್ತರ</string>
+    <string name="low_safety">ಸುರಕ್ಷಿತ</string>
+    <string name="medium_safety">ಸುರಕ್ಷಿತ</string>
+    <string name="high_safety">ಅಸುರಕ್ಷಿತ</string>
     <string name="margin_of_error">ದೋಷದ ಅಂಚು: ±</string>
     <string name="check_color_card">ಸರಿಯಾದ ಬಣ್ಣ ಕಾರ್ಡ್ ಬಳಸಲಾಗಿದೆಯೇ ಎಂದು ಪರಿಶೀಲಿಸಿ. ಕಾರ್ಡ್ ಅನ್ನು ಪರೋಕ್ಷ ಬೆಳಕಿನೊಂದಿಗೆ ಚೆನ್ನಾಗಿ ಬೆಳಗಿದ ಪ್ರದೇಶದಲ್ಲಿ ಇರಿಸಲಾಗಿದೆಯೆ ಎಂದು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ.</string>
     <string name="details">ವಿವರಗಳು</string>
@@ -69,8 +72,5 @@
     <string name="calibrate">ಮಾಪನಾಂಕ ನಿರ್ಣಯ</string>
     <string name="calibrate_summary">ಸ್ಟ್ಯಾಂಡರ್ಡ್ ಬಳಸಿ ಮಾಪನಾಂಕ ನಿರ್ಣಯಿಸಿ</string>
     <string name="no_data">ಪ್ರದರ್ಶಿಸಲು ಡೇಟಾ ಇಲ್ಲ. ಹೊಸ ಪರೀಕ್ಷೆಯನ್ನು ಪ್ರಾರಂಭಿಸಿ</string>
-    <string name="low_safety">ಸುರಕ್ಷಿತ</string>
-    <string name="medium_safety">ಸುರಕ್ಷಿತ</string>
-    <string name="high_safety">ಅಸುರಕ್ಷಿತ</string>
 </resources>
 
