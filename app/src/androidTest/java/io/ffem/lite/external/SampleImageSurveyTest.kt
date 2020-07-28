@@ -188,18 +188,6 @@ class SampleImageSurveyTest : BaseTest() {
         startTest(24)
     }
 
-
-    @Test
-    fun image_025_Nitrate_50_Point_0() {
-        startTest(25)
-    }
-
-
-    @Test
-    fun image_026_Iron_1_Point_5() {
-        startTest(26)
-    }
-
     @Test
     fun invalidTest() {
         validityTest(invalidTest, 1, WRONG_CARD)

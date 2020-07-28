@@ -22,9 +22,11 @@ import io.ffem.lite.app.App.Companion.TEST_ID_KEY
 import io.ffem.lite.app.App.Companion.TEST_VALUE_KEY
 import io.ffem.lite.app.App.Companion.getCardColors
 import io.ffem.lite.app.App.Companion.getTestInfo
-import io.ffem.lite.app.AppDatabase
 import io.ffem.lite.camera.MAX_ANGLE
 import io.ffem.lite.camera.Utilities
+import io.ffem.lite.data.AppDatabase
+import io.ffem.lite.data.Calibration
+import io.ffem.lite.data.TestResult
 import io.ffem.lite.model.*
 import io.ffem.lite.model.ErrorType.*
 import io.ffem.lite.preference.AppPreferences

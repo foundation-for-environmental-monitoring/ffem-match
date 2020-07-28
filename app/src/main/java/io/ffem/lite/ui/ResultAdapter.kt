@@ -5,8 +5,8 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import io.ffem.lite.R
+import io.ffem.lite.data.TestResult
 import io.ffem.lite.databinding.RowResultBinding
-import io.ffem.lite.model.TestResult
 
 class ResultAdapter(private val clickListener: (Int) -> Unit) :
     RecyclerView.Adapter<ResultAdapter.TestResultViewHolder>() {

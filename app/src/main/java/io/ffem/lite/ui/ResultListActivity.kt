@@ -35,11 +35,11 @@ import io.ffem.lite.app.App.Companion.LOCAL_RESULT_EVENT
 import io.ffem.lite.app.App.Companion.PERMISSIONS_MISSING_KEY
 import io.ffem.lite.app.App.Companion.TEST_INFO_KEY
 import io.ffem.lite.app.App.Companion.getVersionName
-import io.ffem.lite.app.AppDatabase
+import io.ffem.lite.data.AppDatabase
+import io.ffem.lite.data.TestResult
 import io.ffem.lite.helper.ApkHelper.isNonStoreVersion
 import io.ffem.lite.model.ResultInfo
 import io.ffem.lite.model.TestInfo
-import io.ffem.lite.model.TestResult
 import io.ffem.lite.model.toLocalString
 import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.preference.SettingsActivity

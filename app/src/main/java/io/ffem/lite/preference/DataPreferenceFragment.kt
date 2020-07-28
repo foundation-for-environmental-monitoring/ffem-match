@@ -8,7 +8,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.ffem.lite.R
-import io.ffem.lite.app.AppDatabase
+import io.ffem.lite.data.AppDatabase
 import java.io.File
 
 

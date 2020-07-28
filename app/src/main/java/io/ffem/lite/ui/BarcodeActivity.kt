@@ -31,13 +31,13 @@ import io.ffem.lite.app.App.Companion.TEST_ID_KEY
 import io.ffem.lite.app.App.Companion.TEST_INFO_KEY
 import io.ffem.lite.app.App.Companion.TEST_VALUE_KEY
 import io.ffem.lite.app.App.Companion.getTestInfo
-import io.ffem.lite.app.AppDatabase
 import io.ffem.lite.camera.CameraFragmentDirections
+import io.ffem.lite.data.AppDatabase
+import io.ffem.lite.data.TestResult
 import io.ffem.lite.databinding.ActivityBarcodeBinding
 import io.ffem.lite.model.CalibrationValue
 import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.TestInfo
-import io.ffem.lite.model.TestResult
 import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.preference.getSampleTestImageNumber
 import io.ffem.lite.preference.getSampleTestImageNumberInt

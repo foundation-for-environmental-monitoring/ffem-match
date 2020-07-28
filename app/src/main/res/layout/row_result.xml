@@ -15,7 +15,7 @@
 
         <variable
             name="result"
-            type="io.ffem.lite.model.TestResult" />
+            type="io.ffem.lite.data.TestResult" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

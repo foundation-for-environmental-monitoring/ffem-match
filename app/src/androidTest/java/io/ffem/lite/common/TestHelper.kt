@@ -16,7 +16,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.*
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
-import io.ffem.lite.app.AppDatabase
+import io.ffem.lite.data.AppDatabase
 import org.junit.Assert
 import timber.log.Timber
 import java.io.File

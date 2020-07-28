@@ -1,7 +1,6 @@
-package io.ffem.lite.model
+package io.ffem.lite.data
 
 import android.os.Parcelable
-import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.android.parcel.Parcelize
@@ -10,8 +9,8 @@ import kotlinx.android.parcel.Parcelize
 @Entity
 data class Calibration(
     @PrimaryKey val id: String = "",
-    @ColumnInfo val value: Double = 0.0,
-    @ColumnInfo val rDiff: Int = 0,
-    @ColumnInfo val gDiff: Int = 0,
-    @ColumnInfo val bDiff: Int = 0
+    val value: Double = 0.0,
+    val rDiff: Int = 0,
+    val gDiff: Int = 0,
+    val bDiff: Int = 0
 ) : Parcelable

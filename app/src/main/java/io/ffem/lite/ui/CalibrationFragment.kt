@@ -14,8 +14,8 @@ import androidx.fragment.app.Fragment
 import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.app.App.Companion.getTestInfo
-import io.ffem.lite.app.AppDatabase
-import io.ffem.lite.model.Calibration
+import io.ffem.lite.data.AppDatabase
+import io.ffem.lite.data.Calibration
 import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.TestInfo
 import io.ffem.lite.model.toLocalString
