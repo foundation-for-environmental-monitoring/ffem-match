@@ -118,6 +118,8 @@ class BarcodeActivity : BaseActivity(), CalibrationItemFragment.OnCalibrationSel
             IntentFilter(App.LOCAL_RESULT_EVENT)
         )
 
+        AppPreferences.generateImageFileName()
+
         if (BuildConfig.APPLICATION_ID == intent.action) {
             val uuid = intent.getStringExtra(TEST_ID)
             if (intent.getBooleanExtra(DEBUG_MODE, false)) {
@@ -193,7 +195,7 @@ class BarcodeActivity : BaseActivity(), CalibrationItemFragment.OnCalibrationSel
         val bitmap = BitmapFactory.decodeFile(File(filePath).path)
 
         if (bitmap != null) {
-            ColorUtil.extractImage(this, fileId, bitmap)
+            ColorUtil.extractImage(this, bitmap)
         }
     }
 

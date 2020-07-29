@@ -177,7 +177,7 @@ fun getMean(pixels: ArrayList<Int>): Int {
 
 object ColorUtil {
 
-    fun extractImage(context: Context, id: String, bitmapImage: Bitmap) {
+    fun extractImage(context: Context, bitmapImage: Bitmap) {
 
         val detector: FirebaseVisionBarcodeDetector by lazy {
             val options = FirebaseVisionBarcodeDetectorOptions.Builder()
@@ -303,7 +303,7 @@ object ColorUtil {
                                                 }
 
                                                 analyzeBarcode(
-                                                    context, id, bitmap, rightBarcode,
+                                                    context, bitmap, rightBarcode,
                                                     rightBoundingBox, leftBoundingBox
                                                 )
                                             }
@@ -331,7 +331,7 @@ object ColorUtil {
     }
 
     private fun analyzeBarcode(
-        context: Context, id: String, bitmap: Bitmap, rightBarcode: FirebaseVisionBarcode,
+        context: Context, bitmap: Bitmap, rightBarcode: FirebaseVisionBarcode,
         rightBoundingBox: Rect, leftBoundingBox: Rect
     ) {
 
@@ -445,7 +445,6 @@ object ColorUtil {
 
             croppedBitmap2.recycle()
 
-            testInfo.fileName = id
             var error = NO_ERROR
             val db = AppDatabase.getDatabase(context)
             var calibration: Calibration? = null
@@ -471,7 +470,7 @@ object ColorUtil {
             }
 
             Utilities.savePicture(
-                context.applicationContext, id,
+                context.applicationContext, testInfo.fileName,
                 testInfo.name!!, Utilities.bitmapToBytes(gsExtractedBitmap),
                 isExtract = true,
                 isGrayscale = true
@@ -496,7 +495,7 @@ object ColorUtil {
             }
 
             Utilities.savePicture(
-                context.applicationContext, id,
+                context.applicationContext, testInfo.fileName,
                 testInfo.name!!, Utilities.bitmapToBytes(extractedBitmap),
                 isExtract = true,
                 isGrayscale = false

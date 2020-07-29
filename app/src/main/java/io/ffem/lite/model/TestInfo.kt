@@ -23,7 +23,7 @@ data class TestInfo(
     var resultInfo: ResultInfo = ResultInfo(),
     var resultInfoGrayscale: ResultInfo = ResultInfo(),
     var error: ErrorType = ErrorType.NO_ERROR,
-    var fileName: String = ""
+    var fileName: String = UUID.randomUUID().toString()
 ) : Parcelable {
 
     fun getResultString(context: Context): String {

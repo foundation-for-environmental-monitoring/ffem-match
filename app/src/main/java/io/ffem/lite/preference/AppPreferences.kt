@@ -3,6 +3,7 @@ package io.ffem.lite.preference
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.app.App
+import io.ffem.lite.app.App.Companion.IMAGE_FILE_NAME
 import io.ffem.lite.app.App.Companion.IS_CALIBRATION
 import io.ffem.lite.util.MAX_COLOR_DISTANCE_CALIBRATION
 import io.ffem.lite.util.MAX_COLOR_DISTANCE_RGB
@@ -106,5 +107,13 @@ object AppPreferences {
 
     fun isCalibration(): Boolean {
         return PreferencesUtil.getBoolean(App.app, IS_CALIBRATION, false)
+    }
+
+    fun generateImageFileName() {
+        PreferencesUtil.setString(App.app, IMAGE_FILE_NAME, UUID.randomUUID().toString())
+    }
+
+    fun getImageFilename(): String {
+        return PreferencesUtil.getString(App.app, IMAGE_FILE_NAME, UUID.randomUUID().toString())!!
     }
 }

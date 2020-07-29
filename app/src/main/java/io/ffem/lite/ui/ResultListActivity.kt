@@ -306,9 +306,8 @@ class ResultListActivity : AppUpdateActivity() {
                                 imageNumber
                             )
 
-                            val id = UUID.randomUUID().toString()
                             if (bitmapFromFile != null) {
-                                ColorUtil.extractImage(this, id, bitmapFromFile)
+                                ColorUtil.extractImage(this, bitmapFromFile)
                             } else {
                                 Toast.makeText(
                                     baseContext, getString(R.string.invalid_image),

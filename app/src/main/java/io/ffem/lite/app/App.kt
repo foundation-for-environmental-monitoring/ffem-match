@@ -13,6 +13,7 @@ import io.ffem.lite.R
 import io.ffem.lite.model.CalibrationValue
 import io.ffem.lite.model.TestConfig
 import io.ffem.lite.model.TestInfo
+import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.preference.isDiagnosticMode
 import io.ffem.lite.util.FileUtil
 import timber.log.Timber
@@ -45,6 +46,7 @@ class App : BaseApplication() {
         const val TEST_ID_KEY = "test_id"
         const val TEST_VALUE_KEY = "value"
         const val IS_CALIBRATION = "is_calibration"
+        const val IMAGE_FILE_NAME = "image_file_name"
 
         const val DEFAULT_TEST_UUID = "d1b25de4-5605-498e-99f1-8412d7e19db2"
 
@@ -166,7 +168,9 @@ class App : BaseApplication() {
 
             for (test in testConfig.tests) {
                 if (test.uuid == id || test.uuid!!.substring(30) == id) {
-                    return test.copy()
+                    val newTest = test.copy()
+                    newTest.fileName = AppPreferences.getImageFilename()
+                    return newTest
                 }
             }
             return null

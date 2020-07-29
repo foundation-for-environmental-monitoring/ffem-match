@@ -84,7 +84,7 @@ abstract class AppUpdateActivity : BaseActivity() {
 
     private fun startImmediateUpdate(appUpdateInfo: AppUpdateInfo?) {
         appUpdateManager.startUpdateFlowForResult(
-            appUpdateInfo,
+            appUpdateInfo!!,
             AppUpdateType.IMMEDIATE,
             this,
             IMMEDIATE_UPDATE_REQUEST_CODE

@@ -109,7 +109,6 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         if (capturePhoto) {
             done = true
             val testInfo = getTestInfo(DEFAULT_TEST_UUID)!!
-            testInfo.fileName = UUID.randomUUID().toString()
             savePhoto(bitmap, testInfo)
             endProcessing(image, true)
             return
@@ -331,7 +330,6 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                 bitmap, cropLeft, cropTop, cropWidth, cropHeight
             )
 
-            testInfo.fileName = UUID.randomUUID().toString()
             savePhoto(finalBitmap, testInfo)
 
             finalBitmap.recycle()
