@@ -12,11 +12,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.GrantPermissionRule
 import io.ffem.lite.R
-import io.ffem.lite.common.TestHelper.enterDiagnosticMode
-import io.ffem.lite.common.TestHelper.leaveDiagnosticMode
+import io.ffem.lite.common.TestHelper.startDiagnosticMode
 import io.ffem.lite.common.TestUtil.childAtPosition
 import io.ffem.lite.common.residualChlorine
-import io.ffem.lite.preference.isDiagnosticMode
 import io.ffem.lite.ui.ResultListActivity
 import io.ffem.lite.util.toLocalString
 import org.hamcrest.Matchers.`is`
@@ -427,57 +425,5 @@ class DiagnosticsTest {
                 )
             )
         ).perform(scrollTo(), click())
-    }
-
-    private fun startDiagnosticMode() {
-        if (isDiagnosticMode()) {
-            Thread.sleep(400)
-
-            val actionMenuItemView = onView(
-                allOf(
-                    withId(R.id.action_settings), withContentDescription(R.string.settings),
-                    childAtPosition(
-                        childAtPosition(
-                            withId(R.id.toolbar),
-                            1
-                        ),
-                        0
-                    ),
-                    isDisplayed()
-                )
-            )
-            actionMenuItemView.perform(click())
-
-            Thread.sleep(400)
-
-            onView(withText(R.string.about)).perform(click())
-
-            Thread.sleep(400)
-
-            leaveDiagnosticMode()
-        } else {
-            val actionMenuItemView = onView(
-                allOf(
-                    withId(R.id.action_settings), withContentDescription(R.string.settings),
-                    childAtPosition(
-                        childAtPosition(
-                            withId(R.id.toolbar),
-                            1
-                        ),
-                        0
-                    ),
-                    isDisplayed()
-                )
-            )
-            actionMenuItemView.perform(click())
-        }
-
-        Thread.sleep(500)
-
-        onView(withText(R.string.about)).perform(click())
-
-        Thread.sleep(500)
-
-        enterDiagnosticMode()
     }
 }

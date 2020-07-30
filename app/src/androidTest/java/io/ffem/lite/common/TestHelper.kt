@@ -11,12 +11,15 @@ import androidx.preference.PreferenceManager
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.*
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.data.AppDatabase
+import io.ffem.lite.preference.isDiagnosticMode
+import org.hamcrest.Matchers
 import org.junit.Assert
 import timber.log.Timber
 import java.io.File
@@ -46,13 +49,13 @@ object TestHelper {
                 || Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic")
                 || "google_sdk" == Build.PRODUCT)
 
-    fun enterDiagnosticMode() {
+    private fun enterDiagnosticMode() {
         for (i in 0..9) {
             onView(withId(R.id.textVersion)).perform(click())
         }
     }
 
-    fun leaveDiagnosticMode() {
+    private fun leaveDiagnosticMode() {
         onView(withId(R.id.fabDisableDiagnostics)).perform(click())
     }
 
@@ -237,6 +240,60 @@ object TestHelper {
 
     fun isDeviceInitialized(): Boolean {
         return ::mDevice.isInitialized
+    }
+
+    fun startDiagnosticMode() {
+        if (isDiagnosticMode()) {
+            Thread.sleep(400)
+
+            val actionMenuItemView = onView(
+                Matchers.allOf(
+                    withId(R.id.action_settings),
+                    ViewMatchers.withContentDescription(R.string.settings),
+                    TestUtil.childAtPosition(
+                        TestUtil.childAtPosition(
+                            withId(R.id.toolbar),
+                            1
+                        ),
+                        0
+                    ),
+                    ViewMatchers.isDisplayed()
+                )
+            )
+            actionMenuItemView.perform(click())
+
+            Thread.sleep(400)
+
+            onView(ViewMatchers.withText(R.string.about)).perform(click())
+
+            Thread.sleep(400)
+
+            leaveDiagnosticMode()
+        } else {
+            val actionMenuItemView = onView(
+                Matchers.allOf(
+                    withId(R.id.action_settings),
+                    ViewMatchers.withContentDescription(R.string.settings),
+                    TestUtil.childAtPosition(
+                        TestUtil.childAtPosition(
+                            withId(R.id.toolbar),
+                            1
+                        ),
+                        0
+                    ),
+                    ViewMatchers.isDisplayed()
+                )
+            )
+            actionMenuItemView.perform(click())
+        }
+
+        Thread.sleep(500)
+
+        onView(ViewMatchers.withText(R.string.about)).perform(click())
+
+        Thread.sleep(500)
+
+        enterDiagnosticMode()
     }
 
     fun takeScreenshot(name: String) {
