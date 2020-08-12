@@ -456,8 +456,7 @@ object ColorUtil {
                 val extractedColors = extractColors(
                     gsExtractedBitmap,
                     bwBitmap,
-                    rightBarcode.displayValue!!,
-                    calibration
+                    rightBarcode.displayValue!!
                 )
 
                 testInfo.resultInfoGrayscale = analyzeColor(extractedColors)
@@ -472,8 +471,7 @@ object ColorUtil {
             Utilities.savePicture(
                 context.applicationContext, testInfo.fileName,
                 testInfo.name!!, Utilities.bitmapToBytes(gsExtractedBitmap),
-                isExtract = true,
-                isGrayscale = true
+                "_swatch_gs"
             )
             gsExtractedBitmap.recycle()
 
@@ -481,11 +479,35 @@ object ColorUtil {
                 val extractedColors = extractColors(
                     extractedBitmap,
                     bwBitmap,
-                    rightBarcode.displayValue!!,
-                    calibration
+                    rightBarcode.displayValue!!
                 )
 
                 testInfo.resultInfo = analyzeColor(extractedColors)
+
+                // if calibrated then calculate also the result by adding the color differences
+                if (calibration != null) {
+                    extractedColors.swatches.removeAt(extractedColors.swatches.size - 1)
+                    extractedColors.swatches.removeAt(extractedColors.swatches.size - 1)
+                    extractedColors.sampleColor = Color.rgb(
+                        min(max(0, extractedColors.sampleColor.red + calibration.rDiff), 255),
+                        min(max(0, extractedColors.sampleColor.green + calibration.gDiff), 255),
+                        min(max(0, extractedColors.sampleColor.blue + calibration.bDiff), 255)
+                    )
+
+                    testInfo.calibratedResultInfo = analyzeColor(extractedColors)
+                }
+
+                val resultImage = ImageUtil.createResultImage(
+                    testInfo.resultInfo,
+                    testInfo.calibratedResultInfo,
+                    500
+                )
+
+                Utilities.savePicture(
+                    context.applicationContext, testInfo.fileName,
+                    testInfo.name!!, Utilities.bitmapToBytes(resultImage),
+                    "_result"
+                )
 
                 if (testInfo.resultInfo.result < 0) {
                     error = NO_MATCH
@@ -497,8 +519,7 @@ object ColorUtil {
             Utilities.savePicture(
                 context.applicationContext, testInfo.fileName,
                 testInfo.name!!, Utilities.bitmapToBytes(extractedBitmap),
-                isExtract = true,
-                isGrayscale = false
+                "_swatch"
             )
 
             extractedBitmap.recycle()
@@ -530,8 +551,7 @@ object ColorUtil {
                         context,
                         testInfo.fileName,
                         testInfo.name!!,
-                        Utilities.bitmapToBytes(bitmapRotated),
-                        isExtract = false, isGrayscale = false
+                        Utilities.bitmapToBytes(bitmapRotated), ""
                     )
 
                     bitmap.recycle()
@@ -560,15 +580,15 @@ object ColorUtil {
                 testInfo.resultInfo.calibration = Calibration(
                     testInfo.uuid!!,
                     -1.0,
-                    Color.red(testInfo.resultInfo.calibrationColor) - Color.red(testInfo.resultInfo.color),
-                    Color.green(testInfo.resultInfo.calibrationColor) - Color.green(testInfo.resultInfo.color),
-                    Color.blue(testInfo.resultInfo.calibrationColor) - Color.blue(testInfo.resultInfo.color)
+                    Color.red(testInfo.resultInfo.calibratedColor) - Color.red(testInfo.resultInfo.sampleColor),
+                    Color.green(testInfo.resultInfo.calibratedColor) - Color.green(testInfo.resultInfo.sampleColor),
+                    Color.blue(testInfo.resultInfo.calibratedColor) - Color.blue(testInfo.resultInfo.sampleColor)
                 )
             } else {
                 db.resultDao().updateResult(
                     testInfo.fileName,
                     testInfo.name!!,
-                    testInfo.resultInfo.result,
+                    testInfo.getResult(),
                     testInfo.resultInfoGrayscale.result,
                     testInfo.getMarginOfError(),
                     testInfo.error.ordinal
@@ -586,8 +606,7 @@ object ColorUtil {
     private fun extractColors(
         bitmap: Bitmap,
         bwBitmap: Bitmap,
-        barcodeValue: String,
-        calibration: Calibration?
+        barcodeValue: String
     ): ColorInfo {
 
         val paint = Paint()
@@ -648,14 +667,7 @@ object ColorUtil {
         val rectangle = Rect(x1 - 17, y1 - 27, x1 + 17, y1 + 35)
         val pixels = getBitmapPixels(bitmap, rectangle)
 
-        var cuvetteColor = getAverageColor(pixels)
-        if (calibration != null) {
-            cuvetteColor = Color.rgb(
-                cuvetteColor.red + calibration.rDiff,
-                cuvetteColor.green + calibration.gDiff,
-                cuvetteColor.blue + calibration.bDiff
-            )
-        }
+        val cuvetteColor = getAverageColor(pixels)
 
         val swatches: ArrayList<Swatch> = ArrayList()
         val colorInfo = ColorInfo(cuvetteColor, swatches)
@@ -949,33 +961,38 @@ object ColorUtil {
     /**
      * Analyzes the color and returns a result info.
      *
-     * @param photoColor The color to compare
+     * @param colorInfo The color to compare
      */
     @Suppress("SameParameterValue")
     private fun analyzeColor(
-        photoColor: ColorInfo
+        colorInfo: ColorInfo
     ): ResultInfo {
 
-        val gradientList = generateGradient(photoColor.swatches)
+        val gradientList = generateGradient(colorInfo.swatches)
 
-        //Find the color within the generated gradient that matches the photoColor
+        //Find the color within the generated gradient that matches the sampleColor
         val colorCompareInfo: ColorCompareInfo =
-            getNearestColorFromSwatches(photoColor.color, gradientList)
+            getNearestColorFromSwatches(colorInfo.sampleColor, gradientList)
 
         //set the result
-        val resultInfo = ResultInfo(color = photoColor.color)
+        val resultInfo = ResultInfo(
+            sampleColor = colorInfo.sampleColor,
+            matchedSwatch = colorCompareInfo.matchedColor,
+            distance = colorCompareInfo.distance,
+            swatches = colorInfo.swatches
+        )
+
         if (colorCompareInfo.result > -1) {
             resultInfo.result = (round(colorCompareInfo.result * 100) / 100.0)
         }
-        resultInfo.matchedColor = colorCompareInfo.matchedColor
-        resultInfo.distance = colorCompareInfo.distance
 
-        var calibrationDistance = 0.0
+        var distanceSum = 0.0
         for (swatch in gradientList) {
-            calibrationDistance += swatch.distance
+            distanceSum += swatch.distance
         }
-        resultInfo.calibrationDistance = calibrationDistance / gradientList.size
-        resultInfo.swatches = photoColor.swatches
+        resultInfo.swatchDistance = distanceSum / gradientList.size
+        resultInfo.matchedPosition =
+            colorCompareInfo.matchedIndex.toFloat() * 100 / gradientList.size
 
         return resultInfo
     }
@@ -998,6 +1015,7 @@ object ColorUtil {
         var tempDistance: Double
         var nearestDistance = MAX_DISTANCE.toDouble()
         var nearestMatchedColor = -1
+        var matchedIndex = 0
 
         for (i in swatches.indices) {
             val tempColor = swatches[i].color
@@ -1011,11 +1029,13 @@ object ColorUtil {
             if (tempDistance == 0.0) {
                 resultValue = swatches[i].value
                 matchedColor = swatches[i].color
+                matchedIndex = i
                 break
             } else if (tempDistance < distance) {
                 distance = tempDistance
                 resultValue = swatches[i].value
                 matchedColor = swatches[i].color
+                matchedIndex = i
             }
         }
 
@@ -1024,7 +1044,7 @@ object ColorUtil {
             distance = nearestDistance
             matchedColor = nearestMatchedColor
         }
-        return ColorCompareInfo(resultValue, colorToFind, matchedColor, distance)
+        return ColorCompareInfo(resultValue, colorToFind, matchedColor, distance, matchedIndex)
     }
 
     private fun getMaxDistance(defaultValue: Double): Double {

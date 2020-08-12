@@ -21,8 +21,7 @@ object Utilities {
         id: String,
         name: String,
         bytes: ByteArray,
-        isExtract: Boolean,
-        isGrayscale: Boolean
+        nameExt: String
     ) {
         try {
             val path = context.getExternalFilesDir(DIRECTORY_PICTURES).toString() +
@@ -33,14 +32,8 @@ object Utilities {
                 Timber.d(if (basePath.mkdirs()) "Success" else "Failed")
 
             val fixedName = name.replace(" ", "")
-            var fileName = fixedName
-            if (isExtract) {
-                fileName += if (isGrayscale) {
-                    "_swatch_gs"
-                } else {
-                    "_swatch"
-                }
-            }
+            val fileName = fixedName + nameExt
+
             val filePath = File("$path$id")
 
             if (!filePath.exists())

@@ -101,7 +101,7 @@ class ResultListActivity : AppUpdateActivity() {
                 db.resultDao().updateResult(
                     testInfo.fileName,
                     testInfo.name!!,
-                    testInfo.resultInfo.result,
+                    testInfo.getResult(),
                     testInfo.resultInfoGrayscale.result,
                     testInfo.getMarginOfError(),
                     testInfo.error.ordinal

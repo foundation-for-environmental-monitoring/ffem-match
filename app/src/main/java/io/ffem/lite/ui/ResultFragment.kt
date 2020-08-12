@@ -70,11 +70,17 @@ class ResultFragment : Fragment() {
                     File.separator + "captures" + File.separator
 
         val fileName = testInfo!!.name!!.replace(" ", "")
+        val resultImagePath =
+            File(path + testInfo.fileName + File.separator + fileName + "_result.jpg")
         val extractImagePath =
-            File(path + testInfo.fileName + File.separator + fileName + "_swatch" + ".jpg")
+            File(path + testInfo.fileName + File.separator + fileName + "_swatch.jpg")
         val gsExtractImagePath =
-            File(path + testInfo.fileName + File.separator + fileName + "_swatch_gs" + ".jpg")
+            File(path + testInfo.fileName + File.separator + fileName + "_swatch_gs.jpg")
         val analyzedImagePath = File(path + testInfo.fileName + File.separator + fileName + ".jpg")
+
+        if (resultImagePath.exists()) {
+            image_result.setImageURI(Uri.fromFile(resultImagePath))
+        }
 
         if (analyzedImagePath.exists()) {
             image_full.setImageURI(Uri.fromFile(analyzedImagePath))

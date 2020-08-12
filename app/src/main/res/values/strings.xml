@@ -97,4 +97,5 @@
     <string name="calibrate_summary">Calibrate using a standard</string>
     <string name="grayscale_result">Grayscale result</string>
     <string name="grayscale_extracts">Grayscale Extracts</string>
+    <string name="result_image">Result image</string>
 </resources>

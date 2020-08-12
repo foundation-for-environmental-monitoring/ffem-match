@@ -44,11 +44,18 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="16dp"
-                    android:layout_marginBottom="6dp"
+                    android:layout_marginBottom="12dp"
                     android:fontFamily="sans-serif-medium"
                     android:textIsSelectable="false"
                     android:textSize="27sp"
                     tools:text="Low" />
+
+                <ImageView
+                    android:id="@+id/image_result"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/result_image" />
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>

@@ -65,10 +65,10 @@ class CalibrationFragment : Fragment() {
         val calibrationValue =
             CalibrationFragmentArgs.fromBundle(requireArguments()).calibrationValue.value
         button_submit.setOnClickListener {
-            val r = testInfo.resultInfo
-            for (s in r.swatches!!) {
+            val result = testInfo.resultInfo
+            for (s in result.swatches!!) {
                 if (s.value == calibrationValue) {
-                    r.calibrationColor = s.color
+                    result.calibratedColor = s.color
                     break
                 }
             }
@@ -78,9 +78,9 @@ class CalibrationFragment : Fragment() {
                 Calibration(
                     testInfo.uuid!!,
                     calibrationValue,
-                    Color.red(r.calibrationColor) - Color.red(r.color),
-                    Color.green(r.calibrationColor) - Color.green(r.color),
-                    Color.blue(r.calibrationColor) - Color.blue(r.color)
+                    Color.red(result.calibratedColor) - Color.red(result.sampleColor),
+                    Color.green(result.calibratedColor) - Color.green(result.sampleColor),
+                    Color.blue(result.calibratedColor) - Color.blue(result.sampleColor)
                 )
             )
 
@@ -118,7 +118,7 @@ class CalibrationFragment : Fragment() {
             lyt_result.visibility = VISIBLE
 
             btn_card_color.setBackgroundColor(calibrationValue.color)
-            btn_calibrated_color.setBackgroundColor(testInfo.resultInfo.color)
+            btn_calibrated_color.setBackgroundColor(testInfo.resultInfo.sampleColor)
 
             button_submit.setText(R.string.confirm)
 

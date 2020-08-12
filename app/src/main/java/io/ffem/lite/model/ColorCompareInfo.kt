@@ -5,5 +5,6 @@ class ColorCompareInfo(
     @Suppress("unused")
     val resultColor: Int,
     val matchedColor: Int,
-    val distance: Double
+    val distance: Double,
+    val matchedIndex: Int
 )

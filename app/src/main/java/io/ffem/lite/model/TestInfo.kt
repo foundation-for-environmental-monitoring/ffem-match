@@ -21,6 +21,7 @@ data class TestInfo(
     var risks: List<RiskValue> = ArrayList(),
     var values: List<CalibrationValue> = ArrayList(),
     var resultInfo: ResultInfo = ResultInfo(),
+    var calibratedResultInfo: ResultInfo = ResultInfo(),
     var resultInfoGrayscale: ResultInfo = ResultInfo(),
     var error: ErrorType = ErrorType.NO_ERROR,
     var fileName: String = UUID.randomUUID().toString()
@@ -30,7 +31,19 @@ data class TestInfo(
         return if (resultInfo.result < 0) {
             error.toLocalString(context)
         } else {
-            resultInfo.result.toString()
+            if (calibratedResultInfo.result > -1) {
+                calibratedResultInfo.result.toString()
+            } else {
+                resultInfo.result.toString()
+            }
+        }
+    }
+
+    fun getResult(): Double {
+        return if (calibratedResultInfo.result > -1) {
+            calibratedResultInfo.result
+        } else {
+            resultInfo.result
         }
     }
 
@@ -53,9 +66,15 @@ data class TestInfo(
     fun getRiskType(): RiskLevel {
         var riskType = RiskLevel.HIGH
 
+        val result = if (calibratedResultInfo.result > -1) {
+            calibratedResultInfo.result
+        } else {
+            resultInfo.result
+        }
+
         // Evaluate the risk level based on the result
         for (element in risks) {
-            if (resultInfo.result >= element.value) {
+            if (result >= element.value) {
                 if (element.risk != null) {
                     riskType = element.risk!!
                 }
@@ -70,7 +89,7 @@ data class TestInfo(
     fun getMarginOfError(): Double {
         if (marginError < minMarginError) {
             marginError =
-                max((resultInfo.distance + resultInfo.calibrationDistance) / 200, minMarginError)
+                max((resultInfo.distance + resultInfo.swatchDistance) / 200, minMarginError)
             marginError = (round(marginError * 100) / 100.0)
         }
         return marginError

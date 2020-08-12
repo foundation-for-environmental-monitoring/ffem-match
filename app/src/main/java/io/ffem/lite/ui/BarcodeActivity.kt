@@ -135,11 +135,11 @@ class BarcodeActivity : BaseActivity(), CalibrationItemFragment.OnCalibrationSel
     fun submitResult(@Suppress("UNUSED_PARAMETER") view: View) {
         if (testInfo != null) {
             val resultIntent = Intent()
-            if (testInfo!!.resultInfo.result >= 0) {
-                resultIntent.putExtra(TEST_VALUE_KEY, testInfo!!.resultInfo.result.toString())
+            if (testInfo!!.getResult() >= 0) {
+                resultIntent.putExtra(TEST_VALUE_KEY, testInfo!!.getResult().toString())
                 resultIntent.putExtra(
                     testInfo!!.name + "_Result",
-                    testInfo!!.resultInfo.result.toString()
+                    testInfo!!.getResult().toString()
                 )
                 resultIntent.putExtra(testInfo!!.name + "_Risk", testInfo!!.getRiskEnglish(this))
                 resultIntent.putExtra("meta_device", Build.BRAND + ", " + Build.MODEL)
@@ -200,7 +200,7 @@ class BarcodeActivity : BaseActivity(), CalibrationItemFragment.OnCalibrationSel
     }
 
     override fun onCalibrationSelected(calibrationValue: CalibrationValue?, testInfo: TestInfo?) {
-        testInfo!!.resultInfo.calibrationColor = calibrationValue!!.color
+        testInfo!!.resultInfo.calibratedColor = calibrationValue!!.color
         findNavController(this@BarcodeActivity, R.id.fragment_container)
             .navigate(
                 CalibrationItemFragmentDirections.actionCalibrationItemFragmentToCalibrationFragment(

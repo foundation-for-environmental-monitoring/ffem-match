@@ -349,9 +349,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
             context.applicationContext,
             testInfo.fileName,
             testInfo.name!!,
-            Utilities.bitmapToBytes(bitmapRotated),
-            isExtract = false,
-            isGrayscale = false
+            Utilities.bitmapToBytes(bitmapRotated), ""
         )
 
         bitmapRotated.recycle()
