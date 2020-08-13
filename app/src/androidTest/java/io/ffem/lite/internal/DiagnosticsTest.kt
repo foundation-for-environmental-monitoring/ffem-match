@@ -336,16 +336,6 @@ class DiagnosticsTest {
         val appCompatImageButton3 = onView(
             allOf(
                 withId(R.id.capture_button), withContentDescription(R.string.capture_photo),
-                childAtPosition(
-                    allOf(
-                        withId(R.id.camera_ui_container),
-                        childAtPosition(
-                            withClassName(`is`("androidx.constraintlayout.widget.ConstraintLayout")),
-                            1
-                        )
-                    ),
-                    2
-                ),
                 isDisplayed()
             )
         )

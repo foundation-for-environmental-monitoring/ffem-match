@@ -125,12 +125,12 @@ object ImageUtil {
         val swatchWidth =
             (imageWidth - resultInfo.swatches!!.size - 1) / resultInfo.swatches!!.size.toFloat()
 
-        var textTop = swatchBottom + sampleHeight
+        var textTop = swatchBottom + sampleHeight + 10
         val textHeight = 25
         val textSize = 20
 
         if (isDiagnosticMode() && calibratedResultInfo.result > -1) {
-            textTop += 50
+            textTop += 40
         }
 
         val result = Bitmap.createBitmap(
@@ -175,6 +175,15 @@ object ImageUtil {
         path.lineTo(pointerTop, swatchTop)
         path.close()
         canvas.drawPath(path, paintColor)
+
+        if (getColorDistance(Color.WHITE, paintColor.color) < 40) {
+            val strokeColor = Paint()
+            strokeColor.style = Paint.Style.STROKE
+            strokeColor.strokeWidth = 2f
+            strokeColor.isAntiAlias = true
+            strokeColor.color = Color.BLACK
+            canvas.drawPath(path, strokeColor)
+        }
 
         // draw the swatches
         val swatchPaint = Paint()

@@ -255,4 +255,8 @@ class BarcodeActivity : BaseActivity(), CalibrationItemFragment.OnCalibrationSel
         broadcastManager.unregisterReceiver(broadcastReceiver)
         broadcastManager.unregisterReceiver(resultBroadcastReceiver)
     }
+
+    override fun onBackPressed() {
+        finish()
+    }
 }
