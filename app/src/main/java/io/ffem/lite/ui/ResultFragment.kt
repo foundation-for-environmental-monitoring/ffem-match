@@ -74,8 +74,7 @@ class ResultFragment : Fragment() {
             File(path + testInfo.fileName + File.separator + fileName + "_result.jpg")
         val extractImagePath =
             File(path + testInfo.fileName + File.separator + fileName + "_swatch.jpg")
-        val gsExtractImagePath =
-            File(path + testInfo.fileName + File.separator + fileName + "_swatch_gs.jpg")
+
         val analyzedImagePath = File(path + testInfo.fileName + File.separator + fileName + ".jpg")
 
         if (resultImagePath.exists()) {
@@ -91,9 +90,17 @@ class ResultFragment : Fragment() {
             image_extract.refreshDrawableState()
         }
 
-        if (gsExtractImagePath.exists()) {
-            image_extract_gs.setImageURI(Uri.fromFile(gsExtractImagePath))
-            image_extract_gs.refreshDrawableState()
+        if (isDiagnosticMode()) {
+            val gsExtractImagePath =
+                File(path + testInfo.fileName + File.separator + fileName + "_swatch_gs.jpg")
+            if (gsExtractImagePath.exists()) {
+                image_extract_gs.setImageURI(Uri.fromFile(gsExtractImagePath))
+                image_extract_gs.refreshDrawableState()
+            } else {
+                lyt_color_extracts_gs.visibility = GONE
+            }
+        } else {
+            lyt_color_extracts_gs.visibility = GONE
         }
 
         if (testInfo.error == ErrorType.NO_ERROR && testInfo.resultInfo.result >= 0) {
@@ -101,10 +108,14 @@ class ResultFragment : Fragment() {
             text_name2.text = ""
             text_result.text = testInfo.getResultString(requireContext())
 
-            val grayscaleResult = testInfo.getResultGrayscaleString()
-            text_grayscale_result.text = grayscaleResult
-            if (grayscaleResult.isNotEmpty()) {
-                text_unit2.text = testInfo.unit
+            if (isDiagnosticMode()) {
+                val grayscaleResult = testInfo.getResultGrayscaleString()
+                text_grayscale_result.text = grayscaleResult
+                if (grayscaleResult.isNotEmpty()) {
+                    text_unit2.text = testInfo.unit
+                }
+            } else {
+                grayscale_lyt.visibility = GONE
             }
 
             text_unit.text = testInfo.unit
@@ -146,9 +157,6 @@ class ResultFragment : Fragment() {
             lyt_result_details.visibility = GONE
             if (!extractImagePath.exists()) {
                 lyt_color_extracts.visibility = GONE
-            }
-            if (!gsExtractImagePath.exists()) {
-                lyt_color_extracts_gs.visibility = GONE
             }
             if (!analyzedImagePath.exists()) {
                 lyt_analyzed_photo.visibility = GONE

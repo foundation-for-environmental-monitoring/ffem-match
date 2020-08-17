@@ -29,10 +29,7 @@ import io.ffem.lite.data.Calibration
 import io.ffem.lite.data.TestResult
 import io.ffem.lite.model.*
 import io.ffem.lite.model.ErrorType.*
-import io.ffem.lite.preference.AppPreferences
-import io.ffem.lite.preference.getCalibrationColorDistanceTolerance
-import io.ffem.lite.preference.getColorDistanceTolerance
-import io.ffem.lite.preference.getSampleTestImageNumber
+import io.ffem.lite.preference.*
 import timber.log.Timber
 import java.io.File
 import java.util.*
@@ -437,7 +434,6 @@ object ColorUtil {
                 croppedBitmap2.width,
                 max(1, bottom - top)
             )
-            val gsExtractedBitmap = ImageUtil.toGrayscale(extractedBitmap)
 
             val bwBitmap = ImageUtil.toBlackAndWhite(
                 extractedBitmap, IMAGE_THRESHOLD, ImageEdgeType.WhiteTop, 0, extractedBitmap.width
@@ -452,28 +448,28 @@ object ColorUtil {
                 calibration = db.resultDao().getCalibration(testInfo.uuid)
             }
 
-            try {
-                val extractedColors = extractColors(
-                    gsExtractedBitmap,
-                    bwBitmap,
-                    rightBarcode.displayValue!!
+            // Calculate grayscale image result
+            if (isDiagnosticMode()) {
+                val gsExtractedBitmap = ImageUtil.toGrayscale(extractedBitmap)
+
+                try {
+                    val extractedColors = extractColors(
+                        gsExtractedBitmap,
+                        bwBitmap,
+                        rightBarcode.displayValue!!
+                    )
+
+                    testInfo.resultInfoGrayscale = analyzeColor(extractedColors)
+                } catch (e: Exception) {
+                }
+
+                Utilities.savePicture(
+                    context.applicationContext, testInfo.fileName,
+                    testInfo.name!!, Utilities.bitmapToBytes(gsExtractedBitmap),
+                    "_swatch_gs"
                 )
-
-                testInfo.resultInfoGrayscale = analyzeColor(extractedColors)
-
-//                if (testInfo.resultInfoGrayscale.result < 0) {
-//                    error = NO_MATCH
-//                }
-            } catch (e: Exception) {
-//                error = CALIBRATION_ERROR
+                gsExtractedBitmap.recycle()
             }
-
-            Utilities.savePicture(
-                context.applicationContext, testInfo.fileName,
-                testInfo.name!!, Utilities.bitmapToBytes(gsExtractedBitmap),
-                "_swatch_gs"
-            )
-            gsExtractedBitmap.recycle()
 
             try {
                 val extractedColors = extractColors(
