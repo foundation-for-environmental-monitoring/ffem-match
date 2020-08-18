@@ -18,7 +18,6 @@ import androidx.test.uiautomator.UiDevice
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.common.TestHelper
-import io.ffem.lite.common.TestHelper.startDiagnosticMode
 import io.ffem.lite.common.TestHelper.takeScreenshot
 import io.ffem.lite.common.TestUtil
 import io.ffem.lite.common.TestUtil.childAtPosition
@@ -108,12 +107,6 @@ class CalibrationTest {
         sleep(2000)
 
         takeScreenshot(screenshotName)
-
-        startDiagnosticMode()
-
-        Espresso.pressBack()
-
-        Espresso.pressBack()
 
         onView(
             allOf(
