@@ -4,11 +4,7 @@
         android:key="preferenceCategoryDiagnostics"
         android:title="@string/diagnostics"
         app:iconSpaceReserved="false">
-        <Preference
-            android:key="calibrate"
-            android:summary="@string/calibrate_summary"
-            android:title="@string/calibrate"
-            app:iconSpaceReserved="false" />
+
         <EditTextPreference
             android:defaultValue="60"
             android:dialogMessage="The max difference between the sample color and the colors on the card"
