@@ -48,7 +48,7 @@ class OtherPreferenceFragment : PreferenceFragmentCompat() {
         val aboutPreference = findPreference<Preference>(getString(R.string.aboutKey))
         if (aboutPreference != null) {
             aboutPreference.summary = App.getAppVersion()
-            aboutPreference.setOnPreferenceChangeListener { preference: Preference, any: Any ->
+            aboutPreference.setOnPreferenceClickListener {
                 val intent = Intent(activity, AboutActivity::class.java)
                 activity?.startActivity(intent)
                 true
