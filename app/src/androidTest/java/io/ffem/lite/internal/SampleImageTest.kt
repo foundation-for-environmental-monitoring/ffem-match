@@ -189,7 +189,6 @@ class SampleImageTest {
         startInternalTest(24)
     }
 
-
     @Test
     fun image_025_Nitrate_0() {
         startInternalTest(25)
