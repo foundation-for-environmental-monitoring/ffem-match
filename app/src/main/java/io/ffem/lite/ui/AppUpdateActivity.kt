@@ -10,7 +10,6 @@ import com.google.android.play.core.install.InstallState
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
-import com.google.android.play.core.tasks.OnSuccessListener
 import dagger.android.AndroidInjection
 import io.ffem.lite.R
 import java.util.concurrent.Executor
@@ -46,7 +45,7 @@ abstract class AppUpdateActivity : BaseActivity() {
 
         appUpdateManager
             .appUpdateInfo
-            .addOnSuccessListener(playServiceExecutor, OnSuccessListener { appUpdateInfo ->
+            .addOnSuccessListener(playServiceExecutor, { appUpdateInfo ->
                 if (appUpdateInfo.installStatus() == InstallStatus.DOWNLOADED) {
                     popupSnackbarForCompleteUpdate()
                 }
@@ -65,7 +64,7 @@ abstract class AppUpdateActivity : BaseActivity() {
     private fun checkInAppUpdate() {
         appUpdateManager
             .appUpdateInfo
-            .addOnSuccessListener(playServiceExecutor, OnSuccessListener { appUpdateInfo ->
+            .addOnSuccessListener(playServiceExecutor, { appUpdateInfo ->
                 when (appUpdateInfo.updateAvailability()) {
                     UpdateAvailability.UPDATE_AVAILABLE -> when {
                         appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE) -> startImmediateUpdate(

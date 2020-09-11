@@ -11,11 +11,12 @@ import androidx.core.graphics.blue
 import androidx.core.graphics.green
 import androidx.core.graphics.red
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.google.firebase.ml.vision.FirebaseVision
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetector
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions
-import com.google.firebase.ml.vision.common.FirebaseVisionImage
+import com.google.mlkit.vision.barcode.Barcode
+import com.google.mlkit.vision.barcode.Barcode.FORMAT_CODE_128
+import com.google.mlkit.vision.barcode.BarcodeScanner
+import com.google.mlkit.vision.barcode.BarcodeScannerOptions
+import com.google.mlkit.vision.barcode.BarcodeScanning
+import com.google.mlkit.vision.common.InputImage
 import io.ffem.lite.app.App
 import io.ffem.lite.app.App.Companion.DEFAULT_TEST_UUID
 import io.ffem.lite.app.App.Companion.TEST_ID_KEY
@@ -176,13 +177,12 @@ object ColorUtil {
 
     fun extractImage(context: Context, bitmapImage: Bitmap) {
 
-        val detector: FirebaseVisionBarcodeDetector by lazy {
-            val options = FirebaseVisionBarcodeDetectorOptions.Builder()
+        val detector: BarcodeScanner by lazy {
+            val options = BarcodeScannerOptions.Builder()
                 .setBarcodeFormats(
-                    FirebaseVisionBarcode.FORMAT_CODE_128
-                )
-                .build()
-            FirebaseVision.getInstance().getVisionBarcodeDetector(options)
+                    FORMAT_CODE_128
+                ).build()
+            BarcodeScanning.getClient(options)
         }
 
         var bitmap: Bitmap
@@ -210,14 +210,14 @@ object ColorUtil {
             bitmap.width, bitmap.height / 2
         )
 
-        detector.detectInImage(FirebaseVisionImage.fromBitmap(leftBarcodeBitmap))
+        detector.process(InputImage.fromBitmap(leftBarcodeBitmap, 0))
             .addOnFailureListener(
                 fun(_: Exception) {
                     returnResult(context)
                 }
             )
             .addOnSuccessListener(
-                fun(result: List<FirebaseVisionBarcode>) {
+                fun(result: List<Barcode>) {
                     if (result.isEmpty()) {
                         returnResult(context, getTestInfo(DEFAULT_TEST_UUID), BAD_LIGHTING, bitmap)
                     }
@@ -246,8 +246,8 @@ object ColorUtil {
                                     bitmap.width, bitmap.height / 2
                                 )
 
-                                detector.detectInImage(
-                                    FirebaseVisionImage.fromBitmap(rightBarcodeBitmap)
+                                detector.process(
+                                    InputImage.fromBitmap(rightBarcodeBitmap, 0)
                                 )
                                     .addOnFailureListener(fun(_: Exception) {
                                         returnResult(
@@ -258,7 +258,7 @@ object ColorUtil {
                                         )
                                     })
                                     .addOnSuccessListener(
-                                        fun(result: List<FirebaseVisionBarcode>) {
+                                        fun(result: List<Barcode>) {
                                             if (result.isEmpty()) {
                                                 returnResult(
                                                     context,
@@ -328,7 +328,7 @@ object ColorUtil {
     }
 
     private fun analyzeBarcode(
-        context: Context, bitmap: Bitmap, rightBarcode: FirebaseVisionBarcode,
+        context: Context, bitmap: Bitmap, rightBarcode: Barcode,
         rightBoundingBox: Rect, leftBoundingBox: Rect
     ) {
 
@@ -694,7 +694,7 @@ object ColorUtil {
     }
 
     fun fixBoundary(
-        barcode: FirebaseVisionBarcode,
+        barcode: Barcode,
         barcodeBitmap: Bitmap,
         imageEdgeSide: ImageEdgeType
     ): Rect {

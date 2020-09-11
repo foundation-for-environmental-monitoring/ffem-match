@@ -34,7 +34,7 @@ class OtherPreferenceFragment : PreferenceFragmentCompat() {
                     )
 
                     if (!isHasPermission(*permissions))
-                        askPermission(permissions = *permissions, requestCode = PERMISSION_REQUEST)
+                        askPermission(permissions = permissions, requestCode = PERMISSION_REQUEST)
 
                 } else {
                     PreferencesUtil.setBoolean(requireContext(), IS_CALIBRATION, true)

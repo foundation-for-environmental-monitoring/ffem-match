@@ -16,17 +16,23 @@
       <w>camerax</w>
       <w>codabar</w>
       <w>constraintlayout</w>
+      <w>cuvette</w>
+      <w>documentclass</w>
       <w>esparcia</w>
       <w>etree</w>
       <w>externalstorage</w>
+      <w>familydefault</w>
       <w>fbbam</w>
       <w>ffem</w>
       <w>findall</w>
       <w>firebase</w>
+      <w>fontenc</w>
+      <w>frac</w>
       <w>googleusercontent</w>
       <w>grayscale</w>
       <w>greyscale</w>
       <w>gson</w>
+      <w>helvet</w>
       <w>hglf</w>
       <w>hhmmss</w>
       <w>imgproc</w>
@@ -36,6 +42,7 @@
       <w>licensors</w>
       <w>luminances</w>
       <w>lázaro</w>
+      <w>maketitle</w>
       <w>marlonlom</w>
       <w>mobilesdk</w>
       <w>nomedia</w>
@@ -44,26 +51,34 @@
       <w>nyjknh</w>
       <w>opencv</w>
       <w>overlayed</w>
+      <w>parindent</w>
+      <w>parskip</w>
       <w>paulburke</w>
       <w>polymorphically</w>
       <w>preallocated</w>
       <w>preimage</w>
       <w>qjgn</w>
       <w>relicensing</w>
+      <w>renewcommand</w>
       <w>resizes</w>
+      <w>rince</w>
       <w>robolectric</w>
       <w>salila</w>
       <w>samsung</w>
+      <w>setlength</w>
+      <w>sfdefault</w>
       <w>smartphone</w>
       <w>snackbar</w>
       <w>sublicenses</w>
       <w>sublicensing</w>
       <w>symbology</w>
+      <w>textbf</w>
       <w>thresholding</w>
       <w>timeago</w>
       <w>tradeoff</w>
       <w>unmock</w>
       <w>unshift</w>
+      <w>usepackage</w>
       <w>vklu</w>
       <w>wipo</w>
       <w>writerow</w>
