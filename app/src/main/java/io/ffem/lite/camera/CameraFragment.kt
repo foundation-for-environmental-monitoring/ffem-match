@@ -188,7 +188,7 @@ class CameraFragment : Fragment() {
         // Bind the cameraProvider to the LifeCycleOwner
         val cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
-        cameraProviderFuture.addListener(Runnable {
+        cameraProviderFuture.addListener({
 
             // CameraProvider
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
@@ -200,7 +200,7 @@ class CameraFragment : Fragment() {
                 .setTargetRotation(rotation)
                 .build()
 
-            preview?.setSurfaceProvider(previewView.createSurfaceProvider())
+            preview?.setSurfaceProvider(previewView.surfaceProvider)
 
             barcodeAnalyzer = BarcodeAnalyzer(requireContext())
             barcodeAnalyzer.reset()
