@@ -46,7 +46,7 @@ class RiskIndicatorTest {
 
     private fun assertFluorideRisk(testInfo: TestInfo) {
 
-        Assert.assertEquals(12, testInfo.values.size)
+        Assert.assertEquals(10, testInfo.values.size)
 
         Assert.assertEquals(3, testInfo.risks.size)
 
