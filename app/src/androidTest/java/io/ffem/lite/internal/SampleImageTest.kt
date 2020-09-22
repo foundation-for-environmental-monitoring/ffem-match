@@ -185,7 +185,7 @@ class SampleImageTest {
     }
 
     @Test
-    fun image_024_Fluoride_0_Point_5() {
+    fun image_024_Fluoride_1_Point_0() {
         startInternalTest(24)
     }
 
@@ -198,6 +198,11 @@ class SampleImageTest {
     @Test
     fun image_026_Iron_0() {
         startInternalTest(26)
+    }
+
+    @Test
+    fun image_027_Fluoride_0_Point_5() {
+        startInternalTest(27)
     }
 
 

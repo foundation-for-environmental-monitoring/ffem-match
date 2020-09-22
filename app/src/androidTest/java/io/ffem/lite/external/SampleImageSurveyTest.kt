@@ -184,7 +184,7 @@ class SampleImageSurveyTest : BaseTest() {
         startTest(23)
     }
     @Test
-    fun image_024_Fluoride_0_Point_5() {
+    fun image_024_Fluoride_1_Point_0() {
         startTest(24)
     }
 

@@ -33,18 +33,44 @@ class RiskIndicatorTest {
 
         val testInfo = getTestInfo(FLUORIDE_ID)!!
 
-        assertFluorideRisk(testInfo)
+        Assert.assertEquals(10, testInfo.values.size)
+
+        Assert.assertEquals(3, testInfo.risks.size)
+
+        assertRisk(testInfo, 0.0, LOW)
+
+        assertRisk(testInfo, 3.0, HIGH)
+
+        assertRisk(testInfo, 2.0, HIGH)
+
+        assertRisk(testInfo, 2.01, HIGH)
+
+        assertRisk(testInfo, 1.3, MEDIUM)
+
+        assertRisk(testInfo, 0.9, LOW)
+
+        assertRisk(testInfo, 2.99, HIGH)
+
+        assertRisk(testInfo, 0.99, LOW)
+
+        assertRisk(testInfo, 1.00, MEDIUM)
+
+        assertRisk(testInfo, 0.5, LOW)
+
+        assertRisk(testInfo, 1.1, MEDIUM)
+
+        assertRisk(testInfo, 4.1, HIGH)
+
+        assertRisk(testInfo, 1.5, HIGH)
+
+        assertRisk(testInfo, 1.99, HIGH)
     }
+
 
     @Test
     fun fluorideHighRangeRiskIndicator() {
 
         val testInfo = getTestInfo(FLUORIDE_HIGH_RANGE_ID)!!
-
-        assertFluorideRisk(testInfo)
-    }
-
-    private fun assertFluorideRisk(testInfo: TestInfo) {
 
         Assert.assertEquals(12, testInfo.values.size)
 
