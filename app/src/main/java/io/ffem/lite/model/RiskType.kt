@@ -8,6 +8,9 @@ enum class RiskType {
     @SerializedName("quantity")
     QUANTITY,
 
+    @SerializedName("alkalinity")
+    ALKALINITY,
+
     @SerializedName("safety")
     SAFETY;
 }

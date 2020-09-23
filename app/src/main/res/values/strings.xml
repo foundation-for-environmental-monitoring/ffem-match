@@ -66,6 +66,10 @@
     <string name="medium_safety">Safe</string>
     <string name="high_safety">Unsafe</string>
 
+    <string name="low_alkalinity">Acidic</string>
+    <string name="medium_alkalinity">Neutral</string>
+    <string name="high_alkalinity">Basic</string>
+
     <string name="margin_of_error">Margin of error: ±</string>
     <string name="check_color_card">Check that the correct color card is being used. Also ensure that the card is placed in a well lit area with indirect lighting.</string>
     <string name="details">Details</string>
