@@ -1,8 +1,11 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
-apply plugin: 'kotlin-android-extensions'
-apply plugin: "androidx.navigation.safeargs"
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'kotlin-android-extensions'
+    id 'androidx.navigation.safeargs'
+    id 'com.google.firebase.crashlytics'
+}
 
 def secretsFile = file(System.properties['user.home'] + '/.gradle/gradle.properties')
 def secrets = new Properties()
@@ -17,8 +20,8 @@ android {
         minSdkVersion 23
         //noinspection OldTargetApi
         targetSdkVersion 29
-        versionCode 56
-        versionName "Alpha 0.42"
+        versionCode 59
+        versionName "Alpha 0.43"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -113,6 +116,8 @@ dependencies {
     // Firebase
     implementation 'com.google.firebase:firebase-ml-vision:24.1.0'
     implementation 'com.google.firebase:firebase-ml-vision-barcode-model:16.1.2'
+    implementation 'com.google.firebase:firebase-analytics-ktx:17.5.0'
+    releaseImplementation 'com.google.firebase:firebase-crashlytics:17.2.1'
 
     // Navigation library
     def nav_version = "2.3.0"
@@ -131,7 +136,7 @@ dependencies {
     implementation 'com.google.dagger:dagger-android:2.28.3'
     kaptAndroidTest 'com.google.dagger:dagger-compiler:2.28.3'
 
-    // Timber
+    // Logs
     implementation 'com.jakewharton.timber:timber:4.7.1'
 
     testImplementation 'junit:junit:4.13'

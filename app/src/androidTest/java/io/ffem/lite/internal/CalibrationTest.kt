@@ -139,7 +139,7 @@ class CalibrationTest {
         takeScreenshot(screenshotName)
 
         onView(withText(R.string.select_calibration_point)).check(matches(isDisplayed()))
-        onView(withText("0.50")).perform(click())
+        onView(withText("1.00")).perform(click())
 
         takeScreenshot(screenshotName)
         onView(withText(R.string.confirm)).perform(click())
