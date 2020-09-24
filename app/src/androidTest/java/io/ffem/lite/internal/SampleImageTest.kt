@@ -205,6 +205,10 @@ class SampleImageTest {
         startInternalTest(27)
     }
 
+    @Test
+    fun image_028_pH_7_Point_0() {
+        startInternalTest(28)
+    }
 
     @Test
     fun imageX_Waiting() {

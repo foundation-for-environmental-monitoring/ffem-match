@@ -152,33 +152,33 @@ class RiskIndicatorTest {
 
         Assert.assertEquals(14, testInfo.values.size)
 
-        Assert.assertEquals(5, testInfo.risks.size)
+        Assert.assertEquals(3, testInfo.risks.size)
 
-        assertRisk(testInfo, 0.0, HIGH)
+        assertRisk(testInfo, 0.0, LOW)
 
-        assertRisk(testInfo, 3.0, HIGH)
+        assertRisk(testInfo, 3.0, LOW)
 
-        assertRisk(testInfo, 2.0, HIGH)
+        assertRisk(testInfo, 2.0, LOW)
 
-        assertRisk(testInfo, 0.9, HIGH)
+        assertRisk(testInfo, 0.9, LOW)
 
-        assertRisk(testInfo, 6.3, MEDIUM)
+        assertRisk(testInfo, 6.8, MEDIUM)
 
         assertRisk(testInfo, 6.5, LOW)
 
         assertRisk(testInfo, 6.6, LOW)
 
-        assertRisk(testInfo, 8.6, MEDIUM)
+        assertRisk(testInfo, 7.1, MEDIUM)
 
-        assertRisk(testInfo, 7.0, LOW)
+        assertRisk(testInfo, 7.0, MEDIUM)
 
-        assertRisk(testInfo, 8.5, MEDIUM)
+        assertRisk(testInfo, 8.5, HIGH)
 
         assertRisk(testInfo, 9.0, HIGH)
 
         assertRisk(testInfo, 10.5, HIGH)
 
-        assertRisk(testInfo, 5.8, HIGH)
+        assertRisk(testInfo, 5.8, LOW)
     }
 
     @Test
@@ -262,6 +262,14 @@ class RiskIndicatorTest {
                             testInfo.getRisk(context)
                         )
                     }
+
+                    RiskType.ALKALINITY -> {
+                        Assert.assertEquals(
+                            context.getString(R.string.low_alkalinity),
+                            testInfo.getRisk(context)
+                        )
+                    }
+
                     else -> {
                         Assert.assertEquals(
                             context.getString(R.string.low),
@@ -285,6 +293,14 @@ class RiskIndicatorTest {
                             testInfo.getRisk(context)
                         )
                     }
+
+                    RiskType.ALKALINITY -> {
+                        Assert.assertEquals(
+                            context.getString(R.string.medium_alkalinity),
+                            testInfo.getRisk(context)
+                        )
+                    }
+
                     else -> {
                         Assert.assertEquals(
                             context.getString(R.string.medium),
@@ -307,6 +323,14 @@ class RiskIndicatorTest {
                             testInfo.getRisk(context)
                         )
                     }
+
+                    RiskType.ALKALINITY -> {
+                        Assert.assertEquals(
+                            context.getString(R.string.high_alkalinity),
+                            testInfo.getRisk(context)
+                        )
+                    }
+
                     else -> {
                         Assert.assertEquals(
                             context.getString(R.string.high),

@@ -46,7 +46,7 @@ class CalibrationViewAdapter internal constructor(
             val color = colors[position].color
             holder.mIdView.background = ColorDrawable(color)
             if (colors[position].value >= 0) {
-                holder.textUnit.text = testInfo.unit.toString()
+                holder.textUnit.text = testInfo.unit ?: ""
             }
         }
         holder.mView.setOnClickListener {
