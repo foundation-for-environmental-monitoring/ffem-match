@@ -35,9 +35,6 @@
         },
         {
           "value": 1.5
-        },
-        {
-          "value": 2
         }
       ]
     },
@@ -86,26 +83,19 @@
       "name": "pH",
       "type": "water",
       "uuid": "ff96e965-13a3-4507-9edf-7aa7fc084354",
+      "riskType": "alkalinity",
       "minMarginError": 0.5,
       "risks": [
         {
           "value": 0,
-          "risk": 2
-        },
-        {
-          "value": 6,
-          "risk": 1
-        },
-        {
-          "value": 6.5,
           "risk": 0
         },
         {
-          "value": 8.5,
+          "value": 6.8,
           "risk": 1
         },
         {
-          "value": 9,
+          "value": 7.2,
           "risk": 2
         }
       ],

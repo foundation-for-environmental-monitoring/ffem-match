@@ -15,7 +15,7 @@ val iron = TestDetails(
     2, riskType = RiskType.SAFETY
 )
 val nitrate = TestDetails("Nitrate", "1b6b24c0fa93", R.string.water_tests_2, 3)
-val pH = TestDetails("pH", "7aa7fc084354", R.string.water_tests_2, 0)
+val pH = TestDetails("pH", "7aa7fc084354", R.string.water_tests_2, 0,riskType = RiskType.ALKALINITY)
 val residualChlorine = TestDetails(
     "Residual Chlorine", "ad0d47bcc96b", R.string.water_tests_2,
     1, riskType = RiskType.QUANTITY
@@ -37,7 +37,7 @@ val testDataList = mutableMapOf(
     11 to TestData(residualChlorine, expectedScanError = R.string.correct_camera_tilt),
     12 to TestData(residualChlorine, expectedScanError = R.string.place_color_card),
     13 to TestData(residualChlorine, expectedScanError = R.string.place_color_card),
-    14 to TestData(pH, 6.4, 0.5, risk = RiskLevel.MEDIUM),
+    14 to TestData(pH, 6.4, 0.5, risk = RiskLevel.LOW),
     15 to TestData(residualChlorine, 0.43, 0.25, risk = RiskLevel.LOW),
     16 to TestData(residualChlorine, expectedResultError = ErrorType.CALIBRATION_ERROR),
     17 to TestData(residualChlorine, expectedScanError = R.string.place_color_card),
@@ -47,9 +47,11 @@ val testDataList = mutableMapOf(
     21 to TestData(residualChlorine, expectedScanError = R.string.place_color_card),
     22 to TestData(pH, expectedScanError = R.string.place_color_card),
     23 to TestData(fluorideHighRange, expectedResultError = ErrorType.NO_MATCH),
-    24 to TestData(fluoride, 0.5, 0.25, risk = RiskLevel.LOW),
+    24 to TestData(fluoride, 1.0, 0.25, risk = RiskLevel.MEDIUM),
     25 to TestData(nitrate, 0.0, 0.80, risk = RiskLevel.LOW),
     26 to TestData(iron, 0.0, 0.15, risk = RiskLevel.LOW),
+    27 to TestData(fluoride, 0.5, 0.25, risk = RiskLevel.LOW),
+    28 to TestData(pH, 7.0, 0.5, risk = RiskLevel.MEDIUM),
     500 to TestData(pH, expectedScanError = R.string.sample_image_not_found)
 )
 

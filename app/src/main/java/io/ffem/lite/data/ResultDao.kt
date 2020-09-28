@@ -23,6 +23,9 @@ interface ResultDao {
     @Query("SELECT * FROM Calibration WHERE id = :id")
     fun getCalibration(id: String?): Calibration?
 
+    @Query("DELETE FROM Calibration")
+    fun deleteCalibration()
+
     @Query("UPDATE TestResult SET name = :name, value = :result, valueGrayscale = :resultGrayscale, marginOfError = :marginOfError, error = :error WHERE id = :id")
     fun updateResult(
         id: String,

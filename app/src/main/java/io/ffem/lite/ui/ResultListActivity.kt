@@ -260,7 +260,7 @@ class ResultListActivity : AppUpdateActivity() {
             )
 
             if (!isHasPermission(*permissions))
-                askPermission(permissions = *permissions, requestCode = PERMISSION_REQUEST)
+                askPermission(permissions = permissions, requestCode = PERMISSION_REQUEST)
             else
                 performFileSearch()
 

@@ -46,6 +46,10 @@
             android:name=".ui.AboutActivity"
             android:screenOrientation="nosensor" />
 
+        <meta-data
+            android:name="firebase_analytics_collection_enabled"
+            android:value="false" />
+
         <!-- Disable Firebase advertising id -->
         <meta-data
             android:name="google_analytics_adid_collection_enabled"

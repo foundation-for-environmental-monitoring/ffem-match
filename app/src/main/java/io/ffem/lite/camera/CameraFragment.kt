@@ -200,7 +200,7 @@ class CameraFragment : Fragment() {
                 .setTargetRotation(rotation)
                 .build()
 
-            preview?.setSurfaceProvider(previewView.createSurfaceProvider())
+            preview?.setSurfaceProvider(previewView.surfaceProvider)
 
             barcodeAnalyzer = BarcodeAnalyzer(requireContext())
             barcodeAnalyzer.reset()

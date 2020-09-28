@@ -2,10 +2,15 @@ package io.ffem.lite.ui
 
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.provider.Settings
 import android.util.TypedValue
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.ktx.Firebase
+import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.preference.isDiagnosticMode
 import kotlinx.android.synthetic.main.app_bar_layout.*
@@ -13,9 +18,14 @@ import kotlinx.android.synthetic.main.app_bar_layout.*
 abstract class BaseActivity : AppCompatActivity() {
 
     private var mTitle: String? = null
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (!BuildConfig.DEBUG && !isTestLab()) {
+            firebaseAnalytics = Firebase.analytics
+            FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(true)
+        }
         updateTheme()
         changeActionBarStyleBasedOnCurrentMode()
     }
@@ -101,6 +111,17 @@ abstract class BaseActivity : AppCompatActivity() {
 
             window.statusBarColor = color
         }
+    }
+
+    private fun isTestLab(): Boolean {
+        try {
+            val testLabSetting = Settings.System.getString(contentResolver, "firebase.test.lab")
+            if ("true" == testLabSetting) {
+                return true
+            }
+        } catch (e: IllegalStateException) {
+        }
+        return false
     }
 }
 

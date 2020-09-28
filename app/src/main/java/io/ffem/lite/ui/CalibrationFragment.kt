@@ -117,9 +117,14 @@ class CalibrationFragment : Fragment() {
             lyt_error_message.visibility = GONE
             lyt_result.visibility = VISIBLE
 
-            btn_card_color.setBackgroundColor(calibrationValue.color)
-            btn_calibrated_color.setBackgroundColor(testInfo.resultInfo.sampleColor)
+            for (swatch in testInfo.resultInfo.swatches!!) {
+                if (swatch.value == calibrationValue.value) {
+                    btn_card_color.setBackgroundColor(swatch.color)
+                    break
+                }
+            }
 
+            btn_calibrated_color.setBackgroundColor(testInfo.resultInfo.sampleColor)
             button_submit.setText(R.string.confirm)
 
         } else {
