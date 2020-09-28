@@ -20,8 +20,8 @@ android {
         minSdkVersion 23
         //noinspection OldTargetApi
         targetSdkVersion 29
-        versionCode 59
-        versionName "Alpha 0.43"
+        versionCode 61
+        versionName "Alpha 0.44"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -125,10 +125,10 @@ dependencies {
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 
     // CameraX
-    def camerax_version = "1.0.0-beta09"
+    def camerax_version = "1.0.0-beta10"
     implementation "androidx.camera:camera-camera2:$camerax_version"
     implementation "androidx.camera:camera-lifecycle:$camerax_version"
-    implementation "androidx.camera:camera-view:1.0.0-alpha16"
+    implementation "androidx.camera:camera-view:1.0.0-alpha17"
 
     // Dagger
     kapt 'com.google.dagger:dagger-compiler:2.28.3'

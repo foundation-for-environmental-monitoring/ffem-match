@@ -59,7 +59,7 @@ fun getColorDistance(color1: Int, color2: Int): Double {
 fun getBitmapPixels(bitmap: Bitmap, rect: Rect): IntArray {
     val pixels = IntArray(bitmap.width * bitmap.height)
     bitmap.getPixels(
-        pixels, 0, bitmap.width, rect.left, rect.top,
+        pixels, 0, bitmap.width, max(0, rect.left), max(0, rect.top),
         rect.width(), rect.height()
     )
     val subsetPixels = IntArray(rect.width() * rect.height())
