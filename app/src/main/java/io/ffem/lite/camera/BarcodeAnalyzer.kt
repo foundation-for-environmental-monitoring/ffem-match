@@ -10,7 +10,6 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.google.android.gms.tasks.Task
 import com.google.mlkit.vision.barcode.Barcode
 import com.google.mlkit.vision.barcode.Barcode.FORMAT_CODE_128
 import com.google.mlkit.vision.barcode.BarcodeScanner
@@ -61,19 +60,11 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         BarcodeScanning.getClient(options)
     }
 
-    private var taskLeftBarcode: Task<out Any>? = null
-//    private lateinit var mediaImage: InputImage
-
     override fun analyze(image: ImageProxy) {
         if (done || processing) {
             return
         }
         processing = true
-
-//        @ExperimentalGetImage
-//        mediaImage = InputImage.fromMediaImage(
-//            image.image!!, 180
-//        )
 
         @ExperimentalGetImage
         val imageProxy = image.image
@@ -140,148 +131,147 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
             bitmap.width, bitmap.height / 2
         )
 
-        taskLeftBarcode =
-            detector.process(InputImage.fromBitmap(leftBarcodeBitmap, 0))
-                .addOnFailureListener(
-                    fun(_: Exception) {
+        detector.process(InputImage.fromBitmap(leftBarcodeBitmap, 0))
+            .addOnFailureListener(
+                fun(_: Exception) {
+                    sendMessage(context.getString(R.string.color_card_not_found))
+                    endProcessing(image, true)
+                    return
+                }
+            )
+            .addOnSuccessListener(
+                fun(result: List<Barcode>) {
+                    if (result.isEmpty()) {
                         sendMessage(context.getString(R.string.color_card_not_found))
                         endProcessing(image, true)
                         return
                     }
-                )
-                .addOnSuccessListener(
-                    fun(result: List<Barcode>) {
-                        if (result.isEmpty()) {
-                            sendMessage(context.getString(R.string.color_card_not_found))
-                            endProcessing(image, true)
-                            return
-                        }
-                        for (leftBarcode in result) {
-                            if (!leftBarcode.rawValue.isNullOrEmpty()) {
-                                var testName = getTestName(result[0].displayValue!!)
-                                if (testName.isEmpty()) {
-                                    sendMessage(context.getString(R.string.invalid_barcode))
-                                    endProcessing(image, true)
-                                    return
-                                }
+                    for (leftBarcode in result) {
+                        if (!leftBarcode.rawValue.isNullOrEmpty()) {
+                            var testName = getTestName(result[0].displayValue!!)
+                            if (testName.isEmpty()) {
+                                sendMessage(context.getString(R.string.invalid_barcode))
+                                endProcessing(image, true)
+                                return
+                            }
 
-                                if (autoFocusCounter < 10) {
-                                    autoFocusCounter++
-                                    endProcessing(image, false)
-                                    return
-                                }
+                            if (autoFocusCounter < 10) {
+                                autoFocusCounter++
+                                endProcessing(image, false)
+                                return
+                            }
 
-                                try {
-                                    val leftBoundingBox =
-                                        fixBoundary(
-                                            leftBarcode,
+                            try {
+                                val leftBoundingBox =
+                                    fixBoundary(
+                                        leftBarcode,
+                                        leftBarcodeBitmap,
+                                        ImageEdgeType.WhiteTop
+                                    )
+
+                                if (leftBoundingBox.top in 11..80) {
+                                    if (!isBarcodeValid(
                                             leftBarcodeBitmap,
+                                            leftBoundingBox,
                                             ImageEdgeType.WhiteTop
                                         )
-
-                                    if (leftBoundingBox.top in 11..80) {
-                                        if (!isBarcodeValid(
-                                                leftBarcodeBitmap,
-                                                leftBoundingBox,
-                                                ImageEdgeType.WhiteTop
-                                            )
-                                        ) {
-                                            badLighting = true
-                                            leftBarcodeBitmap.recycle()
-                                            endProcessing(image, false)
-                                            return
-                                        }
-
+                                    ) {
+                                        badLighting = true
                                         leftBarcodeBitmap.recycle()
+                                        endProcessing(image, false)
+                                        return
+                                    }
 
-                                        val rightBarcodeBitmap = Bitmap.createBitmap(
-                                            bitmap, 0, bitmap.height / 2,
-                                            bitmap.width, bitmap.height / 2
-                                        )
+                                    leftBarcodeBitmap.recycle()
 
-                                        detector.process(
-                                            InputImage.fromBitmap(rightBarcodeBitmap, 0)
-                                        )
-                                            .addOnFailureListener(fun(_: Exception) {
-                                                endProcessing(image, true)
-                                                return
-                                            })
-                                            .addOnSuccessListener(
-                                                fun(result: List<Barcode>) {
-                                                    if (result.isNullOrEmpty()) {
-                                                        endProcessing(image, true)
+                                    val rightBarcodeBitmap = Bitmap.createBitmap(
+                                        bitmap, 0, bitmap.height / 2,
+                                        bitmap.width, bitmap.height / 2
+                                    )
+
+                                    detector.process(
+                                        InputImage.fromBitmap(rightBarcodeBitmap, 0)
+                                    )
+                                        .addOnFailureListener(fun(_: Exception) {
+                                            endProcessing(image, true)
+                                            return
+                                        })
+                                        .addOnSuccessListener(
+                                            fun(result: List<Barcode>) {
+                                                if (result.isNullOrEmpty()) {
+                                                    endProcessing(image, true)
+                                                    return
+                                                }
+
+                                                for (rightBarcode in result) {
+
+                                                    val rightBoundingBox =
+                                                        fixBoundary(
+                                                            rightBarcode,
+                                                            rightBarcodeBitmap,
+                                                            ImageEdgeType.WhiteDown
+                                                        )
+
+                                                    if (rightBarcodeBitmap.height - rightBoundingBox.bottom !in 11..80) {
+                                                        rightBarcodeBitmap.recycle()
+                                                        endProcessing(image, false)
                                                         return
                                                     }
 
-                                                    for (rightBarcode in result) {
-
-                                                        val rightBoundingBox =
-                                                            fixBoundary(
-                                                                rightBarcode,
-                                                                rightBarcodeBitmap,
-                                                                ImageEdgeType.WhiteDown
-                                                            )
-
-                                                        if (rightBarcodeBitmap.height - rightBoundingBox.bottom !in 11..80) {
-                                                            rightBarcodeBitmap.recycle()
-                                                            endProcessing(image, false)
-                                                            return
-                                                        }
-
-                                                        if (isTilted(
-                                                                leftBoundingBox, rightBoundingBox
-                                                            )
-                                                        ) {
-                                                            sendMessage(context.getString(R.string.correct_camera_tilt))
-                                                            endProcessing(image, false)
-                                                            return
-                                                        }
-
-                                                        testName =
-                                                            getTestName(result[0].displayValue!!)
-                                                        if (testName.isEmpty()) {
-                                                            sendMessage(context.getString(R.string.invalid_barcode))
-                                                            endProcessing(image, false)
-                                                            return
-                                                        }
-
-                                                        if (badLighting || !isBarcodeValid(
-                                                                rightBarcodeBitmap,
-                                                                rightBoundingBox,
-                                                                ImageEdgeType.WhiteDown
-                                                            )
-                                                        ) {
-                                                            sendMessage(context.getString(R.string.try_moving_well_lit))
-                                                            rightBarcodeBitmap.recycle()
-                                                            endProcessing(image, false)
-                                                            return
-                                                        }
-
-                                                        rightBarcodeBitmap.recycle()
-
-                                                        analyzeBarcode(
-                                                            image,
-                                                            bitmap,
-                                                            rightBarcode,
-                                                            rightBoundingBox,
-                                                            leftBoundingBox
+                                                    if (isTilted(
+                                                            leftBoundingBox, rightBoundingBox
                                                         )
+                                                    ) {
+                                                        sendMessage(context.getString(R.string.correct_camera_tilt))
+                                                        endProcessing(image, false)
+                                                        return
                                                     }
+
+                                                    testName =
+                                                        getTestName(result[0].displayValue!!)
+                                                    if (testName.isEmpty()) {
+                                                        sendMessage(context.getString(R.string.invalid_barcode))
+                                                        endProcessing(image, false)
+                                                        return
+                                                    }
+
+                                                    if (badLighting || !isBarcodeValid(
+                                                            rightBarcodeBitmap,
+                                                            rightBoundingBox,
+                                                            ImageEdgeType.WhiteDown
+                                                        )
+                                                    ) {
+                                                        sendMessage(context.getString(R.string.try_moving_well_lit))
+                                                        rightBarcodeBitmap.recycle()
+                                                        endProcessing(image, false)
+                                                        return
+                                                    }
+
+                                                    rightBarcodeBitmap.recycle()
+
+                                                    analyzeBarcode(
+                                                        image,
+                                                        bitmap,
+                                                        rightBarcode,
+                                                        rightBoundingBox,
+                                                        leftBoundingBox
+                                                    )
                                                 }
-                                            )
-                                    } else {
-                                        sendMessage(context.getString(R.string.color_card_not_found))
-                                        endProcessing(image, true)
-                                    }
-                                } catch (ignored: Exception) {
+                                            }
+                                        )
+                                } else {
+                                    sendMessage(context.getString(R.string.color_card_not_found))
                                     endProcessing(image, true)
                                 }
-                            } else {
+                            } catch (ignored: Exception) {
                                 endProcessing(image, true)
                             }
+                        } else {
+                            endProcessing(image, true)
                         }
                     }
-                )
+                }
+            )
     }
 
     private fun Image.toBitmap(): Bitmap {
