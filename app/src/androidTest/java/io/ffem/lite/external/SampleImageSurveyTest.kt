@@ -198,10 +198,10 @@ class SampleImageSurveyTest : BaseTest() {
         validityTest(fluoride, 0, WRONG_CARD)
     }
 
-//    @Test
-//    fun imageX_Waiting() {
-//        startTest(500)
-//    }
+    @Test
+    fun imageX_Waiting() {
+        startTest(500)
+    }
 
     private fun validityTest(
         testDetails: TestDetails,

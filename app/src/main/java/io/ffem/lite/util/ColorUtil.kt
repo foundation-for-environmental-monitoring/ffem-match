@@ -59,9 +59,19 @@ fun getColorDistance(color1: Int, color2: Int): Double {
 
 fun getBitmapPixels(bitmap: Bitmap, rect: Rect): IntArray {
     val pixels = IntArray(bitmap.width * bitmap.height)
+
+    val x = max(0, rect.left)
+    val y = max(0, rect.top)
+    var width = rect.width()
+    if (x + rect.width() > bitmap.width) {
+        width = bitmap.width - x
+    }
+    var height = rect.height()
+    if (y + rect.height() > bitmap.height) {
+        height = bitmap.height - y
+    }
     bitmap.getPixels(
-        pixels, 0, bitmap.width, max(0, rect.left), max(0, rect.top),
-        rect.width(), rect.height()
+        pixels, 0, bitmap.width, x, y, width, height
     )
     val subsetPixels = IntArray(rect.width() * rect.height())
     for (row in 0 until rect.height()) {
@@ -346,14 +356,20 @@ object ColorUtil {
             }
 
             val cropLeft = max(leftBoundingBox.left - 20, 0)
-            val cropWidth = min(
+            var cropWidth = min(
                 leftBoundingBox.right - cropLeft + 40,
                 bitmap.width - cropLeft
             )
+            if (cropWidth < (0.6 * bitmap.width)) {
+                cropWidth = bitmap.width
+            }
 
             val cropTop = max(leftBoundingBox.bottom + 2, 0)
             val cropBottom = (bitmap.height / 2) + rightBoundingBox.top
-            val cropHeight = min(cropBottom - cropTop, bitmap.height - cropTop)
+            var cropHeight = min(cropBottom - cropTop, bitmap.height - cropTop)
+            if (cropHeight < (0.35 * bitmap.height)) {
+                cropHeight = bitmap.height - cropTop
+            }
 
             val finalBitmap = Bitmap.createBitmap(
                 bitmap, cropLeft, cropTop, cropWidth, cropHeight

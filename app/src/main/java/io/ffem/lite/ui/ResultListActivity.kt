@@ -306,13 +306,17 @@ class ResultListActivity : AppUpdateActivity() {
                                 imageNumber
                             )
 
-                            if (bitmapFromFile != null) {
-                                ColorUtil.extractImage(this, bitmapFromFile)
-                            } else {
-                                Toast.makeText(
-                                    baseContext, getString(R.string.invalid_image),
-                                    Toast.LENGTH_LONG
-                                ).show()
+                            try {
+                                if (bitmapFromFile != null) {
+                                    ColorUtil.extractImage(this, bitmapFromFile)
+                                } else {
+                                    Toast.makeText(
+                                        baseContext, getString(R.string.invalid_image),
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                            } catch (e: Exception) {
+                                Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
                             }
                         }
                     }
