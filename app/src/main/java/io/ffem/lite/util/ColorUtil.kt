@@ -11,11 +11,12 @@ import androidx.core.graphics.blue
 import androidx.core.graphics.green
 import androidx.core.graphics.red
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.google.firebase.ml.vision.FirebaseVision
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetector
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions
-import com.google.firebase.ml.vision.common.FirebaseVisionImage
+import com.google.mlkit.vision.barcode.Barcode
+import com.google.mlkit.vision.barcode.Barcode.FORMAT_CODE_128
+import com.google.mlkit.vision.barcode.BarcodeScanner
+import com.google.mlkit.vision.barcode.BarcodeScannerOptions
+import com.google.mlkit.vision.barcode.BarcodeScanning
+import com.google.mlkit.vision.common.InputImage
 import io.ffem.lite.app.App
 import io.ffem.lite.app.App.Companion.DEFAULT_TEST_UUID
 import io.ffem.lite.app.App.Companion.TEST_ID_KEY
@@ -58,9 +59,19 @@ fun getColorDistance(color1: Int, color2: Int): Double {
 
 fun getBitmapPixels(bitmap: Bitmap, rect: Rect): IntArray {
     val pixels = IntArray(bitmap.width * bitmap.height)
+
+    val x = max(0, rect.left)
+    val y = max(0, rect.top)
+    var width = rect.width()
+    if (x + rect.width() > bitmap.width) {
+        width = bitmap.width - x
+    }
+    var height = rect.height()
+    if (y + rect.height() > bitmap.height) {
+        height = bitmap.height - y
+    }
     bitmap.getPixels(
-        pixels, 0, bitmap.width, max(0, rect.left), max(0, rect.top),
-        rect.width(), rect.height()
+        pixels, 0, bitmap.width, x, y, width, height
     )
     val subsetPixels = IntArray(rect.width() * rect.height())
     for (row in 0 until rect.height()) {
@@ -176,13 +187,12 @@ object ColorUtil {
 
     fun extractImage(context: Context, bitmapImage: Bitmap) {
 
-        val detector: FirebaseVisionBarcodeDetector by lazy {
-            val options = FirebaseVisionBarcodeDetectorOptions.Builder()
+        val detector: BarcodeScanner by lazy {
+            val options = BarcodeScannerOptions.Builder()
                 .setBarcodeFormats(
-                    FirebaseVisionBarcode.FORMAT_CODE_128
-                )
-                .build()
-            FirebaseVision.getInstance().getVisionBarcodeDetector(options)
+                    FORMAT_CODE_128
+                ).build()
+            BarcodeScanning.getClient(options)
         }
 
         var bitmap: Bitmap
@@ -210,14 +220,14 @@ object ColorUtil {
             bitmap.width, bitmap.height / 2
         )
 
-        detector.detectInImage(FirebaseVisionImage.fromBitmap(leftBarcodeBitmap))
+        detector.process(InputImage.fromBitmap(leftBarcodeBitmap, 0))
             .addOnFailureListener(
                 fun(_: Exception) {
                     returnResult(context)
                 }
             )
             .addOnSuccessListener(
-                fun(result: List<FirebaseVisionBarcode>) {
+                fun(result: List<Barcode>) {
                     if (result.isEmpty()) {
                         returnResult(context, getTestInfo(DEFAULT_TEST_UUID), BAD_LIGHTING, bitmap)
                     }
@@ -246,8 +256,8 @@ object ColorUtil {
                                     bitmap.width, bitmap.height / 2
                                 )
 
-                                detector.detectInImage(
-                                    FirebaseVisionImage.fromBitmap(rightBarcodeBitmap)
+                                detector.process(
+                                    InputImage.fromBitmap(rightBarcodeBitmap, 0)
                                 )
                                     .addOnFailureListener(fun(_: Exception) {
                                         returnResult(
@@ -258,7 +268,7 @@ object ColorUtil {
                                         )
                                     })
                                     .addOnSuccessListener(
-                                        fun(result: List<FirebaseVisionBarcode>) {
+                                        fun(result: List<Barcode>) {
                                             if (result.isEmpty()) {
                                                 returnResult(
                                                     context,
@@ -328,7 +338,7 @@ object ColorUtil {
     }
 
     private fun analyzeBarcode(
-        context: Context, bitmap: Bitmap, rightBarcode: FirebaseVisionBarcode,
+        context: Context, bitmap: Bitmap, rightBarcode: Barcode,
         rightBoundingBox: Rect, leftBoundingBox: Rect
     ) {
 
@@ -346,14 +356,20 @@ object ColorUtil {
             }
 
             val cropLeft = max(leftBoundingBox.left - 20, 0)
-            val cropWidth = min(
+            var cropWidth = min(
                 leftBoundingBox.right - cropLeft + 40,
                 bitmap.width - cropLeft
             )
+            if (cropWidth < (0.6 * bitmap.width)) {
+                cropWidth = bitmap.width
+            }
 
             val cropTop = max(leftBoundingBox.bottom + 2, 0)
             val cropBottom = (bitmap.height / 2) + rightBoundingBox.top
-            val cropHeight = min(cropBottom - cropTop, bitmap.height - cropTop)
+            var cropHeight = min(cropBottom - cropTop, bitmap.height - cropTop)
+            if (cropHeight < (0.35 * bitmap.height)) {
+                cropHeight = bitmap.height - cropTop
+            }
 
             val finalBitmap = Bitmap.createBitmap(
                 bitmap, cropLeft, cropTop, cropWidth, cropHeight
@@ -694,7 +710,7 @@ object ColorUtil {
     }
 
     fun fixBoundary(
-        barcode: FirebaseVisionBarcode,
+        barcode: Barcode,
         barcodeBitmap: Bitmap,
         imageEdgeSide: ImageEdgeType
     ): Rect {
