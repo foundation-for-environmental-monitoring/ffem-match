@@ -34,8 +34,6 @@ import io.ffem.lite.util.getBitmapPixels
 import io.ffem.lite.util.isNotBright
 import java.io.ByteArrayOutputStream
 import java.util.*
-import kotlin.math.max
-import kotlin.math.min
 
 
 const val MAX_ANGLE = 14
@@ -126,12 +124,14 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
             return
         }
 
-        val leftBarcodeBitmap = Bitmap.createBitmap(
+        val barcodeHeight = ((bitmap.height / 2) - (.20 * bitmap.height / 2)).toInt()
+
+        val rightBarcodeBitmap = Bitmap.createBitmap(
             bitmap, 0, 0,
-            bitmap.width, bitmap.height / 2
+            bitmap.width, barcodeHeight
         )
 
-        detector.process(InputImage.fromBitmap(leftBarcodeBitmap, 0))
+        detector.process(InputImage.fromBitmap(rightBarcodeBitmap, 0))
             .addOnFailureListener(
                 fun(_: Exception) {
                     sendMessage(context.getString(R.string.color_card_not_found))
@@ -146,8 +146,8 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                         endProcessing(image, true)
                         return
                     }
-                    for (leftBarcode in result) {
-                        if (!leftBarcode.rawValue.isNullOrEmpty()) {
+                    for (rightBarcode in result) {
+                        if (!rightBarcode.rawValue.isNullOrEmpty()) {
                             var testName = getTestName(result[0].displayValue!!)
                             if (testName.isEmpty()) {
                                 sendMessage(context.getString(R.string.invalid_barcode))
@@ -162,35 +162,35 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                             }
 
                             try {
-                                val leftBoundingBox =
+                                val rightBoundingBox =
                                     fixBoundary(
-                                        leftBarcode,
-                                        leftBarcodeBitmap,
+                                        rightBarcode,
+                                        rightBarcodeBitmap,
                                         ImageEdgeType.WhiteTop
                                     )
 
-                                if (leftBoundingBox.top in 11..80) {
+                                if (rightBoundingBox.top in 11..80) {
                                     if (!isBarcodeValid(
-                                            leftBarcodeBitmap,
-                                            leftBoundingBox,
+                                            rightBarcodeBitmap,
+                                            rightBoundingBox,
                                             ImageEdgeType.WhiteTop
                                         )
                                     ) {
                                         badLighting = true
-                                        leftBarcodeBitmap.recycle()
+                                        rightBarcodeBitmap.recycle()
                                         endProcessing(image, false)
                                         return
                                     }
 
-                                    leftBarcodeBitmap.recycle()
+                                    rightBarcodeBitmap.recycle()
 
-                                    val rightBarcodeBitmap = Bitmap.createBitmap(
-                                        bitmap, 0, bitmap.height / 2,
-                                        bitmap.width, bitmap.height / 2
+                                    val leftBarcodeBitmap = Bitmap.createBitmap(
+                                        bitmap, 0, bitmap.height - barcodeHeight,
+                                        bitmap.width, barcodeHeight
                                     )
 
                                     detector.process(
-                                        InputImage.fromBitmap(rightBarcodeBitmap, 0)
+                                        InputImage.fromBitmap(leftBarcodeBitmap, 0)
                                     )
                                         .addOnFailureListener(fun(_: Exception) {
                                             endProcessing(image, true)
@@ -203,23 +203,23 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                                     return
                                                 }
 
-                                                for (rightBarcode in result) {
+                                                for (leftBarcode in result) {
 
-                                                    val rightBoundingBox =
+                                                    val leftBoundingBox =
                                                         fixBoundary(
-                                                            rightBarcode,
-                                                            rightBarcodeBitmap,
+                                                            leftBarcode,
+                                                            leftBarcodeBitmap,
                                                             ImageEdgeType.WhiteDown
                                                         )
 
-                                                    if (rightBarcodeBitmap.height - rightBoundingBox.bottom !in 11..80) {
-                                                        rightBarcodeBitmap.recycle()
+                                                    if (leftBarcodeBitmap.height - leftBoundingBox.bottom !in 11..122) {
+                                                        leftBarcodeBitmap.recycle()
                                                         endProcessing(image, false)
                                                         return
                                                     }
 
                                                     if (isTilted(
-                                                            leftBoundingBox, rightBoundingBox
+                                                            rightBoundingBox, leftBoundingBox
                                                         )
                                                     ) {
                                                         sendMessage(context.getString(R.string.correct_camera_tilt))
@@ -236,25 +236,25 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                                     }
 
                                                     if (badLighting || !isBarcodeValid(
-                                                            rightBarcodeBitmap,
-                                                            rightBoundingBox,
+                                                            leftBarcodeBitmap,
+                                                            leftBoundingBox,
                                                             ImageEdgeType.WhiteDown
                                                         )
                                                     ) {
                                                         sendMessage(context.getString(R.string.try_moving_well_lit))
-                                                        rightBarcodeBitmap.recycle()
+                                                        leftBarcodeBitmap.recycle()
                                                         endProcessing(image, false)
                                                         return
                                                     }
 
-                                                    rightBarcodeBitmap.recycle()
+                                                    leftBarcodeBitmap.recycle()
 
                                                     analyzeBarcode(
                                                         image,
                                                         bitmap,
                                                         rightBarcode,
-                                                        rightBoundingBox,
-                                                        leftBoundingBox
+                                                        leftBoundingBox,
+                                                        rightBoundingBox
                                                     )
                                                 }
                                             }
@@ -310,11 +310,11 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
     private fun analyzeBarcode(
         image: ImageProxy,
-        bitmap: Bitmap, rightBarcode: Barcode,
+        bitmap: Bitmap, LeftBarcode: Barcode,
         rightBoundingBox: Rect, leftBoundingBox: Rect
     ) {
-        if (!rightBarcode.rawValue.isNullOrEmpty()) {
-            val testInfo = getTestInfo(rightBarcode.displayValue!!)
+        if (!LeftBarcode.rawValue.isNullOrEmpty()) {
+            val testInfo = getTestInfo(LeftBarcode.displayValue!!)
             if (testInfo == null) {
                 sendMessage(context.getString(R.string.invalid_barcode))
                 endProcessing(image, false)
@@ -323,24 +323,24 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
             done = true
 
-            val cropLeft = max(leftBoundingBox.left - 20, 0)
-            val cropWidth = min(
-                leftBoundingBox.right - cropLeft + 40,
-                bitmap.width - cropLeft
-            )
-            val cropTop = max(leftBoundingBox.top - 40, 0)
-            val cropHeight = min(
-                rightBoundingBox.bottom - leftBoundingBox.top + (bitmap.height / 2) + 80,
-                bitmap.height - cropTop
-            )
+//            val cropLeft = max(leftBoundingBox.left - 20, 0)
+//            val cropWidth = min(
+//                leftBoundingBox.right - cropLeft + 40,
+//                bitmap.width - cropLeft
+//            )
+//            val cropTop = max(leftBoundingBox.top - 40, 0)
+//            val cropHeight = min(
+//                rightBoundingBox.bottom - leftBoundingBox.top + (bitmap.height / 2) + 80,
+//                bitmap.height - cropTop
+//            )
 
-            val finalBitmap = Bitmap.createBitmap(
-                bitmap, cropLeft, cropTop, cropWidth, cropHeight
-            )
+//            val finalBitmap = Bitmap.createBitmap(
+//                bitmap, cropLeft, cropTop, cropWidth, cropHeight
+//            )
 
-            savePhoto(finalBitmap, testInfo)
+            savePhoto(bitmap, testInfo)
 
-            finalBitmap.recycle()
+            bitmap.recycle()
 
             endProcessing(image, true)
 
