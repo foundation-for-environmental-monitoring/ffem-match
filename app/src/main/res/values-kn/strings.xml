@@ -71,7 +71,7 @@
     <string name="view_hierarchy">ಪ್ರಾಂಪ್ಟ್‌ಗೆ ಹೋಗಿ</string>
     <string name="calibrate">ಮಾಪನಾಂಕ ನಿರ್ಣಯ</string>
     <string name="calibrate_summary">ಸ್ಟ್ಯಾಂಡರ್ಡ್ ಬಳಸಿ ಮಾಪನಾಂಕ ನಿರ್ಣಯಿಸಿ</string>
-    <string name="no_data">ಪರೀಕ್ಷೆಗಳ ಫಲಿತಾಂಶಗಳಿಲ್ಲ</string>
+    <string name="no_data">ಪರೀಕ್ಷಾ ಫಲಿತಾಂಶಗಳಿಲ್ಲ</string>
     <string name="tap_to_start">ಹೊಸ ಪರೀಕ್ಷೆಯನ್ನು ಪ್ರಾರಂಭಿಸಲು ಕೆಳಗಿನ <b>+</b> ಬಟನ್ ಟ್ಯಾಪ್ ಮಾಡಿ.</string>
     <string name="low_alkalinity">ಆಮ್ಲೀಯ</string>
     <string name="medium_alkalinity">ತಟಸ್ಥ</string>

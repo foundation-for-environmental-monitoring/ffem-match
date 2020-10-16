@@ -225,20 +225,7 @@ class SampleImageTest {
 
         SystemClock.sleep(2000)
 
-        val floatingActionButton = onView(
-            allOf(
-                withId(R.id.fab), withContentDescription(R.string.start_test),
-                childAtPosition(
-                    childAtPosition(
-                        withId(android.R.id.content),
-                        0
-                    ),
-                    1
-                ),
-                isDisplayed()
-            )
-        )
-        floatingActionButton.perform(click())
+        onView(withId(R.id.fab)).perform(click())
 
         if (testData.expectedScanError == -1) {
 
