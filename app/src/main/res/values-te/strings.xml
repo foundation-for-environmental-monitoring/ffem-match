@@ -71,7 +71,8 @@
     <string name="view_hierarchy">ప్రాంప్ట్ కు వెళ్ళండి</string>
     <string name="calibrate">క్రమాంకనం</string>
     <string name="calibrate_summary">ప్రమాణాన్ని ఉపయోగించి క్రమాంకనం చేయండి</string>
-    <string name="no_data">ప్రదర్శించడానికి డేటా లేదు. క్రొత్త పరీక్షను ప్రారంభించండి</string>
+    <string name="no_data">పరీక్షా ఫలితాలు లేవు</string>
+    <string name="tap_to_start">క్రొత్త పరీక్షను ప్రారంభించడానికి దిగువ + బటన్‌ను నొక్కండి.</string>
     <string name="low_alkalinity">ఆమ్ల</string>
     <string name="medium_alkalinity">తటస్థ</string>
     <string name="high_alkalinity">ప్రాథమిక</string>

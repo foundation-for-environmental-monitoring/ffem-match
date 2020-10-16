@@ -71,7 +71,8 @@
     <string name="view_hierarchy">प्रॉम्प्ट पर जाएं</string>
     <string name="calibrate">कैलिब्रेट</string>
     <string name="calibrate_summary">मानक का उपयोग करते हुए कैलिब्रेट करें</string>
-    <string name="no_data">डेटा प्रदर्शित करने के लिए उपलब्ध नहीं हैं। एक नई परीक्षा शुरू करें</string>
+    <string name="no_data">कोई परीक्षा परिणाम नहीं</string>
+    <string name="tap_to_start">नया परीक्षण लॉन्च करने के लिए नीचे + बटन टैप करें।</string>
     <string name="low_alkalinity">अम्लीय</string>
     <string name="medium_alkalinity">तटस्थ</string>
     <string name="high_alkalinity">बुनियादी</string>

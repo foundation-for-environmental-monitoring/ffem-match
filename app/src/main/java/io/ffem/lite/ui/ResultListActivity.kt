@@ -19,6 +19,8 @@ import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.IntRange
@@ -202,21 +204,27 @@ class ResultListActivity : AppUpdateActivity() {
 
         adapter.setTestList(resultList)
 
-        list_results.addItemDecoration(
+        test_results_lst.addItemDecoration(
             DividerItemDecoration(
                 this,
                 DividerItemDecoration.VERTICAL
             )
         )
 
-        list_results.adapter = adapter
+        test_results_lst.adapter = adapter
 
-        if (resultList.isNotEmpty()) {
-            if (R.id.list_results == switcher.nextView.id) {
-                switcher.showNext()
-            }
-        } else if (R.id.text_empty == switcher.nextView.id) {
-            switcher.showNext()
+        showHideList()
+    }
+
+    private fun showHideList() {
+        if (adapter.itemCount > 0) {
+            test_results_lst.visibility = VISIBLE
+            launch_info_txt.visibility = GONE
+            no_result_txt.visibility = GONE
+        } else {
+            test_results_lst.visibility = GONE
+            launch_info_txt.visibility = VISIBLE
+            no_result_txt.visibility = VISIBLE
         }
     }
 
@@ -236,15 +244,9 @@ class ResultListActivity : AppUpdateActivity() {
             IntentFilter(LOCAL_RESULT_EVENT)
         )
 
-        list_results.adapter = adapter
+        test_results_lst.adapter = adapter
 
-        if (adapter.itemCount > 0) {
-            if (R.id.list_results == switcher.nextView.id) {
-                switcher.showNext()
-            }
-        } else if (R.id.text_empty == switcher.nextView.id) {
-            switcher.showNext()
-        }
+        showHideList()
     }
 
     override fun onPause() {

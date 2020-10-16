@@ -312,7 +312,7 @@ class SampleImageTest {
                     childAtPosition(
                         childAtPosition(
                             allOf(
-                                withId(R.id.list_results),
+                                withId(R.id.test_results_lst),
                                 withContentDescription(R.string.result_list)
                             ),
                             0

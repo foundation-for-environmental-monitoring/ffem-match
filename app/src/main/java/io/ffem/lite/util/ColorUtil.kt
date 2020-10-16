@@ -725,8 +725,9 @@ object ColorUtil {
             barcodeBitmap, IMAGE_THRESHOLD, imageEdgeSide, left, right
         )
 
+        val my = min(bwBitmap.height - 1, midY)
         for (x in left until left + 50) {
-            val pixel = bwBitmap.getPixel(x, midY)
+            val pixel = bwBitmap.getPixel(x, my)
             if (isDarkPixel(pixel)) {
                 left = min(x, barcode.boundingBox!!.left)
                 break
@@ -734,7 +735,7 @@ object ColorUtil {
         }
 
         for (y in midY downTo 1) {
-            top = y
+            top = min(y, bwBitmap.height - 1)
             var isClear = true
             for (x in 0 until 20) {
                 val pixel = bwBitmap.getPixel(left + x, top)
@@ -750,7 +751,7 @@ object ColorUtil {
         }
 
         for (y in midY until min(midY + 150, bwBitmap.height)) {
-            bottom = y
+            bottom = min(y, bwBitmap.height - 1)
             var isClear = true
             for (x in 0 until 20) {
                 val pixel = bwBitmap.getPixel(left + x, bottom)

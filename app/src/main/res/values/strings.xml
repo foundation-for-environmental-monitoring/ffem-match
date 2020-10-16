@@ -23,7 +23,8 @@
     <string name="uninstall_install_from_store">Please uninstall and then install the latest version from Play Store.</string>
 
     <string name="result_list">List of results</string>
-    <string name="no_data">No results to display. Start a new test</string>
+    <string name="no_data">No tests results yet</string>
+    <string name="tap_to_start">Tap the <b>+</b> button below to\nlaunch a new test.</string>
     <string name="start_test">Start test</string>
     <string name="analyzed_image">Analyzed image</string>
     <string name="disable_diagnostics">Disable diagnostics</string>
