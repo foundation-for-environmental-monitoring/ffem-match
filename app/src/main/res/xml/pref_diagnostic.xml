@@ -3,6 +3,8 @@
     <PreferenceCategory
         android:key="preferenceCategoryDiagnostics"
         android:title="@string/diagnostics"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="true"
         app:iconSpaceReserved="false">
 
         <EditTextPreference
@@ -13,7 +15,10 @@
             android:maxLength="3"
             android:selectAllOnFocus="true"
             android:title="Max sample color distance"
+            app:allowDividerAbove="true"
+            app:allowDividerBelow="true"
             app:iconSpaceReserved="false" />
+
         <EditTextPreference
             android:defaultValue="80"
             android:dialogMessage="The max difference between the colors on the left and right columns of the color card"
@@ -22,11 +27,14 @@
             android:maxLength="3"
             android:selectAllOnFocus="true"
             android:title="Max card color calibration distance"
+            app:allowDividerAbove="true"
+            app:allowDividerBelow="true"
             app:iconSpaceReserved="false" />
 
         <PreferenceCategory
             android:key="preferenceCategoryCamera"
             android:title="@string/camera"
+            app:allowDividerAbove="true"
             app:iconSpaceReserved="false">
             <SwitchPreferenceCompat
                 android:key="@string/useFlashModeKey"

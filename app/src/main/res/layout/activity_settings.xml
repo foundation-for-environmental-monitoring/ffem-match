@@ -8,7 +8,7 @@
 
     <include layout="@layout/app_bar_layout" />
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollViewSettings"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -45,5 +45,5 @@
                 android:layout_height="200dp" />
 
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 </LinearLayout>

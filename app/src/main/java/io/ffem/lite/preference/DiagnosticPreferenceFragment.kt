@@ -21,7 +21,6 @@ class DiagnosticPreferenceFragment : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         setupDistancePreference()
 
         setupAverageDistancePreference()

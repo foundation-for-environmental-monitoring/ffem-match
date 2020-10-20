@@ -5,6 +5,8 @@
         android:key="calibrate"
         android:summary="@string/calibrate_summary"
         android:title="@string/calibrate"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="true"
         app:iconSpaceReserved="false" />
 
     <Preference
