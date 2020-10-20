@@ -10,7 +10,7 @@
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/card_overlay"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="250dp"
         android:alpha=".6"
         android:src="@drawable/card_overlay"
         app:layout_constraintEnd_toEndOf="parent"
@@ -23,22 +23,23 @@
         android:layout_height="0dp"
         android:background="#444444"
         android:paddingTop="16dp"
-        android:text="@string/place_color_card"
+        android:text="@string/align_color_card"
         android:textAlignment="center"
         android:textColor="#EEEEEE"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/card_overlay" />
 
-    <ImageButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/capture_button"
-        android:layout_width="82dp"
-        android:layout_height="82dp"
-        android:layout_margin="24dp"
-        android:background="@null"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="70dp"
+        android:minWidth="200dp"
         android:contentDescription="@string/capture_photo"
+        android:minHeight="60dp"
+        android:text="@string/take_photo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/ic_camera_black_24dp" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

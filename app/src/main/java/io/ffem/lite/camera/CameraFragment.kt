@@ -28,8 +28,11 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
+import android.util.Size
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -96,9 +99,9 @@ class CameraFragment : Fragment() {
         messageHandler = Handler()
 
         runnable = Runnable {
-            if (bottom_overlay != null && bottom_overlay.text != getString(R.string.place_color_card)) {
+            if (bottom_overlay != null && bottom_overlay.text != getString(R.string.align_color_card)) {
                 bottom_overlay.setTextColor(Color.WHITE)
-                bottom_overlay.text = getString(R.string.place_color_card)
+                bottom_overlay.text = getString(R.string.align_color_card)
             }
         }
 
@@ -147,17 +150,21 @@ class CameraFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         container = view as ConstraintLayout
 
-        // Wait for the views to be properly laid out
-        previewView.post {
+        start_test_btn.setOnClickListener {
+            instruction_lyt.visibility = GONE
+            camera_preview.visibility = VISIBLE
+//            // Wait for the views to be properly laid out
+            camera_preview.post {
 
-            // Keep track of the display in which this view is attached
-            displayId = previewView.display.displayId
+                // Keep track of the display in which this view is attached
+                displayId = camera_preview.display.displayId
 
-            // Build UI controls
-            updateCameraUi()
+                // Build UI controls
+                updateCameraUi()
 
-            // Bind use cases
-            bindCameraUseCases()
+                // Bind use cases
+                bindCameraUseCases()
+            }
         }
     }
 
@@ -178,12 +185,12 @@ class CameraFragment : Fragment() {
     private fun bindCameraUseCases() {
 
         // Get screen metrics used to setup camera for full screen resolution
-        val metrics = DisplayMetrics().also { previewView.display.getRealMetrics(it) }
+        val metrics = DisplayMetrics().also { camera_preview.display.getRealMetrics(it) }
         Timber.d("Screen metrics: ${metrics.widthPixels} x ${metrics.heightPixels}")
         val screenAspectRatio = aspectRatio(metrics.widthPixels, metrics.heightPixels)
         Timber.d("Preview aspect ratio: $screenAspectRatio")
 
-        val rotation = previewView.display.rotation
+        val rotation = camera_preview.display.rotation
 
         // Bind the cameraProvider to the LifeCycleOwner
         val cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
@@ -196,11 +203,11 @@ class CameraFragment : Fragment() {
             // Preview
             preview = Preview.Builder()
                 .setTargetName("Preview")
-                .setTargetAspectRatio(screenAspectRatio)
+                .setTargetResolution(Size(480, 640))
                 .setTargetRotation(rotation)
                 .build()
 
-            preview?.setSurfaceProvider(previewView.surfaceProvider)
+            preview?.setSurfaceProvider(camera_preview.surfaceProvider)
 
             barcodeAnalyzer = BarcodeAnalyzer(requireContext())
             barcodeAnalyzer.reset()
@@ -208,7 +215,7 @@ class CameraFragment : Fragment() {
             // ImageAnalysis
             analysis = ImageAnalysis.Builder()
                 .setTargetName("Analysis")
-                .setTargetAspectRatio(screenAspectRatio)
+                .setTargetResolution(Size(480, 640))
                 .setTargetRotation(rotation)
                 .setImageQueueDepth(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build()
@@ -263,9 +270,9 @@ class CameraFragment : Fragment() {
         View.inflate(requireContext(), R.layout.preview_overlay, container)
 
         if (isDiagnosticMode()) {
-            capture_button.visibility = View.VISIBLE
+            capture_button.visibility = VISIBLE
         } else {
-            capture_button.visibility = View.GONE
+            capture_button.visibility = GONE
         }
 
         capture_button.setOnClickListener {
@@ -275,7 +282,7 @@ class CameraFragment : Fragment() {
         card_overlay.animate()
             .setStartDelay(100)
             .alpha(0.0f)
-            .setDuration(20000)
+            .setDuration(4000)
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
                     if (card_overlay != null) {

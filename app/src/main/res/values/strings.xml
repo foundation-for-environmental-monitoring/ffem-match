@@ -4,7 +4,7 @@
     <string name="legal_info">Legal Information</string>
 
     <string name="testing">Testing</string>
-    <string name="place_color_card">Place the color card within the view finder above</string>
+    <string name="align_color_card">Align the color card within the view finder above</string>
     <string name="version">Version</string>
     <string name="about">About</string>
     <string name="settings">Settings</string>
@@ -103,4 +103,6 @@
     <string name="grayscale_result">Grayscale result</string>
     <string name="grayscale_extracts">Grayscale Extracts</string>
     <string name="result_image">Result image</string>
+    <string name="take_photo">Take photo</string>
+    <string name="start">Start</string>
 </resources>
