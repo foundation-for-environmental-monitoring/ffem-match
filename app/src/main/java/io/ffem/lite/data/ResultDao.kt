@@ -26,9 +26,10 @@ interface ResultDao {
     @Query("DELETE FROM Calibration")
     fun deleteCalibration()
 
-    @Query("UPDATE TestResult SET name = :name, value = :result, valueGrayscale = :resultGrayscale, marginOfError = :marginOfError, error = :error WHERE id = :id")
+    @Query("UPDATE TestResult SET uuid = :uuid, name = :name, value = :result, valueGrayscale = :resultGrayscale, marginOfError = :marginOfError, error = :error WHERE id = :id")
     fun updateResult(
         id: String,
+        uuid: String,
         name: String,
         result: Double,
         resultGrayscale: Double,

@@ -599,6 +599,7 @@ object ColorUtil {
             } else {
                 db.resultDao().updateResult(
                     testInfo.fileName,
+                    testInfo.uuid!!,
                     testInfo.name!!,
                     testInfo.getResult(),
                     testInfo.resultInfoGrayscale.result,

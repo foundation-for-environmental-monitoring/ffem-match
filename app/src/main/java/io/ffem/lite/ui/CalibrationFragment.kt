@@ -60,30 +60,30 @@ class CalibrationFragment : Fragment() {
 
         toolbar.visibility = VISIBLE
         toolbar.setTitle(R.string.confirm_calibration)
-        requireActivity().title = getString(R.string.confirm)
 
         val calibrationValue =
             CalibrationFragmentArgs.fromBundle(requireArguments()).calibrationValue.value
         button_submit.setOnClickListener {
-            val result = testInfo.resultInfo
-            for (s in result.swatches!!) {
-                if (s.value == calibrationValue) {
-                    result.calibratedColor = s.color
-                    break
+            if (testInfo.error == ErrorType.NO_ERROR) {
+                val result = testInfo.resultInfo
+                for (s in result.swatches!!) {
+                    if (s.value == calibrationValue) {
+                        result.calibratedColor = s.color
+                        break
+                    }
                 }
-            }
 
-            val db = AppDatabase.getDatabase(requireContext())
-            db.resultDao().insertCalibration(
-                Calibration(
-                    testInfo.uuid!!,
-                    calibrationValue,
-                    Color.red(result.calibratedColor) - Color.red(result.sampleColor),
-                    Color.green(result.calibratedColor) - Color.green(result.sampleColor),
-                    Color.blue(result.calibratedColor) - Color.blue(result.sampleColor)
+                val db = AppDatabase.getDatabase(requireContext())
+                db.resultDao().insertCalibration(
+                    Calibration(
+                        testInfo.uuid!!,
+                        calibrationValue,
+                        Color.red(result.calibratedColor) - Color.red(result.sampleColor),
+                        Color.green(result.calibratedColor) - Color.green(result.sampleColor),
+                        Color.blue(result.calibratedColor) - Color.blue(result.sampleColor)
+                    )
                 )
-            )
-
+            }
             requireActivity().finish()
         }
     }

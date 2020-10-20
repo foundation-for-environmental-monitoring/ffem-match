@@ -83,12 +83,21 @@ class BarcodeActivity : BaseActivity(), CalibrationItemFragment.OnCalibrationSel
                     ).currentDestination?.id == R.id.camera_fragment
                 ) {
                     if (AppPreferences.isCalibration()) {
-                        findNavController(this@BarcodeActivity, R.id.fragment_container)
-                            .navigate(
-                                CameraFragmentDirections.actionCameraFragmentToCalibrationItemFragment(
-                                    testInfo!!
+                        if (testInfo!!.error == ErrorType.NO_ERROR) {
+                            findNavController(this@BarcodeActivity, R.id.fragment_container)
+                                .navigate(
+                                    CameraFragmentDirections.actionCameraFragmentToCalibrationItemFragment(
+                                        testInfo!!
+                                    )
                                 )
-                            )
+                        } else {
+                            findNavController(this@BarcodeActivity, R.id.fragment_container)
+                                .navigate(
+                                    CameraFragmentDirections.actionCameraFragmentToCalibrationFragment(
+                                        testInfo!!, CalibrationValue()
+                                    )
+                                )
+                        }
                     } else {
                         findNavController(this@BarcodeActivity, R.id.fragment_container)
                             .navigate(
@@ -165,7 +174,7 @@ class BarcodeActivity : BaseActivity(), CalibrationItemFragment.OnCalibrationSel
             deleteExcessData(db)
         }
 
-        analyzeImage(testInfo.fileName, testInfo.name!!)
+        analyzeImage(testInfo)
     }
 
     private fun deleteExcessData(db: AppDatabase) {
@@ -186,7 +195,10 @@ class BarcodeActivity : BaseActivity(), CalibrationItemFragment.OnCalibrationSel
         }
     }
 
-    private fun analyzeImage(fileId: String, name: String) {
+    private fun analyzeImage(testInfo: TestInfo?) {
+        val fileId = testInfo?.fileName!!
+        val name = testInfo.name!!
+
         val path = getExternalFilesDir(DIRECTORY_PICTURES).toString() +
                 separator + "captures" + separator
 
@@ -243,8 +255,8 @@ class BarcodeActivity : BaseActivity(), CalibrationItemFragment.OnCalibrationSel
         if (getSampleTestImageNumberInt() > -1) {
             val toast: Toast = Toast.makeText(this, R.string.dummy_image_message, Toast.LENGTH_LONG)
             toast.setGravity(Gravity.CENTER, 0, -200)
-            (toast.view.findViewById<View>(android.R.id.message) as TextView).setTextColor(Color.WHITE)
-            toast.view.background.setColorFilter(Color.RED, PorterDuff.Mode.SRC_IN)
+            (toast.view?.findViewById<View>(android.R.id.message) as TextView).setTextColor(Color.WHITE)
+            toast.view?.background?.setColorFilter(Color.RED, PorterDuff.Mode.SRC_IN)
             toast.show()
         }
     }

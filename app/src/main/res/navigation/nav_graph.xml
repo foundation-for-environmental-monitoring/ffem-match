@@ -33,6 +33,9 @@
         <action
             android:id="@+id/action_camera_fragment_to_permissions_fragment"
             app:destination="@id/permissions_fragment" />
+        <action
+            android:id="@+id/action_camera_fragment_to_calibrationFragment"
+            app:destination="@id/calibrationFragment" />
     </fragment>
 
     <fragment

@@ -103,6 +103,7 @@ class ResultFragment : Fragment() {
             lyt_color_extracts_gs.visibility = GONE
         }
 
+        val requestedTestId = PreferencesUtil.getString(context, App.TEST_ID_KEY, "")
         if (testInfo.error == ErrorType.NO_ERROR && testInfo.resultInfo.result >= 0) {
             text_name.text = testInfo.name!!.toLocalString()
             text_name2.text = ""
@@ -135,10 +136,12 @@ class ResultFragment : Fragment() {
             lyt_error_message.visibility = GONE
             lyt_result.visibility = VISIBLE
             lyt_result_details.visibility = VISIBLE
-            button_submit.setText(R.string.submit_result)
-
+            if (requestedTestId.isNullOrEmpty()) {
+                button_submit.setText(R.string.close)
+            } else {
+                button_submit.setText(R.string.submit_result)
+            }
         } else {
-            val requestedTestId = PreferencesUtil.getString(context, App.TEST_ID_KEY, "")
             text_name.text = ""
             if (testInfo.uuid != requestedTestId) {
                 val requestedTest = getTestInfo(requestedTestId!!)

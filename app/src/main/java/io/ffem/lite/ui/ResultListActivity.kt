@@ -15,7 +15,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment.DIRECTORY_PICTURES
-import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -50,6 +49,9 @@ import io.ffem.lite.util.ColorUtil
 import io.ffem.lite.util.FileUtil
 import io.ffem.lite.util.PreferencesUtil
 import kotlinx.android.synthetic.main.activity_result_list.*
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.File
 import java.util.*
@@ -102,6 +104,7 @@ class ResultListActivity : AppUpdateActivity() {
             if (testInfo != null) {
                 db.resultDao().updateResult(
                     testInfo.fileName,
+                    testInfo.uuid!!,
                     testInfo.name!!,
                     testInfo.getResult(),
                     testInfo.resultInfoGrayscale.result,
@@ -115,23 +118,23 @@ class ResultListActivity : AppUpdateActivity() {
     }
 
     private fun onResultClick(position: Int) {
-        Handler().postDelayed(
-            {
-                val item = adapter.getItemAt(position)
-                val intent = Intent(baseContext, ImageViewActivity::class.java)
+        MainScope().launch {
+            delay(300)
 
-                val result = db.resultDao().getResult(item.id)!!
-                val testInfo = App.getTestInfo(item.uuid)
-                testInfo!!.error = item.error
-                testInfo.fileName = item.id
-                testInfo.resultInfo = ResultInfo(result.value)
-                testInfo.resultInfoGrayscale = ResultInfo(result.valueGrayscale)
-                testInfo.setMarginOfError(result.marginOfError)
+            val item = adapter.getItemAt(position)
+            val intent = Intent(baseContext, ImageViewActivity::class.java)
 
-                intent.putExtra(TEST_INFO_KEY, testInfo)
-                startActivity(intent)
-            }, 350
-        )
+            val result = db.resultDao().getResult(item.id)!!
+            val testInfo = App.getTestInfo(item.uuid)
+            testInfo!!.error = item.error
+            testInfo.fileName = item.id
+            testInfo.resultInfo = ResultInfo(result.value)
+            testInfo.resultInfoGrayscale = ResultInfo(result.valueGrayscale)
+            testInfo.setMarginOfError(result.marginOfError)
+
+            intent.putExtra(TEST_INFO_KEY, testInfo)
+            startActivity(intent)
+        }
     }
 
     private var adapter: ResultAdapter = ResultAdapter(clickListener = {
