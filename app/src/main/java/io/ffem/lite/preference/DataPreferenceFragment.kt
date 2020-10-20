@@ -3,12 +3,12 @@ package io.ffem.lite.preference
 import android.os.Bundle
 import android.os.Environment
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.ffem.lite.R
 import io.ffem.lite.data.AppDatabase
+import io.ffem.lite.util.toast
 import java.io.File
 
 
@@ -43,10 +43,7 @@ class DataPreferenceFragment : PreferenceFragmentCompat() {
                         db.close()
                     }
 
-                    Toast.makeText(
-                        requireContext(),
-                        getString(R.string.data_deleted), Toast.LENGTH_SHORT
-                    ).show()
+                    requireContext().toast(getString(R.string.data_deleted))
                 }
 
                 builder.setNegativeButton(android.R.string.cancel) { _, _ ->

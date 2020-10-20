@@ -51,6 +51,10 @@ class CalibrationItemFragment : Fragment() {
                 )
             )
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
         requireActivity().title = getString(R.string.select_calibration_point)
     }
 

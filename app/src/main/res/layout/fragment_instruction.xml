@@ -80,7 +80,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="When ready point the phone camera at it."
+            android:text="When ready, point the phone camera at it."
             android:textColor="#ddd"
             android:textSize="15sp" />
     </TableRow>

@@ -1,18 +1,14 @@
 package io.ffem.lite.ui
 
 import android.Manifest
-import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Environment.DIRECTORY_PICTURES
 import android.view.Menu
@@ -22,18 +18,16 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.TextView
 import android.widget.Toast
-import androidx.annotation.IntRange
-import androidx.core.app.ActivityCompat
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.databinding.BindingAdapter
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.DividerItemDecoration
-import com.google.android.material.snackbar.Snackbar
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.app.App.Companion.IS_CALIBRATION
 import io.ffem.lite.app.App.Companion.LOCAL_RESULT_EVENT
-import io.ffem.lite.app.App.Companion.PERMISSIONS_MISSING_KEY
 import io.ffem.lite.app.App.Companion.TEST_INFO_KEY
 import io.ffem.lite.app.App.Companion.getVersionName
 import io.ffem.lite.data.AppDatabase
@@ -45,9 +39,7 @@ import io.ffem.lite.model.toLocalString
 import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.preference.SettingsActivity
 import io.ffem.lite.preference.useDummyImage
-import io.ffem.lite.util.ColorUtil
-import io.ffem.lite.util.FileUtil
-import io.ffem.lite.util.PreferencesUtil
+import io.ffem.lite.util.*
 import kotlinx.android.synthetic.main.activity_result_list.*
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
@@ -55,11 +47,6 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.File
 import java.util.*
-
-const val READ_REQUEST_CODE = 102
-const val PERMISSION_REQUEST = 103
-
-const val SNACK_BAR_LINE_SPACING = 1.4f
 
 @BindingAdapter("android:resultSize")
 fun TextView.bindTextSize(result: Double) {
@@ -87,8 +74,6 @@ class ResultListActivity : AppUpdateActivity() {
 
     private lateinit var db: AppDatabase
     private var appIsClosing: Boolean = false
-    private lateinit var toastLong: Toast
-    private lateinit var toastShort: Toast
     private lateinit var broadcastManager: LocalBroadcastManager
 
     private val broadcastReceiver = object : BroadcastReceiver() {
@@ -113,10 +98,27 @@ class ResultListActivity : AppUpdateActivity() {
                     testInfo.error.ordinal
                 )
             }
-
             refreshList()
         }
     }
+
+    private val requestCameraPermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted: Boolean ->
+            when {
+                granted -> {
+                    val intent = Intent(baseContext, BarcodeActivity::class.java)
+                    startTest.launch(intent)
+                }
+                shouldShowRequestPermissionRationale(Manifest.permission.CAMERA) -> {
+                    findViewById<CoordinatorLayout>(R.id.coordinator_lyt)
+                        ?.snackBar(getString(R.string.camera_permission))
+                }
+                else -> {
+                    findViewById<CoordinatorLayout>(R.id.coordinator_lyt)
+                        ?.snackBar(getString(R.string.camera_permission))
+                }
+            }
+        }
 
     private fun onResultClick(position: Int) {
         MainScope().launch {
@@ -149,20 +151,6 @@ class ResultListActivity : AppUpdateActivity() {
         title = getString(R.string.app_name) + " - " + getVersionName()
 
         broadcastManager = LocalBroadcastManager.getInstance(this)
-
-        @SuppressLint("ShowToast")
-        toastLong = Toast.makeText(
-            applicationContext,
-            "",
-            Toast.LENGTH_LONG
-        )
-
-        @SuppressLint("ShowToast")
-        toastShort = Toast.makeText(
-            applicationContext,
-            "",
-            Toast.LENGTH_SHORT
-        )
 
         if (BuildConfig.BUILD_TYPE == "release" && isNonStoreVersion(this)) {
             val appExpiryDate = GregorianCalendar.getInstance()
@@ -264,95 +252,10 @@ class ResultListActivity : AppUpdateActivity() {
     fun onStartClick(@Suppress("UNUSED_PARAMETER") view: View) {
         PreferencesUtil.setBoolean(this, IS_CALIBRATION, false)
         if (useDummyImage()) {
-            val permissions = arrayOf(
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            )
-
-            if (!isHasPermission(*permissions))
-                askPermission(permissions = permissions, requestCode = PERMISSION_REQUEST)
-            else
-                performFileSearch()
-
+            performFileSearch()
         } else {
-            // Start camera preview
-            val intent = Intent(baseContext, BarcodeActivity::class.java)
-            startActivityForResult(intent, 100)
+            requestCameraPermission.launch(Manifest.permission.CAMERA)
         }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        broadcastManager.unregisterReceiver(broadcastReceiver)
-        broadcastManager.registerReceiver(
-            broadcastReceiver,
-            IntentFilter(LOCAL_RESULT_EVENT)
-        )
-
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == READ_REQUEST_CODE) {
-                data?.data?.also { uri ->
-
-                    val fileUrl = FileUtil.getPath(this, uri)
-                    if (fileUrl != null) {
-                        val filePath = File(fileUrl)
-                        if (filePath.exists()) {
-                            val bitmapFromFile =
-                                BitmapFactory.decodeFile(filePath.absolutePath)
-
-                            var imageNumber = uri.pathSegments[uri.pathSegments.size - 1]
-                                .substringAfterLast("_", "")
-                                .substringBeforeLast(".")
-
-                            try {
-                                imageNumber = imageNumber.toInt().toString()
-                            } catch (ignored: Exception) {
-                            }
-
-                            PreferencesUtil.setString(
-                                this,
-                                R.string.testImageNumberKey,
-                                imageNumber
-                            )
-
-                            try {
-                                if (bitmapFromFile != null) {
-                                    ColorUtil.extractImage(this, bitmapFromFile)
-                                } else {
-                                    Toast.makeText(
-                                        baseContext, getString(R.string.invalid_image),
-                                        Toast.LENGTH_LONG
-                                    ).show()
-                                }
-                            } catch (e: Exception) {
-                                Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
-                            }
-                        }
-                    }
-                }
-            }
-        } else {
-            if (data != null) {
-                if (data.getBooleanExtra(PERMISSIONS_MISSING_KEY, false)) {
-                    showSnackbar(getString(R.string.camera_permission))
-                }
-            }
-        }
-
-        refreshList()
-    }
-
-    private fun showSnackbar(message: String) {
-        val rootView = window.decorView.rootView
-        val snackbar = Snackbar
-            .make(rootView, message.trim { it <= ' ' }, Snackbar.LENGTH_LONG)
-            .setAction("SETTINGS") { App.openAppPermissionSettings(this) }
-        val snackbarView = snackbar.view
-        val textView = snackbarView.findViewById<TextView>(R.id.snackbar_text)
-        textView.setTextColor(Color.WHITE)
-        textView.setLineSpacing(0f, SNACK_BAR_LINE_SPACING)
-        snackbar.setActionTextColor(Color.YELLOW)
-        snackbar.show()
     }
 
     private fun refreshList() {
@@ -367,7 +270,7 @@ class ResultListActivity : AppUpdateActivity() {
 
     fun onSettingsClick(@Suppress("UNUSED_PARAMETER") item: MenuItem) {
         val intent = Intent(baseContext, SettingsActivity::class.java)
-        startActivityForResult(intent, 102)
+        startSettings.launch(intent)
     }
 
     private fun performFileSearch() {
@@ -375,46 +278,64 @@ class ResultListActivity : AppUpdateActivity() {
             addCategory(Intent.CATEGORY_OPENABLE)
             type = "image/jpeg"
         }
-        startActivityForResult(intent, READ_REQUEST_CODE)
+        startFileExplorer.launch(intent)
     }
 
-    private fun Activity.isHasPermission(vararg permissions: String): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            permissions.all { singlePermission ->
-                applicationContext.checkSelfPermission(singlePermission) ==
-                        PackageManager.PERMISSION_GRANTED
-            }
-        else true
-    }
-
-    private fun Activity.askPermission(
-        vararg permissions: String,
-        @IntRange(from = 0) requestCode: Int
-    ) =
-        ActivityCompat.requestPermissions(this, permissions, requestCode)
-
-    private fun permissionsGranted(grantResults: IntArray): Boolean {
-        for (element in grantResults) {
-            if (element != PackageManager.PERMISSION_GRANTED) {
-                return false
-            }
+    private val startTest =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            reset()
         }
-        return true
+
+    private val startSettings =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            reset()
+        }
+
+    private fun reset() {
+        broadcastManager.unregisterReceiver(broadcastReceiver)
+        broadcastManager.registerReceiver(
+            broadcastReceiver,
+            IntentFilter(LOCAL_RESULT_EVENT)
+        )
+        refreshList()
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        when (requestCode) {
-            PERMISSION_REQUEST -> {
-                if (permissionsGranted(grantResults)) {
-                    performFileSearch()
-                } else {
-                    showSnackbar(getString(R.string.storage_permission))
+    private val startFileExplorer =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            it.data?.data?.also { uri ->
+                val fileUrl = FileUtil.getPath(this, uri)
+                if (fileUrl != null) {
+                    val filePath = File(fileUrl)
+                    if (filePath.exists()) {
+                        val bitmapFromFile =
+                            BitmapFactory.decodeFile(filePath.absolutePath)
+
+                        var imageNumber = uri.pathSegments[uri.pathSegments.size - 1]
+                            .substringAfterLast("_", "")
+                            .substringBeforeLast(".")
+
+                        try {
+                            imageNumber = imageNumber.toInt().toString()
+                        } catch (ignored: Exception) {
+                        }
+
+                        PreferencesUtil.setString(
+                            this,
+                            R.string.testImageNumberKey,
+                            imageNumber
+                        )
+
+                        try {
+                            if (bitmapFromFile != null) {
+                                ColorUtil.extractImage(this, bitmapFromFile)
+                            } else {
+                                toast(getString(R.string.diagnosticModeDisabled), Toast.LENGTH_LONG)
+                            }
+                        } catch (e: Exception) {
+                            e.message?.let { it1 -> toast(it1, Toast.LENGTH_LONG) }
+                        }
+                    }
                 }
-                return
             }
         }
-    }
 }

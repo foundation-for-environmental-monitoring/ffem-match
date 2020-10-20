@@ -3,11 +3,11 @@ package io.ffem.lite.ui
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.preference.isDiagnosticMode
+import io.ffem.lite.util.toast
 import kotlinx.android.synthetic.main.activity_about.*
 
 /**
@@ -40,10 +40,7 @@ class AboutActivity : BaseActivity() {
      * Disables diagnostic mode.
      */
     fun disableDiagnosticsMode(@Suppress("UNUSED_PARAMETER") view: View) {
-        Toast.makeText(
-            baseContext, getString(R.string.diagnosticModeDisabled),
-            Toast.LENGTH_SHORT
-        ).show()
+        toast(getString(R.string.diagnosticModeDisabled))
 
         AppPreferences.disableDiagnosticMode()
 
@@ -63,11 +60,8 @@ class AboutActivity : BaseActivity() {
 
             if (clickCount >= CHANGE_MODE_MIN_CLICKS) {
                 clickCount = 0
-                Toast.makeText(
-                    baseContext, getString(
-                        R.string.diagnosticModeEnabled
-                    ), Toast.LENGTH_SHORT
-                ).show()
+                toast(getString(R.string.diagnosticModeEnabled))
+
                 AppPreferences.enableDiagnosticMode()
 
                 changeActionBarStyleBasedOnCurrentMode()

@@ -5,9 +5,9 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.widget.Toast
 import io.ffem.lite.R
 import io.ffem.lite.ui.BaseActivity
+import io.ffem.lite.util.toast
 import kotlinx.android.synthetic.main.activity_settings.*
 import kotlinx.android.synthetic.main.app_bar_layout.*
 
@@ -86,10 +86,7 @@ class SettingsActivity : BaseActivity() {
     }
 
     fun onDisableDiagnostics(@Suppress("UNUSED_PARAMETER") item: MenuItem) {
-        Toast.makeText(
-            baseContext, getString(R.string.diagnosticModeDisabled),
-            Toast.LENGTH_SHORT
-        ).show()
+        toast(getString(R.string.diagnosticModeDisabled))
 
         AppPreferences.disableDiagnosticMode()
 

@@ -62,6 +62,11 @@ class ResultFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
     }
 
+    override fun onResume() {
+        super.onResume()
+        requireActivity().setTitle(R.string.result)
+    }
+
     private fun displayResult(testInfo: TestInfo?) {
         if (testInfo == null) {
             return

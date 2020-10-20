@@ -29,10 +29,7 @@ import io.ffem.lite.ui.ResultListActivity
 import io.ffem.lite.util.PreferencesUtil
 import io.ffem.lite.util.toLocalString
 import org.hamcrest.Matchers.allOf
-import org.junit.AfterClass
-import org.junit.BeforeClass
-import org.junit.Rule
-import org.junit.Test
+import org.junit.*
 import org.junit.runner.RunWith
 import java.io.File
 
@@ -50,6 +47,15 @@ class CalibrationTest {
         GrantPermissionRule.grant(
             "android.permission.CAMERA"
         )
+
+    @Before
+    fun setUp() {
+        if (!initialized) {
+            TestHelper.clearPreferences()
+            clearData()
+            initialized = true
+        }
+    }
 
     @Test
     fun image_024_Fluoride_0_Point_5() {
@@ -80,6 +86,8 @@ class CalibrationTest {
         onView(withText(R.string.start)).perform(click())
 
         SystemClock.sleep(TIME_DELAY)
+
+        onView(withText(R.string.accept)).perform(click())
 
         onView(withText(testData.testDetails.name.toLocalString())).check(matches(isDisplayed()))
 
@@ -136,6 +144,8 @@ class CalibrationTest {
 
         sleep(TIME_DELAY / 2)
 
+        onView(withText(R.string.accept)).perform(click())
+
         onView(withText(testData.testDetails.name.toLocalString())).check(matches(isDisplayed()))
 
         takeScreenshot(screenshotName)
@@ -162,6 +172,8 @@ class CalibrationTest {
         onView(withText(R.string.start)).perform(click())
 
         SystemClock.sleep(TIME_DELAY)
+
+        onView(withText(R.string.accept)).perform(click())
 
         onView(withText(testData.testDetails.name.toLocalString())).check(matches(isDisplayed()))
 
@@ -209,26 +221,9 @@ class CalibrationTest {
 
         SystemClock.sleep(TIME_DELAY)
 
-        onView(withText(testData.testDetails.name.toLocalString())).check(matches(isDisplayed()))
+        onView(withText(R.string.accept)).perform(click())
 
-//        val resultTextView = onView(withId(R.id.text_result))
-//        resultTextView.check(matches(TestUtil.checkResult(testData.expectedResult)))
-//
-//        onView(allOf(withId(R.id.text_unit), withText("mg/l")))
-//            .check(matches(isDisplayed()))
-//
-//        val marginOfErrorView = onView(withId(R.id.text_error_margin))
-//        marginOfErrorView.check(matches(TestUtil.checkResult(testData.expectedMarginOfError)))
-//
-//        onView(
-//            withText(
-//                testData.risk.toResourceId(
-//                    ApplicationProvider.getApplicationContext(), testData.testDetails.riskType
-//                )
-//            )
-//        ).check(
-//            matches(isDisplayed())
-//        )
+        onView(withText(testData.testDetails.name.toLocalString())).check(matches(isDisplayed()))
 
         onView(withText(R.string.close)).perform(click())
 
@@ -264,6 +259,8 @@ class CalibrationTest {
 
         sleep(TIME_DELAY / 2)
 
+        onView(withText(R.string.accept)).perform(click())
+
         onView(withText(testData.testDetails.name.toLocalString())).check(matches(isDisplayed()))
 
         takeScreenshot(screenshotName)
@@ -287,26 +284,9 @@ class CalibrationTest {
 
         SystemClock.sleep(TIME_DELAY)
 
-        onView(withText(testData.testDetails.name.toLocalString())).check(matches(isDisplayed()))
+        onView(withText(R.string.accept)).perform(click())
 
-//        val resultTextView2 = onView(withId(R.id.text_result))
-//        resultTextView2.check(matches(TestUtil.checkResult(testData.expectedResult)))
-//
-//        onView(allOf(withId(R.id.text_unit), withText("mg/l")))
-//            .check(matches(isDisplayed()))
-//
-//        val marginOfErrorView2 = onView(withId(R.id.text_error_margin))
-//        marginOfErrorView2.check(matches(TestUtil.checkResult(testData.expectedMarginOfError)))
-//
-//        onView(
-//            withText(
-//                testData.risk.toResourceId(
-//                    ApplicationProvider.getApplicationContext(), testData.testDetails.riskType
-//                )
-//            )
-//        ).check(
-//            matches(isDisplayed())
-//        )
+        onView(withText(testData.testDetails.name.toLocalString())).check(matches(isDisplayed()))
 
         onView(withText(R.string.close)).perform(click())
 
@@ -314,6 +294,9 @@ class CalibrationTest {
     }
 
     companion object {
+
+        @JvmStatic
+        var initialized = false
 
         @JvmStatic
         @AfterClass

@@ -25,7 +25,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import androidx.viewpager2.widget.ViewPager2
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.app.App
@@ -40,6 +39,7 @@ import io.ffem.lite.data.TestResult
 import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.TestInfo
 import io.ffem.lite.preference.AppPreferences
+import io.ffem.lite.preference.AppPreferences.isCalibration
 import io.ffem.lite.preference.getSampleTestImageNumber
 import io.ffem.lite.preference.getSampleTestImageNumberInt
 import io.ffem.lite.preference.isTestRunning
@@ -63,10 +63,6 @@ class BarcodeActivity : BaseActivity(),
     ImageConfirmFragment.OnConfirmImageListener {
 
     private lateinit var db: AppDatabase
-
-    companion object {
-        lateinit var cameraFragment: CameraFragment
-    }
 
     private lateinit var broadcastManager: LocalBroadcastManager
     private var testInfo: TestInfo? = null
@@ -129,18 +125,6 @@ class BarcodeActivity : BaseActivity(),
             TestInfoViewModel::class.java
         )
 
-        view_pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageScrollStateChanged(state: Int) {
-                super.onPageScrollStateChanged(state)
-
-                if (state == ViewPager2.SCROLL_STATE_IDLE) {
-                    if (view_pager.currentItem == 1) {
-                        cameraFragment.startCamera()
-                    }
-                }
-            }
-        })
-
         view_pager.isUserInputEnabled = false
         val testPagerAdapter = TestPagerAdapter(this)
         view_pager.adapter = testPagerAdapter
@@ -168,7 +152,7 @@ class BarcodeActivity : BaseActivity(),
     private fun saveImageData(data: Intent) {
         val testInfo = data.getParcelableExtra<TestInfo>(TEST_INFO_KEY) ?: return
 
-        if (!AppPreferences.isCalibration()) {
+        if (!isCalibration()) {
             db.resultDao().insert(
                 TestResult(
                     testInfo.fileName, testInfo.uuid!!, 0, testInfo.name!!, Date().time,
@@ -290,7 +274,7 @@ class BarcodeActivity : BaseActivity(),
         var testInfo: TestInfo? = null
 
         override fun getItemCount(): Int {
-            return if (AppPreferences.isCalibration()) {
+            return if (isCalibration()) {
                 5
             } else {
                 4
@@ -303,21 +287,20 @@ class BarcodeActivity : BaseActivity(),
                     InstructionFragment()
                 }
                 1 -> {
-                    cameraFragment = CameraFragment()
-                    cameraFragment
+                    CameraFragment()
                 }
                 2 -> {
                     ImageConfirmFragment()
                 }
                 3 -> {
-                    if (AppPreferences.isCalibration()) {
+                    if (isCalibration()) {
                         CalibrationItemFragment()
                     } else {
                         ResultFragment()
                     }
                 }
                 else -> {
-                    if (AppPreferences.isCalibration()) {
+                    if (isCalibration()) {
                         CalibrationFragment()
                     } else {
                         ResultFragment()
@@ -333,9 +316,18 @@ class BarcodeActivity : BaseActivity(),
 
     override fun onConfirmImage(action: Int) {
         if (action == RESULT_OK) {
-            view_pager.currentItem = 3
+            if (isCalibration()) {
+                if (model.test.get()?.error == ErrorType.NO_ERROR) {
+                    view_pager.currentItem = 3
+                } else {
+                    view_pager.currentItem = 4
+                }
+            } else {
+                view_pager.currentItem = 3
+            }
         } else {
-            pageBack()
+            val testPagerAdapter = TestPagerAdapter(this)
+            view_pager.adapter = testPagerAdapter
         }
     }
 }

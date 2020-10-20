@@ -39,14 +39,16 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.navigation.Navigation
 import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.preference.manualCaptureOnly
 import io.ffem.lite.preference.useFlashMode
 import kotlinx.android.synthetic.main.fragment_camera.*
 import kotlinx.android.synthetic.main.preview_overlay.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.concurrent.Executor
 import kotlin.math.abs
@@ -115,13 +117,12 @@ class CameraFragment : Fragment() {
      */
     override fun onResume() {
         super.onResume()
-        if (!PermissionsFragment.hasPermissions(requireContext())) {
-            Navigation.findNavController(requireActivity(), R.id.fragment_container)
-                .navigate(
-                    CameraFragmentDirections.actionCameraFragmentToPermissionsFragment()
-                )
-        }
         broadcastManager.registerReceiver(broadcastReceiver, IntentFilter(App.ERROR_EVENT))
+
+        lifecycleScope.launch {
+            delay(300)
+            startCamera()
+        }
     }
 
     override fun onPause() {
@@ -261,12 +262,12 @@ class CameraFragment : Fragment() {
         View.inflate(requireContext(), R.layout.preview_overlay, container)
 
         if (manualCaptureOnly()) {
-            capture_button.visibility = VISIBLE
+            take_photo_btn.visibility = VISIBLE
         } else {
-            capture_button.visibility = GONE
+            take_photo_btn.visibility = GONE
         }
 
-        capture_button.setOnClickListener {
+        take_photo_btn.setOnClickListener {
             barcodeAnalyzer.takePhoto()
         }
 

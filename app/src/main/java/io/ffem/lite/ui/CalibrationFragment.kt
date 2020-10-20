@@ -23,6 +23,7 @@ import io.ffem.lite.model.toLocalString
 import io.ffem.lite.preference.isDiagnosticMode
 import io.ffem.lite.util.PreferencesUtil
 import io.ffem.lite.util.toLocalString
+import io.ffem.lite.util.toast
 import kotlinx.android.synthetic.main.app_bar_layout.*
 import kotlinx.android.synthetic.main.fragment_calibration_result.*
 import java.io.File
@@ -83,6 +84,7 @@ class CalibrationFragment : Fragment() {
                             Color.blue(result.calibratedColor) - Color.blue(result.sampleColor)
                         )
                     )
+                    requireContext().toast(model.test.get()!!.name + " calibrated successfully")
                 } finally {
                     db.close()
                 }

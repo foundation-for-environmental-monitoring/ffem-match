@@ -233,6 +233,8 @@ class SampleImageTest {
 
             SystemClock.sleep(TIME_DELAY)
 
+            onView(withText(R.string.accept)).perform(click())
+
             onView(withText(testData.testDetails.name.toLocalString())).check(matches(isDisplayed()))
 
             if (testData.expectedResultError > NO_ERROR) {

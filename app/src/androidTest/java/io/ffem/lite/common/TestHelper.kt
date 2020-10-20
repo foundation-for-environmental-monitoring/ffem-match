@@ -285,4 +285,8 @@ object TestHelper {
             Assert.fail()
         }
     }
+
+    fun sleep(duration: Long) {
+        SystemClock.sleep(duration)
+    }
 }

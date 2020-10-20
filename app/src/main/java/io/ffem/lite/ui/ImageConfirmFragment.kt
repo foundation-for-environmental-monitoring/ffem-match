@@ -16,7 +16,7 @@ class ImageConfirmFragment : Fragment() {
         fun onConfirmImage(action: Int)
     }
 
-    var listener: OnConfirmImageListener? = null
+    private var listener: OnConfirmImageListener? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)

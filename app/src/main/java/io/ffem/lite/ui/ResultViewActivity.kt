@@ -12,7 +12,7 @@ class ResultViewActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_image_view)
+        setContentView(R.layout.activity_result_view)
 
         model = ViewModelProvider(this).get(
             TestInfoViewModel::class.java
@@ -20,6 +20,11 @@ class ResultViewActivity : BaseActivity() {
 
         val testInfo = intent.getParcelableExtra<TestInfo>(App.TEST_INFO_KEY)!!
         model.setTest(testInfo)
+
+        supportFragmentManager
+            .beginTransaction()
+            .add(R.id.fragment_container, ResultFragment())
+            .commit()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

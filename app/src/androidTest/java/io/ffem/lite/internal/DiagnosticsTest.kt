@@ -14,6 +14,7 @@ import androidx.test.rule.GrantPermissionRule
 import io.ffem.lite.R
 import io.ffem.lite.common.TestHelper.enterDiagnosticMode
 import io.ffem.lite.common.TestHelper.leaveDiagnosticMode
+import io.ffem.lite.common.TestHelper.sleep
 import io.ffem.lite.common.TestUtil.childAtPosition
 import io.ffem.lite.common.residualChlorine
 import io.ffem.lite.preference.isDiagnosticMode
@@ -45,20 +46,20 @@ class DiagnosticsTest {
     fun deleteDataTest() {
         startDiagnosticMode()
 
-        Thread.sleep(400)
+        sleep(400)
 
         Espresso.pressBack()
 
-        Thread.sleep(400)
+        sleep(400)
 
         onView(withId(R.id.scrollViewSettings))
             .perform(swipeUp())
 
-        Thread.sleep(400)
+        sleep(400)
 
         onView(withText(R.string.delete_data)).perform(click())
 
-        Thread.sleep(400)
+        sleep(400)
 
         val appCompatButton2 = onView(
             allOf(
@@ -79,22 +80,22 @@ class DiagnosticsTest {
     fun testDiagnosticTest() {
         startDiagnosticMode()
 
-        Thread.sleep(400)
+        sleep(400)
 
         Espresso.pressBack()
 
-        Thread.sleep(400)
+        sleep(400)
 
         onView(withId(R.id.scrollViewSettings))
             .perform(swipeUp())
 
-        Thread.sleep(400)
+        sleep(400)
 
         pressBack()
 
         onView(withText("Test Image Number")).perform(click())
 
-        Thread.sleep(400)
+        sleep(400)
 
         onView(
             allOf(
@@ -153,6 +154,8 @@ class DiagnosticsTest {
         onView(withText(R.string.start)).perform(click())
 
         SystemClock.sleep(TIME_DELAY)
+
+        onView(withText(R.string.accept)).perform(click())
 
         val textView = onView(
             allOf(
@@ -250,14 +253,17 @@ class DiagnosticsTest {
     fun testManualCapture() {
         startDiagnosticMode()
 
-        Thread.sleep(400)
+        sleep(400)
 
         Espresso.pressBack()
 
-        Thread.sleep(400)
+        sleep(400)
 
-        onView(withId(R.id.scrollViewSettings))
-            .perform(swipeUp())
+        onView(withText(R.string.manual_photo_capture)).perform(click())
+
+        sleep(400)
+
+        onView(withId(R.id.scrollViewSettings)).perform(swipeUp())
 
         Thread.sleep(400)
 
@@ -265,7 +271,7 @@ class DiagnosticsTest {
 
         onView(withText("Test Image Number")).perform(click())
 
-        Thread.sleep(400)
+        sleep(400)
 
         onView(
             allOf(
@@ -323,11 +329,13 @@ class DiagnosticsTest {
 
         onView(withText(R.string.start)).perform(click())
 
-        SystemClock.sleep(TIME_DELAY / 4)
+        sleep(TIME_DELAY / 4)
 
         onView(withText(R.string.take_photo)).perform(click())
 
-        SystemClock.sleep(TIME_DELAY / 4)
+        sleep(TIME_DELAY / 4)
+
+        onView(withText(R.string.accept)).perform(click())
 
         val textView = onView(
             allOf(
@@ -406,7 +414,7 @@ class DiagnosticsTest {
 
 private fun startDiagnosticMode() {
     if (isDiagnosticMode()) {
-        Thread.sleep(400)
+        sleep(400)
 
         val actionMenuItemView = onView(
             allOf(
@@ -423,11 +431,11 @@ private fun startDiagnosticMode() {
         )
         actionMenuItemView.perform(click())
 
-        Thread.sleep(400)
+        sleep(400)
 
         onView(withText(R.string.about)).perform(click())
 
-        Thread.sleep(400)
+        sleep(400)
 
         leaveDiagnosticMode()
     } else {
@@ -447,10 +455,10 @@ private fun startDiagnosticMode() {
         actionMenuItemView.perform(click())
     }
 
-    Thread.sleep(500)
+    sleep(500)
 
     onView(withText(R.string.about)).perform(click())
-    Thread.sleep(500)
+    sleep(500)
 
     enterDiagnosticMode()
 }
