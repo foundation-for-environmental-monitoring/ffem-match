@@ -59,7 +59,8 @@
         android:onClick="onStartClick"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_add_black_24dp" />
+        app:srcCompat="@drawable/ic_add_black_24dp"
+        app:tint="@android:color/white" />
 
     <include layout="@layout/app_bar_layout" />
 

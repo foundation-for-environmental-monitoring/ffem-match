@@ -122,6 +122,7 @@
                 android:onClick="disableDiagnosticsMode"
                 android:src="@drawable/ic_revert_24dp"
                 app:backgroundTint="@color/diagnostic"
+                app:tint="@android:color/white"
                 tools:ignore="RelativeOverlap" />
         </RelativeLayout>
     </FrameLayout>
