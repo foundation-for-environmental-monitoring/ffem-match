@@ -28,7 +28,6 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
-import android.util.Size
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -203,7 +202,7 @@ class CameraFragment : Fragment() {
             // Preview
             preview = Preview.Builder()
                 .setTargetName("Preview")
-                .setTargetResolution(Size(480, 640))
+                .setTargetAspectRatio(screenAspectRatio)
                 .setTargetRotation(rotation)
                 .build()
 
@@ -215,7 +214,7 @@ class CameraFragment : Fragment() {
             // ImageAnalysis
             analysis = ImageAnalysis.Builder()
                 .setTargetName("Analysis")
-                .setTargetResolution(Size(480, 640))
+                .setTargetAspectRatio(screenAspectRatio)
                 .setTargetRotation(rotation)
                 .setImageQueueDepth(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build()

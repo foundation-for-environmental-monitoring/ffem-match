@@ -32,8 +32,6 @@ import io.ffem.lite.util.ColorUtil.fixBoundary
 import io.ffem.lite.util.ColorUtil.isBarcodeValid
 import io.ffem.lite.util.ColorUtil.isTilted
 import io.ffem.lite.util.ImageUtil.toBitmap
-import io.ffem.lite.util.getBitmapPixels
-import io.ffem.lite.util.isNotBright
 import java.util.*
 
 
@@ -46,6 +44,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         private var processing = false
         private var done: Boolean = false
         var autoFocusCounter = 0
+        var autoFocusCounter2 = 0
     }
 
     private lateinit var bitmap: Bitmap
@@ -113,19 +112,19 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
         var badLighting = false
 
-        var rect = Rect(100, 0, bitmap.width - 100, 10)
-        var pixels = getBitmapPixels(bitmap, rect)
-        if (isNotBright(pixels)) {
-            endProcessing(image, true)
-            return
-        }
+//        val rect = Rect(100, 0, bitmap.width - 100, 10)
+//        val pixels = getBitmapPixels(bitmap, rect)
+//        if (isNotBright(pixels)) {
+//            endProcessing(image, true)
+//            return
+//        }
 
-        rect = Rect(100, bitmap.height - 10, bitmap.width - 100, bitmap.height)
-        pixels = getBitmapPixels(bitmap, rect)
-        if (isNotBright(pixels)) {
-            endProcessing(image, true)
-            return
-        }
+//        rect = Rect(100, bitmap.height - 10, bitmap.width - 100, bitmap.height)
+//        pixels = getBitmapPixels(bitmap, rect)
+//        if (isNotBright(pixels)) {
+//            endProcessing(image, true)
+//            return
+//        }
 
         val barcodeHeight = ((bitmap.height / 2) - (.20 * bitmap.height / 2)).toInt()
 
@@ -149,7 +148,8 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                         endProcessing(image, true)
                         return
                     }
-                    for (rightBarcode in result) {
+                    if (result.isNotEmpty()) {
+                        val rightBarcode = result[0]
                         if (!rightBarcode.rawValue.isNullOrEmpty()) {
                             var testName = getTestName(result[0].displayValue!!)
                             if (testName.isEmpty()) {
@@ -158,7 +158,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                 return
                             }
 
-                            if (autoFocusCounter < 10) {
+                            if (autoFocusCounter < 6) {
                                 autoFocusCounter++
                                 endProcessing(image, false)
                                 return
@@ -206,8 +206,14 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                                     return
                                                 }
 
-                                                for (leftBarcode in result) {
+                                                if (autoFocusCounter2 < 3) {
+                                                    autoFocusCounter2++
+                                                    endProcessing(image, false)
+                                                    return
+                                                }
 
+                                                if (result.isNotEmpty()) {
+                                                    val leftBarcode = result[0]
                                                     val leftBoundingBox =
                                                         fixBoundary(
                                                             leftBarcode,
@@ -221,17 +227,14 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                                         return
                                                     }
 
-                                                    if (isTilted(
-                                                            rightBoundingBox, leftBoundingBox
-                                                        )
+                                                    if (isTilted(rightBoundingBox, leftBoundingBox)
                                                     ) {
                                                         sendMessage(context.getString(R.string.correct_camera_tilt))
                                                         endProcessing(image, false)
                                                         return
                                                     }
 
-                                                    testName =
-                                                        getTestName(result[0].displayValue!!)
+                                                    testName = getTestName(result[0].displayValue!!)
                                                     if (testName.isEmpty()) {
                                                         sendMessage(context.getString(R.string.invalid_barcode))
                                                         endProcessing(image, false)
@@ -284,6 +287,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         processing = false
         if (reset) {
             autoFocusCounter = 0
+            autoFocusCounter2 = 0
         }
         image.close()
     }
@@ -366,5 +370,6 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         processing = false
         capturePhoto = false
         autoFocusCounter = 0
+        autoFocusCounter2 = 0
     }
 }
