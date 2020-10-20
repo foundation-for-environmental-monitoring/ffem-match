@@ -11,6 +11,7 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.app.App.Companion.getTestInfo
@@ -27,6 +28,7 @@ import kotlinx.android.synthetic.main.fragment_calibration_result.*
 import java.io.File
 
 class CalibrationFragment : Fragment() {
+    private val model: TestInfoViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,7 +40,6 @@ class CalibrationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val testInfo = CalibrationFragmentArgs.fromBundle(requireArguments()).testInfo
         if (isDiagnosticMode()) {
             toolbar.setBackgroundColor(
                 ContextCompat.getColor(
@@ -56,33 +57,35 @@ class CalibrationFragment : Fragment() {
         }
         button_submit.visibility = VISIBLE
 
-        displayResult(testInfo)
+        displayResult(model.test.get())
 
         toolbar.visibility = VISIBLE
         toolbar.setTitle(R.string.confirm_calibration)
 
-        val calibrationValue =
-            CalibrationFragmentArgs.fromBundle(requireArguments()).calibrationValue.value
         button_submit.setOnClickListener {
-            if (testInfo.error == ErrorType.NO_ERROR) {
-                val result = testInfo.resultInfo
+            if (model.test.get()!!.error == ErrorType.NO_ERROR) {
+                val result = model.test.get()!!.resultInfo
                 for (s in result.swatches!!) {
-                    if (s.value == calibrationValue) {
+                    if (s.value == 0.0) {
                         result.calibratedColor = s.color
                         break
                     }
                 }
 
                 val db = AppDatabase.getDatabase(requireContext())
-                db.resultDao().insertCalibration(
-                    Calibration(
-                        testInfo.uuid!!,
-                        calibrationValue,
-                        Color.red(result.calibratedColor) - Color.red(result.sampleColor),
-                        Color.green(result.calibratedColor) - Color.green(result.sampleColor),
-                        Color.blue(result.calibratedColor) - Color.blue(result.sampleColor)
+                try {
+                    db.resultDao().insertCalibration(
+                        Calibration(
+                            model.test.get()!!.uuid!!,
+                            0.0,
+                            Color.red(result.calibratedColor) - Color.red(result.sampleColor),
+                            Color.green(result.calibratedColor) - Color.green(result.sampleColor),
+                            Color.blue(result.calibratedColor) - Color.blue(result.sampleColor)
+                        )
                     )
-                )
+                } finally {
+                    db.close()
+                }
             }
             requireActivity().finish()
         }
@@ -109,16 +112,15 @@ class CalibrationFragment : Fragment() {
         }
 
         if (testInfo.error == ErrorType.NO_ERROR && testInfo.resultInfo.result >= 0) {
-            val calibrationValue =
-                CalibrationFragmentArgs.fromBundle(requireArguments()).calibrationValue
+            val calibrationValue = 0.0
             text_name.text = testInfo.name!!.toLocalString()
             text_name2.text = ""
-            text_risk.text = calibrationValue.value.toString()
+            text_risk.text = calibrationValue.toString()
             lyt_error_message.visibility = GONE
             lyt_result.visibility = VISIBLE
 
             for (swatch in testInfo.resultInfo.swatches!!) {
-                if (swatch.value == calibrationValue.value) {
+                if (swatch.value == calibrationValue) {
                     btn_card_color.setBackgroundColor(swatch.color)
                     break
                 }

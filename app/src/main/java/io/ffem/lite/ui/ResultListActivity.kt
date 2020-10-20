@@ -85,6 +85,7 @@ fun getResultString(view: TextView, result: TestResult) {
 
 class ResultListActivity : AppUpdateActivity() {
 
+    private lateinit var db: AppDatabase
     private var appIsClosing: Boolean = false
     private lateinit var toastLong: Toast
     private lateinit var toastShort: Toast
@@ -122,7 +123,7 @@ class ResultListActivity : AppUpdateActivity() {
             delay(300)
 
             val item = adapter.getItemAt(position)
-            val intent = Intent(baseContext, ImageViewActivity::class.java)
+            val intent = Intent(baseContext, ResultViewActivity::class.java)
 
             val result = db.resultDao().getResult(item.id)!!
             val testInfo = App.getTestInfo(item.uuid)
@@ -140,8 +141,6 @@ class ResultListActivity : AppUpdateActivity() {
     private var adapter: ResultAdapter = ResultAdapter(clickListener = {
         onResultClick(it)
     })
-
-    private lateinit var db: AppDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -255,6 +254,11 @@ class ResultListActivity : AppUpdateActivity() {
     override fun onPause() {
         super.onPause()
         broadcastManager.unregisterReceiver(broadcastReceiver)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        db.close()
     }
 
     fun onStartClick(@Suppress("UNUSED_PARAMETER") view: View) {

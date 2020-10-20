@@ -1,0 +1,58 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/instruction_lyt"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#444"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="3dp"
+        android:src="@drawable/card_overlay" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:text="Confirm"
+        android:textColor="#ddd"
+        android:textSize="17sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:lineSpacingExtra="3dp"
+        android:text="If the color extraction looks ok then proceed otherwise redo the capture in a better light condition."
+        android:textColor="#ddd"
+        android:textSize="15sp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/redo_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="30dp"
+        android:minWidth="200dp"
+        android:padding="10dp"
+        android:text="@string/redo"
+        android:textSize="17sp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/accept_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="30dp"
+        android:minWidth="200dp"
+        android:padding="10dp"
+        android:text="@string/accept"
+        android:textSize="17sp" />
+</LinearLayout>

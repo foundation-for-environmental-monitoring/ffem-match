@@ -2,23 +2,24 @@ package io.ffem.lite.ui
 
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.navigation.findNavController
+import androidx.lifecycle.ViewModelProvider
 import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.model.TestInfo
 
-class ImageViewActivity : BaseActivity() {
+class ResultViewActivity : BaseActivity() {
+    lateinit var model: TestInfoViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_image_view)
-        val navController = findNavController(R.id.fragment_container)
+
+        model = ViewModelProvider(this).get(
+            TestInfoViewModel::class.java
+        )
 
         val testInfo = intent.getParcelableExtra<TestInfo>(App.TEST_INFO_KEY)!!
-
-        val bundle = Bundle()
-        bundle.putParcelable(App.TEST_INFO_KEY, testInfo)
-        navController.setGraph(navController.graph, bundle)
+        model.setTest(testInfo)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

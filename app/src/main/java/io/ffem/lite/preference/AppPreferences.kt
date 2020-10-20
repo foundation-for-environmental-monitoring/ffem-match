@@ -48,7 +48,7 @@ fun useDummyImage(): Boolean {
 }
 
 fun manualCaptureOnly(): Boolean {
-    return isDiagnosticMode() && PreferencesUtil.getBoolean(
+    return PreferencesUtil.getBoolean(
         App.app,
         R.string.manualCaptureOnlyKey, false
     )
@@ -96,7 +96,6 @@ object AppPreferences {
         PreferencesUtil.setBoolean(App.app, R.string.diagnosticModeKey, false)
         PreferencesUtil.setBoolean(App.app, R.string.testModeOnKey, false)
         PreferencesUtil.setBoolean(App.app, R.string.dummyImageKey, false)
-        PreferencesUtil.setBoolean(App.app, R.string.manualCaptureOnlyKey, false)
     }
 
     fun checkDiagnosticModeExpiry() {

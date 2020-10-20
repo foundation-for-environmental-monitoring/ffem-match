@@ -9,8 +9,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <include layout="@layout/app_bar_layout" />
-
         <fragment
             android:id="@+id/fragment_container"
             android:name="androidx.navigation.fragment.NavHostFragment"

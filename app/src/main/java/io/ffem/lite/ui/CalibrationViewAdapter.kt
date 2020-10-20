@@ -50,7 +50,8 @@ class CalibrationViewAdapter internal constructor(
             }
         }
         holder.mView.setOnClickListener {
-            mListener?.onCalibrationSelected(holder.calibrationValue, testInfo)
+            testInfo.resultInfo.calibratedColor = holder.calibrationValue!!.color
+            mListener?.onCalibrationSelected()
         }
     }
 

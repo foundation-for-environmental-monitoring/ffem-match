@@ -9,6 +9,14 @@
         app:allowDividerBelow="true"
         app:iconSpaceReserved="false" />
 
+    <CheckBoxPreference
+        android:key="@string/manualCaptureOnlyKey"
+        android:summary="Turn this on if the auto photo capture is not working well on this phone"
+        android:title="@string/manual_photo_capture"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="true"
+        app:iconSpaceReserved="false" />
+
     <Preference
         android:key="@string/aboutKey"
         android:title="@string/about"

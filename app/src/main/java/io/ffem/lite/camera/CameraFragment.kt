@@ -43,7 +43,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.Navigation
 import io.ffem.lite.R
 import io.ffem.lite.app.App
-import io.ffem.lite.preference.isDiagnosticMode
+import io.ffem.lite.preference.manualCaptureOnly
 import io.ffem.lite.preference.useFlashMode
 import kotlinx.android.synthetic.main.fragment_camera.*
 import kotlinx.android.synthetic.main.preview_overlay.*
@@ -78,7 +78,7 @@ class CameraFragment : Fragment() {
     private lateinit var messageHandler: Handler
     private lateinit var runnable: Runnable
 
-    private val broadcastReceiver2 = object : BroadcastReceiver() {
+    private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
 
             messageHandler.removeCallbacksAndMessages(null)
@@ -121,20 +121,20 @@ class CameraFragment : Fragment() {
                     CameraFragmentDirections.actionCameraFragmentToPermissionsFragment()
                 )
         }
-        broadcastManager.registerReceiver(broadcastReceiver2, IntentFilter(App.ERROR_EVENT))
+        broadcastManager.registerReceiver(broadcastReceiver, IntentFilter(App.ERROR_EVENT))
     }
 
     override fun onPause() {
         super.onPause()
         messageHandler.removeCallbacksAndMessages(runnable)
-        broadcastManager.unregisterReceiver(broadcastReceiver2)
+        broadcastManager.unregisterReceiver(broadcastReceiver)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         // Unregister the broadcast receivers and listeners
         messageHandler.removeCallbacksAndMessages(runnable)
-        broadcastManager.unregisterReceiver(broadcastReceiver2)
+        broadcastManager.unregisterReceiver(broadcastReceiver)
     }
 
     override fun onCreateView(
@@ -145,25 +145,17 @@ class CameraFragment : Fragment() {
 
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
         super.onViewCreated(view, savedInstanceState)
         container = view as ConstraintLayout
+    }
 
-        start_test_btn.setOnClickListener {
-            instruction_lyt.visibility = GONE
-            camera_preview.visibility = VISIBLE
-//            // Wait for the views to be properly laid out
-            camera_preview.post {
-
-                // Keep track of the display in which this view is attached
-                displayId = camera_preview.display.displayId
-
-                // Build UI controls
-                updateCameraUi()
-
-                // Bind use cases
-                bindCameraUseCases()
-            }
+    fun startCamera() {
+        camera_preview.post {
+            // Wait for the views to be properly laid out
+            // Keep track of the display in which this view is attached
+            displayId = camera_preview.display.displayId
+            updateCameraUi()
+            bindCameraUseCases()
         }
     }
 
@@ -185,9 +177,9 @@ class CameraFragment : Fragment() {
 
         // Get screen metrics used to setup camera for full screen resolution
         val metrics = DisplayMetrics().also { camera_preview.display.getRealMetrics(it) }
-        Timber.d("Screen metrics: ${metrics.widthPixels} x ${metrics.heightPixels}")
+//        Timber.d("Screen metrics: ${metrics.widthPixels} x ${metrics.heightPixels}")
         val screenAspectRatio = aspectRatio(metrics.widthPixels, metrics.heightPixels)
-        Timber.d("Preview aspect ratio: $screenAspectRatio")
+//        Timber.d("Preview aspect ratio: $screenAspectRatio")
 
         val rotation = camera_preview.display.rotation
 
@@ -268,7 +260,7 @@ class CameraFragment : Fragment() {
 
         View.inflate(requireContext(), R.layout.preview_overlay, container)
 
-        if (isDiagnosticMode()) {
+        if (manualCaptureOnly()) {
             capture_button.visibility = VISIBLE
         } else {
             capture_button.visibility = GONE

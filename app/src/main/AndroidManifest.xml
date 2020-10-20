@@ -38,7 +38,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.ImageViewActivity"
+            android:name=".ui.ResultViewActivity"
             android:screenOrientation="nosensor" />
         <activity
             android:name=".preference.SettingsActivity"

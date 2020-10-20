@@ -10,6 +10,7 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.app.App.Companion.getTestInfo
@@ -25,7 +26,7 @@ import kotlinx.android.synthetic.main.fragment_result.*
 import java.io.File
 
 class ResultFragment : Fragment() {
-
+    private val model: TestInfoViewModel by activityViewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -35,9 +36,9 @@ class ResultFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         requireActivity().setTitle(R.string.result)
-        var testInfo = requireArguments().getParcelable<TestInfo>(App.TEST_INFO_KEY)
-        if (testInfo == null) {
-            testInfo = ResultFragmentArgs.fromBundle(requireArguments()).testInfo
+        if (activity is ResultViewActivity) {
+            button_submit.visibility = GONE
+        } else {
             if (isDiagnosticMode()) {
                 toolbar.setBackgroundColor(
                     ContextCompat.getColor(
@@ -54,22 +55,23 @@ class ResultFragment : Fragment() {
                 )
             }
             button_submit.visibility = VISIBLE
-        } else {
-            toolbar.visibility = GONE
-            button_submit.visibility = GONE
         }
-        displayResult(testInfo)
+
+        displayResult(model.test.get())
 
         super.onViewCreated(view, savedInstanceState)
     }
 
     private fun displayResult(testInfo: TestInfo?) {
+        if (testInfo == null) {
+            return
+        }
 
         val path =
             requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES).toString() +
                     File.separator + "captures" + File.separator
 
-        val fileName = testInfo!!.name!!.replace(" ", "")
+        val fileName = testInfo.name!!.replace(" ", "")
         val resultImagePath =
             File(path + testInfo.fileName + File.separator + fileName + "_result.jpg")
         val extractImagePath =

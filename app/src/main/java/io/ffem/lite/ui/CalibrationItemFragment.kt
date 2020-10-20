@@ -7,21 +7,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import io.ffem.lite.R
-import io.ffem.lite.model.CalibrationValue
 import io.ffem.lite.model.TestInfo
 import io.ffem.lite.preference.isDiagnosticMode
 import kotlinx.android.synthetic.main.app_bar_layout.*
 import kotlinx.android.synthetic.main.fragment_calibration_list.*
 
 class CalibrationItemFragment : Fragment() {
-    private lateinit var testInfo: TestInfo
+    private val model: TestInfoViewModel by activityViewModels()
     private var mListener: OnCalibrationSelectedListener? = null
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        testInfo = ResultFragmentArgs.fromBundle(requireArguments()).testInfo
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,7 +34,7 @@ class CalibrationItemFragment : Fragment() {
 
         loadDetails()
 
-        text_title.text = testInfo.name
+        text_title.text = model.test.get()!!.name
 
         if (isDiagnosticMode()) {
             toolbar.setBackgroundColor(
@@ -62,7 +58,7 @@ class CalibrationItemFragment : Fragment() {
      * Display the calibration details such as date, expiry, batch number etc...
      */
     private fun loadDetails() {
-        setAdapter(testInfo)
+        setAdapter(model.test.get()!!)
     }
 
     override fun onAttach(context: Context) {
@@ -87,6 +83,6 @@ class CalibrationItemFragment : Fragment() {
     }
 
     interface OnCalibrationSelectedListener {
-        fun onCalibrationSelected(calibrationValue: CalibrationValue?, testInfo: TestInfo?)
+        fun onCalibrationSelected()
     }
 }

@@ -7,12 +7,6 @@
         app:allowDividerBelow="true"
         app:iconSpaceReserved="false">
         <CheckBoxPreference
-            android:key="@string/manualCaptureOnlyKey"
-            android:title="Manual photo capture only"
-            app:allowDividerAbove="true"
-            app:allowDividerBelow="true"
-            app:iconSpaceReserved="false" />
-        <CheckBoxPreference
             android:key="@string/dummyImageKey"
             android:title="Select existing image for analysis"
             app:allowDividerAbove="true"

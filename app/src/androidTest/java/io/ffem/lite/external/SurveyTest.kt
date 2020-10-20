@@ -67,6 +67,10 @@ fun startTest(imageNumber: Int) {
 
     SystemClock.sleep(1000)
 
+    Espresso.onView(ViewMatchers.withText(R.string.start)).perform(ViewActions.click())
+
+    SystemClock.sleep(1000)
+
     takeScreenshot(screenshotName)
 
     if (testData.expectedScanError == -1) {

@@ -112,19 +112,19 @@ fun isDark(pixels: IntArray): Boolean {
     return (r / pixels.size) < 140
 }
 
-fun isNotBright(pixels: IntArray): Boolean {
-    var r = 0
-
-    if (pixels.isEmpty()) {
-        return false
-    }
-
-    for (element in pixels) {
-        r += element.red
-    }
-
-    return (r / pixels.size) < 110
-}
+//fun isNotBright(pixels: IntArray): Boolean {
+//    var r = 0
+//
+//    if (pixels.isEmpty()) {
+//        return false
+//    }
+//
+//    for (element in pixels) {
+//        r += element.red
+//    }
+//
+//    return (r / pixels.size) < 110
+//}
 
 
 fun isWhite(pixels: IntArray): Boolean {
@@ -458,10 +458,14 @@ object ColorUtil {
             croppedBitmap2.recycle()
 
             var error = NO_ERROR
-            val db = AppDatabase.getDatabase(context)
             var calibration: Calibration? = null
             if (!AppPreferences.isCalibration()) {
-                calibration = db.resultDao().getCalibration(testInfo.uuid)
+                val db = AppDatabase.getDatabase(context)
+                try {
+                    calibration = db.resultDao().getCalibration(testInfo.uuid)
+                } finally {
+                    db.close()
+                }
             }
 
             // Calculate grayscale image result
@@ -555,59 +559,62 @@ object ColorUtil {
             testInfo.error = error
 
             val db = AppDatabase.getDatabase(context)
-
-            if (db.resultDao().getResult(testInfo.fileName) == null) {
-                if (bitmap != null) {
-                    val bitmapRotated = Utilities.rotateImage(bitmap, 270)
-                    Utilities.savePicture(
-                        context,
-                        testInfo.fileName,
-                        testInfo.name!!,
-                        Utilities.bitmapToBytes(bitmapRotated), ""
-                    )
-
-                    bitmap.recycle()
-                    bitmapRotated.recycle()
-                }
-
-                if (!AppPreferences.isCalibration()) {
-                    db.resultDao().insert(
-                        TestResult(
-                            testInfo.fileName, testInfo.uuid!!, 0, testInfo.name!!,
-                            Date().time, -1.0, -1.0, 0.0, NO_ERROR,
-                            getSampleTestImageNumber()
+            try {
+                if (db.resultDao().getResult(testInfo.fileName) == null) {
+                    if (bitmap != null) {
+                        val bitmapRotated = Utilities.rotateImage(bitmap, 270)
+                        Utilities.savePicture(
+                            context,
+                            testInfo.fileName,
+                            testInfo.name!!,
+                            Utilities.bitmapToBytes(bitmapRotated), ""
                         )
+
+                        bitmap.recycle()
+                        bitmapRotated.recycle()
+                    }
+
+                    if (!AppPreferences.isCalibration()) {
+                        db.resultDao().insert(
+                            TestResult(
+                                testInfo.fileName, testInfo.uuid!!, 0, testInfo.name!!,
+                                Date().time, -1.0, -1.0, 0.0, NO_ERROR,
+                                getSampleTestImageNumber()
+                            )
+                        )
+                    }
+                }
+
+
+                val path = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES).toString() +
+                        File.separator + "captures" + File.separator
+
+                val basePath = File(path)
+                if (!basePath.exists())
+                    Timber.d(if (basePath.mkdirs()) "Success" else "Failed")
+
+                if (AppPreferences.isCalibration()) {
+                    testInfo.resultInfo.calibration = Calibration(
+                        testInfo.uuid!!,
+                        -1.0,
+                        Color.red(testInfo.resultInfo.calibratedColor) - Color.red(testInfo.resultInfo.sampleColor),
+                        Color.green(testInfo.resultInfo.calibratedColor) - Color.green(testInfo.resultInfo.sampleColor),
+                        Color.blue(testInfo.resultInfo.calibratedColor) - Color.blue(testInfo.resultInfo.sampleColor)
+                    )
+                } else {
+                    db.resultDao().updateResult(
+                        testInfo.fileName,
+                        testInfo.uuid!!,
+                        testInfo.name!!,
+                        testInfo.getResult(),
+                        testInfo.resultInfoGrayscale.result,
+                        testInfo.getMarginOfError(),
+                        testInfo.error.ordinal
                     )
                 }
+            } finally {
+                db.close()
             }
-
-            val path = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES).toString() +
-                    File.separator + "captures" + File.separator
-
-            val basePath = File(path)
-            if (!basePath.exists())
-                Timber.d(if (basePath.mkdirs()) "Success" else "Failed")
-
-            if (AppPreferences.isCalibration()) {
-                testInfo.resultInfo.calibration = Calibration(
-                    testInfo.uuid!!,
-                    -1.0,
-                    Color.red(testInfo.resultInfo.calibratedColor) - Color.red(testInfo.resultInfo.sampleColor),
-                    Color.green(testInfo.resultInfo.calibratedColor) - Color.green(testInfo.resultInfo.sampleColor),
-                    Color.blue(testInfo.resultInfo.calibratedColor) - Color.blue(testInfo.resultInfo.sampleColor)
-                )
-            } else {
-                db.resultDao().updateResult(
-                    testInfo.fileName,
-                    testInfo.uuid!!,
-                    testInfo.name!!,
-                    testInfo.getResult(),
-                    testInfo.resultInfoGrayscale.result,
-                    testInfo.getMarginOfError(),
-                    testInfo.error.ordinal
-                )
-            }
-
             intent.putExtra(App.TEST_INFO_KEY, testInfo)
             intent.putExtra(TEST_VALUE_KEY, testInfo.resultInfo.result)
         }

@@ -20,9 +20,12 @@ import android.view.Gravity
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
-import androidx.databinding.DataBindingUtil
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.navigation.Navigation.findNavController
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.app.App
@@ -31,11 +34,9 @@ import io.ffem.lite.app.App.Companion.TEST_ID_KEY
 import io.ffem.lite.app.App.Companion.TEST_INFO_KEY
 import io.ffem.lite.app.App.Companion.TEST_VALUE_KEY
 import io.ffem.lite.app.App.Companion.getTestInfo
-import io.ffem.lite.camera.CameraFragmentDirections
+import io.ffem.lite.camera.CameraFragment
 import io.ffem.lite.data.AppDatabase
 import io.ffem.lite.data.TestResult
-import io.ffem.lite.databinding.ActivityBarcodeBinding
-import io.ffem.lite.model.CalibrationValue
 import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.TestInfo
 import io.ffem.lite.preference.AppPreferences
@@ -44,6 +45,7 @@ import io.ffem.lite.preference.getSampleTestImageNumberInt
 import io.ffem.lite.preference.isTestRunning
 import io.ffem.lite.util.ColorUtil
 import io.ffem.lite.util.PreferencesUtil
+import kotlinx.android.synthetic.main.activity_barcode.*
 import java.io.File
 import java.io.File.separator
 import java.util.*
@@ -55,11 +57,20 @@ const val TEST_ID = "testId"
 /**
  * Activity to display info about the app.
  */
-class BarcodeActivity : BaseActivity(), CalibrationItemFragment.OnCalibrationSelectedListener {
+class BarcodeActivity : BaseActivity(),
+    CalibrationItemFragment.OnCalibrationSelectedListener,
+    InstructionFragment.OnStartTestListener,
+    ImageConfirmFragment.OnConfirmImageListener {
+
+    private lateinit var db: AppDatabase
+
+    companion object {
+        lateinit var cameraFragment: CameraFragment
+    }
 
     private lateinit var broadcastManager: LocalBroadcastManager
-    private lateinit var b: ActivityBarcodeBinding
     private var testInfo: TestInfo? = null
+    lateinit var model: TestInfoViewModel
 
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -76,36 +87,8 @@ class BarcodeActivity : BaseActivity(), CalibrationItemFragment.OnCalibrationSel
             testInfo = intent.getParcelableExtra(TEST_INFO_KEY)
 
             if (testInfo != null) {
-                // Display the result screen
-                if (findNavController(
-                        this@BarcodeActivity,
-                        R.id.fragment_container
-                    ).currentDestination?.id == R.id.camera_fragment
-                ) {
-                    if (AppPreferences.isCalibration()) {
-                        if (testInfo!!.error == ErrorType.NO_ERROR) {
-                            findNavController(this@BarcodeActivity, R.id.fragment_container)
-                                .navigate(
-                                    CameraFragmentDirections.actionCameraFragmentToCalibrationItemFragment(
-                                        testInfo!!
-                                    )
-                                )
-                        } else {
-                            findNavController(this@BarcodeActivity, R.id.fragment_container)
-                                .navigate(
-                                    CameraFragmentDirections.actionCameraFragmentToCalibrationFragment(
-                                        testInfo!!, CalibrationValue()
-                                    )
-                                )
-                        }
-                    } else {
-                        findNavController(this@BarcodeActivity, R.id.fragment_container)
-                            .navigate(
-                                CameraFragmentDirections
-                                    .actionCameraFragmentToResultFragment(testInfo!!)
-                            )
-                    }
-                }
+                model.setTest(testInfo)
+                view_pager.currentItem = 2
             }
         }
     }
@@ -113,7 +96,9 @@ class BarcodeActivity : BaseActivity(), CalibrationItemFragment.OnCalibrationSel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        b = DataBindingUtil.setContentView(this, R.layout.activity_barcode)
+        setContentView(R.layout.activity_barcode)
+
+        db = AppDatabase.getDatabase(baseContext)
 
         broadcastManager = LocalBroadcastManager.getInstance(this)
 
@@ -139,6 +124,26 @@ class BarcodeActivity : BaseActivity(), CalibrationItemFragment.OnCalibrationSel
         } else {
             PreferencesUtil.removeKey(this, TEST_ID_KEY)
         }
+
+        model = ViewModelProvider(this).get(
+            TestInfoViewModel::class.java
+        )
+
+        view_pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageScrollStateChanged(state: Int) {
+                super.onPageScrollStateChanged(state)
+
+                if (state == ViewPager2.SCROLL_STATE_IDLE) {
+                    if (view_pager.currentItem == 1) {
+                        cameraFragment.startCamera()
+                    }
+                }
+            }
+        })
+
+        view_pager.isUserInputEnabled = false
+        val testPagerAdapter = TestPagerAdapter(this)
+        view_pager.adapter = testPagerAdapter
     }
 
     fun submitResult(@Suppress("UNUSED_PARAMETER") view: View) {
@@ -164,20 +169,18 @@ class BarcodeActivity : BaseActivity(), CalibrationItemFragment.OnCalibrationSel
         val testInfo = data.getParcelableExtra<TestInfo>(TEST_INFO_KEY) ?: return
 
         if (!AppPreferences.isCalibration()) {
-            val db = AppDatabase.getDatabase(baseContext)
             db.resultDao().insert(
                 TestResult(
                     testInfo.fileName, testInfo.uuid!!, 0, testInfo.name!!, Date().time,
                     -1.0, -1.0, 0.0, ErrorType.NO_ERROR, getSampleTestImageNumber()
                 )
             )
-            deleteExcessData(db)
+            deleteExcessData()
         }
-
         analyzeImage(testInfo)
     }
 
-    private fun deleteExcessData(db: AppDatabase) {
+    private fun deleteExcessData() {
         // Keep only last 20 results to save drive space
         for (i in 0..1) {
             if (db.resultDao().getCount() > 20) {
@@ -211,14 +214,8 @@ class BarcodeActivity : BaseActivity(), CalibrationItemFragment.OnCalibrationSel
         }
     }
 
-    override fun onCalibrationSelected(calibrationValue: CalibrationValue?, testInfo: TestInfo?) {
-        testInfo!!.resultInfo.calibratedColor = calibrationValue!!.color
-        findNavController(this@BarcodeActivity, R.id.fragment_container)
-            .navigate(
-                CalibrationItemFragmentDirections.actionCalibrationItemFragmentToCalibrationFragment(
-                    testInfo, calibrationValue
-                )
-            )
+    override fun onCalibrationSelected() {
+        pageNext()
     }
 
     /**
@@ -266,9 +263,79 @@ class BarcodeActivity : BaseActivity(), CalibrationItemFragment.OnCalibrationSel
         // Unregister the broadcast receivers and listeners
         broadcastManager.unregisterReceiver(broadcastReceiver)
         broadcastManager.unregisterReceiver(resultBroadcastReceiver)
+        db.close()
+    }
+
+    private fun pageBack() {
+        view_pager.currentItem = view_pager.currentItem - 1
+    }
+
+    private fun pageNext() {
+        view_pager.currentItem = view_pager.currentItem + 1
     }
 
     override fun onBackPressed() {
-        finish()
+        if (view_pager.currentItem > 0) {
+            pageBack()
+        } else {
+            super.onBackPressed()
+        }
+    }
+
+    class TestPagerAdapter(
+        activity: AppCompatActivity
+    ) :
+        FragmentStateAdapter(activity) {
+
+        var testInfo: TestInfo? = null
+
+        override fun getItemCount(): Int {
+            return if (AppPreferences.isCalibration()) {
+                5
+            } else {
+                4
+            }
+        }
+
+        override fun createFragment(position: Int): Fragment {
+            return when (position) {
+                0 -> {
+                    InstructionFragment()
+                }
+                1 -> {
+                    cameraFragment = CameraFragment()
+                    cameraFragment
+                }
+                2 -> {
+                    ImageConfirmFragment()
+                }
+                3 -> {
+                    if (AppPreferences.isCalibration()) {
+                        CalibrationItemFragment()
+                    } else {
+                        ResultFragment()
+                    }
+                }
+                else -> {
+                    if (AppPreferences.isCalibration()) {
+                        CalibrationFragment()
+                    } else {
+                        ResultFragment()
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onStartTest() {
+        view_pager.currentItem = 1
+    }
+
+    override fun onConfirmImage(action: Int) {
+        if (action == RESULT_OK) {
+            view_pager.currentItem = 3
+        } else {
+            pageBack()
+        }
     }
 }

@@ -325,13 +325,7 @@ class DiagnosticsTest {
 
         SystemClock.sleep(TIME_DELAY / 4)
 
-        val appCompatImageButton3 = onView(
-            allOf(
-                withId(R.id.capture_button), withContentDescription(R.string.capture_photo),
-                isDisplayed()
-            )
-        )
-        appCompatImageButton3.perform(click())
+        onView(withText(R.string.take_photo)).perform(click())
 
         SystemClock.sleep(TIME_DELAY / 4)
 
@@ -409,6 +403,7 @@ class DiagnosticsTest {
         ).perform(scrollTo(), click())
     }
 }
+
 private fun startDiagnosticMode() {
     if (isDiagnosticMode()) {
         Thread.sleep(400)

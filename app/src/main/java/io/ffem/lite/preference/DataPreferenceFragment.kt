@@ -37,7 +37,11 @@ class DataPreferenceFragment : PreferenceFragmentCompat() {
                     folder.deleteRecursively()
 
                     val db = AppDatabase.getDatabase(view.context)
-                    db.resultDao().deleteAll()
+                    try {
+                        db.clearAllTables()
+                    } finally {
+                        db.close()
+                    }
 
                     Toast.makeText(
                         requireContext(),

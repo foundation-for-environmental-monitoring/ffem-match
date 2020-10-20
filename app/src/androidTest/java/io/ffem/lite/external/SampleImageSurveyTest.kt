@@ -224,6 +224,10 @@ class SampleImageSurveyTest : BaseTest() {
         sleep(2000)
         clickLaunchButton(testDetails.buttonIndex)
 
+        sleep(2000)
+
+        onView(withText(R.string.start)).perform(click())
+
         sleep(TIME_DELAY)
 
         onView(withText(testDetails.name.toLocalString())).check(matches(isDisplayed()))
