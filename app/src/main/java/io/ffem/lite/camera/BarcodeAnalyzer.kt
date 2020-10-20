@@ -2,9 +2,9 @@ package io.ffem.lite.camera
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.Rect
 import android.graphics.drawable.BitmapDrawable
-import android.media.Image
 import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
@@ -27,12 +27,13 @@ import io.ffem.lite.model.ImageEdgeType
 import io.ffem.lite.model.TestInfo
 import io.ffem.lite.preference.getSampleTestImageNumberInt
 import io.ffem.lite.preference.isDiagnosticMode
+import io.ffem.lite.preference.manualCaptureOnly
 import io.ffem.lite.util.ColorUtil.fixBoundary
 import io.ffem.lite.util.ColorUtil.isBarcodeValid
 import io.ffem.lite.util.ColorUtil.isTilted
+import io.ffem.lite.util.ImageUtil.toBitmap
 import io.ffem.lite.util.getBitmapPixels
 import io.ffem.lite.util.isNotBright
-import java.io.ByteArrayOutputStream
 import java.util.*
 
 
@@ -64,9 +65,6 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         }
         processing = true
 
-        @ExperimentalGetImage
-        val imageProxy = image.image
-
         localBroadcastManager = LocalBroadcastManager.getInstance(context)
 
         if (BuildConfig.DEBUG && (isDiagnosticMode() || BuildConfig.INSTRUMENTED_TEST_RUNNING.get())) {
@@ -87,11 +85,11 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                 }
             } else {
                 @ExperimentalGetImage
-                bitmap = imageProxy!!.toBitmap()
+                bitmap = image.toBitmap()
             }
         } else {
             @ExperimentalGetImage
-            bitmap = imageProxy!!.toBitmap()
+            bitmap = image.toBitmap()
         }
 
         bitmap = Bitmap.createBitmap(
@@ -104,6 +102,11 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
             done = true
             val testInfo = getTestInfo(DEFAULT_TEST_UUID)!!
             savePhoto(bitmap, testInfo)
+            endProcessing(image, true)
+            return
+        }
+
+        if (manualCaptureOnly()) {
             endProcessing(image, true)
             return
         }
@@ -272,29 +275,6 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                     }
                 }
             )
-    }
-
-    private fun Image.toBitmap(): Bitmap {
-        val yBuffer = planes[0].buffer // Y
-        val uBuffer = planes[1].buffer // U
-        val vBuffer = planes[2].buffer // V
-
-        val ySize = yBuffer.remaining()
-        val uSize = uBuffer.remaining()
-        val vSize = vBuffer.remaining()
-
-        val nv21 = ByteArray(ySize + uSize + vSize)
-
-        //U and V are swapped
-        yBuffer.get(nv21, 0, ySize)
-        vBuffer.get(nv21, ySize, vSize)
-        uBuffer.get(nv21, ySize + vSize, uSize)
-
-        val yuvImage = YuvImage(nv21, ImageFormat.NV21, this.width, this.height, null)
-        val out = ByteArrayOutputStream()
-        yuvImage.compressToJpeg(Rect(0, 0, yuvImage.width, yuvImage.height), 50, out)
-        val imageBytes = out.toByteArray()
-        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
     }
 
     private fun endProcessing(image: ImageProxy, reset: Boolean) {
