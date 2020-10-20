@@ -56,6 +56,11 @@ class CalibrationTest {
         startCalibrationTest(24)
     }
 
+    @Test
+    fun image_004_pH_NoMatch() {
+        calibrationNoMatch(4)
+    }
+
     private fun startCalibrationTest(@Suppress("SameParameterValue") imageNumber: Int) {
         val testData = testDataList[imageNumber]!!
         val screenshotName = "calibration"
@@ -68,16 +73,11 @@ class CalibrationTest {
         onView(
             allOf(
                 withId(R.id.fab), withContentDescription(R.string.start_test),
-                childAtPosition(
-                    childAtPosition(
-                        withId(android.R.id.content),
-                        0
-                    ),
-                    1
-                ),
                 isDisplayed()
             )
         ).perform(click())
+
+        onView(withText(R.string.start)).perform(click())
 
         SystemClock.sleep(TIME_DELAY)
 
@@ -102,7 +102,7 @@ class CalibrationTest {
             matches(isDisplayed())
         )
 
-        onView(withText(R.string.submit_result)).perform(click())
+        onView(withText(R.string.close)).perform(click())
 
         sleep(2000)
 
@@ -127,6 +127,8 @@ class CalibrationTest {
         takeScreenshot(screenshotName)
 
         onView(withText(R.string.calibrate)).perform(click())
+
+        onView(withText(R.string.start)).perform(click())
 
         sleep(TIME_DELAY / 2)
 
@@ -153,16 +155,11 @@ class CalibrationTest {
         onView(
             allOf(
                 withId(R.id.fab), withContentDescription(R.string.start_test),
-                childAtPosition(
-                    childAtPosition(
-                        withId(android.R.id.content),
-                        0
-                    ),
-                    1
-                ),
                 isDisplayed()
             )
         ).perform(click())
+
+        onView(withText(R.string.start)).perform(click())
 
         SystemClock.sleep(TIME_DELAY)
 
@@ -187,7 +184,131 @@ class CalibrationTest {
             matches(isDisplayed())
         )
 
-        onView(withText(R.string.submit_result)).perform(click())
+        onView(withText(R.string.close)).perform(click())
+
+        sleep(2000)
+    }
+
+    private fun calibrationNoMatch(@Suppress("SameParameterValue") imageNumber: Int) {
+        val testData = testDataList[imageNumber]!!
+        val screenshotName = "calibration"
+
+        PreferencesUtil.setString(
+            ApplicationProvider.getApplicationContext(),
+            R.string.testImageNumberKey, imageNumber.toString()
+        )
+
+        onView(
+            allOf(
+                withId(R.id.fab), withContentDescription(R.string.start_test),
+                isDisplayed()
+            )
+        ).perform(click())
+
+        onView(withText(R.string.start)).perform(click())
+
+        SystemClock.sleep(TIME_DELAY)
+
+        onView(withText(testData.testDetails.name.toLocalString())).check(matches(isDisplayed()))
+
+//        val resultTextView = onView(withId(R.id.text_result))
+//        resultTextView.check(matches(TestUtil.checkResult(testData.expectedResult)))
+//
+//        onView(allOf(withId(R.id.text_unit), withText("mg/l")))
+//            .check(matches(isDisplayed()))
+//
+//        val marginOfErrorView = onView(withId(R.id.text_error_margin))
+//        marginOfErrorView.check(matches(TestUtil.checkResult(testData.expectedMarginOfError)))
+//
+//        onView(
+//            withText(
+//                testData.risk.toResourceId(
+//                    ApplicationProvider.getApplicationContext(), testData.testDetails.riskType
+//                )
+//            )
+//        ).check(
+//            matches(isDisplayed())
+//        )
+
+        onView(withText(R.string.close)).perform(click())
+
+        sleep(2000)
+
+        takeScreenshot(screenshotName)
+
+        onView(
+            allOf(
+                withId(R.id.action_settings), withContentDescription(R.string.settings),
+                childAtPosition(
+                    childAtPosition(
+                        withId(R.id.toolbar),
+                        1
+                    ),
+                    0
+                ),
+                isDisplayed()
+            )
+        ).perform(click())
+
+        sleep(400)
+
+        takeScreenshot(screenshotName)
+
+        onView(withText(R.string.calibrate)).perform(click())
+
+        onView(withText(R.string.start)).perform(click())
+
+        sleep(TIME_DELAY / 2)
+
+        takeScreenshot(screenshotName)
+
+        sleep(TIME_DELAY / 2)
+
+        onView(withText(testData.testDetails.name.toLocalString())).check(matches(isDisplayed()))
+
+        takeScreenshot(screenshotName)
+
+        onView(withText(R.string.close)).perform(click())
+
+        sleep(1000)
+
+        takeScreenshot(screenshotName)
+
+        Espresso.pressBack()
+
+        onView(
+            allOf(
+                withId(R.id.fab), withContentDescription(R.string.start_test),
+                isDisplayed()
+            )
+        ).perform(click())
+
+        onView(withText(R.string.start)).perform(click())
+
+        SystemClock.sleep(TIME_DELAY)
+
+        onView(withText(testData.testDetails.name.toLocalString())).check(matches(isDisplayed()))
+
+//        val resultTextView2 = onView(withId(R.id.text_result))
+//        resultTextView2.check(matches(TestUtil.checkResult(testData.expectedResult)))
+//
+//        onView(allOf(withId(R.id.text_unit), withText("mg/l")))
+//            .check(matches(isDisplayed()))
+//
+//        val marginOfErrorView2 = onView(withId(R.id.text_error_margin))
+//        marginOfErrorView2.check(matches(TestUtil.checkResult(testData.expectedMarginOfError)))
+//
+//        onView(
+//            withText(
+//                testData.risk.toResourceId(
+//                    ApplicationProvider.getApplicationContext(), testData.testDetails.riskType
+//                )
+//            )
+//        ).check(
+//            matches(isDisplayed())
+//        )
+
+        onView(withText(R.string.close)).perform(click())
 
         sleep(2000)
     }

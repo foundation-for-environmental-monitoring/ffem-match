@@ -145,17 +145,12 @@ class DiagnosticsTest {
         val floatingActionButton = onView(
             allOf(
                 withId(R.id.fab), withContentDescription(R.string.start_test),
-                childAtPosition(
-                    childAtPosition(
-                        withId(android.R.id.content),
-                        0
-                    ),
-                    1
-                ),
                 isDisplayed()
             )
         )
         floatingActionButton.perform(click())
+
+        onView(withText(R.string.start)).perform(click())
 
         SystemClock.sleep(TIME_DELAY)
 
@@ -245,7 +240,7 @@ class DiagnosticsTest {
 
         onView(
             allOf(
-                withId(R.id.button_submit), withText(R.string.submit_result),
+                withId(R.id.button_submit), withText(R.string.close),
                 isDisplayed()
             )
         ).perform(click())
@@ -321,17 +316,12 @@ class DiagnosticsTest {
         val floatingActionButton = onView(
             allOf(
                 withId(R.id.fab), withContentDescription(R.string.start_test),
-                childAtPosition(
-                    childAtPosition(
-                        withId(android.R.id.content),
-                        0
-                    ),
-                    1
-                ),
                 isDisplayed()
             )
         )
         floatingActionButton.perform(click())
+
+        onView(withText(R.string.start)).perform(click())
 
         SystemClock.sleep(TIME_DELAY / 4)
 

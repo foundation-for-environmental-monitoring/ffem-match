@@ -38,7 +38,7 @@ import org.junit.runner.RunWith
 import org.junit.runners.MethodSorters
 import java.io.File
 
-const val TIME_DELAY = 9000L
+const val TIME_DELAY = 10000L
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
@@ -227,6 +227,8 @@ class SampleImageTest {
 
         onView(withId(R.id.fab)).perform(click())
 
+        onView(withText(R.string.start)).perform(click())
+
         if (testData.expectedScanError == -1) {
 
             SystemClock.sleep(TIME_DELAY)
@@ -270,7 +272,7 @@ class SampleImageTest {
                     matches(isDisplayed())
                 )
 
-                onView(withText(R.string.submit_result)).perform(click())
+                onView(withText(R.string.close)).perform(click())
             }
 
             SystemClock.sleep(1000)
