@@ -2,7 +2,6 @@ package io.ffem.lite.internal
 
 
 import android.os.Environment
-import android.os.SystemClock
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
@@ -85,7 +84,7 @@ class CalibrationTest {
 
         onView(withText(R.string.start)).perform(click())
 
-        SystemClock.sleep(TIME_DELAY)
+        sleep(TIME_DELAY)
 
         onView(withText(R.string.accept)).perform(click())
 
@@ -171,7 +170,7 @@ class CalibrationTest {
 
         onView(withText(R.string.start)).perform(click())
 
-        SystemClock.sleep(TIME_DELAY)
+        sleep(TIME_DELAY)
 
         onView(withText(R.string.accept)).perform(click())
 
@@ -219,7 +218,7 @@ class CalibrationTest {
 
         onView(withText(R.string.start)).perform(click())
 
-        SystemClock.sleep(TIME_DELAY)
+        sleep(TIME_DELAY)
 
         onView(withText(R.string.accept)).perform(click())
 
@@ -282,7 +281,7 @@ class CalibrationTest {
 
         onView(withText(R.string.start)).perform(click())
 
-        SystemClock.sleep(TIME_DELAY)
+        sleep(TIME_DELAY)
 
         onView(withText(R.string.accept)).perform(click())
 

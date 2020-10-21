@@ -1,6 +1,5 @@
 package io.ffem.lite.ui
 
-import android.Manifest
 import android.app.AlertDialog
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -19,7 +18,6 @@ import android.view.View.VISIBLE
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.databinding.BindingAdapter
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -39,7 +37,10 @@ import io.ffem.lite.model.toLocalString
 import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.preference.SettingsActivity
 import io.ffem.lite.preference.useDummyImage
-import io.ffem.lite.util.*
+import io.ffem.lite.util.ColorUtil
+import io.ffem.lite.util.FileUtil
+import io.ffem.lite.util.PreferencesUtil
+import io.ffem.lite.util.toast
 import kotlinx.android.synthetic.main.activity_result_list.*
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
@@ -101,24 +102,6 @@ class ResultListActivity : AppUpdateActivity() {
             refreshList()
         }
     }
-
-    private val requestCameraPermission =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted: Boolean ->
-            when {
-                granted -> {
-                    val intent = Intent(baseContext, BarcodeActivity::class.java)
-                    startTest.launch(intent)
-                }
-                shouldShowRequestPermissionRationale(Manifest.permission.CAMERA) -> {
-                    findViewById<CoordinatorLayout>(R.id.coordinator_lyt)
-                        ?.snackBar(getString(R.string.camera_permission))
-                }
-                else -> {
-                    findViewById<CoordinatorLayout>(R.id.coordinator_lyt)
-                        ?.snackBar(getString(R.string.camera_permission))
-                }
-            }
-        }
 
     private fun onResultClick(position: Int) {
         MainScope().launch {
@@ -254,7 +237,8 @@ class ResultListActivity : AppUpdateActivity() {
         if (useDummyImage()) {
             performFileSearch()
         } else {
-            requestCameraPermission.launch(Manifest.permission.CAMERA)
+            val intent = Intent(baseContext, BarcodeActivity::class.java)
+            startTest.launch(intent)
         }
     }
 

@@ -597,9 +597,11 @@ object ColorUtil {
                     testInfo.resultInfo.calibration = Calibration(
                         testInfo.uuid!!,
                         -1.0,
-                        Color.red(testInfo.resultInfo.calibratedColor) - Color.red(testInfo.resultInfo.sampleColor),
-                        Color.green(testInfo.resultInfo.calibratedColor) - Color.green(testInfo.resultInfo.sampleColor),
-                        Color.blue(testInfo.resultInfo.calibratedColor) - Color.blue(testInfo.resultInfo.sampleColor)
+                        Color.red(testInfo.resultInfo.calibratedValue.color) - Color.red(testInfo.resultInfo.sampleColor),
+                        Color.green(testInfo.resultInfo.calibratedValue.color) - Color.green(
+                            testInfo.resultInfo.sampleColor
+                        ),
+                        Color.blue(testInfo.resultInfo.calibratedValue.color) - Color.blue(testInfo.resultInfo.sampleColor)
                     )
                 } else {
                     db.resultDao().updateResult(

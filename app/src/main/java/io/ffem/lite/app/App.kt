@@ -1,6 +1,5 @@
 package io.ffem.lite.app
 
-import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -41,7 +40,6 @@ class App : BaseApplication() {
         const val CAPTURED_EVENT = "captured_event"
         const val ERROR_EVENT = "error_event"
 
-        const val PERMISSIONS_MISSING_KEY = "permissions_missing"
         const val TEST_INFO_KEY = "test_info"
         const val TEST_ID_KEY = "test_id"
         const val TEST_VALUE_KEY = "value"
@@ -108,18 +106,15 @@ class App : BaseApplication() {
             return version
         }
 
-        fun openAppPermissionSettings(context: Activity?) {
-            if (context == null) {
-                return
-            }
+        fun openAppPermissionSettings() {
             val i = Intent()
             i.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
             i.addCategory(Intent.CATEGORY_DEFAULT)
-            i.data = Uri.parse("package:" + context.packageName)
+            i.data = Uri.parse("package:" + app.packageName)
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
             i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
-            context.startActivity(i)
+            app.startActivity(i)
         }
 
         private val gson: Gson =
@@ -161,9 +156,9 @@ class App : BaseApplication() {
 
         fun getTestInfo(id: String): TestInfo? {
 //            if (!::testConfig.isInitialized) {
-                val input = app.resources.openRawResource(R.raw.tests)
-                val content = FileUtil.readTextFile(input)
-                testConfig = gson.fromJson(content, TestConfig::class.java)
+            val input = app.resources.openRawResource(R.raw.tests)
+            val content = FileUtil.readTextFile(input)
+            testConfig = gson.fromJson(content, TestConfig::class.java)
 //            }
 
             for (test in testConfig.tests) {

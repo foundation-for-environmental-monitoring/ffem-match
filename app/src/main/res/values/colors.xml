@@ -3,13 +3,13 @@
 
     <color name="colorPrimary">#585858</color>
     <color name="colorPrimaryDark">#4d4d4d</color>
-    <color name="colorAccent">#494848</color>
+    <color name="colorAccent">#494949</color>
 
     <color name="window_background">#fff</color>
     <color name="primary_background">#ccc</color>
 
-    <color name="text_primary">#d9222222</color>
-    <color name="text_secondary">#d9161616</color>
+    <color name="text_primary">#d9161616</color>
+    <color name="text_secondary">#D91B1B1B</color>
 
     <color name="button_text_soft">#e33b3b3b</color>
     <color name="button_green">#CDCDCD</color>

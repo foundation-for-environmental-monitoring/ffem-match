@@ -12,10 +12,12 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.GrantPermissionRule
 import io.ffem.lite.R
+import io.ffem.lite.common.TestHelper
 import io.ffem.lite.common.TestHelper.enterDiagnosticMode
 import io.ffem.lite.common.TestHelper.leaveDiagnosticMode
 import io.ffem.lite.common.TestHelper.sleep
 import io.ffem.lite.common.TestUtil.childAtPosition
+import io.ffem.lite.common.clearData
 import io.ffem.lite.common.residualChlorine
 import io.ffem.lite.preference.isDiagnosticMode
 import io.ffem.lite.ui.ResultListActivity
@@ -23,6 +25,7 @@ import io.ffem.lite.util.toLocalString
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.core.IsInstanceOf
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -42,6 +45,15 @@ class DiagnosticsTest {
             "android.permission.CAMERA"
         )
 
+    @Before
+    fun setUp() {
+        if (!CalibrationTest.initialized) {
+            TestHelper.clearPreferences()
+            clearData()
+            CalibrationTest.initialized = true
+        }
+    }
+
     @Test
     fun deleteDataTest() {
         startDiagnosticMode()
@@ -52,8 +64,7 @@ class DiagnosticsTest {
 
         sleep(400)
 
-        onView(withId(R.id.scrollViewSettings))
-            .perform(swipeUp())
+        onView(withId(R.id.scrollViewSettings)).perform(swipeUp())
 
         sleep(400)
 
@@ -86,8 +97,11 @@ class DiagnosticsTest {
 
         sleep(400)
 
-        onView(withId(R.id.scrollViewSettings))
-            .perform(swipeUp())
+        onView(withText(R.string.manual_photo_capture)).perform(click())
+
+        sleep(400)
+
+        onView(withId(R.id.scrollViewSettings)).perform(swipeUp())
 
         sleep(400)
 

@@ -17,10 +17,6 @@ class TestInfoViewModel(application: Application) : AndroidViewModel(application
         Companion.testInfo = testInfo
     }
 
-    fun getTestInfo(id: String?): TestInfo? {
-        return testInfo
-    }
-
     companion object {
         private var testInfo: TestInfo? = null
     }

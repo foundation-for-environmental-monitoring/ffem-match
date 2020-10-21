@@ -3,7 +3,6 @@ package io.ffem.lite.internal
 
 import android.content.Context
 import android.os.Environment
-import android.os.SystemClock
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
@@ -19,6 +18,7 @@ import androidx.test.rule.GrantPermissionRule
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.common.TestHelper.clearPreferences
+import io.ffem.lite.common.TestHelper.sleep
 import io.ffem.lite.common.TestUtil.checkResult
 import io.ffem.lite.common.TestUtil.childAtPosition
 import io.ffem.lite.common.clearData
@@ -38,7 +38,7 @@ import org.junit.runner.RunWith
 import org.junit.runners.MethodSorters
 import java.io.File
 
-const val TIME_DELAY = 10000L
+const val TIME_DELAY = 11000L
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
@@ -223,7 +223,7 @@ class SampleImageTest {
             R.string.testImageNumberKey, imageNumber.toString()
         )
 
-        SystemClock.sleep(2000)
+        sleep(2000)
 
         onView(withId(R.id.fab)).perform(click())
 
@@ -231,7 +231,7 @@ class SampleImageTest {
 
         if (testData.expectedScanError == -1) {
 
-            SystemClock.sleep(TIME_DELAY)
+            sleep(TIME_DELAY)
 
             onView(withText(R.string.accept)).perform(click())
 
@@ -277,7 +277,7 @@ class SampleImageTest {
                 onView(withText(R.string.close)).perform(click())
             }
 
-            SystemClock.sleep(1000)
+            sleep(1000)
 
             onView(
                 allOf(
@@ -314,7 +314,7 @@ class SampleImageTest {
                 )
             )
 
-            SystemClock.sleep(3000)
+            sleep(3000)
 
             if (testData.expectedResultError == NO_ERROR) {
                 textView.check(matches(checkResult(testData.expectedResult)))
@@ -325,7 +325,7 @@ class SampleImageTest {
 
             textView.perform(click())
 
-            SystemClock.sleep(2000)
+            sleep(2000)
 
             val imageView = onView(
                 allOf(
@@ -348,7 +348,7 @@ class SampleImageTest {
 
         } else {
 
-            SystemClock.sleep(TIME_DELAY)
+            sleep(TIME_DELAY)
 
             onView(withText(testData.expectedScanError)).check(matches(isDisplayed()))
 

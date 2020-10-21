@@ -230,6 +230,8 @@ class SampleImageSurveyTest : BaseTest() {
 
         sleep(TIME_DELAY)
 
+        onView(withText(R.string.accept)).perform(click())
+
         onView(withText(testDetails.name.toLocalString())).check(matches(isDisplayed()))
 
         if (expectedResultError > NO_ERROR) {

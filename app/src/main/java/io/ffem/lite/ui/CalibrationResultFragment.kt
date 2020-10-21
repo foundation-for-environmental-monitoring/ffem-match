@@ -28,7 +28,7 @@ import kotlinx.android.synthetic.main.app_bar_layout.*
 import kotlinx.android.synthetic.main.fragment_calibration_result.*
 import java.io.File
 
-class CalibrationFragment : Fragment() {
+class CalibrationResultFragment : Fragment() {
     private val model: TestInfoViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -58,17 +58,20 @@ class CalibrationFragment : Fragment() {
         }
         button_submit.visibility = VISIBLE
 
-        displayResult(model.test.get())
+        val testInfo = model.test.get()!!
+
+        displayResult(testInfo)
 
         toolbar.visibility = VISIBLE
         toolbar.setTitle(R.string.confirm_calibration)
 
         button_submit.setOnClickListener {
             if (model.test.get()!!.error == ErrorType.NO_ERROR) {
-                val result = model.test.get()!!.resultInfo
+                val result = testInfo.resultInfo
+                val calibratedValue = testInfo.calibratedResultInfo.calibratedValue
                 for (s in result.swatches!!) {
-                    if (s.value == 0.0) {
-                        result.calibratedColor = s.color
+                    if (s.value == calibratedValue.value) {
+                        result.calibratedValue.color = s.color
                         break
                     }
                 }
@@ -77,14 +80,14 @@ class CalibrationFragment : Fragment() {
                 try {
                     db.resultDao().insertCalibration(
                         Calibration(
-                            model.test.get()!!.uuid!!,
-                            0.0,
-                            Color.red(result.calibratedColor) - Color.red(result.sampleColor),
-                            Color.green(result.calibratedColor) - Color.green(result.sampleColor),
-                            Color.blue(result.calibratedColor) - Color.blue(result.sampleColor)
+                            testInfo.uuid!!,
+                            testInfo.calibratedResultInfo.calibratedValue.value,
+                            Color.red(result.calibratedValue.color) - Color.red(result.sampleColor),
+                            Color.green(result.calibratedValue.color) - Color.green(result.sampleColor),
+                            Color.blue(result.calibratedValue.color) - Color.blue(result.sampleColor)
                         )
                     )
-                    requireContext().toast(model.test.get()!!.name + " calibrated successfully")
+                    requireContext().toast(testInfo.name + " calibrated successfully")
                 } finally {
                     db.close()
                 }
@@ -114,7 +117,7 @@ class CalibrationFragment : Fragment() {
         }
 
         if (testInfo.error == ErrorType.NO_ERROR && testInfo.resultInfo.result >= 0) {
-            val calibrationValue = 0.0
+            val calibrationValue = testInfo.calibratedResultInfo.calibratedValue.value
             text_name.text = testInfo.name!!.toLocalString()
             text_name2.text = ""
             text_risk.text = calibrationValue.toString()

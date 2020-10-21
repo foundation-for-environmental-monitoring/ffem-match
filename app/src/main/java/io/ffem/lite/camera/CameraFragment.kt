@@ -150,7 +150,7 @@ class CameraFragment : Fragment() {
         container = view as ConstraintLayout
     }
 
-    fun startCamera() {
+    private fun startCamera() {
         camera_preview.post {
             // Wait for the views to be properly laid out
             // Keep track of the display in which this view is attached

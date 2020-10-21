@@ -108,4 +108,15 @@
     <string name="grayscale_result">Grayscale result</string>
     <string name="grayscale_extracts">Grayscale Extracts</string>
     <string name="navigate_up">Navigate up</string>
+    <string name="app_in_development">This app is in development. It may be unstable.</string>
+    <string name="instructions">Instructions</string>
+    <string name="_1">1.</string>
+    <string name="place_card_and_cuvette">Place the card and cuvette with the water sample on the provided stand.</string>
+    <string name="_2">2.</string>
+    <string name="when_ready_camera">When ready, point the phone camera at it.</string>
+    <string name="_3">3.</string>
+    <string name="click_launch_camera">Click start below to launch the camera preview.</string>
+    <string name="_4">4.</string>
+    <string name="camera_start_align_card">When the camera starts, align the card in the viewer as shown in the example above.</string>
+    <string name="confirm_color_extract">If the color extraction looks good, then proceed otherwise redo the capture in a better light condition.</string>
 </resources>

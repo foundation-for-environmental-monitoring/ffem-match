@@ -39,7 +39,7 @@ class OtherPreferenceFragment : PreferenceFragmentCompat() {
                 } else {
                     PreferencesUtil.setBoolean(requireContext(), IS_CALIBRATION, true)
                     val intent = Intent(requireContext(), BarcodeActivity::class.java)
-                    startActivityForResult(intent, 100)
+                    startActivity(intent)
                 }
                 true
             }
@@ -47,7 +47,8 @@ class OtherPreferenceFragment : PreferenceFragmentCompat() {
 
         val aboutPreference = findPreference<Preference>(getString(R.string.aboutKey))
         if (aboutPreference != null) {
-            aboutPreference.summary = App.getAppVersion()
+            aboutPreference.summary =
+                App.getAppVersion() + ". " + getString(R.string.app_in_development)
             aboutPreference.setOnPreferenceClickListener {
                 val intent = Intent(activity, AboutActivity::class.java)
                 activity?.startActivity(intent)

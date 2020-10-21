@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import io.ffem.lite.R
+import io.ffem.lite.model.CalibrationValue
 import io.ffem.lite.model.TestInfo
 import io.ffem.lite.preference.isDiagnosticMode
 import kotlinx.android.synthetic.main.app_bar_layout.*
@@ -87,6 +88,6 @@ class CalibrationItemFragment : Fragment() {
     }
 
     interface OnCalibrationSelectedListener {
-        fun onCalibrationSelected()
+        fun onCalibrationSelected(calibrationValue: CalibrationValue)
     }
 }

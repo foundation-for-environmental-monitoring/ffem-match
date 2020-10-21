@@ -36,6 +36,7 @@ import io.ffem.lite.app.App.Companion.getTestInfo
 import io.ffem.lite.camera.CameraFragment
 import io.ffem.lite.data.AppDatabase
 import io.ffem.lite.data.TestResult
+import io.ffem.lite.model.CalibrationValue
 import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.TestInfo
 import io.ffem.lite.preference.AppPreferences
@@ -198,7 +199,8 @@ class BarcodeActivity : BaseActivity(),
         }
     }
 
-    override fun onCalibrationSelected() {
+    override fun onCalibrationSelected(calibrationValue: CalibrationValue) {
+        model.test.get()!!.calibratedResultInfo.calibratedValue = calibrationValue
         pageNext()
     }
 
@@ -251,7 +253,12 @@ class BarcodeActivity : BaseActivity(),
     }
 
     private fun pageBack() {
-        view_pager.currentItem = view_pager.currentItem - 1
+        if (view_pager.currentItem == 2) {
+            val testPagerAdapter = TestPagerAdapter(this)
+            view_pager.adapter = testPagerAdapter
+        } else {
+            view_pager.currentItem = view_pager.currentItem - 1
+        }
     }
 
     private fun pageNext() {
@@ -301,7 +308,7 @@ class BarcodeActivity : BaseActivity(),
                 }
                 else -> {
                     if (isCalibration()) {
-                        CalibrationFragment()
+                        CalibrationResultFragment()
                     } else {
                         ResultFragment()
                     }

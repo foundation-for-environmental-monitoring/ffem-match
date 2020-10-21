@@ -18,8 +18,8 @@ data class ResultInfo(
     // distance between sampleColor and matchedColor
     var distance: Double = 0.0,
 
-    // the color chosen for calibration by the user
-    var calibratedColor: Int = 0,
+    // the value chosen for calibration by the user
+    var calibratedValue: CalibrationValue = CalibrationValue(),
 
     // color difference on calibration
     var calibration: Calibration = Calibration(),

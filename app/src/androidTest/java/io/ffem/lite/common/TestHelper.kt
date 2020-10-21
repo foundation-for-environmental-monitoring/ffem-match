@@ -29,8 +29,7 @@ const val TEST_SURVEY_NAME = "ffem Lite Testing"
 fun clearData() {
     val db = AppDatabase.getDatabase(ApplicationProvider.getApplicationContext())
     try {
-        db.resultDao().deleteAll()
-        db.resultDao().deleteCalibration()
+        db.clearAllTables()
     } finally {
         db.close()
     }
