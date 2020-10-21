@@ -18,23 +18,27 @@ package io.ffem.lite.camera
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
-import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.Configuration
 import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.TextView
+import android.widget.Toast
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.view.PreviewView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -43,6 +47,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import io.ffem.lite.R
 import io.ffem.lite.app.App
+import io.ffem.lite.preference.getSampleTestImageNumberInt
 import io.ffem.lite.preference.manualCaptureOnly
 import io.ffem.lite.preference.useFlashMode
 import kotlinx.android.synthetic.main.fragment_camera.*
@@ -122,6 +127,20 @@ class CameraFragment : Fragment() {
         lifecycleScope.launch {
             delay(300)
             startCamera()
+
+            if (getSampleTestImageNumberInt() > -1) {
+                val toast: Toast = Toast.makeText(
+                    requireContext(),
+                    R.string.dummy_image_message,
+                    Toast.LENGTH_LONG
+                )
+                toast.setGravity(Gravity.CENTER, 0, -200)
+                (toast.view?.findViewById<View>(android.R.id.message) as TextView).setTextColor(
+                    Color.WHITE
+                )
+                toast.view?.background?.setColorFilter(Color.RED, PorterDuff.Mode.SRC_IN)
+                toast.show()
+            }
         }
     }
 
@@ -144,7 +163,6 @@ class CameraFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? = inflater.inflate(R.layout.fragment_camera, container, false)
 
-    @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         container = view as ConstraintLayout
@@ -152,9 +170,7 @@ class CameraFragment : Fragment() {
 
     private fun startCamera() {
         camera_preview.post {
-            // Wait for the views to be properly laid out
-            // Keep track of the display in which this view is attached
-            displayId = camera_preview.display.displayId
+            displayId = view?.findViewById<PreviewView>(R.id.camera_preview)!!.display.displayId
             updateCameraUi()
             bindCameraUseCases()
         }

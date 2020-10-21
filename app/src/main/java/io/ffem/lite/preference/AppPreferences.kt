@@ -95,7 +95,6 @@ object AppPreferences {
     fun disableDiagnosticMode() {
         PreferencesUtil.setBoolean(App.app, R.string.diagnosticModeKey, false)
         PreferencesUtil.setBoolean(App.app, R.string.testModeOnKey, false)
-        PreferencesUtil.setBoolean(App.app, R.string.dummyImageKey, false)
     }
 
     fun checkDiagnosticModeExpiry() {

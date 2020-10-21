@@ -38,7 +38,7 @@ import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.preference.SettingsActivity
 import io.ffem.lite.preference.useDummyImage
 import io.ffem.lite.util.ColorUtil
-import io.ffem.lite.util.FileUtil
+import io.ffem.lite.util.FileUtil.getPathFromURI
 import io.ffem.lite.util.PreferencesUtil
 import io.ffem.lite.util.toast
 import kotlinx.android.synthetic.main.activity_result_list.*
@@ -100,6 +100,7 @@ class ResultListActivity : AppUpdateActivity() {
                 )
             }
             refreshList()
+            progress_lyt.visibility = GONE
         }
     }
 
@@ -220,6 +221,12 @@ class ResultListActivity : AppUpdateActivity() {
         test_results_lst.adapter = adapter
 
         showHideList()
+
+        if (useDummyImage()) {
+            load_image_fab.visibility = VISIBLE
+        } else {
+            load_image_fab.visibility = GONE
+        }
     }
 
     override fun onPause() {
@@ -234,16 +241,13 @@ class ResultListActivity : AppUpdateActivity() {
 
     fun onStartClick(@Suppress("UNUSED_PARAMETER") view: View) {
         PreferencesUtil.setBoolean(this, IS_CALIBRATION, false)
-        if (useDummyImage()) {
-            performFileSearch()
-        } else {
-            val intent = Intent(baseContext, BarcodeActivity::class.java)
-            startTest.launch(intent)
-        }
+        val intent = Intent(baseContext, BarcodeActivity::class.java)
+        startTest.launch(intent)
     }
 
     private fun refreshList() {
         adapter.setTestList(db.resultDao().getResults())
+        test_results_lst.adapter = adapter
         adapter.notifyDataSetChanged()
     }
 
@@ -258,10 +262,9 @@ class ResultListActivity : AppUpdateActivity() {
     }
 
     private fun performFileSearch() {
-        val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
-            addCategory(Intent.CATEGORY_OPENABLE)
-            type = "image/jpeg"
-        }
+        PreferencesUtil.setBoolean(this, IS_CALIBRATION, false)
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
         startFileExplorer.launch(intent)
     }
 
@@ -287,7 +290,7 @@ class ResultListActivity : AppUpdateActivity() {
     private val startFileExplorer =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             it.data?.data?.also { uri ->
-                val fileUrl = FileUtil.getPath(this, uri)
+                val fileUrl = getPathFromURI(this, uri)
                 if (fileUrl != null) {
                     val filePath = File(fileUrl)
                     if (filePath.exists()) {
@@ -311,9 +314,15 @@ class ResultListActivity : AppUpdateActivity() {
 
                         try {
                             if (bitmapFromFile != null) {
+                                AppPreferences.generateImageFileName()
+                                progress_lyt.visibility = VISIBLE
                                 ColorUtil.extractImage(this, bitmapFromFile)
+                                MainScope().launch {
+                                    delay(3000)
+                                    progress_lyt.visibility = GONE
+                                }
                             } else {
-                                toast(getString(R.string.diagnosticModeDisabled), Toast.LENGTH_LONG)
+                                toast(getString(R.string.invalid_image), Toast.LENGTH_LONG)
                             }
                         } catch (e: Exception) {
                             e.message?.let { it1 -> toast(it1, Toast.LENGTH_LONG) }
@@ -322,4 +331,8 @@ class ResultListActivity : AppUpdateActivity() {
                 }
             }
         }
+
+    fun onLoadFileClick(@Suppress("UNUSED_PARAMETER") view: View) {
+        performFileSearch()
+    }
 }

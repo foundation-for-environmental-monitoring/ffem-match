@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import io.ffem.lite.R
+import kotlinx.android.synthetic.main.app_bar_layout.*
 import kotlinx.android.synthetic.main.fragment_image_confirm.*
 import java.io.File
 
@@ -52,6 +53,8 @@ class ImageConfirmFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        toolbar.setTitle(R.string.confirm)
+
         if (model.test.get() != null) {
             val path =
                 requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES).toString() +

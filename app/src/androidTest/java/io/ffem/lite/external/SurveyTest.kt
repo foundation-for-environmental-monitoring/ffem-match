@@ -77,7 +77,9 @@ fun startTest(imageNumber: Int) {
 
         SystemClock.sleep(TIME_DELAY)
 
-        Espresso.onView(ViewMatchers.withText(R.string.accept)).perform(ViewActions.click())
+        if (testData.expectedResultError == ErrorType.NO_ERROR) {
+            Espresso.onView(ViewMatchers.withText(R.string.accept)).perform(ViewActions.click())
+        }
 
         Espresso.onView(ViewMatchers.withText(testData.testDetails.name.toLocalString()))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))

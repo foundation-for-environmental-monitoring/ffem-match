@@ -10,8 +10,6 @@ import io.ffem.lite.R.xml
 import io.ffem.lite.util.MAX_COLOR_DISTANCE_CALIBRATION
 import io.ffem.lite.util.MAX_COLOR_DISTANCE_RGB
 
-const val PERMISSION_REQUEST = 103
-
 class DiagnosticPreferenceFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {

@@ -9,17 +9,12 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.BitmapFactory
-import android.graphics.Color
-import android.graphics.PorterDuff
 import android.media.MediaActionSound
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment.DIRECTORY_PICTURES
 import android.os.Handler
-import android.view.Gravity
 import android.view.View
-import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -42,7 +37,6 @@ import io.ffem.lite.model.TestInfo
 import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.preference.AppPreferences.isCalibration
 import io.ffem.lite.preference.getSampleTestImageNumber
-import io.ffem.lite.preference.getSampleTestImageNumberInt
 import io.ffem.lite.preference.isTestRunning
 import io.ffem.lite.util.ColorUtil
 import io.ffem.lite.util.PreferencesUtil
@@ -54,6 +48,12 @@ import kotlin.math.round
 
 const val DEBUG_MODE = "debugMode"
 const val TEST_ID = "testId"
+
+const val INSTRUCTION_PAGE = 0
+const val CAMERA_PAGE = 1
+const val CONFIRMATION_PAGE = 2
+const val CALIBRATE_LIST_PAGE = 3
+const val RESULT_PAGE = 4
 
 /**
  * Activity to display info about the app.
@@ -85,7 +85,11 @@ class BarcodeActivity : BaseActivity(),
 
             if (testInfo != null) {
                 model.setTest(testInfo)
-                view_pager.currentItem = 2
+                if (testInfo!!.error == ErrorType.NO_ERROR) {
+                    view_pager.currentItem = CONFIRMATION_PAGE
+                } else {
+                    view_pager.currentItem = RESULT_PAGE
+                }
             }
         }
     }
@@ -166,9 +170,9 @@ class BarcodeActivity : BaseActivity(),
     }
 
     private fun deleteExcessData() {
-        // Keep only last 20 results to save drive space
+        // Keep only last 25 results to save drive space
         for (i in 0..1) {
-            if (db.resultDao().getCount() > 20) {
+            if (db.resultDao().getCount() > 25) {
                 val result = db.resultDao().getOldestResult()
 
                 val path = getExternalFilesDir(DIRECTORY_PICTURES).toString() +
@@ -232,18 +236,6 @@ class BarcodeActivity : BaseActivity(),
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-
-        if (getSampleTestImageNumberInt() > -1) {
-            val toast: Toast = Toast.makeText(this, R.string.dummy_image_message, Toast.LENGTH_LONG)
-            toast.setGravity(Gravity.CENTER, 0, -200)
-            (toast.view?.findViewById<View>(android.R.id.message) as TextView).setTextColor(Color.WHITE)
-            toast.view?.background?.setColorFilter(Color.RED, PorterDuff.Mode.SRC_IN)
-            toast.show()
-        }
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         // Unregister the broadcast receivers and listeners
@@ -253,7 +245,7 @@ class BarcodeActivity : BaseActivity(),
     }
 
     private fun pageBack() {
-        if (view_pager.currentItem == 2) {
+        if (view_pager.currentItem == CONFIRMATION_PAGE) {
             val testPagerAdapter = TestPagerAdapter(this)
             view_pager.adapter = testPagerAdapter
         } else {
@@ -266,7 +258,7 @@ class BarcodeActivity : BaseActivity(),
     }
 
     override fun onBackPressed() {
-        if (view_pager.currentItem > 0) {
+        if (view_pager.currentItem > INSTRUCTION_PAGE) {
             pageBack()
         } else {
             super.onBackPressed()
@@ -290,16 +282,16 @@ class BarcodeActivity : BaseActivity(),
 
         override fun createFragment(position: Int): Fragment {
             return when (position) {
-                0 -> {
+                INSTRUCTION_PAGE -> {
                     InstructionFragment()
                 }
-                1 -> {
+                CAMERA_PAGE -> {
                     CameraFragment()
                 }
-                2 -> {
+                CONFIRMATION_PAGE -> {
                     ImageConfirmFragment()
                 }
-                3 -> {
+                CALIBRATE_LIST_PAGE -> {
                     if (isCalibration()) {
                         CalibrationItemFragment()
                     } else {
@@ -318,19 +310,19 @@ class BarcodeActivity : BaseActivity(),
     }
 
     override fun onStartTest() {
-        view_pager.currentItem = 1
+        view_pager.currentItem = CAMERA_PAGE
     }
 
     override fun onConfirmImage(action: Int) {
         if (action == RESULT_OK) {
             if (isCalibration()) {
                 if (model.test.get()?.error == ErrorType.NO_ERROR) {
-                    view_pager.currentItem = 3
+                    view_pager.currentItem = CALIBRATE_LIST_PAGE
                 } else {
-                    view_pager.currentItem = 4
+                    view_pager.currentItem = RESULT_PAGE
                 }
             } else {
-                view_pager.currentItem = 3
+                view_pager.currentItem = CALIBRATE_LIST_PAGE
             }
         } else {
             val testPagerAdapter = TestPagerAdapter(this)

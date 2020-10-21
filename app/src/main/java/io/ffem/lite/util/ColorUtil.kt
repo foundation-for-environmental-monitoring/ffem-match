@@ -195,23 +195,7 @@ object ColorUtil {
             BarcodeScanning.getClient(options)
         }
 
-        var bitmap: Bitmap
-        bitmap = when {
-            bitmapImage.width.toDouble() / bitmapImage.height > 1.58 -> {
-                cropImageToHalfSize(bitmapImage)
-            }
-            bitmapImage.height.toDouble() / bitmapImage.width > 1.58 -> {
-                bitmap = Utilities.rotateImage(bitmapImage, 90)
-                cropImageToHalfSize(bitmap)
-            }
-            else -> {
-                bitmapImage
-            }
-        }
-
-        if (bitmap.width > bitmap.height) {
-            bitmap = Utilities.rotateImage(bitmap, 90)
-        }
+        val bitmap = Utilities.rotateImage(bitmapImage, 90)
 
         var badLighting = false
 
@@ -231,7 +215,8 @@ object ColorUtil {
                     if (result.isEmpty()) {
                         returnResult(context, getTestInfo(DEFAULT_TEST_UUID), BAD_LIGHTING, bitmap)
                     }
-                    for (leftBarcode in result) {
+                    if (result.isNotEmpty()) {
+                        val leftBarcode = result[0]
                         if (!leftBarcode.rawValue.isNullOrEmpty()) {
                             try {
                                 val testInfo = getTestInfo(result[0].displayValue!!)
@@ -279,8 +264,8 @@ object ColorUtil {
                                                 return
                                             }
 
-                                            for (rightBarcode in result) {
-
+                                            if (result.isNotEmpty()) {
+                                                val rightBarcode = result[0]
                                                 val rightBoundingBox =
                                                     fixBoundary(
                                                         rightBarcode,
@@ -329,13 +314,13 @@ object ColorUtil {
             )
     }
 
-    private fun cropImageToHalfSize(bitmap: Bitmap): Bitmap {
-        return Bitmap.createBitmap(
-            bitmap, bitmap.width / 2, 0,
-            bitmap.width / 2,
-            bitmap.height
-        )
-    }
+//    private fun cropImageToHalfSize(bitmap: Bitmap): Bitmap {
+//        return Bitmap.createBitmap(
+//            bitmap, 0, 0,
+//            bitmap.width / 2,
+//            bitmap.height
+//        )
+//    }
 
     private fun analyzeBarcode(
         context: Context, bitmap: Bitmap, rightBarcode: Barcode,
@@ -633,7 +618,7 @@ object ColorUtil {
 
         val paint = Paint()
         paint.style = Style.STROKE
-        paint.color = Color.WHITE
+        paint.color = Color.GREEN
         paint.strokeWidth = 2f
         paint.isAntiAlias = true
 

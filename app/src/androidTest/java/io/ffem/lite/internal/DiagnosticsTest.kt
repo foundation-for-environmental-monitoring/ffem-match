@@ -89,15 +89,13 @@ class DiagnosticsTest {
 
     @Test
     fun testDiagnosticTest() {
+        TestHelper.clearPreferences()
+
         startDiagnosticMode()
 
         sleep(400)
 
         Espresso.pressBack()
-
-        sleep(400)
-
-        onView(withText(R.string.manual_photo_capture)).perform(click())
 
         sleep(400)
 
@@ -159,7 +157,7 @@ class DiagnosticsTest {
 
         val floatingActionButton = onView(
             allOf(
-                withId(R.id.fab), withContentDescription(R.string.start_test),
+                withId(R.id.start_test_fab), withContentDescription(R.string.start_test),
                 isDisplayed()
             )
         )
@@ -239,21 +237,6 @@ class DiagnosticsTest {
             )
         )
         textView6.check(matches(withText("0.30")))
-
-        val textView7 = onView(
-            allOf(
-                withText(R.string.result),
-                childAtPosition(
-                    childAtPosition(
-                        IsInstanceOf.instanceOf(android.widget.LinearLayout::class.java),
-                        0
-                    ),
-                    0
-                ),
-                isDisplayed()
-            )
-        )
-        textView7.check(matches(withText(R.string.result)))
 
         onView(
             allOf(
@@ -335,7 +318,7 @@ class DiagnosticsTest {
 
         val floatingActionButton = onView(
             allOf(
-                withId(R.id.fab), withContentDescription(R.string.start_test),
+                withId(R.id.start_test_fab), withContentDescription(R.string.start_test),
                 isDisplayed()
             )
         )
@@ -348,8 +331,6 @@ class DiagnosticsTest {
         onView(withText(R.string.take_photo)).perform(click())
 
         sleep(TIME_DELAY / 4)
-
-        onView(withText(R.string.accept)).perform(click())
 
         val textView = onView(
             allOf(

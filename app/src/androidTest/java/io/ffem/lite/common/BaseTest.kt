@@ -24,7 +24,7 @@ open class BaseTest {
 
                 Assume.assumeFalse("true" == testLabSetting)
             }
-        } catch (e: IllegalStateException) {
+        } catch (e: Exception) {
         }
     }
 }

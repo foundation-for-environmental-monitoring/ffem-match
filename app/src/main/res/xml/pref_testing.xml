@@ -8,7 +8,8 @@
         app:iconSpaceReserved="false">
         <CheckBoxPreference
             android:key="@string/dummyImageKey"
-            android:title="Select existing image for analysis"
+            android:summary="Adds a button to pick a photo from the gallery or media folder for analysis"
+            android:title="Load a photo file to analyze"
             app:allowDividerAbove="true"
             app:allowDividerBelow="true"
             app:iconSpaceReserved="false" />

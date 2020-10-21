@@ -35,7 +35,6 @@ class ResultFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        requireActivity().setTitle(R.string.result)
         if (activity is ResultViewActivity) {
             button_submit.visibility = GONE
         } else {
@@ -64,7 +63,7 @@ class ResultFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        requireActivity().setTitle(R.string.result)
+        toolbar.setTitle(R.string.result)
     }
 
     private fun displayResult(testInfo: TestInfo?) {

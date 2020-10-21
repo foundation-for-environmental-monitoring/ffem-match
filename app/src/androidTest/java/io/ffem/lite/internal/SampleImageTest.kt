@@ -194,7 +194,6 @@ class SampleImageTest {
         startInternalTest(25)
     }
 
-
     @Test
     fun image_026_Iron_0() {
         startInternalTest(26)
@@ -225,7 +224,7 @@ class SampleImageTest {
 
         sleep(2000)
 
-        onView(withId(R.id.fab)).perform(click())
+        onView(withId(R.id.start_test_fab)).perform(click())
 
         onView(withText(R.string.start)).perform(click())
 
@@ -233,7 +232,9 @@ class SampleImageTest {
 
             sleep(TIME_DELAY)
 
-            onView(withText(R.string.accept)).perform(click())
+            if (testData.expectedResultError == NO_ERROR) {
+                onView(withText(R.string.accept)).perform(click())
+            }
 
             onView(withText(testData.testDetails.name.toLocalString())).check(matches(isDisplayed()))
 

@@ -41,6 +41,7 @@ class ScreenshotTest : BaseTest() {
 
     @Before
     override fun setUp() {
+        super.setUp()
         if (!initialized) {
             clearPreferences()
             clearData()

@@ -63,7 +63,6 @@ class InstructionFragment : Fragment() {
             }
         }
 
-
     class MyUndoListener : View.OnClickListener {
         override fun onClick(v: View) {
             App.openAppPermissionSettings()

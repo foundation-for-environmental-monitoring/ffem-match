@@ -57,6 +57,7 @@ class SampleImageSurveyTest : BaseTest() {
 
     @Before
     override fun setUp() {
+        super.setUp()
         if (!initialized) {
             clearPreferences()
             clearData()

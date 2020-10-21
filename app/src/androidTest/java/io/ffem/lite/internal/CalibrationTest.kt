@@ -23,6 +23,7 @@ import io.ffem.lite.common.TestUtil.childAtPosition
 import io.ffem.lite.common.TestUtil.sleep
 import io.ffem.lite.common.clearData
 import io.ffem.lite.common.testDataList
+import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.toResourceId
 import io.ffem.lite.ui.ResultListActivity
 import io.ffem.lite.util.PreferencesUtil
@@ -63,6 +64,7 @@ class CalibrationTest {
 
     @Test
     fun image_004_pH_NoMatch() {
+        TestHelper.clearPreferences()
         calibrationNoMatch(4)
     }
 
@@ -77,7 +79,7 @@ class CalibrationTest {
 
         onView(
             allOf(
-                withId(R.id.fab), withContentDescription(R.string.start_test),
+                withId(R.id.start_test_fab), withContentDescription(R.string.start_test),
                 isDisplayed()
             )
         ).perform(click())
@@ -86,7 +88,9 @@ class CalibrationTest {
 
         sleep(TIME_DELAY)
 
-        onView(withText(R.string.accept)).perform(click())
+        if (testData.expectedResultError == ErrorType.NO_ERROR) {
+            onView(withText(R.string.accept)).perform(click())
+        }
 
         onView(withText(testData.testDetails.name.toLocalString())).check(matches(isDisplayed()))
 
@@ -163,7 +167,7 @@ class CalibrationTest {
 
         onView(
             allOf(
-                withId(R.id.fab), withContentDescription(R.string.start_test),
+                withId(R.id.start_test_fab), withContentDescription(R.string.start_test),
                 isDisplayed()
             )
         ).perform(click())
@@ -211,7 +215,7 @@ class CalibrationTest {
 
         onView(
             allOf(
-                withId(R.id.fab), withContentDescription(R.string.start_test),
+                withId(R.id.start_test_fab), withContentDescription(R.string.start_test),
                 isDisplayed()
             )
         ).perform(click())
@@ -220,7 +224,9 @@ class CalibrationTest {
 
         sleep(TIME_DELAY)
 
-        onView(withText(R.string.accept)).perform(click())
+        if (testData.expectedResultError == ErrorType.NO_ERROR) {
+            onView(withText(R.string.accept)).perform(click())
+        }
 
         onView(withText(testData.testDetails.name.toLocalString())).check(matches(isDisplayed()))
 
@@ -258,7 +264,9 @@ class CalibrationTest {
 
         sleep(TIME_DELAY / 2)
 
-        onView(withText(R.string.accept)).perform(click())
+        if (testData.expectedResultError == ErrorType.NO_ERROR) {
+            onView(withText(R.string.accept)).perform(click())
+        }
 
         onView(withText(testData.testDetails.name.toLocalString())).check(matches(isDisplayed()))
 
@@ -274,7 +282,7 @@ class CalibrationTest {
 
         onView(
             allOf(
-                withId(R.id.fab), withContentDescription(R.string.start_test),
+                withId(R.id.start_test_fab), withContentDescription(R.string.start_test),
                 isDisplayed()
             )
         ).perform(click())
@@ -283,7 +291,9 @@ class CalibrationTest {
 
         sleep(TIME_DELAY)
 
-        onView(withText(R.string.accept)).perform(click())
+        if (testData.expectedResultError == ErrorType.NO_ERROR) {
+            onView(withText(R.string.accept)).perform(click())
+        }
 
         onView(withText(testData.testDetails.name.toLocalString())).check(matches(isDisplayed()))
 
