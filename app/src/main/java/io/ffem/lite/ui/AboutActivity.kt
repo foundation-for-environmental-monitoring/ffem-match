@@ -5,6 +5,7 @@ import android.view.MenuItem
 import android.view.View
 import io.ffem.lite.R
 import io.ffem.lite.app.App
+import io.ffem.lite.helper.ApkHelper.isTestDevice
 import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.preference.isDiagnosticMode
 import io.ffem.lite.util.toast
@@ -32,8 +33,10 @@ class AboutActivity : BaseActivity() {
      * Displays legal information.
      */
     fun onSoftwareNoticesClick(@Suppress("UNUSED_PARAMETER") view: View) {
-        dialog = NoticesDialogFragment.newInstance()
-        dialog!!.show(supportFragmentManager, "NoticesDialog")
+        if (!isTestDevice(this)) {
+            dialog = NoticesDialogFragment.newInstance()
+            dialog!!.show(supportFragmentManager, "NoticesDialog")
+        }
     }
 
     /**

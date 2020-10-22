@@ -1,6 +1,7 @@
 package io.ffem.lite.helper
 
 import android.content.Context
+import android.provider.Settings
 import java.util.*
 
 object ApkHelper {
@@ -27,5 +28,16 @@ object ApkHelper {
         }
 
         return true
+    }
+
+    fun isTestDevice(context: Context): Boolean {
+        try {
+            val testLabSetting: String =
+                Settings.System.getString(context.contentResolver, "firebase.test.lab")
+            return "true" == testLabSetting
+        } catch (ignored: Exception) {
+            // do nothing
+        }
+        return false
     }
 }

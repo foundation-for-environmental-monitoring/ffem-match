@@ -245,7 +245,7 @@ class BarcodeActivity : BaseActivity(),
     }
 
     private fun pageBack() {
-        if (view_pager.currentItem == CONFIRMATION_PAGE) {
+        if (view_pager.currentItem in CAMERA_PAGE..CONFIRMATION_PAGE) {
             val testPagerAdapter = TestPagerAdapter(this)
             view_pager.adapter = testPagerAdapter
         } else {
