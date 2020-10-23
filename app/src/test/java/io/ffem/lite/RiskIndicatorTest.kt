@@ -23,6 +23,7 @@ const val PH_ID = "ff96e965-13a3-4507-9edf-7aa7fc084354"
 const val RESIDUAL_CHLORINE_ID = "f1d64b11-64c4-4a34-806e-ad0d47bcc96b"
 const val NITRATE_ID = "d69ca7a2-e357-4820-a99b-1b6b24c0fa93"
 const val IRON_ID = "7fd5d20d-73e3-4c95-86ef-352410b1893d"
+const val PHOSPHATE_ID = "b396de78-0de6-11eb-adc1-0242ac120002"
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.O_MR1])
@@ -243,6 +244,36 @@ class RiskIndicatorTest {
         assertRisk(testInfo, 0.1, LOW)
 
         assertRisk(testInfo, 0.31, HIGH)
+    }
+
+    @Test
+    fun phosphateRiskIndicator() {
+
+        val testInfo = getTestInfo(PHOSPHATE_ID)!!
+
+        Assert.assertEquals(8, testInfo.values.size)
+
+        Assert.assertEquals(2, testInfo.risks.size)
+
+        assertRisk(testInfo, 0.31, HIGH)
+
+        assertRisk(testInfo, 0.5, HIGH)
+
+        assertRisk(testInfo, 1.0, HIGH)
+
+        assertRisk(testInfo, 0.21, LOW)
+
+        assertRisk(testInfo, 0.12, LOW)
+
+        assertRisk(testInfo, 1.5, HIGH)
+
+        assertRisk(testInfo, 0.0, LOW)
+
+        assertRisk(testInfo, 0.15, LOW)
+
+        assertRisk(testInfo, 0.1, LOW)
+
+        assertRisk(testInfo, 0.9, HIGH)
     }
 
     private fun assertRisk(testInfo: TestInfo, result: Double, risk: RiskLevel) {

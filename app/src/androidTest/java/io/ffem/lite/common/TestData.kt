@@ -20,6 +20,10 @@ val residualChlorine = TestDetails(
     "Residual Chlorine", "ad0d47bcc96b", R.string.water_tests_2,
     1, riskType = RiskType.QUANTITY
 )
+val phosphate = TestDetails(
+    "Phosphate", "0242ac120002", R.string.water_tests_2,
+    2, riskType = RiskType.SAFETY
+)
 val invalidTest = TestDetails("Residual Chlorine", "ad0d47bcc96b", R.string.water_tests_2, 2)
 
 val testDataList = mutableMapOf(
@@ -52,6 +56,8 @@ val testDataList = mutableMapOf(
     26 to TestData(iron, 0.0, 0.15, risk = RiskLevel.LOW),
     27 to TestData(fluoride, 0.5, 0.25, risk = RiskLevel.LOW),
     28 to TestData(pH, 7.0, 0.5, risk = RiskLevel.MEDIUM),
+    29 to TestData(phosphate, 1.6, 0.47, risk = RiskLevel.HIGH),
+
     500 to TestData(pH, expectedScanError = R.string.sample_image_not_found)
 )
 
