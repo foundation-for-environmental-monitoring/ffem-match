@@ -210,6 +210,11 @@ class SampleImageTest {
     }
 
     @Test
+    fun image_029_Phosphate_1_Point_6() {
+        startInternalTest(29)
+    }
+
+    @Test
     fun imageX_Waiting() {
         startInternalTest(500)
     }
