@@ -35,6 +35,7 @@ class App : BaseApplication() {
     companion object {
 
         const val ERROR_MESSAGE = "error_message"
+        const val SCAN_PROGRESS = "scan_progress"
 
         const val LOCAL_RESULT_EVENT = "result_event"
         const val CAPTURED_EVENT = "captured_event"

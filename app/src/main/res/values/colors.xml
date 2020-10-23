@@ -28,5 +28,6 @@
     <color name="diagnostic">#910228</color>
     <color name="diagnostic_status">#830023</color>
     <color name="diagnostic_option_background">#FFF0DC</color>
+    <color name="bright_green">#1DEF60</color>
 
 </resources>

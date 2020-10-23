@@ -20,11 +20,16 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Context.SENSOR_SERVICE
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.PorterDuff
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
@@ -47,6 +52,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import io.ffem.lite.R
 import io.ffem.lite.app.App
+import io.ffem.lite.app.App.Companion.SCAN_PROGRESS
 import io.ffem.lite.preference.getSampleTestImageNumberInt
 import io.ffem.lite.preference.manualCaptureOnly
 import io.ffem.lite.preference.useFlashMode
@@ -68,6 +74,9 @@ import kotlin.math.min
  */
 class CameraFragment : Fragment() {
 
+    private var lightSensor: Sensor? = null
+    private lateinit var lightEventListener: SensorEventListener
+    private lateinit var sensorManager: SensorManager
     private lateinit var container: ConstraintLayout
     private lateinit var broadcastManager: LocalBroadcastManager
     private lateinit var mainExecutor: Executor
@@ -91,10 +100,13 @@ class CameraFragment : Fragment() {
             messageHandler.removeCallbacksAndMessages(null)
 
             val message = intent.getStringExtra(App.ERROR_MESSAGE)
-            if (bottom_overlay != null && bottom_overlay.text != message) {
+            val scanProgress = intent.getIntExtra(SCAN_PROGRESS, 0)
+
+            if (bottom_overlay != null && bottom_overlay.text != message && !message.isNullOrEmpty()) {
                 bottom_overlay.setTextColor(Color.YELLOW)
                 bottom_overlay.text = message
             }
+            progress_bar.progress = scanProgress
 
             messageHandler.postDelayed(runnable, 3000)
         }
@@ -114,6 +126,23 @@ class CameraFragment : Fragment() {
         mainExecutor = ContextCompat.getMainExecutor(requireContext())
 
         broadcastManager = LocalBroadcastManager.getInstance(requireContext())
+
+        sensorManager = requireActivity().getSystemService(SENSOR_SERVICE) as SensorManager
+        lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT)
+
+        if (lightSensor != null) {
+            lightEventListener = object : SensorEventListener {
+                override fun onSensorChanged(sensorEvent: SensorEvent) {
+                    val value = sensorEvent.values[0]
+                    if (luminosity_txt != null) {
+                        val lux = "Luminosity : $value lx"
+                        luminosity_txt.text = lux
+                    }
+                }
+
+                override fun onAccuracyChanged(sensor: Sensor, i: Int) {}
+            }
+        }
     }
 
     /**
@@ -122,6 +151,13 @@ class CameraFragment : Fragment() {
      */
     override fun onResume() {
         super.onResume()
+        if (lightSensor != null) {
+            sensorManager.registerListener(
+                lightEventListener,
+                lightSensor,
+                SensorManager.SENSOR_DELAY_FASTEST
+            )
+        }
         broadcastManager.registerReceiver(broadcastReceiver, IntentFilter(App.ERROR_EVENT))
 
         lifecycleScope.launch {
@@ -148,6 +184,9 @@ class CameraFragment : Fragment() {
         super.onPause()
         messageHandler.removeCallbacksAndMessages(runnable)
         broadcastManager.unregisterReceiver(broadcastReceiver)
+        if (lightSensor != null) {
+            sensorManager.unregisterListener(lightEventListener)
+        }
     }
 
     override fun onDestroyView() {

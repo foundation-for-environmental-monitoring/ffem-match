@@ -38,7 +38,7 @@ import org.junit.runner.RunWith
 import org.junit.runners.MethodSorters
 import java.io.File
 
-const val TIME_DELAY = 11000L
+const val TIME_DELAY = 10000L
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
@@ -175,7 +175,7 @@ class SampleImageTest {
     }
 
     @Test
-    fun image_022_Waiting() {
+    fun image_022_Tilted() {
         startInternalTest(22)
     }
 

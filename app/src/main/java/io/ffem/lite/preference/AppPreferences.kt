@@ -122,4 +122,12 @@ object AppPreferences {
     fun getImageFilename(): String {
         return PreferencesUtil.getString(App.app, IMAGE_FILE_NAME, UUID.randomUUID().toString())!!
     }
+
+//    fun isAppUpdateCheckRequired(): Boolean {
+//        if (BuildConfig.INSTRUMENTED_TEST_RUNNING.get()) {
+//            return true
+//        }
+//        val lastCheck = PreferencesUtil.getLong(App.app, "lastUpdateCheck")
+//        return TimeUnit.MILLISECONDS.toDays(Calendar.getInstance().timeInMillis - lastCheck) > 0
+//    }
 }

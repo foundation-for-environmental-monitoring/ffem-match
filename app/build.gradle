@@ -19,8 +19,8 @@ android {
         applicationId "io.ffem.lite"
         minSdkVersion 23
         targetSdkVersion 30
-        versionCode 74
-        versionName "Alpha 0.49.5"
+        versionCode 77
+        versionName "Alpha 0.51"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -123,10 +123,10 @@ dependencies {
     implementation "androidx.camera:camera-view:1.0.0-alpha18"
 
     // Dagger
-    kapt 'com.google.dagger:dagger-compiler:2.28.3'
-    kapt 'com.google.dagger:dagger-android-processor:2.28.3'
-    implementation 'com.google.dagger:dagger-android:2.28.3'
-    kaptAndroidTest 'com.google.dagger:dagger-compiler:2.28.3'
+    kapt 'com.google.dagger:dagger-compiler:2.29.1'
+    kapt 'com.google.dagger:dagger-android-processor:2.29.1'
+    implementation 'com.google.dagger:dagger-android:2.29.1'
+    kaptAndroidTest 'com.google.dagger:dagger-compiler:2.29.1'
 
     // Logs
     implementation 'com.jakewharton.timber:timber:4.7.1'
@@ -146,7 +146,7 @@ dependencies {
     }
 
     // Robolectric
-    testImplementation 'org.robolectric:robolectric:4.3.1'
+    testImplementation 'org.robolectric:robolectric:4.4'
 
     // UIAutomator
     androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'

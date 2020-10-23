@@ -17,6 +17,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#444444"
+        android:indeterminate="false"
+        android:max="10"
+        android:progressTint="@color/bright_green"
+        android:scaleY="2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/card_overlay" />
+
     <TextView
         android:id="@+id/bottom_overlay"
         android:layout_width="match_parent"
@@ -27,15 +41,26 @@
         android:textAlignment="center"
         android:textColor="#EEEEEE"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/card_overlay" />
+        app:layout_constraintTop_toBottomOf="@+id/progress_bar" />
+
+    <TextView
+        android:id="@+id/luminosity_txt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:paddingTop="16dp"
+        android:textAlignment="center"
+        android:textColor="#EEEEEE"
+        app:layout_constraintTop_toBottomOf="@+id/card_overlay"
+        tools:text="Luminosity: 30" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/take_photo_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="70dp"
-        android:minWidth="200dp"
         android:contentDescription="@string/capture_photo"
+        android:minWidth="200dp"
         android:minHeight="60dp"
         android:text="@string/take_photo"
         app:layout_constraintBottom_toBottomOf="parent"

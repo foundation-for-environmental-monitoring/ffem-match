@@ -7,6 +7,7 @@ import android.content.Intent
 import android.graphics.*
 import android.graphics.Paint.Style
 import android.os.Environment
+import androidx.core.content.ContextCompat.getColor
 import androidx.core.graphics.blue
 import androidx.core.graphics.green
 import androidx.core.graphics.red
@@ -17,6 +18,7 @@ import com.google.mlkit.vision.barcode.BarcodeScanner
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
+import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.app.App.Companion.DEFAULT_TEST_UUID
 import io.ffem.lite.app.App.Companion.TEST_ID_KEY
@@ -112,20 +114,19 @@ fun isDark(pixels: IntArray): Boolean {
     return (r / pixels.size) < 140
 }
 
-//fun isNotBright(pixels: IntArray): Boolean {
-//    var r = 0
-//
-//    if (pixels.isEmpty()) {
-//        return false
-//    }
-//
-//    for (element in pixels) {
-//        r += element.red
-//    }
-//
-//    return (r / pixels.size) < 110
-//}
+fun isNotBright(pixels: IntArray): Boolean {
+    var r = 0
 
+    if (pixels.isEmpty()) {
+        return false
+    }
+
+    for (element in pixels) {
+        r += element.red
+    }
+
+    return (r / pixels.size) < 110
+}
 
 fun isWhite(pixels: IntArray): Boolean {
     var r = 0
@@ -199,9 +200,11 @@ object ColorUtil {
 
         var badLighting = false
 
+        val barcodeHeight = ((bitmap.height / 2) - (.20 * bitmap.height / 2)).toInt()
+
         val leftBarcodeBitmap = Bitmap.createBitmap(
             bitmap, 0, 0,
-            bitmap.width, bitmap.height / 2
+            bitmap.width, barcodeHeight
         )
 
         detector.process(InputImage.fromBitmap(leftBarcodeBitmap, 0))
@@ -237,8 +240,8 @@ object ColorUtil {
                                 }
 
                                 val rightBarcodeBitmap = Bitmap.createBitmap(
-                                    bitmap, 0, bitmap.height / 2,
-                                    bitmap.width, bitmap.height / 2
+                                    bitmap, 0, bitmap.height - barcodeHeight,
+                                    bitmap.width, barcodeHeight
                                 )
 
                                 detector.process(
@@ -296,7 +299,7 @@ object ColorUtil {
 
                                                 analyzeBarcode(
                                                     context, bitmap, rightBarcode,
-                                                    rightBoundingBox, leftBoundingBox
+                                                    rightBoundingBox, leftBoundingBox, barcodeHeight
                                                 )
                                             }
 
@@ -314,17 +317,9 @@ object ColorUtil {
             )
     }
 
-//    private fun cropImageToHalfSize(bitmap: Bitmap): Bitmap {
-//        return Bitmap.createBitmap(
-//            bitmap, 0, 0,
-//            bitmap.width / 2,
-//            bitmap.height
-//        )
-//    }
-
     private fun analyzeBarcode(
         context: Context, bitmap: Bitmap, rightBarcode: Barcode,
-        rightBoundingBox: Rect, leftBoundingBox: Rect
+        rightBoundingBox: Rect, leftBoundingBox: Rect, barcodeHeight: Int
     ) {
 
         if (!rightBarcode.rawValue.isNullOrEmpty()) {
@@ -346,11 +341,11 @@ object ColorUtil {
                 bitmap.width - cropLeft
             )
             if (cropWidth < (0.6 * bitmap.width)) {
-                cropWidth = bitmap.width
+                cropWidth = bitmap.width - cropLeft
             }
 
             val cropTop = max(leftBoundingBox.bottom + 2, 0)
-            val cropBottom = (bitmap.height / 2) + rightBoundingBox.top
+            val cropBottom = (bitmap.height - barcodeHeight) + rightBoundingBox.top
             var cropHeight = min(cropBottom - cropTop, bitmap.height - cropTop)
             if (cropHeight < (0.35 * bitmap.height)) {
                 cropHeight = bitmap.height - cropTop
@@ -461,7 +456,8 @@ object ColorUtil {
                     val extractedColors = extractColors(
                         gsExtractedBitmap,
                         bwBitmap,
-                        rightBarcode.displayValue!!
+                        rightBarcode.displayValue!!,
+                        context
                     )
 
                     testInfo.resultInfoGrayscale = analyzeColor(extractedColors)
@@ -480,7 +476,8 @@ object ColorUtil {
                 val extractedColors = extractColors(
                     extractedBitmap,
                     bwBitmap,
-                    rightBarcode.displayValue!!
+                    rightBarcode.displayValue!!,
+                    context
                 )
 
                 testInfo.resultInfo = analyzeColor(extractedColors)
@@ -613,14 +610,19 @@ object ColorUtil {
     private fun extractColors(
         bitmap: Bitmap,
         bwBitmap: Bitmap,
-        barcodeValue: String
+        barcodeValue: String,
+        context: Context
     ): ColorInfo {
 
         val paint = Paint()
         paint.style = Style.STROKE
-        paint.color = Color.GREEN
-        paint.strokeWidth = 2f
-        paint.isAntiAlias = true
+        paint.color = getColor(context, R.color.bright_green)
+        paint.strokeWidth = 3f
+
+        val paint1 = Paint()
+        paint1.style = Style.STROKE
+        paint1.color = Color.BLACK
+        paint1.strokeWidth = 1f
 
         val cardColors: List<CalibrationValue> = getCardColors(barcodeValue)
 
@@ -648,6 +650,7 @@ object ColorUtil {
 
             val canvas = Canvas(bitmap)
             canvas.drawRect(rectangle, paint)
+            canvas.drawRect(rectangle, paint1)
         }
 
         val commonRight = points.y
@@ -667,6 +670,7 @@ object ColorUtil {
 
             val canvas = Canvas(bitmap)
             canvas.drawRect(rectangle, paint)
+            canvas.drawRect(rectangle, paint1)
         }
 
         val x1 = ((commonRight - commonLeft) / 2) + commonLeft
@@ -680,6 +684,7 @@ object ColorUtil {
         val colorInfo = ColorInfo(cuvetteColor, swatches)
         val canvas = Canvas(bitmap)
         canvas.drawRect(rectangle, paint)
+        canvas.drawRect(rectangle, paint1)
 
         for (cal in cardColors) {
             if (swatches.size >= cardColors.size / 2) {
@@ -861,10 +866,14 @@ object ColorUtil {
             blue += i.color.blue
         }
 
-        return Swatch(
-            pointValue, Color.rgb(red / count, green / count, blue / count),
-            distance / filteredCalibrations.size
-        )
+        val color = Color.rgb(red / count, green / count, blue / count)
+
+        if (getColorDistance(color, Color.BLACK) < 10) {
+            Timber.e("Card color is too dark")
+            throw Exception()
+        }
+
+        return Swatch(pointValue, color, distance / filteredCalibrations.size)
     }
 
     /**

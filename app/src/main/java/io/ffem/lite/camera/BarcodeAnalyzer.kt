@@ -5,7 +5,6 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Rect
 import android.graphics.drawable.BitmapDrawable
-import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.core.content.ContextCompat
@@ -32,6 +31,8 @@ import io.ffem.lite.util.ColorUtil.fixBoundary
 import io.ffem.lite.util.ColorUtil.isBarcodeValid
 import io.ffem.lite.util.ColorUtil.isTilted
 import io.ffem.lite.util.ImageUtil.toBitmap
+import io.ffem.lite.util.getBitmapPixels
+import io.ffem.lite.util.isNotBright
 import java.util.*
 
 
@@ -66,42 +67,22 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
         localBroadcastManager = LocalBroadcastManager.getInstance(context)
 
-        if (BuildConfig.DEBUG && (isDiagnosticMode() || BuildConfig.INSTRUMENTED_TEST_RUNNING.get())) {
-            val imageNumber = getSampleTestImageNumberInt()
-            if (imageNumber > -1) {
-                try {
-                    val drawable = ContextCompat.getDrawable(
-                        context, context.resources.getIdentifier(
-                            "test_${java.lang.String.format(Locale.ROOT, "%03d", imageNumber)}",
-                            "drawable", context.packageName
-                        )
-                    )
-                    bitmap = (drawable as BitmapDrawable).bitmap
-                } catch (ex: Exception) {
-                    sendMessage(context.getString(R.string.sample_image_not_found))
+        try {
+            if (capturePhoto) {
+                done = true
+                bitmap = getBitmap(image)
+                val testInfo = getTestInfo(DEFAULT_TEST_UUID)!!
+                savePhoto(bitmap, testInfo)
+                endProcessing(image, true)
+                return
+            } else {
+                if (manualCaptureOnly()) {
                     endProcessing(image, true)
                     return
                 }
-            } else {
-                @ExperimentalGetImage
-                bitmap = image.toBitmap()
+                bitmap = getBitmap(image)
             }
-        } else {
-            @ExperimentalGetImage
-            bitmap = image.toBitmap()
-        }
-
-        bitmap = Bitmap.createBitmap(
-            bitmap, 0, 0,
-            bitmap.width / 2,
-            bitmap.height
-        )
-
-        if (capturePhoto) {
-            done = true
-            val testInfo = getTestInfo(DEFAULT_TEST_UUID)!!
-            savePhoto(bitmap, testInfo)
-            endProcessing(image, true)
+        } catch (e: Exception) {
             return
         }
 
@@ -112,19 +93,19 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
         var badLighting = false
 
-//        val rect = Rect(100, 0, bitmap.width - 100, 10)
-//        val pixels = getBitmapPixels(bitmap, rect)
-//        if (isNotBright(pixels)) {
-//            endProcessing(image, true)
-//            return
-//        }
+        var rect = Rect(100, 0, bitmap.width - 100, 10)
+        var pixels = getBitmapPixels(bitmap, rect)
+        if (isNotBright(pixels)) {
+            endProcessing(image, true)
+            return
+        }
 
-//        rect = Rect(100, bitmap.height - 10, bitmap.width - 100, bitmap.height)
-//        pixels = getBitmapPixels(bitmap, rect)
-//        if (isNotBright(pixels)) {
-//            endProcessing(image, true)
-//            return
-//        }
+        rect = Rect(100, bitmap.height - 10, bitmap.width - 100, bitmap.height)
+        pixels = getBitmapPixels(bitmap, rect)
+        if (isNotBright(pixels)) {
+            endProcessing(image, true)
+            return
+        }
 
         val barcodeHeight = ((bitmap.height / 2) - (.20 * bitmap.height / 2)).toInt()
 
@@ -172,7 +153,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                         ImageEdgeType.WhiteTop
                                     )
 
-                                if (rightBoundingBox.top in 11..80) {
+                                if (rightBoundingBox.top in 7..80) {
                                     if (!isBarcodeValid(
                                             rightBarcodeBitmap,
                                             rightBoundingBox,
@@ -206,7 +187,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                                     return
                                                 }
 
-                                                if (autoFocusCounter2 < 3) {
+                                                if (autoFocusCounter2 < 4) {
                                                     autoFocusCounter2++
                                                     endProcessing(image, false)
                                                     return
@@ -280,6 +261,38 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
             )
     }
 
+    private fun getBitmap(image: ImageProxy): Bitmap {
+        val bitmap =
+            if (BuildConfig.DEBUG && (isDiagnosticMode() || BuildConfig.INSTRUMENTED_TEST_RUNNING.get())) {
+                val imageNumber = getSampleTestImageNumberInt()
+                if (imageNumber > -1) {
+                    try {
+                        val drawable = ContextCompat.getDrawable(
+                            context, context.resources.getIdentifier(
+                                "test_${java.lang.String.format(Locale.ROOT, "%03d", imageNumber)}",
+                                "drawable", context.packageName
+                            )
+                        )
+                        (drawable as BitmapDrawable).bitmap
+                    } catch (ex: Exception) {
+                        sendMessage(context.getString(R.string.sample_image_not_found))
+                        endProcessing(image, true)
+                        throw Exception()
+                    }
+                } else {
+                    image.toBitmap()
+                }
+            } else {
+                image.toBitmap()
+            }
+
+        return Bitmap.createBitmap(
+            bitmap, 0, 0,
+            (bitmap.width * 0.43).toInt(),
+            bitmap.height
+        )
+    }
+
     private fun endProcessing(image: ImageProxy, reset: Boolean) {
         if (::bitmap.isInitialized) {
             bitmap.recycle()
@@ -288,6 +301,8 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         if (reset) {
             autoFocusCounter = 0
             autoFocusCounter2 = 0
+        } else {
+            sendMessage("")
         }
         image.close()
     }
@@ -356,6 +371,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
     private fun sendMessage(s: String) {
         val intent = Intent(App.ERROR_EVENT)
         intent.putExtra(App.ERROR_MESSAGE, s)
+        intent.putExtra(App.SCAN_PROGRESS, autoFocusCounter + autoFocusCounter2)
         localBroadcastManager.sendBroadcast(
             intent
         )
