@@ -11,18 +11,22 @@ import io.ffem.lite.util.PreferencesUtil
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-fun getSampleTestImageNumber(): String {
-    var testImageNumber = ""
+fun getSampleTestImageNumber(): Int {
+    var testImageNumber = -1
     if (isTestRunning()) {
-        testImageNumber = PreferencesUtil
-            .getString(App.app, R.string.testImageNumberKey, "")
+        testImageNumber = try {
+            PreferencesUtil
+                .getString(App.app, R.string.testImageNumberKey, " -1").toInt()
+        } catch (e: Exception) {
+            -1
+        }
     }
     return testImageNumber
 }
 
 fun getSampleTestImageNumberInt(): Int {
     return try {
-        getSampleTestImageNumber().toInt()
+        getSampleTestImageNumber()
     } catch (e: Exception) {
         -1
     }

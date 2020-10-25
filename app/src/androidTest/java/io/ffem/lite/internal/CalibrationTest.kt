@@ -94,13 +94,13 @@ class CalibrationTest {
 
         onView(withText(testData.testDetails.name.toLocalString())).check(matches(isDisplayed()))
 
-        val resultTextView = onView(withId(R.id.text_result))
+        val resultTextView = onView(withId(R.id.result_txt))
         resultTextView.check(matches(TestUtil.checkResult(testData.expectedResult)))
 
-        onView(allOf(withId(R.id.text_unit), withText("mg/l")))
+        onView(allOf(withId(R.id.unit_txt), withText("mg/l")))
             .check(matches(isDisplayed()))
 
-        val marginOfErrorView = onView(withId(R.id.text_error_margin))
+        val marginOfErrorView = onView(withId(R.id.error_margin_txt))
         marginOfErrorView.check(matches(TestUtil.checkResult(testData.expectedMarginOfError)))
 
         onView(
@@ -156,8 +156,12 @@ class CalibrationTest {
         onView(withText(R.string.select_calibration_point)).check(matches(isDisplayed()))
         onView(withText("1.00")).perform(click())
 
-        takeScreenshot(screenshotName)
+        onView(allOf(withId(R.id.value_txt), withText("1.0")))
+            .check(matches(isDisplayed()))
+
         onView(withText(R.string.confirm)).perform(click())
+
+        takeScreenshot(screenshotName)
 
         sleep(1000)
 
@@ -180,13 +184,13 @@ class CalibrationTest {
 
         onView(withText(testData.testDetails.name.toLocalString())).check(matches(isDisplayed()))
 
-        val resultTextView2 = onView(withId(R.id.text_result))
+        val resultTextView2 = onView(withId(R.id.result_txt))
         resultTextView2.check(matches(TestUtil.checkResult(testData.expectedResult)))
 
-        onView(allOf(withId(R.id.text_unit), withText("mg/l")))
+        onView(allOf(withId(R.id.unit_txt), withText("mg/l")))
             .check(matches(isDisplayed()))
 
-        val marginOfErrorView2 = onView(withId(R.id.text_error_margin))
+        val marginOfErrorView2 = onView(withId(R.id.error_margin_txt))
         marginOfErrorView2.check(matches(TestUtil.checkResult(testData.expectedMarginOfError)))
 
         onView(

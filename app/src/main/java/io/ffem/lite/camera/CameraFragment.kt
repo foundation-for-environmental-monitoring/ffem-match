@@ -53,14 +53,17 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.app.App.Companion.SCAN_PROGRESS
-import io.ffem.lite.preference.getSampleTestImageNumberInt
-import io.ffem.lite.preference.manualCaptureOnly
-import io.ffem.lite.preference.useFlashMode
+import io.ffem.lite.data.AppDatabase
+import io.ffem.lite.data.TestResult
+import io.ffem.lite.model.ErrorType
+import io.ffem.lite.model.TestInfo
+import io.ffem.lite.preference.*
 import kotlinx.android.synthetic.main.fragment_camera.*
 import kotlinx.android.synthetic.main.preview_overlay.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.*
 import java.util.concurrent.Executor
 import kotlin.math.abs
 import kotlin.math.max
@@ -74,23 +77,21 @@ import kotlin.math.min
  */
 class CameraFragment : Fragment() {
 
+    private var currentLuminosity: Float = -1f
+    private lateinit var cameraProvider: ProcessCameraProvider
+    private lateinit var container: ConstraintLayout
+    private lateinit var broadcastManager: LocalBroadcastManager
+
     private var lightSensor: Sensor? = null
     private lateinit var lightEventListener: SensorEventListener
     private lateinit var sensorManager: SensorManager
-    private lateinit var container: ConstraintLayout
-    private lateinit var broadcastManager: LocalBroadcastManager
     private lateinit var mainExecutor: Executor
-
     private lateinit var cameraControl: CameraControl
 
     private var displayId: Int = -1
-    private var lensFacing: Int = CameraSelector.LENS_FACING_BACK
     private var preview: Preview? = null
 
     private lateinit var barcodeAnalyzer: BarcodeAnalyzer
-
-    private var analysis: ImageAnalysis? = null
-
     private lateinit var messageHandler: Handler
     private lateinit var runnable: Runnable
 
@@ -109,6 +110,30 @@ class CameraFragment : Fragment() {
             progress_bar.progress = scanProgress
 
             messageHandler.postDelayed(runnable, 3000)
+        }
+    }
+
+    private val capturedPhotoBroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val testInfo = intent.getParcelableExtra<TestInfo>(App.TEST_INFO_KEY) ?: return
+            if (!AppPreferences.isCalibration()) {
+                val db: AppDatabase = AppDatabase.getDatabase(requireContext())
+                db.resultDao().insert(
+                    TestResult(
+                        testInfo.fileName,
+                        testInfo.uuid!!,
+                        0,
+                        testInfo.name!!,
+                        Date().time,
+                        -1.0,
+                        -1.0,
+                        0.0,
+                        currentLuminosity,
+                        ErrorType.NO_ERROR,
+                        getSampleTestImageNumber()
+                    )
+                )
+            }
         }
     }
 
@@ -135,7 +160,8 @@ class CameraFragment : Fragment() {
                 override fun onSensorChanged(sensorEvent: SensorEvent) {
                     val value = sensorEvent.values[0]
                     if (luminosity_txt != null) {
-                        val lux = "Luminosity : $value lx"
+                        currentLuminosity = value
+                        val lux = getString(R.string.luminosity) + ": $value lx"
                         luminosity_txt.text = lux
                     }
                 }
@@ -159,6 +185,10 @@ class CameraFragment : Fragment() {
             )
         }
         broadcastManager.registerReceiver(broadcastReceiver, IntentFilter(App.ERROR_EVENT))
+        broadcastManager.registerReceiver(
+            capturedPhotoBroadcastReceiver,
+            IntentFilter(App.CAPTURED_EVENT)
+        )
 
         lifecycleScope.launch {
             delay(300)
@@ -180,22 +210,6 @@ class CameraFragment : Fragment() {
         }
     }
 
-    override fun onPause() {
-        super.onPause()
-        messageHandler.removeCallbacksAndMessages(runnable)
-        broadcastManager.unregisterReceiver(broadcastReceiver)
-        if (lightSensor != null) {
-            sensorManager.unregisterListener(lightEventListener)
-        }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        // Unregister the broadcast receivers and listeners
-        messageHandler.removeCallbacksAndMessages(runnable)
-        broadcastManager.unregisterReceiver(broadcastReceiver)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -213,6 +227,23 @@ class CameraFragment : Fragment() {
             updateCameraUi()
             bindCameraUseCases()
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        cameraProvider.unbindAll()
+        messageHandler.removeCallbacksAndMessages(runnable)
+        broadcastManager.unregisterReceiver(broadcastReceiver)
+        broadcastManager.unregisterReceiver(capturedPhotoBroadcastReceiver)
+        if (lightSensor != null) {
+            sensorManager.unregisterListener(lightEventListener)
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        messageHandler.removeCallbacksAndMessages(runnable)
+        broadcastManager.unregisterReceiver(broadcastReceiver)
     }
 
     /**
@@ -240,12 +271,13 @@ class CameraFragment : Fragment() {
         val rotation = camera_preview.display.rotation
 
         // Bind the cameraProvider to the LifeCycleOwner
-        val cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
+        val cameraSelector =
+            CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build()
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
         cameraProviderFuture.addListener({
 
             // CameraProvider
-            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+            cameraProvider = cameraProviderFuture.get()
 
             // Preview
             preview = Preview.Builder()
@@ -260,14 +292,14 @@ class CameraFragment : Fragment() {
             barcodeAnalyzer.reset()
 
             // ImageAnalysis
-            analysis = ImageAnalysis.Builder()
+            val analysis = ImageAnalysis.Builder()
                 .setTargetName("Analysis")
                 .setTargetAspectRatio(screenAspectRatio)
                 .setTargetRotation(rotation)
                 .setImageQueueDepth(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build()
 
-            analysis?.setAnalyzer(mainExecutor, BarcodeAnalyzer(requireContext()))
+            analysis.setAnalyzer(mainExecutor, BarcodeAnalyzer(requireContext()))
 
             // Must unbind use cases before rebinding them.
             cameraProvider.unbindAll()

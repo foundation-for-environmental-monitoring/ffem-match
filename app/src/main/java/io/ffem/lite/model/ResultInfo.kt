@@ -7,6 +7,8 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class ResultInfo(
     var result: Double = -1.0,
+    var luminosity: Float = -1f,
+
     val sampleColor: Int = 0,
 
     // the swatch that matches the sample color

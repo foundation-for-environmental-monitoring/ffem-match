@@ -119,24 +119,24 @@ fun startTest(imageNumber: Int) {
                     )
                 )
 
-            val resultTextView = Espresso.onView(ViewMatchers.withId(R.id.text_result))
+            val resultTextView = Espresso.onView(ViewMatchers.withId(R.id.result_txt))
 
             resultTextView.check(ViewAssertions.matches(TestUtil.checkResult(testData.expectedResult)))
             val convertedValue = TestUtil.getText(resultTextView).toDouble()
 
             if (testData.testDetails == pH) {
-                Espresso.onView(ViewMatchers.withId(R.id.text_unit))
+                Espresso.onView(ViewMatchers.withId(R.id.unit_txt))
                     .check(ViewAssertions.matches(Matchers.not(ViewMatchers.isDisplayed())))
             } else {
                 Espresso.onView(
                     Matchers.allOf(
-                        ViewMatchers.withId(R.id.text_unit),
+                        ViewMatchers.withId(R.id.unit_txt),
                         ViewMatchers.withText("mg/l")
                     )
                 ).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
             }
 
-            val marginOfErrorView = Espresso.onView(ViewMatchers.withId(R.id.text_error_margin))
+            val marginOfErrorView = Espresso.onView(ViewMatchers.withId(R.id.error_margin_txt))
             marginOfErrorView.check(ViewAssertions.matches(TestUtil.checkResult(testData.expectedMarginOfError)))
 
             Espresso.onView(

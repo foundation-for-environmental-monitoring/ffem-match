@@ -256,17 +256,17 @@ class SampleImageTest {
                     )
                 )
 
-                val resultTextView = onView(withId(R.id.text_result))
+                val resultTextView = onView(withId(R.id.result_txt))
                 resultTextView.check(matches(checkResult(testData.expectedResult)))
 
                 if (testData.testDetails == pH) {
-                    onView(withId(R.id.text_unit)).check(matches(not(isDisplayed())))
+                    onView(withId(R.id.unit_txt)).check(matches(not(isDisplayed())))
                 } else {
-                    onView(allOf(withId(R.id.text_unit), withText("mg/l")))
+                    onView(allOf(withId(R.id.unit_txt), withText("mg/l")))
                         .check(matches(isDisplayed()))
                 }
 
-                val marginOfErrorView = onView(withId(R.id.text_error_margin))
+                val marginOfErrorView = onView(withId(R.id.error_margin_txt))
                 marginOfErrorView.check(matches(checkResult(testData.expectedMarginOfError)))
 
                 onView(
@@ -335,7 +335,7 @@ class SampleImageTest {
 
             val imageView = onView(
                 allOf(
-                    withId(R.id.image_extract), withContentDescription(R.string.analyzed_image),
+                    withId(R.id.extract_img), withContentDescription(R.string.analyzed_image),
                     isDisplayed()
                 )
             )
@@ -346,7 +346,7 @@ class SampleImageTest {
 
             val imageView2 = onView(
                 allOf(
-                    withId(R.id.image_full), withContentDescription(R.string.analyzed_image),
+                    withId(R.id.full_photo_img), withContentDescription(R.string.analyzed_image),
                     isDisplayed()
                 )
             )

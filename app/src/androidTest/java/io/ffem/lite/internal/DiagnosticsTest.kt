@@ -171,10 +171,10 @@ class DiagnosticsTest {
 
         val textView = onView(
             allOf(
-                withId(R.id.text_name), withText(residualChlorine.name.toLocalString()),
+                withId(R.id.name_txt), withText(residualChlorine.name.toLocalString()),
                 childAtPosition(
                     childAtPosition(
-                        withId(R.id.lyt_result),
+                        withId(R.id.result_lyt),
                         0
                     ),
                     0
@@ -186,7 +186,7 @@ class DiagnosticsTest {
 
         val textView2 = onView(
             allOf(
-                withId(R.id.text_result), withText("0.0"),
+                withId(R.id.result_txt), withText("0.0"),
                 isDisplayed()
             )
         )
@@ -194,7 +194,7 @@ class DiagnosticsTest {
 
         val textView3 = onView(
             allOf(
-                withId(R.id.text_unit), withText("mg/l"),
+                withId(R.id.unit_txt), withText("mg/l"),
                 isDisplayed()
             )
         )
@@ -202,7 +202,7 @@ class DiagnosticsTest {
 
         val textView4 = onView(
             allOf(
-                withId(R.id.text_risk), withText(R.string.medium_quantity),
+                withId(R.id.value_txt), withText(R.string.medium_quantity),
                 isDisplayed()
             )
         )
@@ -225,7 +225,7 @@ class DiagnosticsTest {
 
         val textView6 = onView(
             allOf(
-                withId(R.id.text_error_margin), withText("0.30"),
+                withId(R.id.error_margin_txt), withText("0.30"),
                 childAtPosition(
                     childAtPosition(
                         IsInstanceOf.instanceOf(android.widget.LinearLayout::class.java),
@@ -240,7 +240,7 @@ class DiagnosticsTest {
 
         onView(
             allOf(
-                withId(R.id.button_submit), withText(R.string.close),
+                withId(R.id.submit_btn), withText(R.string.close),
                 isDisplayed()
             )
         ).perform(click())
@@ -334,10 +334,10 @@ class DiagnosticsTest {
 
         val textView = onView(
             allOf(
-                withId(R.id.text_name2), withText(R.string.unknown),
+                withId(R.id.name2_txt), withText(R.string.unknown),
                 childAtPosition(
                     childAtPosition(
-                        withId(R.id.lyt_error_message),
+                        withId(R.id.error_message_lyt),
                         0
                     ),
                     0
@@ -349,10 +349,10 @@ class DiagnosticsTest {
 
         val textView2 = onView(
             allOf(
-                withId(R.id.text_error), withText(R.string.bad_lighting),
+                withId(R.id.error_txt), withText(R.string.bad_lighting),
                 childAtPosition(
                     childAtPosition(
-                        withId(R.id.lyt_error_message),
+                        withId(R.id.error_message_lyt),
                         0
                     ),
                     1
@@ -367,7 +367,7 @@ class DiagnosticsTest {
                 withText(R.string.analyzed_photo),
                 childAtPosition(
                     childAtPosition(
-                        withId(R.id.lyt_analyzed_photo),
+                        withId(R.id.analyzed_photo_lyt),
                         0
                     ),
                     0
@@ -379,10 +379,10 @@ class DiagnosticsTest {
 
         val imageView = onView(
             allOf(
-                withId(R.id.image_full), withContentDescription(R.string.analyzed_image),
+                withId(R.id.full_photo_img), withContentDescription(R.string.analyzed_image),
                 childAtPosition(
                     childAtPosition(
-                        withId(R.id.lyt_analyzed_photo),
+                        withId(R.id.analyzed_photo_lyt),
                         0
                     ),
                     1
@@ -394,7 +394,7 @@ class DiagnosticsTest {
 
         onView(
             allOf(
-                withId(R.id.button_submit), withText(R.string.close),
+                withId(R.id.submit_btn), withText(R.string.close),
                 childAtPosition(
                     childAtPosition(
                         withId(R.id.resultScrollView),

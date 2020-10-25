@@ -47,7 +47,7 @@
     <string name="confirm">Confirm</string>
     <string name="select_calibration_point">Select calibration point</string>
     <string name="select_standard_measured">Select the value of the standard measured</string>
-    <string name="color_change">Color change</string>
+    <string name="color_shift">Color shift</string>
 
     <!-- ErrorType -->
     <string name="no_error" tools:keep="@string/no_error">No error</string>
@@ -115,4 +115,5 @@
     <string name="camera_start_align_card">When the camera starts, align the card in the viewer as shown in the example above.</string>
     <string name="confirm_color_extract">If the color detection above is incorrect, redo the capture with better light conditions.</string>
     <string name="analyzing_photo">Analyzing photo…</string>
+    <string name="luminosity">Luminosity</string>
 </resources>

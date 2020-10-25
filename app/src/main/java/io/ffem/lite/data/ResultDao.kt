@@ -37,6 +37,9 @@ interface ResultDao {
         error: Int
     )
 
+    @Query("UPDATE TestResult SET testImageNumber = :testImageNumber WHERE id = :id")
+    fun updateResultSampleNumber(id: String, testImageNumber: Int)
+
     @Query("DELETE FROM TestResult")
     fun deleteAll()
 

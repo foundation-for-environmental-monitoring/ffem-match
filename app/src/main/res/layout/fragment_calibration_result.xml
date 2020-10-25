@@ -16,7 +16,7 @@
         <include layout="@layout/app_bar_layout" />
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/lyt_result"
+            android:id="@+id/result_lyt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp">
@@ -28,7 +28,7 @@
                 android:padding="16dp">
 
                 <TextView
-                    android:id="@+id/text_name"
+                    android:id="@+id/name_txt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -39,7 +39,7 @@
                     tools:text="Fluoride - High Range" />
 
                 <TextView
-                    android:id="@+id/text_risk"
+                    android:id="@+id/value_txt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
@@ -83,14 +83,14 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:fontFamily="sans-serif-medium"
-                    android:text="@string/color_change"
+                    android:text="@string/color_shift"
                     android:textIsSelectable="false"
                     android:textSize="16sp" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/lyt_error_message"
+            android:id="@+id/error_message_lyt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -101,7 +101,7 @@
                 android:padding="16dp">
 
                 <TextView
-                    android:id="@+id/text_name2"
+                    android:id="@+id/name2_txt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -112,7 +112,7 @@
                     tools:text="Fluoride - High Range" />
 
                 <TextView
-                    android:id="@+id/text_error"
+                    android:id="@+id/error_txt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -139,7 +139,7 @@
         </androidx.cardview.widget.CardView>
 
         <Button
-            android:id="@+id/button_submit"
+            android:id="@+id/submit_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -152,7 +152,7 @@
             android:theme="?primaryButtonStyle" />
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/lyt_color_extracts"
+            android:id="@+id/color_extracts_lyt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -175,7 +175,7 @@
                     android:textStyle="normal" />
 
                 <ImageView
-                    android:id="@+id/image_extract"
+                    android:id="@+id/extract_img"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/analyzed_image"
@@ -187,7 +187,7 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/lyt_analyzed_photo"
+            android:id="@+id/analyzed_photo_lyt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp">
@@ -211,7 +211,7 @@
                     android:textStyle="normal" />
 
                 <ImageView
-                    android:id="@+id/image_full"
+                    android:id="@+id/full_photo_img"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/analyzed_image"

@@ -114,6 +114,26 @@ object PreferencesUtil {
         editor.apply()
     }
 
+    fun getInt(context: Context, @StringRes keyId: Int): Int {
+        return getInt(context, getKey(context, keyId))
+    }
+
+    private fun getInt(context: Context, key: String): Int {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        return sharedPreferences.getInt(key, -1)
+    }
+
+    fun setInt(context: Context, @StringRes keyId: Int, value: Int) {
+        setInt(context, getKey(context, keyId), value)
+    }
+
+    private fun setInt(context: Context, key: String, value: Int) {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val editor = sharedPreferences.edit()
+        editor.putInt(key, value)
+        editor.apply()
+    }
+
     /**
      * Removes the key from the preferences.
      *

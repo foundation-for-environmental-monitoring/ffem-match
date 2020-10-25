@@ -30,13 +30,11 @@ import io.ffem.lite.app.App.Companion.TEST_VALUE_KEY
 import io.ffem.lite.app.App.Companion.getTestInfo
 import io.ffem.lite.camera.CameraFragment
 import io.ffem.lite.data.AppDatabase
-import io.ffem.lite.data.TestResult
 import io.ffem.lite.model.CalibrationValue
 import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.TestInfo
 import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.preference.AppPreferences.isCalibration
-import io.ffem.lite.preference.getSampleTestImageNumber
 import io.ffem.lite.preference.isTestRunning
 import io.ffem.lite.util.ColorUtil
 import io.ffem.lite.util.PreferencesUtil
@@ -69,7 +67,7 @@ class BarcodeActivity : BaseActivity(),
     private var testInfo: TestInfo? = null
     lateinit var model: TestInfoViewModel
 
-    private val broadcastReceiver = object : BroadcastReceiver() {
+    private val capturedPhotoBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (!isTestRunning() && !BuildConfig.INSTRUMENTED_TEST_RUNNING.get()) {
                 val sound = MediaActionSound()
@@ -104,7 +102,7 @@ class BarcodeActivity : BaseActivity(),
         broadcastManager = LocalBroadcastManager.getInstance(this)
 
         broadcastManager.registerReceiver(
-            broadcastReceiver,
+            capturedPhotoBroadcastReceiver,
             IntentFilter(App.CAPTURED_EVENT)
         )
 
@@ -156,17 +154,8 @@ class BarcodeActivity : BaseActivity(),
 
     private fun saveImageData(data: Intent) {
         val testInfo = data.getParcelableExtra<TestInfo>(TEST_INFO_KEY) ?: return
-
-        if (!isCalibration()) {
-            db.resultDao().insert(
-                TestResult(
-                    testInfo.fileName, testInfo.uuid!!, 0, testInfo.name!!, Date().time,
-                    -1.0, -1.0, 0.0, ErrorType.NO_ERROR, getSampleTestImageNumber()
-                )
-            )
-            deleteExcessData()
-        }
         analyzeImage(testInfo)
+        deleteExcessData()
     }
 
     private fun deleteExcessData() {
@@ -239,7 +228,7 @@ class BarcodeActivity : BaseActivity(),
     override fun onDestroy() {
         super.onDestroy()
         // Unregister the broadcast receivers and listeners
-        broadcastManager.unregisterReceiver(broadcastReceiver)
+        broadcastManager.unregisterReceiver(capturedPhotoBroadcastReceiver)
         broadcastManager.unregisterReceiver(resultBroadcastReceiver)
         db.close()
     }

@@ -17,6 +17,7 @@ data class TestResult(
     val value: Double,
     val valueGrayscale: Double,
     val marginOfError: Double,
+    val luminosity: Float = -1f,
     val error: ErrorType,
-    val testImageNumber: String
+    val testImageNumber: Int = -1
 )

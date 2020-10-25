@@ -10,8 +10,9 @@
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/card_overlay"
         android:layout_width="match_parent"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
         android:layout_height="250dp"
-        android:alpha=".6"
         android:src="@drawable/card_overlay"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

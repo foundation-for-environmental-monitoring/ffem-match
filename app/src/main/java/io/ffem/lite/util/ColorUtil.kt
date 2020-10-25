@@ -560,13 +560,16 @@ object ColorUtil {
                         db.resultDao().insert(
                             TestResult(
                                 testInfo.fileName, testInfo.uuid!!, 0, testInfo.name!!,
-                                Date().time, -1.0, -1.0, 0.0, NO_ERROR,
-                                getSampleTestImageNumber()
+                                Date().time, -1.0, -1.0, 0.0, error = NO_ERROR
                             )
+                        )
+
+                        db.resultDao().updateResultSampleNumber(
+                            testInfo.fileName,
+                            getSampleTestImageNumber()
                         )
                     }
                 }
-
 
                 val path = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES).toString() +
                         File.separator + "captures" + File.separator

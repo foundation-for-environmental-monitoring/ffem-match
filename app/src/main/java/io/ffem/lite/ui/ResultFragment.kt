@@ -36,7 +36,7 @@ class ResultFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         if (activity is ResultViewActivity) {
-            button_submit.visibility = GONE
+            submit_btn.visibility = GONE
         } else {
             if (isDiagnosticMode()) {
                 toolbar.setBackgroundColor(
@@ -53,7 +53,7 @@ class ResultFragment : Fragment() {
                     )
                 )
             }
-            button_submit.visibility = VISIBLE
+            submit_btn.visibility = VISIBLE
         }
 
         displayResult(model.test.get())
@@ -84,24 +84,24 @@ class ResultFragment : Fragment() {
         val analyzedImagePath = File(path + testInfo.fileName + File.separator + fileName + ".jpg")
 
         if (resultImagePath.exists()) {
-            image_result.setImageURI(Uri.fromFile(resultImagePath))
+            result_img.setImageURI(Uri.fromFile(resultImagePath))
         }
 
         if (analyzedImagePath.exists()) {
-            image_full.setImageURI(Uri.fromFile(analyzedImagePath))
+            full_photo_img.setImageURI(Uri.fromFile(analyzedImagePath))
         }
 
         if (extractImagePath.exists()) {
-            image_extract.setImageURI(Uri.fromFile(extractImagePath))
-            image_extract.refreshDrawableState()
+            extract_img.setImageURI(Uri.fromFile(extractImagePath))
+            extract_img.refreshDrawableState()
         }
 
         if (isDiagnosticMode()) {
             val gsExtractImagePath =
                 File(path + testInfo.fileName + File.separator + fileName + "_swatch_gs.jpg")
             if (gsExtractImagePath.exists()) {
-                image_extract_gs.setImageURI(Uri.fromFile(gsExtractImagePath))
-                image_extract_gs.refreshDrawableState()
+                extract_gs_img.setImageURI(Uri.fromFile(gsExtractImagePath))
+                extract_gs_img.refreshDrawableState()
             } else {
                 lyt_color_extracts_gs.visibility = GONE
             }
@@ -111,66 +111,71 @@ class ResultFragment : Fragment() {
 
         val requestedTestId = PreferencesUtil.getString(context, App.TEST_ID_KEY, "")
         if (testInfo.error == ErrorType.NO_ERROR && testInfo.resultInfo.result >= 0) {
-            text_name.text = testInfo.name!!.toLocalString()
-            text_name2.text = ""
-            text_result.text = testInfo.getResultString(requireContext())
+            name_txt.text = testInfo.name!!.toLocalString()
+            name2_txt.text = ""
+            result_txt.text = testInfo.getResultString(requireContext())
 
             if (isDiagnosticMode()) {
                 val grayscaleResult = testInfo.getResultGrayscaleString()
-                text_grayscale_result.text = grayscaleResult
+                grayscale_result_txt.text = grayscaleResult
                 if (grayscaleResult.isNotEmpty()) {
-                    text_unit2.text = testInfo.unit
+                    unit2_txt.text = testInfo.unit
                 }
             } else {
                 grayscale_lyt.visibility = GONE
             }
 
-            text_unit.text = testInfo.unit
-            text_risk.text = testInfo.getRisk(requireContext())
+            unit_txt.text = testInfo.unit
+            value_txt.text = testInfo.getRisk(requireContext())
             when {
                 testInfo.getRiskType() == RiskLevel.HIGH -> {
-                    text_risk.setTextColor(resources.getColor(R.color.high_risk, null))
+                    value_txt.setTextColor(resources.getColor(R.color.high_risk, null))
                 }
                 testInfo.getRiskType() == RiskLevel.MEDIUM -> {
-                    text_risk.setTextColor(resources.getColor(R.color.medium_risk, null))
+                    value_txt.setTextColor(resources.getColor(R.color.medium_risk, null))
                 }
                 testInfo.getRiskType() == RiskLevel.LOW -> {
-                    text_risk.setTextColor(resources.getColor(R.color.low_risk, null))
+                    value_txt.setTextColor(resources.getColor(R.color.low_risk, null))
                 }
             }
-            text_error_margin.text = String.format("%.2f", testInfo.getMarginOfError())
-            lyt_error_message.visibility = GONE
-            lyt_result.visibility = VISIBLE
-            lyt_result_details.visibility = VISIBLE
-            if (requestedTestId.isNullOrEmpty()) {
-                button_submit.setText(R.string.close)
+            error_margin_txt.text = String.format("%.2f", testInfo.getMarginOfError())
+            if (testInfo.resultInfo.luminosity > -1) {
+                luminosity_txt.text = String.format("%.2f", testInfo.resultInfo.luminosity)
             } else {
-                button_submit.setText(R.string.submit_result)
+                luminosity_lyt.visibility = GONE
+            }
+            error_message_lyt.visibility = GONE
+            result_lyt.visibility = VISIBLE
+            result_details_lyt.visibility = VISIBLE
+            if (requestedTestId.isNullOrEmpty()) {
+                submit_btn.setText(R.string.close)
+            } else {
+                submit_btn.setText(R.string.submit_result)
             }
         } else {
-            text_name.text = ""
+            name_txt.text = ""
             if (testInfo.uuid != requestedTestId) {
                 val requestedTest = getTestInfo(requestedTestId!!)
                 if (requestedTest != null) {
-                    text_name2.text = requestedTest.name!!.toLocalString()
+                    name2_txt.text = requestedTest.name!!.toLocalString()
                 } else {
-                    text_name2.text = testInfo.name!!.toLocalString()
+                    name2_txt.text = testInfo.name!!.toLocalString()
                 }
             } else {
-                text_name2.text = testInfo.name!!.toLocalString()
+                name2_txt.text = testInfo.name!!.toLocalString()
             }
 
-            text_error.text = testInfo.error.toLocalString(requireContext())
-            lyt_error_message.visibility = VISIBLE
-            lyt_result.visibility = GONE
-            lyt_result_details.visibility = GONE
+            error_txt.text = testInfo.error.toLocalString(requireContext())
+            error_message_lyt.visibility = VISIBLE
+            result_lyt.visibility = GONE
+            result_details_lyt.visibility = GONE
             if (!extractImagePath.exists()) {
-                lyt_color_extracts.visibility = GONE
+                color_extracts_lyt.visibility = GONE
             }
             if (!analyzedImagePath.exists()) {
-                lyt_analyzed_photo.visibility = GONE
+                analyzed_photo_lyt.visibility = GONE
             }
-            button_submit.setText(R.string.close)
+            submit_btn.setText(R.string.close)
         }
     }
 }

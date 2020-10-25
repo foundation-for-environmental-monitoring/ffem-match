@@ -56,16 +56,14 @@ class CalibrationResultFragment : Fragment() {
                 )
             )
         }
-        button_submit.visibility = VISIBLE
+        submit_btn.visibility = VISIBLE
 
         val testInfo = model.test.get()!!
-
-        displayResult(testInfo)
 
         toolbar.visibility = VISIBLE
         toolbar.setTitle(R.string.confirm_calibration)
 
-        button_submit.setOnClickListener {
+        submit_btn.setOnClickListener {
             if (model.test.get()!!.error == ErrorType.NO_ERROR) {
                 val result = testInfo.resultInfo
                 val calibratedValue = testInfo.calibratedResultInfo.calibratedValue
@@ -94,6 +92,12 @@ class CalibrationResultFragment : Fragment() {
             }
             requireActivity().finish()
         }
+        displayResult(testInfo)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        displayResult(model.test.get())
     }
 
     private fun displayResult(testInfo: TestInfo?) {
@@ -108,21 +112,21 @@ class CalibrationResultFragment : Fragment() {
         val analyzedImagePath = File(path + testInfo.fileName + File.separator + fileName + ".jpg")
 
         if (analyzedImagePath.exists()) {
-            image_full.setImageURI(Uri.fromFile(analyzedImagePath))
+            full_photo_img.setImageURI(Uri.fromFile(analyzedImagePath))
         }
 
         if (extractImagePath.exists()) {
-            image_extract.setImageURI(Uri.fromFile(extractImagePath))
-            image_extract.refreshDrawableState()
+            extract_img.setImageURI(Uri.fromFile(extractImagePath))
+            extract_img.refreshDrawableState()
         }
 
         if (testInfo.error == ErrorType.NO_ERROR && testInfo.resultInfo.result >= 0) {
             val calibrationValue = testInfo.calibratedResultInfo.calibratedValue.value
-            text_name.text = testInfo.name!!.toLocalString()
-            text_name2.text = ""
-            text_risk.text = calibrationValue.toString()
-            lyt_error_message.visibility = GONE
-            lyt_result.visibility = VISIBLE
+            name_txt.text = testInfo.name!!.toLocalString()
+            name2_txt.text = ""
+            value_txt.text = calibrationValue.toString()
+            error_message_lyt.visibility = GONE
+            result_lyt.visibility = VISIBLE
 
             for (swatch in testInfo.resultInfo.swatches!!) {
                 if (swatch.value == calibrationValue) {
@@ -132,32 +136,32 @@ class CalibrationResultFragment : Fragment() {
             }
 
             btn_calibrated_color.setBackgroundColor(testInfo.resultInfo.sampleColor)
-            button_submit.setText(R.string.confirm)
+            submit_btn.setText(R.string.confirm)
 
         } else {
             val requestedTestId = PreferencesUtil.getString(context, App.TEST_ID_KEY, "")
-            text_name.text = ""
+            name_txt.text = ""
             if (testInfo.uuid != requestedTestId) {
                 val requestedTest = getTestInfo(requestedTestId!!)
                 if (requestedTest != null) {
-                    text_name2.text = requestedTest.name!!.toLocalString()
+                    name2_txt.text = requestedTest.name!!.toLocalString()
                 } else {
-                    text_name2.text = testInfo.name!!.toLocalString()
+                    name2_txt.text = testInfo.name!!.toLocalString()
                 }
             } else {
-                text_name2.text = testInfo.name!!.toLocalString()
+                name2_txt.text = testInfo.name!!.toLocalString()
             }
 
-            text_error.text = testInfo.error.toLocalString(requireContext())
-            lyt_error_message.visibility = VISIBLE
-            lyt_result.visibility = GONE
+            error_txt.text = testInfo.error.toLocalString(requireContext())
+            error_message_lyt.visibility = VISIBLE
+            result_lyt.visibility = GONE
             if (!extractImagePath.exists()) {
-                lyt_color_extracts.visibility = GONE
+                color_extracts_lyt.visibility = GONE
             }
             if (!analyzedImagePath.exists()) {
-                lyt_analyzed_photo.visibility = GONE
+                analyzed_photo_lyt.visibility = GONE
             }
-            button_submit.setText(R.string.close)
+            submit_btn.setText(R.string.close)
         }
     }
 }

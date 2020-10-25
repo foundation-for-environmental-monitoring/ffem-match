@@ -100,7 +100,6 @@ class ResultListActivity : AppUpdateActivity() {
                 )
             }
             refreshList()
-            progress_lyt.visibility = GONE
         }
     }
 
@@ -115,7 +114,7 @@ class ResultListActivity : AppUpdateActivity() {
             val testInfo = App.getTestInfo(item.uuid)
             testInfo!!.error = item.error
             testInfo.fileName = item.id
-            testInfo.resultInfo = ResultInfo(result.value)
+            testInfo.resultInfo = ResultInfo(result.value, result.luminosity)
             testInfo.resultInfoGrayscale = ResultInfo(result.valueGrayscale)
             testInfo.setMarginOfError(result.marginOfError)
 
@@ -172,12 +171,6 @@ class ResultListActivity : AppUpdateActivity() {
             }
         }
 
-        db = AppDatabase.getDatabase(baseContext)
-
-        val resultList = db.resultDao().getResults()
-
-        adapter.setTestList(resultList)
-
         test_results_lst.addItemDecoration(
             DividerItemDecoration(
                 this,
@@ -185,6 +178,9 @@ class ResultListActivity : AppUpdateActivity() {
             )
         )
 
+        db = AppDatabase.getDatabase(baseContext)
+        val resultList = db.resultDao().getResults()
+        adapter.setTestList(resultList)
         test_results_lst.adapter = adapter
 
         showHideList()
@@ -249,6 +245,7 @@ class ResultListActivity : AppUpdateActivity() {
         adapter.setTestList(db.resultDao().getResults())
         test_results_lst.adapter = adapter
         adapter.notifyDataSetChanged()
+        showHideList()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -318,8 +315,10 @@ class ResultListActivity : AppUpdateActivity() {
                                 progress_lyt.visibility = VISIBLE
                                 ColorUtil.extractImage(this, bitmapFromFile)
                                 MainScope().launch {
-                                    delay(3000)
+                                    delay(3500)
+                                    refreshList()
                                     progress_lyt.visibility = GONE
+                                    onResultClick(0)
                                 }
                             } else {
                                 toast(getString(R.string.invalid_image), Toast.LENGTH_LONG)
