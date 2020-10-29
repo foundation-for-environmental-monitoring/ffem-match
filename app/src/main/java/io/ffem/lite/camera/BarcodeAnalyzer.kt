@@ -59,7 +59,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         BarcodeScanning.getClient(options)
     }
 
-    override fun analyze(image: ImageProxy) {
+    override fun analyze(imageProxy: ImageProxy) {
         if (done || processing) {
             return
         }
@@ -70,24 +70,24 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         try {
             if (capturePhoto) {
                 done = true
-                bitmap = getBitmap(image)
+                bitmap = getBitmap(imageProxy)
                 val testInfo = getTestInfo(DEFAULT_TEST_UUID)!!
                 savePhoto(bitmap, testInfo)
-                endProcessing(image, true)
+                endProcessing(imageProxy, true)
                 return
             } else {
                 if (manualCaptureOnly()) {
-                    endProcessing(image, true)
+                    endProcessing(imageProxy, true)
                     return
                 }
-                bitmap = getBitmap(image)
+                bitmap = getBitmap(imageProxy)
             }
         } catch (e: Exception) {
             return
         }
 
         if (manualCaptureOnly()) {
-            endProcessing(image, true)
+            endProcessing(imageProxy, true)
             return
         }
 
@@ -96,14 +96,14 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         var rect = Rect(100, 0, bitmap.width - 100, 10)
         var pixels = getBitmapPixels(bitmap, rect)
         if (isNotBright(pixels)) {
-            endProcessing(image, true)
+            endProcessing(imageProxy, true)
             return
         }
 
         rect = Rect(100, bitmap.height - 10, bitmap.width - 100, bitmap.height)
         pixels = getBitmapPixels(bitmap, rect)
         if (isNotBright(pixels)) {
-            endProcessing(image, true)
+            endProcessing(imageProxy, true)
             return
         }
 
@@ -118,7 +118,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
             .addOnFailureListener(
                 fun(_: Exception) {
                     sendMessage(context.getString(R.string.color_card_not_found))
-                    endProcessing(image, true)
+                    endProcessing(imageProxy, true)
                     return
                 }
             )
@@ -126,7 +126,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                 fun(result: List<Barcode>) {
                     if (result.isEmpty()) {
                         sendMessage(context.getString(R.string.color_card_not_found))
-                        endProcessing(image, true)
+                        endProcessing(imageProxy, true)
                         return
                     }
                     if (result.isNotEmpty()) {
@@ -135,13 +135,13 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                             var testName = getTestName(result[0].displayValue!!)
                             if (testName.isEmpty()) {
                                 sendMessage(context.getString(R.string.invalid_barcode))
-                                endProcessing(image, true)
+                                endProcessing(imageProxy, true)
                                 return
                             }
 
                             if (autoFocusCounter < 6) {
                                 autoFocusCounter++
-                                endProcessing(image, false)
+                                endProcessing(imageProxy, false)
                                 return
                             }
 
@@ -162,7 +162,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                     ) {
                                         badLighting = true
                                         rightBarcodeBitmap.recycle()
-                                        endProcessing(image, false)
+                                        endProcessing(imageProxy, false)
                                         return
                                     }
 
@@ -177,19 +177,19 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                         InputImage.fromBitmap(leftBarcodeBitmap, 0)
                                     )
                                         .addOnFailureListener(fun(_: Exception) {
-                                            endProcessing(image, true)
+                                            endProcessing(imageProxy, true)
                                             return
                                         })
                                         .addOnSuccessListener(
                                             fun(result: List<Barcode>) {
                                                 if (result.isNullOrEmpty()) {
-                                                    endProcessing(image, true)
+                                                    endProcessing(imageProxy, true)
                                                     return
                                                 }
 
                                                 if (autoFocusCounter2 < 4) {
                                                     autoFocusCounter2++
-                                                    endProcessing(image, false)
+                                                    endProcessing(imageProxy, false)
                                                     return
                                                 }
 
@@ -204,21 +204,21 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
                                                     if (leftBarcodeBitmap.height - leftBoundingBox.bottom !in 11..122) {
                                                         leftBarcodeBitmap.recycle()
-                                                        endProcessing(image, false)
+                                                        endProcessing(imageProxy, false)
                                                         return
                                                     }
 
                                                     if (isTilted(rightBoundingBox, leftBoundingBox)
                                                     ) {
                                                         sendMessage(context.getString(R.string.correct_camera_tilt))
-                                                        endProcessing(image, false)
+                                                        endProcessing(imageProxy, false)
                                                         return
                                                     }
 
                                                     testName = getTestName(result[0].displayValue!!)
                                                     if (testName.isEmpty()) {
                                                         sendMessage(context.getString(R.string.invalid_barcode))
-                                                        endProcessing(image, false)
+                                                        endProcessing(imageProxy, false)
                                                         return
                                                     }
 
@@ -230,14 +230,14 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                                     ) {
                                                         sendMessage(context.getString(R.string.try_moving_well_lit))
                                                         leftBarcodeBitmap.recycle()
-                                                        endProcessing(image, false)
+                                                        endProcessing(imageProxy, false)
                                                         return
                                                     }
 
                                                     leftBarcodeBitmap.recycle()
 
                                                     analyzeBarcode(
-                                                        image,
+                                                        imageProxy,
                                                         bitmap,
                                                         rightBarcode,
                                                         leftBoundingBox,
@@ -248,13 +248,13 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                         )
                                 } else {
                                     sendMessage(context.getString(R.string.color_card_not_found))
-                                    endProcessing(image, true)
+                                    endProcessing(imageProxy, true)
                                 }
                             } catch (ignored: Exception) {
-                                endProcessing(image, true)
+                                endProcessing(imageProxy, true)
                             }
                         } else {
-                            endProcessing(image, true)
+                            endProcessing(imageProxy, true)
                         }
                     }
                 }
