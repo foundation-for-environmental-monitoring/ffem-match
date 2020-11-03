@@ -1,5 +1,6 @@
 package io.ffem.lite.util
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import android.provider.DocumentsContract
@@ -25,6 +26,7 @@ object FileUtil {
     }
 
     // stackoverflow.com/questions/54020463/select-multiple-images-from-gallery-in-kotlin-want-image-path
+    @SuppressLint("InlinedApi")
     fun getPathFromURI(context: Context, uri: Uri): String? {
         val path: String? = uri.path
         val databaseUri: Uri

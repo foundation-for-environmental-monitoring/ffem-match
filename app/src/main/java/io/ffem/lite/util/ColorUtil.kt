@@ -39,7 +39,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.*
 
-const val IMAGE_THRESHOLD = 130
+const val IMAGE_THRESHOLD = 100
 const val MAX_COLOR_DISTANCE_RGB = 60
 const val MAX_COLOR_DISTANCE_CALIBRATION = 80
 const val INTERPOLATION_COUNT = 100.0
@@ -710,6 +710,24 @@ object ColorUtil {
             return true
         }
         return false
+    }
+
+    fun isBarcodeTilted(
+        corners: Array<Point>?
+    ): Boolean {
+        if (corners == null) {
+            return true
+        }
+        if (abs(corners[0].y - corners[1].y) < MAX_ANGLE) {
+            return false
+        }
+        if (abs(corners[0].y - corners[2].y) < MAX_ANGLE) {
+            return false
+        }
+        if (abs(corners[0].y - corners[3].y) < MAX_ANGLE) {
+            return false
+        }
+        return true
     }
 
     fun fixBoundary(

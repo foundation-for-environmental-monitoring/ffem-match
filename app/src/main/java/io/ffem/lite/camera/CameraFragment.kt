@@ -47,7 +47,6 @@ import androidx.camera.view.PreviewView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import io.ffem.lite.R
@@ -240,12 +239,6 @@ class CameraFragment : Fragment() {
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        messageHandler.removeCallbacksAndMessages(runnable)
-        broadcastManager.unregisterReceiver(broadcastReceiver)
-    }
-
     /**
      * Inflate camera controls and update the UI manually upon config changes to avoid removing
      * and re-adding the view finder from the view hierarchy; this provides a seamless rotation
@@ -285,28 +278,28 @@ class CameraFragment : Fragment() {
                 .setTargetAspectRatio(screenAspectRatio)
                 .setTargetRotation(rotation)
                 .build()
-
-            preview?.setSurfaceProvider(camera_preview.surfaceProvider)
+                .also {
+                    it.setSurfaceProvider(camera_preview.surfaceProvider)
+                }
 
             barcodeAnalyzer = BarcodeAnalyzer(requireContext())
             barcodeAnalyzer.reset()
 
-            // ImageAnalysis
-            val analysis = ImageAnalysis.Builder()
-                .setTargetName("Analysis")
-                .setTargetAspectRatio(screenAspectRatio)
-                .setTargetRotation(rotation)
-                .setImageQueueDepth(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                .build()
-
-            analysis.setAnalyzer(mainExecutor, BarcodeAnalyzer(requireContext()))
-
-            // Must unbind use cases before rebinding them.
-            cameraProvider.unbindAll()
-
             try {
+                val analysis = ImageAnalysis.Builder()
+                    .setTargetName("Analysis")
+                    .setTargetAspectRatio(screenAspectRatio)
+                    .setTargetRotation(rotation)
+                    .setImageQueueDepth(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                    .build()
+
+                analysis.setAnalyzer(mainExecutor, BarcodeAnalyzer(requireContext()))
+
+                // Must unbind use cases before rebinding them.
+                cameraProvider.unbindAll()
+
                 val camera = cameraProvider.bindToLifecycle(
-                    this as LifecycleOwner, cameraSelector, preview, analysis
+                    this, cameraSelector, preview, analysis
                 )
                 cameraControl = camera.cameraControl
                 cameraControl.enableTorch(useFlashMode())
@@ -350,12 +343,11 @@ class CameraFragment : Fragment() {
 
         if (manualCaptureOnly()) {
             take_photo_btn.visibility = VISIBLE
+            take_photo_btn.setOnClickListener {
+                barcodeAnalyzer.takePhoto()
+            }
         } else {
             take_photo_btn.visibility = GONE
-        }
-
-        take_photo_btn.setOnClickListener {
-            barcodeAnalyzer.takePhoto()
         }
 
         card_overlay.animate()

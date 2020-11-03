@@ -14,6 +14,27 @@ import java.util.*
 object ImageUtil {
     private val decimalFormat = DecimalFormat("#.###", DecimalFormatSymbols(Locale.US))
 
+    fun resizeBitmap(bitmap: Bitmap): Bitmap {
+        val maxSize = 720
+        val outWidth: Int
+        val outHeight: Int
+        val inWidth: Int = bitmap.width
+        val inHeight: Int = bitmap.height
+        if (inWidth <= maxSize && inHeight <= maxSize) {
+            return bitmap
+        }
+        if (inWidth > inHeight) {
+            outWidth = maxSize
+            outHeight = inHeight * maxSize / inWidth
+        } else {
+            outHeight = maxSize
+            outWidth = inWidth * maxSize / inHeight
+        }
+        val newBitmap = Bitmap.createScaledBitmap(bitmap, outWidth, outHeight, true)
+        bitmap.recycle()
+        return newBitmap
+    }
+
     private fun createGreyMatrix(): ColorMatrix {
         return ColorMatrix(
             floatArrayOf(

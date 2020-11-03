@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -43,6 +44,9 @@ class InstructionFragment : Fragment() {
 
         start_test_btn.setOnClickListener {
             requestCameraPermission.launch(Manifest.permission.CAMERA)
+        }
+        if (requireActivity().window.decorView.measuredHeight < 1300) {
+            instruction_txt.visibility = GONE
         }
     }
 

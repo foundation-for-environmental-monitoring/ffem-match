@@ -28,8 +28,10 @@ import io.ffem.lite.preference.getSampleTestImageNumberInt
 import io.ffem.lite.preference.isDiagnosticMode
 import io.ffem.lite.preference.manualCaptureOnly
 import io.ffem.lite.util.ColorUtil.fixBoundary
+import io.ffem.lite.util.ColorUtil.isBarcodeTilted
 import io.ffem.lite.util.ColorUtil.isBarcodeValid
 import io.ffem.lite.util.ColorUtil.isTilted
+import io.ffem.lite.util.ImageUtil.resizeBitmap
 import io.ffem.lite.util.ImageUtil.toBitmap
 import io.ffem.lite.util.getBitmapPixels
 import io.ffem.lite.util.isNotBright
@@ -72,12 +74,15 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                 done = true
                 bitmap = getBitmap(imageProxy)
                 val testInfo = getTestInfo(DEFAULT_TEST_UUID)!!
+                bitmap = resizeBitmap(bitmap)
                 savePhoto(bitmap, testInfo)
-                endProcessing(imageProxy, true)
+                bitmap.recycle()
+                imageProxy.close()
                 return
             } else {
                 if (manualCaptureOnly()) {
-                    endProcessing(imageProxy, true)
+                    processing = false
+                    imageProxy.close()
                     return
                 }
                 bitmap = getBitmap(imageProxy)
@@ -146,6 +151,13 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                             }
 
                             try {
+                                if (isBarcodeTilted(rightBarcode.cornerPoints)
+                                ) {
+                                    sendMessage(context.getString(R.string.correct_camera_tilt))
+                                    endProcessing(imageProxy, false)
+                                    return
+                                }
+
                                 val rightBoundingBox =
                                     fixBoundary(
                                         rightBarcode,
@@ -288,12 +300,12 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
         return Bitmap.createBitmap(
             bitmap, 0, 0,
-            (bitmap.width * 0.43).toInt(),
+            (bitmap.width * 0.45).toInt(),
             bitmap.height
         )
     }
 
-    private fun endProcessing(image: ImageProxy, reset: Boolean) {
+    private fun endProcessing(imageProxy: ImageProxy, reset: Boolean) {
         if (::bitmap.isInitialized) {
             bitmap.recycle()
         }
@@ -304,7 +316,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         } else {
             sendMessage("")
         }
-        image.close()
+        imageProxy.close()
     }
 
     private fun analyzeBarcode(

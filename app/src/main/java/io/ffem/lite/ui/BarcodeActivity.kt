@@ -84,10 +84,12 @@ class BarcodeActivity : BaseActivity(),
 
             if (testInfo != null) {
                 model.setTest(testInfo)
-                if (testInfo!!.error == ErrorType.NO_ERROR) {
-                    view_pager.currentItem = CONFIRMATION_PAGE
-                } else {
+                if (testInfo!!.error == ErrorType.BAD_LIGHTING ||
+                    testInfo!!.error == ErrorType.IMAGE_TILTED
+                ) {
                     view_pager.currentItem = RESULT_PAGE
+                } else {
+                    view_pager.currentItem = CONFIRMATION_PAGE
                 }
             }
         }
@@ -272,8 +274,7 @@ class BarcodeActivity : BaseActivity(),
 
     class TestPagerAdapter(
         activity: AppCompatActivity
-    ) :
-        FragmentStateAdapter(activity) {
+    ) : FragmentStateAdapter(activity) {
 
         var testInfo: TestInfo? = null
 

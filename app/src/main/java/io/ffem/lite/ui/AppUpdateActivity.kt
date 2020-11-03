@@ -119,7 +119,7 @@ abstract class AppUpdateActivity : BaseActivity() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         appUpdateManager.unregisterListener(listener)
+        super.onDestroy()
     }
 }
