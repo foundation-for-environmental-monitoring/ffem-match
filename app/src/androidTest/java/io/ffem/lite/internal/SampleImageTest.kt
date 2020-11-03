@@ -24,6 +24,7 @@ import io.ffem.lite.common.TestUtil.childAtPosition
 import io.ffem.lite.common.clearData
 import io.ffem.lite.common.pH
 import io.ffem.lite.common.testDataList
+import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.ErrorType.NO_ERROR
 import io.ffem.lite.model.toLocalString
 import io.ffem.lite.model.toResourceId
@@ -175,7 +176,7 @@ class SampleImageTest {
     }
 
     @Test
-    fun image_022_Tilted() {
+    fun image_022_Waiting() {
         startInternalTest(22)
     }
 
@@ -237,7 +238,9 @@ class SampleImageTest {
 
             sleep(TIME_DELAY)
 
-            if (testData.expectedResultError == NO_ERROR) {
+            if (testData.expectedResultError != ErrorType.BAD_LIGHTING &&
+                testData.expectedResultError != ErrorType.IMAGE_TILTED
+            ) {
                 onView(withText(R.string.accept)).perform(click())
             }
 

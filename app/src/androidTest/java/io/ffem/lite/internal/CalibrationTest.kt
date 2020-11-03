@@ -228,10 +228,13 @@ class CalibrationTest {
 
         sleep(TIME_DELAY)
 
-        if (testData.expectedResultError == ErrorType.NO_ERROR) {
+        if (testData.expectedResultError != ErrorType.BAD_LIGHTING &&
+            testData.expectedResultError != ErrorType.IMAGE_TILTED
+        ) {
             onView(withText(R.string.accept)).perform(click())
         }
 
+        sleep(1000)
         onView(withText(testData.testDetails.name.toLocalString())).check(matches(isDisplayed()))
 
         onView(withText(R.string.close)).perform(click())
@@ -268,11 +271,15 @@ class CalibrationTest {
 
         sleep(TIME_DELAY / 2)
 
-        if (testData.expectedResultError == ErrorType.NO_ERROR) {
+        if (testData.expectedResultError != ErrorType.BAD_LIGHTING &&
+            testData.expectedResultError != ErrorType.IMAGE_TILTED
+        ) {
             onView(withText(R.string.accept)).perform(click())
         }
 
-        onView(withText(testData.testDetails.name.toLocalString())).check(matches(isDisplayed()))
+        sleep(2000)
+        onView(allOf(isDisplayed(), withText(testData.testDetails.name.toLocalString())))
+            .check(matches(isDisplayed()))
 
         takeScreenshot(screenshotName)
 
@@ -295,15 +302,17 @@ class CalibrationTest {
 
         sleep(TIME_DELAY)
 
-        if (testData.expectedResultError == ErrorType.NO_ERROR) {
+        if (testData.expectedResultError != ErrorType.BAD_LIGHTING &&
+            testData.expectedResultError != ErrorType.IMAGE_TILTED
+        ) {
             onView(withText(R.string.accept)).perform(click())
         }
 
-        onView(withText(testData.testDetails.name.toLocalString())).check(matches(isDisplayed()))
+        sleep(2000)
+        onView(allOf(isDisplayed(), withText(testData.testDetails.name.toLocalString())))
+            .check(matches(isDisplayed()))
 
         onView(withText(R.string.close)).perform(click())
-
-        sleep(2000)
     }
 
     companion object {

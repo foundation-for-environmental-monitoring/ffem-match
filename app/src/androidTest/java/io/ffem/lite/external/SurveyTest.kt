@@ -77,7 +77,9 @@ fun startTest(imageNumber: Int) {
 
         SystemClock.sleep(TIME_DELAY)
 
-        if (testData.expectedResultError == ErrorType.NO_ERROR) {
+        if (testData.expectedResultError != ErrorType.BAD_LIGHTING &&
+            testData.expectedResultError != ErrorType.IMAGE_TILTED
+        ) {
             Espresso.onView(ViewMatchers.withText(R.string.accept)).perform(ViewActions.click())
         }
 
