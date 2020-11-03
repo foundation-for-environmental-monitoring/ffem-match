@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.app.App
@@ -94,6 +95,7 @@ class BarcodeActivity : BaseActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
 
         setContentView(R.layout.activity_barcode)
 
@@ -131,6 +133,20 @@ class BarcodeActivity : BaseActivity(),
         view_pager.isUserInputEnabled = false
         val testPagerAdapter = TestPagerAdapter(this)
         view_pager.adapter = testPagerAdapter
+
+        view_pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageScrollStateChanged(state: Int) {
+            }
+
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                if (position == CAMERA_PAGE || position == INSTRUCTION_PAGE) {
+                    window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
+                } else {
+                    window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
+                }
+            }
+        })
     }
 
     fun submitResult(@Suppress("UNUSED_PARAMETER") view: View) {
