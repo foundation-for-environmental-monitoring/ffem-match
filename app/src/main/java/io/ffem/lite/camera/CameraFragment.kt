@@ -353,7 +353,7 @@ class CameraFragment : Fragment() {
         card_overlay.animate()
             .setStartDelay(100)
             .alpha(0.0f)
-            .setDuration(7000)
+            .setDuration(8000)
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
                     if (card_overlay != null) {
