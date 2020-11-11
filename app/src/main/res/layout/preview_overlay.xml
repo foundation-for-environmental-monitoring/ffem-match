@@ -10,9 +10,9 @@
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/card_overlay"
         android:layout_width="match_parent"
+        android:layout_height="250dp"
         android:adjustViewBounds="true"
         android:scaleType="centerCrop"
-        android:layout_height="250dp"
         android:src="@drawable/card_overlay"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -53,7 +53,7 @@
         android:textAlignment="center"
         android:textColor="#EEEEEE"
         app:layout_constraintTop_toBottomOf="@+id/card_overlay"
-        tools:text="Luminosity: 30" />
+        tools:text="Brightness: 30" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/take_photo_btn"

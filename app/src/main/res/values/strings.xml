@@ -115,5 +115,5 @@
     <string name="camera_start_align_card">When the camera starts, align the card in the viewer as shown in the example above.</string>
     <string name="confirm_color_extract">If the color detection above is incorrect, redo the capture with better light conditions.</string>
     <string name="analyzing_photo">Analyzing photo…</string>
-    <string name="luminosity">Luminosity</string>
+    <string name="brightness">Brightness</string>
 </resources>

@@ -140,7 +140,7 @@ class ResultFragment : Fragment() {
             }
             error_margin_txt.text = String.format("%.2f", testInfo.getMarginOfError())
             if (testInfo.resultInfo.luminosity > -1) {
-                luminosity_txt.text = String.format("%.2f", testInfo.resultInfo.luminosity)
+                luminosity_txt.text = testInfo.resultInfo.luminosity.toString()
             } else {
                 luminosity_lyt.visibility = GONE
             }

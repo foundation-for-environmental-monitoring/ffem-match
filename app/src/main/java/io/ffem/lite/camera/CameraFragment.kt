@@ -76,7 +76,7 @@ import kotlin.math.min
  */
 class CameraFragment : Fragment() {
 
-    private var currentLuminosity: Float = -1f
+    private var currentLuminosity: Int = -1
     private lateinit var cameraProvider: ProcessCameraProvider
     private lateinit var container: ConstraintLayout
     private lateinit var broadcastManager: LocalBroadcastManager
@@ -157,11 +157,11 @@ class CameraFragment : Fragment() {
         if (lightSensor != null) {
             lightEventListener = object : SensorEventListener {
                 override fun onSensorChanged(sensorEvent: SensorEvent) {
-                    val value = sensorEvent.values[0]
-                    if (luminosity_txt != null) {
+                    val value = sensorEvent.values[0].toInt()
+                    if (currentLuminosity != value) {
                         currentLuminosity = value
-                        val lux = getString(R.string.luminosity) + ": $value lx"
-                        luminosity_txt.text = lux
+                        val lux = getString(R.string.brightness) + ": $value"
+                        luminosity_txt?.text = lux
                     }
                 }
 

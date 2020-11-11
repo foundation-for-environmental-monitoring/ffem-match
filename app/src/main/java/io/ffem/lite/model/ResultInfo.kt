@@ -7,7 +7,7 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class ResultInfo(
     var result: Double = -1.0,
-    var luminosity: Float = -1f,
+    var luminosity: Int = -1,
 
     val sampleColor: Int = 0,
 

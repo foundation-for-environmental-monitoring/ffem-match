@@ -192,7 +192,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
-                        android:text="@string/luminosity"
+                        android:text="@string/brightness"
                         android:textColor="#2C2B2B"
                         android:textSize="17sp"
                         android:textStyle="normal" />
