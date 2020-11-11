@@ -32,7 +32,9 @@ abstract class BaseActivity : AppCompatActivity() {
 
     private fun updateTheme() {
 
-        setTheme(R.style.AppTheme_Main)
+        if (this !is BarcodeActivity) {
+            setTheme(R.style.AppTheme_Main)
+        }
 
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
 

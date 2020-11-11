@@ -31,7 +31,8 @@
         </activity>
         <activity
             android:name=".ui.BarcodeActivity"
-            android:screenOrientation="nosensor">
+            android:screenOrientation="nosensor"
+            android:theme="@style/AppTheme.Main.FullScreen">
             <intent-filter>
                 <action android:name="io.ffem.lite" />
                 <category android:name="android.intent.category.DEFAULT" />
