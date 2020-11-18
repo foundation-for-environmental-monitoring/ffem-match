@@ -2,6 +2,7 @@
   <dictionary name="common">
     <words>
       <w>adid</w>
+      <w>adjoint</w>
       <w>affero</w>
       <w>appinvite</w>
       <w>appspot</w>
@@ -15,9 +16,12 @@
       <w>bresenham</w>
       <w>camerax</w>
       <w>codabar</w>
+      <w>cofactor</w>
       <w>constraintlayout</w>
       <w>cuvette</w>
+      <w>datamatrix</w>
       <w>documentclass</w>
+      <w>duplicative</w>
       <w>esparcia</w>
       <w>etree</w>
       <w>externalstorage</w>
@@ -27,6 +31,7 @@
       <w>findall</w>
       <w>firebase</w>
       <w>fontenc</w>
+      <w>forney</w>
       <w>frac</w>
       <w>googleusercontent</w>
       <w>grayscale</w>
@@ -38,15 +43,18 @@
       <w>imgproc</w>
       <w>lateinit</w>
       <w>lbgon</w>
+      <w>leakcanary</w>
       <w>libopencv</w>
       <w>licensors</w>
       <w>luminances</w>
       <w>lázaro</w>
+      <w>maggs</w>
       <w>maketitle</w>
       <w>marlonlom</w>
       <w>mobilesdk</w>
       <w>nomedia</w>
       <w>noncommercially</w>
+      <w>nonnegative</w>
       <w>nosensor</w>
       <w>nyjknh</w>
       <w>opencv</w>
@@ -58,18 +66,21 @@
       <w>preallocated</w>
       <w>preimage</w>
       <w>qjgn</w>
+      <w>recenters</w>
       <w>recents</w>
       <w>relicensing</w>
       <w>renewcommand</w>
       <w>resizes</w>
       <w>rince</w>
       <w>robolectric</w>
+      <w>rucklidge</w>
       <w>salila</w>
       <w>samsung</w>
       <w>setlength</w>
       <w>sfdefault</w>
       <w>smartphone</w>
       <w>snackbar</w>
+      <w>squareup</w>
       <w>stackoverflow</w>
       <w>sublicenses</w>
       <w>sublicensing</w>
@@ -79,10 +90,13 @@
       <w>timeago</w>
       <w>tradeoff</w>
       <w>unmock</w>
+      <w>unrotated</w>
       <w>unshift</w>
+      <w>unskewed</w>
       <w>usepackage</w>
       <w>vklu</w>
       <w>wipo</w>
+      <w>wolberg</w>
       <w>writerow</w>
       <w>xing</w>
       <w>xstep</w>
