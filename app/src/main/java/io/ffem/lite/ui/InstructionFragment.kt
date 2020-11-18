@@ -9,9 +9,11 @@ import android.view.View.GONE
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import io.ffem.lite.R
 import io.ffem.lite.app.App
+import io.ffem.lite.preference.useColorCardVersion2
 import io.ffem.lite.util.snackBar
 import io.ffem.lite.util.snackBarAction
 import kotlinx.android.synthetic.main.fragment_instruction.*
@@ -47,6 +49,22 @@ class InstructionFragment : Fragment() {
         }
         if (requireActivity().window.decorView.measuredHeight < 1300) {
             instruction_txt.visibility = GONE
+        }
+
+        if (useColorCardVersion2()) {
+            example_img.setImageDrawable(
+                ContextCompat.getDrawable(
+                    requireContext(),
+                    R.drawable.card_2_overlay
+                )
+            )
+        } else {
+            example_img.setImageDrawable(
+                ContextCompat.getDrawable(
+                    requireContext(),
+                    R.drawable.card_overlay
+                )
+            )
         }
     }
 
