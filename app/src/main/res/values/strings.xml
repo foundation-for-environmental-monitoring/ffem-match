@@ -4,7 +4,7 @@
     <string name="legal_info">Legal Information</string>
 
     <string name="testing">Testing</string>
-    <string name="align_color_card">Align the color card within the view finder above</string>
+    <string name="align_color_card">Align the color card within the view above</string>
     <string name="version">Version</string>
     <string name="about">About</string>
     <string name="settings">Settings</string>
@@ -29,7 +29,7 @@
     <string name="disable_diagnostics">Disable diagnostics</string>
     <string name="settings_not_clickable">Settings not clickable</string>
     <string name="try_moving_well_lit">Bad lighting. Try moving to a well lit area</string>
-    <string name="correct_camera_tilt">Camera tilted. Set position correctly over the card</string>
+    <string name="correct_camera_tilt">Align camera</string>
     <string name="color_card_not_found">Check alignment or lighting</string>
     <string name="capture_photo">Capture photo</string>
     <string name="invalid_image">Invalid image</string>
@@ -116,4 +116,6 @@
     <string name="confirm_color_extract">If the color detection above is incorrect, redo the capture with better light conditions.</string>
     <string name="analyzing_photo">Analyzing photo…</string>
     <string name="brightness">Brightness</string>
+    <string name="closer">Closer</string>
+    <string name="too_close">Too close</string>
 </resources>

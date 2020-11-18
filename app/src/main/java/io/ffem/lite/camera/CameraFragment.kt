@@ -49,6 +49,7 @@ import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.app.App.Companion.SCAN_PROGRESS
 import io.ffem.lite.common.CAPTURED_EVENT_BROADCAST
+import io.ffem.lite.common.OVERLAY_UPDATE_BROADCAST
 import io.ffem.lite.data.AppDatabase
 import io.ffem.lite.data.TestResult
 import io.ffem.lite.model.ErrorType
@@ -118,7 +119,14 @@ class CameraFragment : Fragment() {
         }
     }
 
-            messageHandler.postDelayed(runnable, 3000)
+    private val overlayUpdateReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            if (scanner_ovr != null) {
+                scanner_ovr.refreshOverlay(
+                    colorCardAnalyzer.getPattern(),
+                    container.measuredHeight
+                )
+            }
         }
     }
 
@@ -188,6 +196,11 @@ class CameraFragment : Fragment() {
         broadcastManager.registerReceiver(
             capturedPhotoBroadcastReceiver,
             IntentFilter(CAPTURED_EVENT_BROADCAST)
+        )
+
+        broadcastManager.registerReceiver(
+            overlayUpdateReceiver,
+            IntentFilter(OVERLAY_UPDATE_BROADCAST)
         )
 
         lifecycleScope.launch {
