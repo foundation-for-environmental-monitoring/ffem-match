@@ -7,6 +7,14 @@
         app:allowDividerBelow="true"
         app:iconSpaceReserved="false">
 
+        <CheckBoxPreference
+            android:key="@string/useColorCardVersion2"
+            android:summary="Color card with QR code corners"
+            android:title="Use version 2 color card"
+            app:allowDividerAbove="true"
+            app:allowDividerBelow="true"
+            app:iconSpaceReserved="false" />
+
         <EditTextPreference
             android:defaultValue="60"
             android:dialogMessage="The max difference between the sample color and the colors on the card"

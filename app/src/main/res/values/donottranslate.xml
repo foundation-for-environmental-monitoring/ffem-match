@@ -29,6 +29,7 @@
     <string name="diagnosticModeKey">diagnosticMode</string>
     <string name="testModeOnKey">testModeOn</string>
     <string name="dummyImageKey">dummyImage</string>
+    <string name="useColorCardVersion2">useColorCardVersion2</string>
     <string name="manualCaptureOnlyKey">manualCaptureOnly</string>
     <string name="aboutKey">aboutApp</string>
     <string name="data_delete_key">data_delete</string>
