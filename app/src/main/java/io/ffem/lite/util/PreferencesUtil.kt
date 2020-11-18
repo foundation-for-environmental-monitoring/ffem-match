@@ -134,6 +134,10 @@ object PreferencesUtil {
 //        editor.apply()
 //    }
 
+    fun removeKey(context: Context, @StringRes keyId: Int) {
+        removeKey(context, context.getString(keyId))
+    }
+
     /**
      * Removes the key from the preferences.
      *

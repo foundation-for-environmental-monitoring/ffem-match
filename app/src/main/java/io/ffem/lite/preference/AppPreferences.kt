@@ -41,7 +41,11 @@ fun isDiagnosticMode(): Boolean {
 }
 
 fun useFlashMode(): Boolean {
-    return PreferencesUtil.getBoolean(App.app, R.string.useFlashModeKey, false)
+    return isDiagnosticMode() && PreferencesUtil.getBoolean(
+        App.app,
+        R.string.useFlashModeKey,
+        false
+    )
 }
 
 fun useDummyImage(): Boolean {
@@ -99,6 +103,7 @@ object AppPreferences {
     fun disableDiagnosticMode() {
         PreferencesUtil.setBoolean(App.app, R.string.diagnosticModeKey, false)
         PreferencesUtil.setBoolean(App.app, R.string.testModeOnKey, false)
+        PreferencesUtil.removeKey(App.app, R.string.testImageNumberKey)
     }
 
     fun checkDiagnosticModeExpiry() {
