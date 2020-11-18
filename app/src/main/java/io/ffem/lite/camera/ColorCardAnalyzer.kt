@@ -3,6 +3,7 @@ package io.ffem.lite.camera
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.graphics.Rect
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
@@ -26,8 +27,10 @@ import io.ffem.lite.zxing.datamatrix.decoder.SpecificAreaReader
 import io.ffem.lite.zxing.qrcode.QRCodeReader
 import io.ffem.lite.zxing.qrcode.detector.FinderPatternInfo
 import java.nio.ByteBuffer
+import kotlin.math.max
+import kotlin.math.roundToInt
 
-const val MAX_TILT_ALLOWED = 6
+const val MAX_TILT_ALLOWED = 10
 
 class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
@@ -125,15 +128,7 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                     val bitmap = getBitmap(imageProxy)
                     savePhoto(bitmap, testInfo!!)
 
-                    val top =
-                        (topLeft.y + (bottomRight.y - topLeft.y) * 0.21).toInt()
-                    val height =
-                        (bottomRight.y - (bottomRight.y - topLeft.y) * 0.21).toInt() - top
-                    val croppedBitmap = Bitmap.createBitmap(
-                        bitmap, topLeft.x.toInt(), top,
-                        (bottomRight.x - topLeft.x).toInt(),
-                        height
-                    )
+                    val croppedBitmap = perspectiveTransform(bitmap, pattern!!)
 
                     ImageColorUtil.getResult(context, testInfo, ErrorType.NO_ERROR, croppedBitmap)
                     croppedBitmap.recycle()
@@ -157,12 +152,67 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                 sendOverlayUpdate()
                 endProcessing(imageProxy, true)
             }
-//            getPatternFromBitmap(bitmap)
         } catch (e: Exception) {
             endProcessing(imageProxy, true)
             return
         }
         endProcessing(imageProxy, true)
+    }
+
+    //https://stackoverflow.com/questions/13161628/cropping-a-perspective-transformation-of-image-on-android
+    private fun perspectiveTransform(bitmap: Bitmap, pattern: FinderPatternInfo): Bitmap {
+        val matrix = Matrix()
+        val dst = floatArrayOf(
+            0f, 0f,
+            bitmap.width.toFloat(), 0f,
+            bitmap.width.toFloat(),
+            bitmap.height.toFloat(), 0f,
+            bitmap.height.toFloat()
+        )
+        val src = floatArrayOf(
+            pattern.topLeft.x,
+            pattern.topLeft.y,
+            pattern.topRight.x,
+            pattern.topRight.y,
+            pattern.bottomRight.x,
+            pattern.bottomRight.y,
+            pattern.bottomLeft.x,
+            pattern.bottomLeft.y
+        )
+        matrix.setPolyToPoly(src, 0, dst, 0, src.size shr 1)
+        val mappedTL = floatArrayOf(0f, 0f)
+        matrix.mapPoints(mappedTL)
+        val mapTLx = mappedTL[0].roundToInt()
+        val mapTLy = mappedTL[1].roundToInt()
+
+        val mappedTR = floatArrayOf(bitmap.width.toFloat(), 0f)
+        matrix.mapPoints(mappedTR)
+//        val mapTRx = Math.round(mappedTR[0])
+        val mapTRy = mappedTR[1].roundToInt()
+
+        val mappedLL = floatArrayOf(0f, bitmap.height.toFloat())
+        matrix.mapPoints(mappedLL)
+        val mapLLx = mappedLL[0].roundToInt()
+//        val mapLLy = mappedLL[1].roundToInt()
+
+        val shiftX = max(-mapTLx, -mapLLx)
+        val shiftY = max(-mapTRy, -mapTLy)
+
+        val resultBitmap: Bitmap =
+            Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+
+        val top = shiftY + (bitmap.height * 0.21).toInt()
+        val height = bitmap.height * 0.58
+
+        return Bitmap.createBitmap(
+            resultBitmap,
+            shiftX,
+            top,
+            bitmap.width,
+            height.toInt(),
+            null,
+            true
+        )
     }
 
     private fun savePhoto(bitmap: Bitmap, testInfo: TestInfo) {

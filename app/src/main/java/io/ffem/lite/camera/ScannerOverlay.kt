@@ -13,7 +13,9 @@ class ScannerOverlay @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
+    private var previewWidth: Int = 0
     private var previewHeight: Int = 0
+    private var topMargin: Int = 0
 
     private var patternInfo: FinderPatternInfo? = null
 
@@ -26,18 +28,35 @@ class ScannerOverlay @JvmOverloads constructor(
         super.onDraw(canvas)
         try {
             patternInfo?.apply {
-                val top = (width - previewHeight) / 2
-                canvas.drawCircle(height - topLeft.y, topLeft.x - top.toFloat(), 10f, greenPaint)
+
+                // left point
                 canvas.drawCircle(
-                    height - bottomLeft.y,
-                    bottomLeft.x - top.toFloat(),
+                    (previewWidth * (height - bottomLeft.y)) / height,
+                    (previewHeight * bottomLeft.x / width) - topMargin,
                     10f,
                     greenPaint
                 )
-                canvas.drawCircle(height - topRight.y, topRight.x - top.toFloat(), 10f, greenPaint)
+
+                // top right
                 canvas.drawCircle(
-                    height - bottomRight.y,
-                    bottomRight.x - top.toFloat(),
+                    (previewWidth * (height - topLeft.y)) / height,
+                    (previewHeight * topLeft.x / width) - topMargin,
+                    10f,
+                    greenPaint
+                )
+
+                // bottom right
+                canvas.drawCircle(
+                    (previewWidth * (height - topRight.y)) / height,
+                    (previewHeight * topRight.x / width) - topMargin,
+                    10f,
+                    greenPaint
+                )
+
+                // bottom left
+                canvas.drawCircle(
+                    (previewWidth * (height - bottomRight.y)) / height,
+                    (previewHeight * bottomRight.x / width) - topMargin,
                     10f,
                     greenPaint
                 )
@@ -46,9 +65,11 @@ class ScannerOverlay @JvmOverloads constructor(
         }
     }
 
-    fun refreshOverlay(pattern: FinderPatternInfo?, height: Int) {
+    fun refreshOverlay(pattern: FinderPatternInfo?, width: Int, height: Int, marginTop: Int) {
         patternInfo = pattern
+        previewWidth = width
         previewHeight = height
+        topMargin = marginTop
         invalidate()
     }
 }

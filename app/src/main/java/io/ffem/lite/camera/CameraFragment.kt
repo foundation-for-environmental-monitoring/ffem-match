@@ -126,7 +126,9 @@ class CameraFragment : Fragment() {
             if (scanner_ovr != null) {
                 scanner_ovr.refreshOverlay(
                     colorCardAnalyzer.getPattern(),
-                    container.measuredHeight
+                    container.measuredWidth,
+                    requireActivity().window.decorView.height,
+                    (requireActivity().window.decorView.height - container.measuredHeight) / 2
                 )
             }
         }
