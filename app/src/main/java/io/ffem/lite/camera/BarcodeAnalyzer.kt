@@ -22,6 +22,7 @@ import io.ffem.lite.app.App.Companion.DEFAULT_TEST_UUID
 import io.ffem.lite.app.App.Companion.TEST_INFO_KEY
 import io.ffem.lite.app.App.Companion.getTestInfo
 import io.ffem.lite.app.App.Companion.getTestName
+import io.ffem.lite.common.CAPTURED_EVENT_BROADCAST
 import io.ffem.lite.model.ImageEdgeType
 import io.ffem.lite.model.TestInfo
 import io.ffem.lite.preference.getSampleTestImageNumberInt
@@ -154,7 +155,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                 if (isBarcodeTilted(rightBarcode.cornerPoints)
                                 ) {
                                     sendMessage(context.getString(R.string.correct_camera_tilt))
-                                    endProcessing(imageProxy, false)
+                                    endProcessing(imageProxy, true)
                                     return
                                 }
 
@@ -373,7 +374,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
         bitmapRotated.recycle()
 
-        val intent = Intent(App.CAPTURED_EVENT)
+        val intent = Intent(CAPTURED_EVENT_BROADCAST)
         intent.putExtra(TEST_INFO_KEY, testInfo)
         localBroadcastManager.sendBroadcast(
             intent

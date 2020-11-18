@@ -38,7 +38,6 @@ class App : BaseApplication() {
         const val SCAN_PROGRESS = "scan_progress"
 
         const val LOCAL_RESULT_EVENT = "result_event"
-        const val CAPTURED_EVENT = "captured_event"
         const val ERROR_EVENT = "error_event"
 
         const val TEST_INFO_KEY = "test_info"
@@ -179,7 +178,7 @@ class App : BaseApplication() {
             testConfig = gson.fromJson(content, TestConfig::class.java)
 //            }
 
-            var calibration: List<CalibrationValue> = testConfig.tests[0].values
+            var calibration: List<CalibrationValue> = testConfig.tests[3].values
             for (test in testConfig.tests) {
                 if (test.uuid!!.substring(30) == id) {
                     calibration = test.values
