@@ -8,7 +8,7 @@
         app:iconSpaceReserved="false">
 
         <EditTextPreference
-            android:defaultValue="60"
+            android:defaultValue="55"
             android:dialogMessage="The max difference between the sample color and the colors on the card"
             android:inputType="number"
             android:key="@string/colorDistanceToleranceKey"
