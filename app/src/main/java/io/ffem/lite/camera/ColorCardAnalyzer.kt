@@ -27,7 +27,7 @@ import io.ffem.lite.zxing.qrcode.detector.FinderPatternInfo
 import kotlin.math.max
 import kotlin.math.roundToInt
 
-const val MAX_TILT_ALLOWED = 10
+const val MAX_TILT_ALLOWED = 12
 
 class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
@@ -65,9 +65,8 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
                     // Check if camera is too far
                     if (topLeft.x < imageProxy.width * 0.04 ||
-                        bottomRight.y > imageProxy.height * 0.91 ||
-                        topRight.y < imageProxy.height * 0.06
-
+                        bottomRight.y > imageProxy.height * 0.95 ||
+                        topRight.y < imageProxy.height * 0.035
                     ) {
                         sendMessage(context.getString(R.string.too_close))
                         endProcessing(imageProxy, true)
@@ -76,7 +75,7 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
                     // Check if camera is too far
                     if (topLeft.x > imageProxy.width * 0.1 ||
-                        bottomRight.y < imageProxy.height * 0.9 ||
+                        bottomRight.y < imageProxy.height * 0.88 ||
                         topRight.y > imageProxy.height * 0.2
 
                     ) {

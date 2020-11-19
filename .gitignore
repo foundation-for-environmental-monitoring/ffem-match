@@ -70,4 +70,5 @@ docs/*.gz
 
 
 .DS_Store
+workspace.xml
 
