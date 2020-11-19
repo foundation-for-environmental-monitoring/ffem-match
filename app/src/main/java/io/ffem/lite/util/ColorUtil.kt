@@ -40,7 +40,7 @@ import kotlin.collections.ArrayList
 import kotlin.math.*
 
 const val IMAGE_THRESHOLD = 100
-const val MAX_COLOR_DISTANCE_RGB = 60
+const val MAX_COLOR_DISTANCE_RGB = 55
 const val MAX_COLOR_DISTANCE_CALIBRATION = 80
 const val INTERPOLATION_COUNT = 100.0
 const val MAX_DISTANCE = 999
@@ -678,7 +678,13 @@ object ColorUtil {
 
         val x1 = ((commonRight - commonLeft) / 2) + commonLeft
         val y1 = ((bwBitmap.height) / 2) + (bwBitmap.height * 0.1).toInt()
-        val rectangle = Rect(x1 - 17, y1 - 27, x1 + 17, y1 + 35)
+        val areaWidth = (bitmap.height * 0.04).toInt()
+        val rectangle = Rect(
+            x1 - areaWidth,
+            y1 - (bitmap.height * 0.04).toInt(),
+            x1 + areaWidth,
+            y1 + (bitmap.height * 0.1).toInt()
+        )
         val pixels = getBitmapPixels(bitmap, rectangle)
 
         val cuvetteColor = getAverageColor(pixels)

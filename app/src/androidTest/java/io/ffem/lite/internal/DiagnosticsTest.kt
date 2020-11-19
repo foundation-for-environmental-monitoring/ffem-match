@@ -16,6 +16,7 @@ import io.ffem.lite.common.TestHelper
 import io.ffem.lite.common.TestHelper.enterDiagnosticMode
 import io.ffem.lite.common.TestHelper.leaveDiagnosticMode
 import io.ffem.lite.common.TestHelper.sleep
+import io.ffem.lite.common.TestUtil
 import io.ffem.lite.common.TestUtil.childAtPosition
 import io.ffem.lite.common.clearData
 import io.ffem.lite.common.residualChlorine
@@ -225,7 +226,7 @@ class DiagnosticsTest {
 
         val textView6 = onView(
             allOf(
-                withId(R.id.error_margin_txt), withText("0.30"),
+                withId(R.id.error_margin_txt),
                 childAtPosition(
                     childAtPosition(
                         IsInstanceOf.instanceOf(android.widget.LinearLayout::class.java),
@@ -236,7 +237,7 @@ class DiagnosticsTest {
                 isDisplayed()
             )
         )
-        textView6.check(matches(withText("0.30")))
+        textView6.check(matches(TestUtil.checkResult(0.3)))
 
         onView(
             allOf(
