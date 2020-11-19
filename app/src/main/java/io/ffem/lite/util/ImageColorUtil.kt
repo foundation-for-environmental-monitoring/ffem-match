@@ -224,7 +224,12 @@ object ImageColorUtil {
         val y1 = ((row2Top - row1Top) / 2) + row1Top
         val x1 = ((bitmap.width) / 2) + (bitmap.width * 0.1).toInt()
         val areaHeight = (bitmap.width * 0.05).toInt()
-        val rectangle = Rect(x1 - 27, y1 - areaHeight, x1 + 35, y1 + areaHeight)
+        val rectangle = Rect(
+            x1 - (bitmap.width * 0.03).toInt(),
+            y1 - areaHeight,
+            x1 + (bitmap.width * 0.1).toInt(),
+            y1 + areaHeight
+        )
         val pixels = getBitmapPixels(bitmap, rectangle)
 
         val cuvetteColor = getAverageColor(pixels)

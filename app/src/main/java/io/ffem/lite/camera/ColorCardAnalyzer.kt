@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Matrix
-import android.graphics.Rect
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -19,14 +18,12 @@ import io.ffem.lite.util.ImageColorUtil
 import io.ffem.lite.util.ImageUtil.toBitmap
 import io.ffem.lite.zxing.BinaryBitmap
 import io.ffem.lite.zxing.LuminanceSource
-import io.ffem.lite.zxing.PlanarYUVLuminanceSource
 import io.ffem.lite.zxing.RGBLuminanceSource
 import io.ffem.lite.zxing.common.HybridBinarizer
 import io.ffem.lite.zxing.datamatrix.decoder.DataMatrixReader
 import io.ffem.lite.zxing.datamatrix.decoder.SpecificAreaReader
 import io.ffem.lite.zxing.qrcode.QRCodeReader
 import io.ffem.lite.zxing.qrcode.detector.FinderPatternInfo
-import java.nio.ByteBuffer
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -49,13 +46,6 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         return pattern
     }
 
-    private fun ByteBuffer.toByteArray(): ByteArray {
-        rewind()
-        val data = ByteArray(remaining())
-        get(data)
-        return data
-    }
-
     override fun analyze(imageProxy: ImageProxy) {
         if (done || processing) {
             return
@@ -66,18 +56,7 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
         try {
 
-            val data = imageProxy.planes[0].buffer.toByteArray()
-            val source: PlanarYUVLuminanceSource? =
-                buildLuminanceSource(data, imageProxy.width, imageProxy.height)
-
-            val binaryBitmap = BinaryBitmap(
-                HybridBinarizer(
-                    source
-                )
-            )
-
             pattern = getPatternFromBitmap(imageProxy.toBitmap())
-//            pattern = getPattern(binaryBitmap)
             if (pattern != null) {
 
                 sendOverlayUpdate()
@@ -85,9 +64,9 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                 pattern?.apply {
 
                     // Check if camera is too far
-                    if (topLeft.x < binaryBitmap.width * 0.04 ||
-                        bottomRight.y > binaryBitmap.height * 0.91 ||
-                        topRight.y < binaryBitmap.height * 0.12
+                    if (topLeft.x < imageProxy.width * 0.04 ||
+                        bottomRight.y > imageProxy.height * 0.91 ||
+                        topRight.y < imageProxy.height * 0.06
 
                     ) {
                         sendMessage(context.getString(R.string.too_close))
@@ -96,9 +75,9 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                     }
 
                     // Check if camera is too far
-                    if (topLeft.x > binaryBitmap.width * 0.08 ||
-                        bottomRight.y < binaryBitmap.height * 0.75 ||
-                        topRight.y > binaryBitmap.height * 0.2
+                    if (topLeft.x > imageProxy.width * 0.1 ||
+                        bottomRight.y < imageProxy.height * 0.9 ||
+                        topRight.y > imageProxy.height * 0.2
 
                     ) {
                         sendMessage(context.getString(R.string.closer))
@@ -201,8 +180,8 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         val resultBitmap: Bitmap =
             Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
 
-        val top = shiftY + (bitmap.height * 0.21).toInt()
-        val height = bitmap.height * 0.58
+        val top = shiftY + (bitmap.height * 0.24).toInt()
+        val height = bitmap.height * 0.53
 
         return Bitmap.createBitmap(
             resultBitmap,
@@ -213,6 +192,52 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
             null,
             true
         )
+    }
+
+    private fun getBitmap(image: ImageProxy): Bitmap {
+        val bitmap = image.toBitmap()
+        return Bitmap.createBitmap(
+            bitmap, 0, 0,
+            (bitmap.width * 0.45).toInt(),
+            bitmap.height
+        )
+    }
+
+    // https://stackoverflow.com/questions/14861553/zxing-convert-bitmap-to-binarybitmap
+    private fun getPatternFromBitmap(bMap: Bitmap): FinderPatternInfo? {
+        val intArray = IntArray(bMap.width * bMap.height)
+        //copy pixel data from the Bitmap into the 'intArray' array
+        bMap.getPixels(intArray, 0, bMap.width, 0, 0, bMap.width, bMap.height)
+        val source: LuminanceSource = RGBLuminanceSource(bMap.width, bMap.height, intArray)
+        val binaryBitmap = BinaryBitmap(HybridBinarizer(source))
+        return getPatternFromBinaryBitmap(binaryBitmap)
+    }
+
+    private fun getPatternFromBinaryBitmap(bitmap: BinaryBitmap): FinderPatternInfo? {
+        var result: FinderPatternInfo? = null
+        try {
+            val dataResult = SpecificAreaReader(DataMatrixReader()).decode(bitmap)
+            if (!dataResult.text.isNullOrEmpty()) {
+                result = QRCodeReader().getPatterns(bitmap, null)
+                result.testId = dataResult.text
+                result.width = bitmap.width
+                result.height = bitmap.height
+            }
+        } catch (e: Exception) {
+            return null
+        }
+        return result
+    }
+
+    private fun endProcessing(imageProxy: ImageProxy, reset: Boolean) {
+        processing = false
+        if (reset) {
+            autoFocusCounter = 0
+            autoFocusCounter2 = 0
+        } else {
+            sendMessage("")
+        }
+        imageProxy.close()
     }
 
     private fun savePhoto(bitmap: Bitmap, testInfo: TestInfo) {
@@ -227,67 +252,6 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         )
 
         bitmapRotated.recycle()
-    }
-
-    private fun buildLuminanceSource(
-        data: ByteArray?,
-        width: Int,
-        height: Int
-    ): PlanarYUVLuminanceSource? {
-        val rect = Rect(0, 0, width, height)
-        // Go ahead and assume it's YUV rather than die.
-        return PlanarYUVLuminanceSource(
-            data, width, height, rect.left, rect.top,
-            rect.width(), rect.height(), false
-        )
-    }
-
-
-    private fun getBitmap(image: ImageProxy): Bitmap {
-        val bitmap = image.toBitmap()
-        return Bitmap.createBitmap(
-            bitmap, 0, 0,
-            (bitmap.width * 0.45).toInt(),
-            bitmap.height
-        )
-    }
-
-    private fun endProcessing(imageProxy: ImageProxy, reset: Boolean) {
-        processing = false
-        if (reset) {
-            autoFocusCounter = 0
-            autoFocusCounter2 = 0
-        } else {
-            sendMessage("")
-        }
-        imageProxy.close()
-    }
-
-    private fun getPatternFromBitmap(bMap: Bitmap): FinderPatternInfo? {
-        val intArray = IntArray(bMap.width * bMap.height)
-        //copy pixel data from the Bitmap into the 'intArray' array
-        bMap.getPixels(intArray, 0, bMap.width, 0, 0, bMap.width, bMap.height)
-        val source: LuminanceSource = RGBLuminanceSource(bMap.width, bMap.height, intArray)
-        val bitmap = BinaryBitmap(HybridBinarizer(source))
-        return getPattern(bitmap)
-    }
-
-    private fun getPattern(
-        bitmap: BinaryBitmap
-    ): FinderPatternInfo? {
-        var result: FinderPatternInfo? = null
-        try {
-            val dataResult = SpecificAreaReader(DataMatrixReader()).decode(bitmap)
-            if (!dataResult.text.isNullOrEmpty()) {
-                result = QRCodeReader().getPatterns(bitmap, null)
-                result.testId = dataResult.text
-                result.width = bitmap.width
-                result.height = bitmap.height
-            }
-        } catch (e: Exception) {
-            return null
-        }
-        return result
     }
 
     private fun sendMessage(s: String) {
