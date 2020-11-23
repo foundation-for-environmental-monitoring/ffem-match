@@ -67,6 +67,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.*
 import java.util.concurrent.Executor
+import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -327,6 +328,25 @@ class CameraFragment : Fragment() {
                 cameraControl = camera.cameraControl
                 cameraControl.enableTorch(useFlashMode())
 
+                camera_preview.afterMeasured {
+                    val factory: MeteringPointFactory = SurfaceOrientedMeteringPointFactory(
+                        camera_preview.width.toFloat(), camera_preview.height.toFloat()
+                    )
+                    val centerWidth = camera_preview.width.toFloat() / 2
+                    val centerHeight = camera_preview.height.toFloat() / 5
+                    //create a point on the center of the view
+                    val autoFocusPoint = factory.createPoint(centerWidth, centerHeight)
+                    cameraControl.startFocusAndMetering(
+                        FocusMeteringAction.Builder(
+                            autoFocusPoint,
+                            FocusMeteringAction.FLAG_AF
+                        ).apply {
+                            //auto-focus every 1 seconds
+                            setAutoCancelDuration(1, TimeUnit.SECONDS)
+                        }.build()
+                    )
+                }
+
             } catch (e: Exception) {
                 Timber.e(e)
             }
@@ -400,6 +420,18 @@ class CameraFragment : Fragment() {
                     }
                 }
             })
+    }
+
+    private inline fun View.afterMeasured(crossinline block: () -> Unit) {
+        viewTreeObserver.addOnGlobalLayoutListener(object :
+            ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                if (measuredWidth > 0 && measuredHeight > 0) {
+                    viewTreeObserver.removeOnGlobalLayoutListener(this)
+                    block()
+                }
+            }
+        })
     }
 
     companion object {
