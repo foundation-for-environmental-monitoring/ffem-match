@@ -25,21 +25,18 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.Configuration
 import android.graphics.Color
-import android.graphics.PorterDuff
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.widget.TextView
-import android.widget.Toast
+import android.view.ViewTreeObserver
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
@@ -211,20 +208,6 @@ class CameraFragment : Fragment() {
         lifecycleScope.launch {
             delay(300)
             startCamera()
-
-            if (getSampleTestImageNumberInt() > -1) {
-                val toast: Toast = Toast.makeText(
-                    requireContext(),
-                    R.string.dummy_image_message,
-                    Toast.LENGTH_LONG
-                )
-                toast.setGravity(Gravity.CENTER, 0, -200)
-                (toast.view?.findViewById<View>(android.R.id.message) as TextView).setTextColor(
-                    Color.WHITE
-                )
-                toast.view?.background?.setColorFilter(Color.RED, PorterDuff.Mode.SRC_IN)
-                toast.show()
-            }
         }
     }
 
@@ -244,6 +227,10 @@ class CameraFragment : Fragment() {
             displayId = view?.findViewById<PreviewView>(R.id.camera_preview)!!.display.displayId
             updateCameraUi()
             bindCameraUseCases()
+
+            if (getSampleTestImageNumberInt() > -1) {
+                message_txt.visibility = VISIBLE
+            }
         }
     }
 
