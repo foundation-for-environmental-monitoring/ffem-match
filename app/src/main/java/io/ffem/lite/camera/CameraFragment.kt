@@ -214,6 +214,14 @@ class CameraFragment : Fragment() {
             delay(300)
             startCamera()
         }
+
+        if (take_photo_btn != null) {
+            if (manualCaptureOnly()) {
+                take_photo_btn.visibility = VISIBLE
+            } else {
+                take_photo_btn.visibility = GONE
+            }
+        }
     }
 
     override fun onCreateView(

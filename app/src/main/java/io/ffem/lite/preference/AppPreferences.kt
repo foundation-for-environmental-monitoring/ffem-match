@@ -67,7 +67,7 @@ fun manualCaptureOnly(): Boolean {
     return PreferencesUtil.getBoolean(
         App.app,
         R.string.manualCaptureOnlyKey, false
-    )
+    ) && !useColorCardVersion2()
 }
 
 fun getColorDistanceTolerance(): Int {

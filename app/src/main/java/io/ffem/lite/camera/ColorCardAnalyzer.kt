@@ -11,6 +11,7 @@ import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.common.CARD_CAPTURED_EVENT_BROADCAST
 import io.ffem.lite.common.Constants.IMAGE_CROP_PERCENTAGE
+import io.ffem.lite.common.Constants.MAX_TILT_PERCENTAGE_ALLOWED
 import io.ffem.lite.common.OVERLAY_UPDATE_BROADCAST
 import io.ffem.lite.common.TEST_INFO_KEY
 import io.ffem.lite.model.ErrorType
@@ -26,10 +27,7 @@ import io.ffem.lite.zxing.datamatrix.decoder.DataMatrixReader
 import io.ffem.lite.zxing.qrcode.QRCodeReader
 import io.ffem.lite.zxing.qrcode.detector.FinderPatternInfo
 import kotlin.math.max
-import kotlin.math.min
 import kotlin.math.roundToInt
-
-const val MAX_TILT_ALLOWED = 12
 
 class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
@@ -67,8 +65,8 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                 pattern?.apply {
 
                     // Check if camera is too far
-                    if (topLeft.x < imageProxy.width * 0.04 ||
-                        bottomRight.y > imageProxy.height * 0.95 ||
+                    if (topLeft.x < imageProxy.width * 0.018 ||
+                        bottomRight.y > imageProxy.height * 0.96 ||
                         topRight.y < imageProxy.height * 0.035
                     ) {
                         sendMessage(context.getString(R.string.too_close))
@@ -87,11 +85,13 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                         return
                     }
 
+                    val allowedTilt = MAX_TILT_PERCENTAGE_ALLOWED * imageProxy.height
+
                     // Check if image is tilted
-                    if (topLeft.x - bottomLeft.x > MAX_TILT_ALLOWED ||
-                        topLeft.y - topRight.y > MAX_TILT_ALLOWED ||
-                        topRight.x - bottomRight.x > MAX_TILT_ALLOWED ||
-                        bottomLeft.y - bottomRight.y > MAX_TILT_ALLOWED
+                    if (topLeft.x - bottomLeft.x > allowedTilt ||
+                        topLeft.y - topRight.y > allowedTilt ||
+                        topRight.x - bottomRight.x > allowedTilt ||
+                        bottomLeft.y - bottomRight.y > allowedTilt
                     ) {
                         sendMessage(context.getString(R.string.correct_camera_tilt))
                         endProcessing(imageProxy)
@@ -214,24 +214,24 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
     }
 
     private fun getPatternFromBinaryBitmap(bitmap: BinaryBitmap): FinderPatternInfo? {
-        val result: FinderPatternInfo?
+        var result: FinderPatternInfo? = null
         try {
             result = QRCodeReader().getPatterns(bitmap, null)
             if (result != null) {
+                result.width = bitmap.width
+                result.height = bitmap.height
                 val dataResult: Result = dataMatrixReader.decode(
                     bitmap.crop(
-                        result.topLeft.x.toInt() * 3,
-                        min(0, result.topLeft.x.toInt() - 20),
-                        bitmap.width / 3,
+                        result.topLeft.x.toInt() + 100,
+                        0,
+                        bitmap.width / 2,
                         bitmap.height / 4
                     ), null
                 )
                 result.testId = dataResult.text
-                result.width = bitmap.width
-                result.height = bitmap.height
             }
         } catch (e: Exception) {
-            return null
+            return result
         }
         return result
     }
