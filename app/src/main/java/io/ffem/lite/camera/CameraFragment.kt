@@ -49,6 +49,8 @@ import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.app.App.Companion.SCAN_PROGRESS
 import io.ffem.lite.common.CAPTURED_EVENT_BROADCAST
+import io.ffem.lite.common.Constants.ANALYZER_IMAGE_MAX_WIDTH
+import io.ffem.lite.common.Constants.IMAGE_CROP_PERCENTAGE
 import io.ffem.lite.common.OVERLAY_UPDATE_BROADCAST
 import io.ffem.lite.data.AppDatabase
 import io.ffem.lite.data.TestResult
@@ -125,7 +127,10 @@ class CameraFragment : Fragment() {
                 scanner_ovr.refreshOverlay(
                     colorCardAnalyzer.getPattern(),
                     container.measuredWidth,
-                    requireActivity().window.decorView.height,
+                    max(
+                        ANALYZER_IMAGE_MAX_WIDTH * IMAGE_CROP_PERCENTAGE,
+                        requireActivity().window.decorView.height * IMAGE_CROP_PERCENTAGE
+                    ).toInt(),
                     (requireActivity().window.decorView.height - container.measuredHeight) / 2
                 )
             }

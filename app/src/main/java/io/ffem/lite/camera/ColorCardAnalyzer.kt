@@ -10,6 +10,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.common.CARD_CAPTURED_EVENT_BROADCAST
+import io.ffem.lite.common.Constants.IMAGE_CROP_PERCENTAGE
 import io.ffem.lite.common.OVERLAY_UPDATE_BROADCAST
 import io.ffem.lite.common.TEST_INFO_KEY
 import io.ffem.lite.model.ErrorType
@@ -19,12 +20,13 @@ import io.ffem.lite.util.ImageUtil.toBitmap
 import io.ffem.lite.zxing.BinaryBitmap
 import io.ffem.lite.zxing.LuminanceSource
 import io.ffem.lite.zxing.RGBLuminanceSource
+import io.ffem.lite.zxing.Result
 import io.ffem.lite.zxing.common.HybridBinarizer
 import io.ffem.lite.zxing.datamatrix.decoder.DataMatrixReader
-import io.ffem.lite.zxing.datamatrix.decoder.SpecificAreaReader
 import io.ffem.lite.zxing.qrcode.QRCodeReader
 import io.ffem.lite.zxing.qrcode.detector.FinderPatternInfo
 import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.roundToInt
 
 const val MAX_TILT_ALLOWED = 12
@@ -38,6 +40,7 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         var autoFocusCounter = 0
         var autoFocusCounter2 = 0
         var pattern: FinderPatternInfo? = null
+        val dataMatrixReader = DataMatrixReader()
     }
 
     private lateinit var localBroadcastManager: LocalBroadcastManager
@@ -55,8 +58,8 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         localBroadcastManager = LocalBroadcastManager.getInstance(context)
 
         try {
-
-            pattern = getPatternFromBitmap(imageProxy.toBitmap())
+            val bitmap = getBitmap(imageProxy)
+            pattern = getPatternFromBitmap(bitmap)
             if (pattern != null) {
 
                 sendOverlayUpdate()
@@ -69,18 +72,18 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                         topRight.y < imageProxy.height * 0.035
                     ) {
                         sendMessage(context.getString(R.string.too_close))
-                        endProcessing(imageProxy, true)
+                        endProcessing(imageProxy)
                         return
                     }
 
                     // Check if camera is too far
                     if (topLeft.x > imageProxy.width * 0.1 ||
-                        bottomRight.y < imageProxy.height * 0.88 ||
+                        bottomRight.y < imageProxy.height * 0.84 ||
                         topRight.y > imageProxy.height * 0.2
 
                     ) {
                         sendMessage(context.getString(R.string.closer))
-                        endProcessing(imageProxy, true)
+                        endProcessing(imageProxy)
                         return
                     }
 
@@ -91,7 +94,7 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                         bottomLeft.y - bottomRight.y > MAX_TILT_ALLOWED
                     ) {
                         sendMessage(context.getString(R.string.correct_camera_tilt))
-                        endProcessing(imageProxy, true)
+                        endProcessing(imageProxy)
                         return
                     }
 
@@ -103,7 +106,6 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
                     val testInfo = App.getTestInfo(testId)
 
-                    val bitmap = getBitmap(imageProxy)
                     savePhoto(bitmap, testInfo!!)
 
                     val croppedBitmap = perspectiveTransform(bitmap, pattern!!)
@@ -120,7 +122,7 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                             intent
                         )
                     } else {
-                        endProcessing(imageProxy, true)
+                        endProcessing(imageProxy)
                         sendMessage(context.getString(R.string.color_card_not_found))
                         sendOverlayUpdate()
                     }
@@ -128,13 +130,13 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
             } else {
                 sendMessage(context.getString(R.string.color_card_not_found))
                 sendOverlayUpdate()
-                endProcessing(imageProxy, true)
+                endProcessing(imageProxy)
             }
         } catch (e: Exception) {
-            endProcessing(imageProxy, true)
+            endProcessing(imageProxy)
             return
         }
-        endProcessing(imageProxy, true)
+        endProcessing(imageProxy)
     }
 
     //https://stackoverflow.com/questions/13161628/cropping-a-perspective-transformation-of-image-on-android
@@ -194,11 +196,10 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
     }
 
     private fun getBitmap(image: ImageProxy): Bitmap {
-        val bitmap = image.toBitmap()
         return Bitmap.createBitmap(
-            bitmap, 0, 0,
-            (bitmap.width * 0.45).toInt(),
-            bitmap.height
+            image.toBitmap(), 0, 0,
+            (image.width * IMAGE_CROP_PERCENTAGE).toInt(),
+            image.height
         )
     }
 
@@ -213,11 +214,18 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
     }
 
     private fun getPatternFromBinaryBitmap(bitmap: BinaryBitmap): FinderPatternInfo? {
-        var result: FinderPatternInfo? = null
+        val result: FinderPatternInfo?
         try {
-            val dataResult = SpecificAreaReader(DataMatrixReader()).decode(bitmap)
-            if (!dataResult.text.isNullOrEmpty()) {
-                result = QRCodeReader().getPatterns(bitmap, null)
+            result = QRCodeReader().getPatterns(bitmap, null)
+            if (result != null) {
+                val dataResult: Result = dataMatrixReader.decode(
+                    bitmap.crop(
+                        result.topLeft.x.toInt() * 3,
+                        min(0, result.topLeft.x.toInt() - 20),
+                        bitmap.width / 3,
+                        bitmap.height / 4
+                    ), null
+                )
                 result.testId = dataResult.text
                 result.width = bitmap.width
                 result.height = bitmap.height
@@ -228,14 +236,8 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         return result
     }
 
-    private fun endProcessing(imageProxy: ImageProxy, reset: Boolean) {
+    private fun endProcessing(imageProxy: ImageProxy) {
         processing = false
-        if (reset) {
-            autoFocusCounter = 0
-            autoFocusCounter2 = 0
-        } else {
-            sendMessage("")
-        }
         imageProxy.close()
     }
 
