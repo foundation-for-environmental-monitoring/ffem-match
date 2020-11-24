@@ -114,7 +114,7 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                     croppedBitmap.recycle()
                     bitmap.recycle()
 
-                    if (testInfo.resultInfo.result > -1) {
+                    if (testInfo.resultInfo.result > -2) {
                         done = true
                         val intent = Intent(CARD_CAPTURED_EVENT_BROADCAST)
                         intent.putExtra(TEST_INFO_KEY, testInfo)
@@ -181,8 +181,8 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         val resultBitmap: Bitmap =
             Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
 
-        val top = shiftY + (bitmap.height * 0.24).toInt()
-        val height = bitmap.height * 0.53
+        val top = shiftY + (bitmap.height * 0.26).toInt()
+        val height = bitmap.height * 0.47
 
         return Bitmap.createBitmap(
             resultBitmap,

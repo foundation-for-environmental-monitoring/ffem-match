@@ -21,6 +21,7 @@ import io.ffem.lite.data.Calibration
 import io.ffem.lite.data.TestResult
 import io.ffem.lite.model.*
 import io.ffem.lite.model.ErrorType.NO_ERROR
+import io.ffem.lite.model.ErrorType.NO_MATCH
 import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.preference.getCalibrationColorDistanceTolerance
 import io.ffem.lite.preference.getColorDistanceTolerance
@@ -57,7 +58,7 @@ object ImageColorUtil {
                 )
 
                 testInfo.resultInfo = analyzeColor(extractedColors)
-                if (testInfo.resultInfo.result > -1) {
+                if (testInfo.resultInfo.result > -2) {
 
                     var calibration: Calibration? = null
                     if (!AppPreferences.isCalibration()) {
@@ -100,7 +101,11 @@ object ImageColorUtil {
                 return
             }
 
-            testInfo.error = error
+            if (testInfo.resultInfo.result == -1.0) {
+                testInfo.error = NO_MATCH
+            } else {
+                testInfo.error = error
+            }
 
             val db = AppDatabase.getDatabase(context)
             try {
