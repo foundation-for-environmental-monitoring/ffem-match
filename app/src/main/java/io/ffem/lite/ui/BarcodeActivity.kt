@@ -30,6 +30,7 @@ import io.ffem.lite.app.App.Companion.TEST_INFO_KEY
 import io.ffem.lite.app.App.Companion.TEST_VALUE_KEY
 import io.ffem.lite.app.App.Companion.getTestInfo
 import io.ffem.lite.camera.CameraFragment
+import io.ffem.lite.common.CAPTURED_EVENT_BROADCAST
 import io.ffem.lite.data.AppDatabase
 import io.ffem.lite.model.CalibrationValue
 import io.ffem.lite.model.ErrorType
@@ -107,7 +108,7 @@ class BarcodeActivity : BaseActivity(),
 
         broadcastManager.registerReceiver(
             capturedPhotoBroadcastReceiver,
-            IntentFilter(App.CAPTURED_EVENT)
+            IntentFilter(CAPTURED_EVENT_BROADCAST)
         )
 
         broadcastManager.registerReceiver(

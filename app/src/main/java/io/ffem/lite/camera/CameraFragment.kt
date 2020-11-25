@@ -30,7 +30,6 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
-import android.os.Handler
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
@@ -49,6 +48,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.app.App.Companion.SCAN_PROGRESS
+import io.ffem.lite.common.CAPTURED_EVENT_BROADCAST
 import io.ffem.lite.data.AppDatabase
 import io.ffem.lite.data.TestResult
 import io.ffem.lite.model.ErrorType
@@ -56,6 +56,8 @@ import io.ffem.lite.model.TestInfo
 import io.ffem.lite.preference.*
 import kotlinx.android.synthetic.main.fragment_camera.*
 import kotlinx.android.synthetic.main.preview_overlay.*
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -89,24 +91,28 @@ class CameraFragment : Fragment() {
     private var preview: Preview? = null
 
     private lateinit var barcodeAnalyzer: BarcodeAnalyzer
-    private lateinit var messageHandler: Handler
-    private lateinit var runnable: Runnable
+    private val mainScope = MainScope()
 
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
 
-            messageHandler.removeCallbacksAndMessages(null)
-
             val message = intent.getStringExtra(App.ERROR_MESSAGE)
             val scanProgress = intent.getIntExtra(SCAN_PROGRESS, 0)
 
-            if (bottom_overlay != null && bottom_overlay.text != message && !message.isNullOrEmpty()) {
+            if (bottom_overlay != null && !message.isNullOrEmpty()) {
                 bottom_overlay.setTextColor(Color.YELLOW)
                 bottom_overlay.text = message
+            } else {
+                mainScope.cancel(null)
+                mainScope.launch {
+                    delay(2000)
+                    if (bottom_overlay != null && bottom_overlay.text != getString(R.string.align_color_card)) {
+                        bottom_overlay.setTextColor(Color.WHITE)
+                        bottom_overlay.text = getString(R.string.align_color_card)
+                    }
+                }
             }
             progress_bar.progress = scanProgress
-
-            messageHandler.postDelayed(runnable, 3000)
         }
     }
 
@@ -136,15 +142,6 @@ class CameraFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        messageHandler = Handler()
-
-        runnable = Runnable {
-            if (bottom_overlay != null && bottom_overlay.text != getString(R.string.align_color_card)) {
-                bottom_overlay.setTextColor(Color.WHITE)
-                bottom_overlay.text = getString(R.string.align_color_card)
-            }
-        }
-
         mainExecutor = ContextCompat.getMainExecutor(requireContext())
 
         broadcastManager = LocalBroadcastManager.getInstance(requireContext())
@@ -184,12 +181,20 @@ class CameraFragment : Fragment() {
         broadcastManager.registerReceiver(broadcastReceiver, IntentFilter(App.ERROR_EVENT))
         broadcastManager.registerReceiver(
             capturedPhotoBroadcastReceiver,
-            IntentFilter(App.CAPTURED_EVENT)
+            IntentFilter(CAPTURED_EVENT_BROADCAST)
         )
 
         lifecycleScope.launch {
             delay(300)
             startCamera()
+        }
+
+        if (take_photo_btn != null) {
+            if (manualCaptureOnly()) {
+                take_photo_btn.visibility = VISIBLE
+            } else {
+                take_photo_btn.visibility = GONE
+            }
         }
     }
 
@@ -218,8 +223,8 @@ class CameraFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
+        mainScope.cancel(null)
         cameraProvider.unbindAll()
-        messageHandler.removeCallbacksAndMessages(runnable)
         broadcastManager.unregisterReceiver(broadcastReceiver)
         broadcastManager.unregisterReceiver(capturedPhotoBroadcastReceiver)
         if (lightSensor != null) {
@@ -281,7 +286,7 @@ class CameraFragment : Fragment() {
                     .setImageQueueDepth(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                     .build()
 
-                analysis.setAnalyzer(mainExecutor, BarcodeAnalyzer(requireContext()))
+                analysis.setAnalyzer(mainExecutor, barcodeAnalyzer)
 
                 // Must unbind use cases before rebinding them.
                 cameraProvider.unbindAll()

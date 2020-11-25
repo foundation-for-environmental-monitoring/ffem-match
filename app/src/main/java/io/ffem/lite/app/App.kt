@@ -38,7 +38,6 @@ class App : BaseApplication() {
         const val SCAN_PROGRESS = "scan_progress"
 
         const val LOCAL_RESULT_EVENT = "result_event"
-        const val CAPTURED_EVENT = "captured_event"
         const val ERROR_EVENT = "error_event"
 
         const val TEST_INFO_KEY = "test_info"
