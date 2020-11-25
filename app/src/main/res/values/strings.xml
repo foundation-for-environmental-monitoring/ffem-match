@@ -116,4 +116,6 @@
     <string name="confirm_color_extract">If the color detection above is incorrect, redo the capture with better light conditions.</string>
     <string name="analyzing_photo">Analyzing photo…</string>
     <string name="brightness">Brightness</string>
+    <string name="closer">Closer</string>
+    <string name="too_close">Too close</string>
 </resources>

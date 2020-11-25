@@ -302,8 +302,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/analyzed_image"
-                    android:minHeight="250dp"
-                    android:rotation="-90" />
+                    android:minHeight="250dp" />
 
             </LinearLayout>
 

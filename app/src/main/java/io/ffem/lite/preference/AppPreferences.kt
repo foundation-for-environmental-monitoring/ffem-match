@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit
 
 fun getSampleTestImageNumber(): Int {
     var testImageNumber = -1
-    if (isTestRunning()) {
+    if (isTestRunning() && !useColorCardVersion2()) {
         testImageNumber = try {
             PreferencesUtil
                 .getString(App.app, R.string.testImageNumberKey, " -1").toInt()
@@ -34,6 +34,14 @@ fun getSampleTestImageNumberInt(): Int {
 
 fun isTestRunning(): Boolean {
     return BuildConfig.DEBUG && (isDiagnosticMode() || BuildConfig.INSTRUMENTED_TEST_RUNNING.get())
+}
+
+fun useColorCardVersion2(): Boolean {
+    return isDiagnosticMode() && PreferencesUtil.getBoolean(
+        App.app,
+        R.string.useColorCardVersion2,
+        false
+    )
 }
 
 fun isDiagnosticMode(): Boolean {
@@ -59,7 +67,7 @@ fun manualCaptureOnly(): Boolean {
     return PreferencesUtil.getBoolean(
         App.app,
         R.string.manualCaptureOnlyKey, false
-    )
+    ) && !useColorCardVersion2()
 }
 
 fun getColorDistanceTolerance(): Int {

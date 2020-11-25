@@ -2,55 +2,103 @@
   <dictionary name="common">
     <words>
       <w>adid</w>
+      <w>adjoint</w>
       <w>affero</w>
+      <w>ahki</w>
       <w>appinvite</w>
       <w>appspot</w>
       <w>attrib</w>
       <w>autofocus</w>
+      <w>bahnschrift</w>
       <w>barcodes</w>
       <w>binarized</w>
       <w>binarizer</w>
+      <w>bkbru</w>
       <w>blackbox</w>
       <w>blackpoint</w>
+      <w>bordercolor</w>
+      <w>borderlayer</w>
+      <w>borderopacity</w>
       <w>bresenham</w>
+      <w>calibri</w>
       <w>camerax</w>
+      <w>cccc</w>
+      <w>cccccccccccccccccc</w>
       <w>codabar</w>
+      <w>cofactor</w>
       <w>constraintlayout</w>
       <w>cuvette</w>
+      <w>dasharray</w>
+      <w>dashoffset</w>
+      <w>datamatrix</w>
+      <w>defs</w>
+      <w>docname</w>
       <w>documentclass</w>
+      <w>duplicative</w>
+      <w>ehwpw</w>
+      <w>ehyp</w>
+      <w>epvswg</w>
       <w>esparcia</w>
       <w>etree</w>
+      <w>evenodd</w>
       <w>externalstorage</w>
       <w>familydefault</w>
+      <w>fauv</w>
       <w>fbbam</w>
       <w>ffem</w>
       <w>findall</w>
       <w>firebase</w>
       <w>fontenc</w>
+      <w>forney</w>
       <w>frac</w>
       <w>googleusercontent</w>
       <w>grayscale</w>
       <w>greyscale</w>
+      <w>groupmode</w>
       <w>gson</w>
+      <w>hdywp</w>
       <w>helvet</w>
       <w>hglf</w>
       <w>hhmmss</w>
+      <w>ijdcxe</w>
       <w>imgproc</w>
+      <w>inkscape</w>
+      <w>isstock</w>
+      <w>jggg</w>
+      <w>kqer</w>
       <w>lateinit</w>
       <w>lbgon</w>
+      <w>leakcanary</w>
       <w>libopencv</w>
       <w>licensors</w>
+      <w>linecap</w>
+      <w>linejoin</w>
+      <w>lstart</w>
       <w>luminances</w>
       <w>lázaro</w>
+      <w>maggs</w>
       <w>maketitle</w>
       <w>marlonlom</w>
+      <w>miterlimit</w>
       <w>mobilesdk</w>
+      <w>mstart</w>
+      <w>namedview</w>
+      <w>nodetypes</w>
       <w>nomedia</w>
       <w>noncommercially</w>
+      <w>nonnegative</w>
       <w>nosensor</w>
+      <w>ntudtdtere</w>
       <w>nyjknh</w>
+      <w>ofkc</w>
+      <w>ofkci</w>
+      <w>ofvh</w>
       <w>opencv</w>
       <w>overlayed</w>
+      <w>pagecheckerboard</w>
+      <w>pagecolor</w>
+      <w>pageopacity</w>
+      <w>pageshadow</w>
       <w>parindent</w>
       <w>parskip</w>
       <w>paulburke</w>
@@ -58,19 +106,30 @@
       <w>preallocated</w>
       <w>preimage</w>
       <w>qjgn</w>
+      <w>rdcfcc</w>
+      <w>recenters</w>
       <w>recents</w>
       <w>relicensing</w>
       <w>renewcommand</w>
       <w>resizes</w>
       <w>rince</w>
       <w>robolectric</w>
+      <w>rucklidge</w>
       <w>salila</w>
       <w>samsung</w>
       <w>setlength</w>
       <w>sfdefault</w>
+      <w>showborder</w>
+      <w>showgrid</w>
+      <w>showguides</w>
+      <w>showpageshadow</w>
       <w>smartphone</w>
       <w>snackbar</w>
+      <w>sodipodi</w>
+      <w>squareup</w>
+      <w>sspa</w>
       <w>stackoverflow</w>
+      <w>stockid</w>
       <w>sublicenses</w>
       <w>sublicensing</w>
       <w>symbology</w>
@@ -78,16 +137,32 @@
       <w>thresholding</w>
       <w>timeago</w>
       <w>tradeoff</w>
+      <w>tspan</w>
       <w>unmock</w>
+      <w>unrotated</w>
       <w>unshift</w>
+      <w>unskewed</w>
       <w>usepackage</w>
       <w>vklu</w>
+      <w>vslnr</w>
+      <w>wdth</w>
+      <w>wght</w>
       <w>wipo</w>
+      <w>wolberg</w>
+      <w>wrdc</w>
       <w>writerow</w>
+      <w>wxcgk</w>
       <w>xing</w>
+      <w>xlink</w>
+      <w>xpvl</w>
       <w>xstep</w>
+      <w>xues</w>
+      <w>xups</w>
+      <w>xygrid</w>
       <w>yoffset</w>
       <w>ystep</w>
+      <w>zarffr</w>
+      <w>zosju</w>
     </words>
   </dictionary>
 </component>
