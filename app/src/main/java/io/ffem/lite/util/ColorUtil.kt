@@ -19,14 +19,11 @@ import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
 import io.ffem.lite.R
-import io.ffem.lite.app.App
-import io.ffem.lite.app.App.Companion.DEFAULT_TEST_UUID
-import io.ffem.lite.app.App.Companion.TEST_ID_KEY
-import io.ffem.lite.app.App.Companion.TEST_VALUE_KEY
 import io.ffem.lite.app.App.Companion.getCardColors
 import io.ffem.lite.app.App.Companion.getTestInfo
 import io.ffem.lite.camera.MAX_ANGLE
 import io.ffem.lite.camera.Utilities
+import io.ffem.lite.common.*
 import io.ffem.lite.data.AppDatabase
 import io.ffem.lite.data.Calibration
 import io.ffem.lite.data.TestResult
@@ -536,7 +533,7 @@ object ColorUtil {
         error: ErrorType = NO_ERROR,
         bitmap: Bitmap? = null
     ) {
-        val intent = Intent(App.LOCAL_RESULT_EVENT)
+        val intent = Intent(RESULT_EVENT_BROADCAST)
         if (testInfo != null) {
             testInfo.error = error
 
@@ -602,7 +599,7 @@ object ColorUtil {
             } finally {
                 db.close()
             }
-            intent.putExtra(App.TEST_INFO_KEY, testInfo)
+            intent.putExtra(TEST_INFO_KEY, testInfo)
             intent.putExtra(TEST_VALUE_KEY, testInfo.resultInfo.result)
         }
 

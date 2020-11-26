@@ -17,12 +17,9 @@ import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
-import io.ffem.lite.app.App
-import io.ffem.lite.app.App.Companion.DEFAULT_TEST_UUID
-import io.ffem.lite.app.App.Companion.TEST_INFO_KEY
 import io.ffem.lite.app.App.Companion.getTestInfo
 import io.ffem.lite.app.App.Companion.getTestName
-import io.ffem.lite.common.CAPTURED_EVENT_BROADCAST
+import io.ffem.lite.common.*
 import io.ffem.lite.model.ImageEdgeType
 import io.ffem.lite.model.TestInfo
 import io.ffem.lite.preference.getSampleTestImageNumberInt
@@ -392,9 +389,9 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
     }
 
     private fun sendMessage(s: String) {
-        val intent = Intent(App.ERROR_EVENT)
-        intent.putExtra(App.ERROR_MESSAGE, s)
-        intent.putExtra(App.SCAN_PROGRESS, autoFocusCounter + autoFocusCounter2)
+        val intent = Intent(ERROR_EVENT_BROADCAST)
+        intent.putExtra(ERROR_MESSAGE, s)
+        intent.putExtra(SCAN_PROGRESS, autoFocusCounter + autoFocusCounter2)
         localBroadcastManager.sendBroadcast(
             intent
         )

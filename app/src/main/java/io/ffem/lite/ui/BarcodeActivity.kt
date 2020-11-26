@@ -23,14 +23,9 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
-import io.ffem.lite.app.App
-import io.ffem.lite.app.App.Companion.IS_CALIBRATION
-import io.ffem.lite.app.App.Companion.TEST_ID_KEY
-import io.ffem.lite.app.App.Companion.TEST_INFO_KEY
-import io.ffem.lite.app.App.Companion.TEST_VALUE_KEY
 import io.ffem.lite.app.App.Companion.getTestInfo
 import io.ffem.lite.camera.CameraFragment
-import io.ffem.lite.common.CAPTURED_EVENT_BROADCAST
+import io.ffem.lite.common.*
 import io.ffem.lite.data.AppDatabase
 import io.ffem.lite.model.CalibrationValue
 import io.ffem.lite.model.ErrorType
@@ -128,7 +123,7 @@ class BarcodeActivity : BaseActivity(),
 
         broadcastManager.registerReceiver(
             resultBroadcastReceiver,
-            IntentFilter(App.LOCAL_RESULT_EVENT)
+            IntentFilter(RESULT_EVENT_BROADCAST)
         )
 
         AppPreferences.generateImageFileName()

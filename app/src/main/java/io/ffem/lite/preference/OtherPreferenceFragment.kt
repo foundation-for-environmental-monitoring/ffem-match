@@ -7,7 +7,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.ffem.lite.R
 import io.ffem.lite.app.App
-import io.ffem.lite.app.App.Companion.IS_CALIBRATION
+import io.ffem.lite.common.IS_CALIBRATION
 import io.ffem.lite.ui.AboutActivity
 import io.ffem.lite.ui.BarcodeActivity
 import io.ffem.lite.util.PreferencesUtil

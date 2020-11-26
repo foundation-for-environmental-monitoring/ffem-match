@@ -13,8 +13,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import io.ffem.lite.R
-import io.ffem.lite.app.App
 import io.ffem.lite.app.App.Companion.getTestInfo
+import io.ffem.lite.common.TEST_ID_KEY
 import io.ffem.lite.data.AppDatabase
 import io.ffem.lite.data.Calibration
 import io.ffem.lite.model.ErrorType
@@ -139,7 +139,7 @@ class CalibrationResultFragment : Fragment() {
             submit_btn.setText(R.string.confirm)
 
         } else {
-            val requestedTestId = PreferencesUtil.getString(context, App.TEST_ID_KEY, "")
+            val requestedTestId = PreferencesUtil.getString(context, TEST_ID_KEY, "")
             name_txt.text = ""
             if (testInfo.uuid != requestedTestId) {
                 val requestedTest = getTestInfo(requestedTestId!!)

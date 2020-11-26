@@ -46,12 +46,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import io.ffem.lite.R
-import io.ffem.lite.app.App
-import io.ffem.lite.app.App.Companion.SCAN_PROGRESS
-import io.ffem.lite.common.CAPTURED_EVENT_BROADCAST
+import io.ffem.lite.common.*
 import io.ffem.lite.common.Constants.ANALYZER_IMAGE_MAX_WIDTH
 import io.ffem.lite.common.Constants.IMAGE_CROP_PERCENTAGE
-import io.ffem.lite.common.OVERLAY_UPDATE_BROADCAST
 import io.ffem.lite.data.AppDatabase
 import io.ffem.lite.data.TestResult
 import io.ffem.lite.model.ErrorType
@@ -101,7 +98,7 @@ class CameraFragment : Fragment() {
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
 
-            val message = intent.getStringExtra(App.ERROR_MESSAGE)
+            val message = intent.getStringExtra(ERROR_MESSAGE)
             val scanProgress = intent.getIntExtra(SCAN_PROGRESS, 0)
 
             if (bottom_overlay != null && !message.isNullOrEmpty()) {
@@ -139,7 +136,7 @@ class CameraFragment : Fragment() {
 
     private val capturedPhotoBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            val testInfo = intent.getParcelableExtra<TestInfo>(App.TEST_INFO_KEY) ?: return
+            val testInfo = intent.getParcelableExtra<TestInfo>(TEST_INFO_KEY) ?: return
             if (!AppPreferences.isCalibration()) {
                 val db: AppDatabase = AppDatabase.getDatabase(requireContext())
                 db.resultDao().insert(
@@ -199,7 +196,7 @@ class CameraFragment : Fragment() {
                 SensorManager.SENSOR_DELAY_FASTEST
             )
         }
-        broadcastManager.registerReceiver(broadcastReceiver, IntentFilter(App.ERROR_EVENT))
+        broadcastManager.registerReceiver(broadcastReceiver, IntentFilter(ERROR_EVENT_BROADCAST))
         broadcastManager.registerReceiver(
             capturedPhotoBroadcastReceiver,
             IntentFilter(CAPTURED_EVENT_BROADCAST)

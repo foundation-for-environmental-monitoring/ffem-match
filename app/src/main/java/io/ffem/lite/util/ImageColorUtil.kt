@@ -12,10 +12,11 @@ import androidx.core.graphics.green
 import androidx.core.graphics.red
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import io.ffem.lite.R
-import io.ffem.lite.app.App
-import io.ffem.lite.app.App.Companion.TEST_VALUE_KEY
 import io.ffem.lite.app.App.Companion.getCardColors
 import io.ffem.lite.camera.Utilities
+import io.ffem.lite.common.RESULT_EVENT_BROADCAST
+import io.ffem.lite.common.TEST_INFO_KEY
+import io.ffem.lite.common.TEST_VALUE_KEY
 import io.ffem.lite.data.AppDatabase
 import io.ffem.lite.data.Calibration
 import io.ffem.lite.data.TestResult
@@ -41,7 +42,7 @@ object ImageColorUtil {
         error: ErrorType = NO_ERROR,
         bitmap: Bitmap? = null
     ) {
-        val intent = Intent(App.LOCAL_RESULT_EVENT)
+        val intent = Intent(RESULT_EVENT_BROADCAST)
         if (testInfo != null && bitmap != null) {
 
             try {
@@ -150,7 +151,7 @@ object ImageColorUtil {
             } finally {
                 db.close()
             }
-            intent.putExtra(App.TEST_INFO_KEY, testInfo)
+            intent.putExtra(TEST_INFO_KEY, testInfo)
             intent.putExtra(TEST_VALUE_KEY, testInfo.resultInfo.result)
         }
 

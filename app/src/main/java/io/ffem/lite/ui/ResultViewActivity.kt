@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.lifecycle.ViewModelProvider
 import io.ffem.lite.R
-import io.ffem.lite.app.App
+import io.ffem.lite.common.TEST_INFO_KEY
 import io.ffem.lite.model.TestInfo
 
 class ResultViewActivity : BaseActivity() {
@@ -18,7 +18,7 @@ class ResultViewActivity : BaseActivity() {
             TestInfoViewModel::class.java
         )
 
-        val testInfo = intent.getParcelableExtra<TestInfo>(App.TEST_INFO_KEY)!!
+        val testInfo = intent.getParcelableExtra<TestInfo>(TEST_INFO_KEY)!!
         model.setTest(testInfo)
 
         supportFragmentManager

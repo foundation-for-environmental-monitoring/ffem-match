@@ -9,11 +9,11 @@ import androidx.camera.core.ImageProxy
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import io.ffem.lite.R
 import io.ffem.lite.app.App
-import io.ffem.lite.common.CARD_CAPTURED_EVENT_BROADCAST
+import io.ffem.lite.common.*
+import io.ffem.lite.common.Constants.CALIBRATION_COLOR_AREA_WIDTH_PERCENTAGE
 import io.ffem.lite.common.Constants.IMAGE_CROP_PERCENTAGE
 import io.ffem.lite.common.Constants.MAX_TILT_PERCENTAGE_ALLOWED
-import io.ffem.lite.common.OVERLAY_UPDATE_BROADCAST
-import io.ffem.lite.common.TEST_INFO_KEY
+import io.ffem.lite.common.Constants.QR_TO_COLOR_AREA_DISTANCE_PERCENTAGE
 import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.TestInfo
 import io.ffem.lite.util.ImageColorUtil
@@ -67,7 +67,7 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                     // Check if camera is too far
                     if (topLeft.x < imageProxy.width * 0.018 ||
                         bottomRight.y > imageProxy.height * 0.96 ||
-                        topRight.y < imageProxy.height * 0.035
+                        topRight.y < imageProxy.height * 0.048
                     ) {
                         sendMessage(context.getString(R.string.too_close))
                         endProcessing(imageProxy)
@@ -181,8 +181,8 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         val resultBitmap: Bitmap =
             Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
 
-        val top = shiftY + (bitmap.height * 0.26).toInt()
-        val height = bitmap.height * 0.47
+        val top = shiftY + (bitmap.height * QR_TO_COLOR_AREA_DISTANCE_PERCENTAGE).toInt()
+        val height = bitmap.height * CALIBRATION_COLOR_AREA_WIDTH_PERCENTAGE
 
         return Bitmap.createBitmap(
             resultBitmap,
@@ -222,10 +222,10 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                 result.height = bitmap.height
                 val dataResult: Result = dataMatrixReader.decode(
                     bitmap.crop(
-                        result.topLeft.x.toInt() + 100,
+                        result.topLeft.x.toInt() + (bitmap.width / 5),
                         0,
-                        bitmap.width / 2,
-                        bitmap.height / 4
+                        bitmap.width / 3,
+                        (bitmap.height / 3.7).toInt()
                     ), null
                 )
                 result.testId = dataResult.text
@@ -256,10 +256,10 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
     }
 
     private fun sendMessage(s: String) {
-        val intent = Intent(App.ERROR_EVENT)
-        intent.putExtra(App.ERROR_MESSAGE, s)
+        val intent = Intent(ERROR_EVENT_BROADCAST)
+        intent.putExtra(ERROR_MESSAGE, s)
         intent.putExtra(
-            App.SCAN_PROGRESS,
+            SCAN_PROGRESS,
             autoFocusCounter + autoFocusCounter2
         )
         localBroadcastManager.sendBroadcast(

@@ -24,10 +24,10 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.app.App
-import io.ffem.lite.app.App.Companion.IS_CALIBRATION
-import io.ffem.lite.app.App.Companion.LOCAL_RESULT_EVENT
-import io.ffem.lite.app.App.Companion.TEST_INFO_KEY
 import io.ffem.lite.app.App.Companion.getVersionName
+import io.ffem.lite.common.IS_CALIBRATION
+import io.ffem.lite.common.RESULT_EVENT_BROADCAST
+import io.ffem.lite.common.TEST_INFO_KEY
 import io.ffem.lite.data.AppDatabase
 import io.ffem.lite.data.TestResult
 import io.ffem.lite.helper.ApkHelper.isNonStoreVersion
@@ -212,7 +212,7 @@ class ResultListActivity : AppUpdateActivity() {
 
         broadcastManager.registerReceiver(
             broadcastReceiver,
-            IntentFilter(LOCAL_RESULT_EVENT)
+            IntentFilter(RESULT_EVENT_BROADCAST)
         )
 
         test_results_lst.adapter = adapter
@@ -280,7 +280,7 @@ class ResultListActivity : AppUpdateActivity() {
         broadcastManager.unregisterReceiver(broadcastReceiver)
         broadcastManager.registerReceiver(
             broadcastReceiver,
-            IntentFilter(LOCAL_RESULT_EVENT)
+            IntentFilter(RESULT_EVENT_BROADCAST)
         )
         refreshList()
     }
