@@ -11,7 +11,6 @@ import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.common.*
 import io.ffem.lite.common.Constants.CALIBRATION_COLOR_AREA_WIDTH_PERCENTAGE
-import io.ffem.lite.common.Constants.IMAGE_CROP_PERCENTAGE
 import io.ffem.lite.common.Constants.MAX_TILT_PERCENTAGE_ALLOWED
 import io.ffem.lite.common.Constants.QR_TO_COLOR_AREA_DISTANCE_PERCENTAGE
 import io.ffem.lite.model.ErrorType
@@ -26,10 +25,14 @@ import io.ffem.lite.zxing.common.HybridBinarizer
 import io.ffem.lite.zxing.datamatrix.decoder.DataMatrixReader
 import io.ffem.lite.zxing.qrcode.QRCodeReader
 import io.ffem.lite.zxing.qrcode.detector.FinderPatternInfo
+import kotlin.math.abs
 import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.roundToInt
 
 class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
+    private lateinit var bitmap: Bitmap
+    private lateinit var croppedBitmap: Bitmap
 
     companion object {
         private var capturePhoto: Boolean = false
@@ -41,11 +44,10 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         val dataMatrixReader = DataMatrixReader()
     }
 
+    var previewWidth: Int = 0
+    var previewHeight: Int = 0
+    var viewFinderHeight: Int = 0
     private lateinit var localBroadcastManager: LocalBroadcastManager
-
-    fun getPattern(): FinderPatternInfo? {
-        return pattern
-    }
 
     override fun analyze(imageProxy: ImageProxy) {
         if (done || processing) {
@@ -56,44 +58,39 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         localBroadcastManager = LocalBroadcastManager.getInstance(context)
 
         try {
-            val bitmap = getBitmap(imageProxy)
+            bitmap = getBitmap(imageProxy, previewHeight, previewWidth)
             pattern = getPatternFromBitmap(bitmap)
             if (pattern != null) {
 
-                sendOverlayUpdate()
-
                 pattern?.apply {
 
-                    // Check if camera is too far
-                    if (topLeft.x < imageProxy.width * 0.018 ||
-                        bottomRight.y > imageProxy.height * 0.96 ||
-                        topRight.y < imageProxy.height * 0.048
+                    // Check if camera is too close
+                    if (topLeft.x < bitmap.width * 0.018 ||
+                        bottomRight.y > bitmap.height * 0.96 ||
+                        topRight.y < bitmap.height * 0.048
                     ) {
                         sendMessage(context.getString(R.string.too_close))
                         endProcessing(imageProxy)
                         return
                     }
 
-                    // Check if camera is too far
-                    if (topLeft.x > imageProxy.width * 0.1 ||
-                        bottomRight.y < imageProxy.height * 0.84 ||
-                        topRight.y > imageProxy.height * 0.2
-
+                    val allowedTilt = max(12.0, MAX_TILT_PERCENTAGE_ALLOWED * imageProxy.height)
+                    // Check if image is tilted
+                    if (abs(topLeft.x - bottomLeft.x) > allowedTilt ||
+                        abs(topLeft.y - topRight.y) > allowedTilt ||
+                        abs(topRight.x - bottomRight.x) > allowedTilt ||
+                        abs(bottomLeft.y - bottomRight.y) > allowedTilt
                     ) {
-                        sendMessage(context.getString(R.string.closer))
+                        sendMessage(context.getString(R.string.correct_camera_tilt))
                         endProcessing(imageProxy)
                         return
                     }
 
-                    val allowedTilt = MAX_TILT_PERCENTAGE_ALLOWED * imageProxy.height
-
-                    // Check if image is tilted
-                    if (topLeft.x - bottomLeft.x > allowedTilt ||
-                        topLeft.y - topRight.y > allowedTilt ||
-                        topRight.x - bottomRight.x > allowedTilt ||
-                        bottomLeft.y - bottomRight.y > allowedTilt
+                    // Check if camera is too far
+                    if (bottomRight.y - topRight.y < bitmap.height * 0.8 ||
+                        topRight.x - topLeft.x < bitmap.width * 0.7
                     ) {
-                        sendMessage(context.getString(R.string.correct_camera_tilt))
+                        sendMessage(context.getString(R.string.closer))
                         endProcessing(imageProxy)
                         return
                     }
@@ -108,11 +105,11 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
                     savePhoto(bitmap, testInfo!!)
 
-                    val croppedBitmap = perspectiveTransform(bitmap, pattern!!)
+                    croppedBitmap = perspectiveTransform(bitmap, pattern!!)
+                    bitmap.recycle()
 
                     ImageColorUtil.getResult(context, testInfo, ErrorType.NO_ERROR, croppedBitmap)
                     croppedBitmap.recycle()
-                    bitmap.recycle()
 
                     if (testInfo.resultInfo.result > -2) {
                         done = true
@@ -122,21 +119,43 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                             intent
                         )
                     } else {
-                        endProcessing(imageProxy)
                         sendMessage(context.getString(R.string.color_card_not_found))
-                        sendOverlayUpdate()
+                        endProcessing(imageProxy)
+                        return
                     }
                 }
             } else {
                 sendMessage(context.getString(R.string.color_card_not_found))
-                sendOverlayUpdate()
                 endProcessing(imageProxy)
+                return
             }
         } catch (e: Exception) {
             endProcessing(imageProxy)
             return
         }
         endProcessing(imageProxy)
+    }
+
+    private fun getBitmap(imageProxy: ImageProxy, previewHeight: Int, previewWidth: Int): Bitmap {
+        val actualHeight = (imageProxy.height * previewHeight) / previewWidth
+        val margin = if (actualHeight < imageProxy.width) {
+            imageProxy.width - actualHeight
+        } else {
+            0
+        }
+        val height = min(
+            imageProxy.height,
+            ((imageProxy.width * imageProxy.height) / actualHeight)
+        )
+        val width = min(
+            viewFinderHeight,
+            ((actualHeight * viewFinderHeight) / previewHeight)
+        )
+
+        return Bitmap.createBitmap(
+            imageProxy.toBitmap(), margin / 2, (imageProxy.height - height) / 2,
+            width, height
+        )
     }
 
     //https://stackoverflow.com/questions/13161628/cropping-a-perspective-transformation-of-image-on-android
@@ -195,14 +214,6 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         )
     }
 
-    private fun getBitmap(image: ImageProxy): Bitmap {
-        return Bitmap.createBitmap(
-            image.toBitmap(), 0, 0,
-            (image.width * IMAGE_CROP_PERCENTAGE).toInt(),
-            image.height
-        )
-    }
-
     // https://stackoverflow.com/questions/14861553/zxing-convert-bitmap-to-binarybitmap
     private fun getPatternFromBitmap(bMap: Bitmap): FinderPatternInfo? {
         val intArray = IntArray(bMap.width * bMap.height)
@@ -239,6 +250,12 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
     private fun endProcessing(imageProxy: ImageProxy) {
         processing = false
         imageProxy.close()
+        if (::croppedBitmap.isInitialized) {
+            croppedBitmap.recycle()
+        }
+        if (::bitmap.isInitialized) {
+            bitmap.recycle()
+        }
     }
 
     private fun savePhoto(bitmap: Bitmap, testInfo: TestInfo) {
@@ -262,13 +279,6 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
             SCAN_PROGRESS,
             autoFocusCounter + autoFocusCounter2
         )
-        localBroadcastManager.sendBroadcast(
-            intent
-        )
-    }
-
-    private fun sendOverlayUpdate() {
-        val intent = Intent(OVERLAY_UPDATE_BROADCAST)
         localBroadcastManager.sendBroadcast(
             intent
         )

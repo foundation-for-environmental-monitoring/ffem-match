@@ -1,19 +1,3 @@
-/*
- * Copyright 2019 Google LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package io.ffem.lite.camera
 
 import android.animation.Animator
@@ -24,7 +8,6 @@ import android.content.Context.SENSOR_SERVICE
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.Configuration
-import android.graphics.Color
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -47,8 +30,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import io.ffem.lite.R
 import io.ffem.lite.common.*
-import io.ffem.lite.common.Constants.ANALYZER_IMAGE_MAX_WIDTH
-import io.ffem.lite.common.Constants.IMAGE_CROP_PERCENTAGE
 import io.ffem.lite.data.AppDatabase
 import io.ffem.lite.data.TestResult
 import io.ffem.lite.model.ErrorType
@@ -63,6 +44,8 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.*
 import java.util.concurrent.Executor
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 import kotlin.math.max
@@ -86,6 +69,7 @@ class CameraFragment : Fragment() {
     private lateinit var lightEventListener: SensorEventListener
     private lateinit var sensorManager: SensorManager
     private lateinit var mainExecutor: Executor
+    private lateinit var executorService: ExecutorService
     private lateinit var cameraControl: CameraControl
 
     private var displayId: Int = -1
@@ -101,36 +85,19 @@ class CameraFragment : Fragment() {
             val message = intent.getStringExtra(ERROR_MESSAGE)
             val scanProgress = intent.getIntExtra(SCAN_PROGRESS, 0)
 
-            if (bottom_overlay != null && !message.isNullOrEmpty()) {
-                bottom_overlay.setTextColor(Color.YELLOW)
-                bottom_overlay.text = message
+            if (message_overlay != null && !message.isNullOrEmpty()) {
+                message_overlay.text = message
+                message_overlay.visibility = VISIBLE
             } else {
                 mainScope.cancel(null)
                 mainScope.launch {
                     delay(2000)
-                    if (bottom_overlay != null && bottom_overlay.text != getString(R.string.align_color_card)) {
-                        bottom_overlay.setTextColor(Color.WHITE)
-                        bottom_overlay.text = getString(R.string.align_color_card)
+                    if (message_overlay != null) {
+                        message_overlay.visibility = GONE
                     }
                 }
             }
             progress_bar.progress = scanProgress
-        }
-    }
-
-    private val overlayUpdateReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            if (scanner_ovr != null) {
-                scanner_ovr.refreshOverlay(
-                    colorCardAnalyzer.getPattern(),
-                    container.measuredWidth,
-                    max(
-                        ANALYZER_IMAGE_MAX_WIDTH * IMAGE_CROP_PERCENTAGE,
-                        requireActivity().window.decorView.height * IMAGE_CROP_PERCENTAGE
-                    ).toInt(),
-                    (requireActivity().window.decorView.height - container.measuredHeight) / 2
-                )
-            }
         }
     }
 
@@ -161,6 +128,7 @@ class CameraFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mainExecutor = ContextCompat.getMainExecutor(requireContext())
+        executorService = Executors.newFixedThreadPool(1)
 
         broadcastManager = LocalBroadcastManager.getInstance(requireContext())
 
@@ -200,11 +168,6 @@ class CameraFragment : Fragment() {
         broadcastManager.registerReceiver(
             capturedPhotoBroadcastReceiver,
             IntentFilter(CAPTURED_EVENT_BROADCAST)
-        )
-
-        broadcastManager.registerReceiver(
-            overlayUpdateReceiver,
-            IntentFilter(OVERLAY_UPDATE_BROADCAST)
         )
 
         lifecycleScope.launch {
@@ -299,21 +262,33 @@ class CameraFragment : Fragment() {
                 }
 
             try {
-                val analysis = ImageAnalysis.Builder()
-                    .setTargetName("Analysis")
-                    .setTargetAspectRatio(screenAspectRatio)
-                    .setTargetRotation(rotation)
-                    .setImageQueueDepth(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                    .build()
+                val analysis = if (metrics.widthPixels <= 480) {
+                    ImageAnalysis.Builder()
+                        .setTargetName("Analysis")
+                        .setTargetRotation(rotation)
+                        .setImageQueueDepth(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                        .build()
+                } else {
+                    ImageAnalysis.Builder()
+                        .setTargetName("Analysis")
+                        .setTargetAspectRatio(screenAspectRatio)
+                        .setTargetRotation(rotation)
+                        .setImageQueueDepth(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                        .build()
+                }
 
                 if (useColorCardVersion2()) {
                     colorCardAnalyzer = ColorCardAnalyzer(requireContext())
+                    colorCardAnalyzer.previewHeight = camera_preview.measuredHeight
+                    colorCardAnalyzer.viewFinderHeight = card_overlay.measuredHeight
+                    colorCardAnalyzer.previewWidth = metrics.widthPixels
                     colorCardAnalyzer.reset()
-                    analysis.setAnalyzer(mainExecutor, colorCardAnalyzer)
+                    progress_bar.visibility = GONE
+                    analysis.setAnalyzer(executorService, colorCardAnalyzer)
                 } else {
                     barcodeAnalyzer = BarcodeAnalyzer(requireContext())
                     barcodeAnalyzer.reset()
-                    analysis.setAnalyzer(mainExecutor, barcodeAnalyzer)
+                    analysis.setAnalyzer(executorService, barcodeAnalyzer)
                 }
 
                 // Must unbind use cases before rebinding them.
@@ -323,6 +298,7 @@ class CameraFragment : Fragment() {
                     this, cameraSelector, preview, analysis
                 )
                 cameraControl = camera.cameraControl
+                cameraControl.setLinearZoom(0f)
                 cameraControl.enableTorch(useFlashMode())
 
                 camera_preview.afterMeasured {
@@ -343,11 +319,9 @@ class CameraFragment : Fragment() {
                         }.build()
                     )
                 }
-
             } catch (e: Exception) {
                 Timber.e(e)
             }
-
         }, mainExecutor)
     }
 
@@ -394,7 +368,7 @@ class CameraFragment : Fragment() {
             card_overlay.setImageDrawable(
                 ContextCompat.getDrawable(
                     requireContext(),
-                    R.drawable.card_2_overlay
+                    R.drawable.card_overlay_2
                 )
             )
         } else {
@@ -404,19 +378,18 @@ class CameraFragment : Fragment() {
                     R.drawable.card_overlay
                 )
             )
-        }
-
-        card_overlay.animate()
-            .setStartDelay(100)
-            .alpha(0.0f)
-            .setDuration(8000)
-            .setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) {
-                    if (card_overlay != null) {
-                        card_overlay.visibility = View.INVISIBLE
+            card_overlay.animate()
+                .setStartDelay(100)
+                .alpha(0.0f)
+                .setDuration(8000)
+                .setListener(object : AnimatorListenerAdapter() {
+                    override fun onAnimationEnd(animation: Animator) {
+                        if (card_overlay != null) {
+                            card_overlay.visibility = View.INVISIBLE
+                        }
                     }
-                }
-            })
+                })
+        }
     }
 
     private inline fun View.afterMeasured(crossinline block: () -> Unit) {

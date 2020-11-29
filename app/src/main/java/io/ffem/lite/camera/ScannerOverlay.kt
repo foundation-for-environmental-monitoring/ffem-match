@@ -29,11 +29,13 @@ class ScannerOverlay @JvmOverloads constructor(
         try {
             patternInfo?.apply {
 
+                val radius = width * 0.02f
+
                 // left point
                 canvas.drawCircle(
                     (previewWidth * (height - bottomLeft.y)) / height,
                     (previewHeight * bottomLeft.x / width) - topMargin,
-                    10f,
+                    radius,
                     greenPaint
                 )
 
@@ -41,7 +43,7 @@ class ScannerOverlay @JvmOverloads constructor(
                 canvas.drawCircle(
                     (previewWidth * (height - topLeft.y)) / height,
                     (previewHeight * topLeft.x / width) - topMargin,
-                    10f,
+                    radius,
                     greenPaint
                 )
 
@@ -49,7 +51,7 @@ class ScannerOverlay @JvmOverloads constructor(
                 canvas.drawCircle(
                     (previewWidth * (height - topRight.y)) / height,
                     (previewHeight * topRight.x / width) - topMargin,
-                    10f,
+                    radius,
                     greenPaint
                 )
 
@@ -57,7 +59,7 @@ class ScannerOverlay @JvmOverloads constructor(
                 canvas.drawCircle(
                     (previewWidth * (height - bottomRight.y)) / height,
                     (previewHeight * bottomRight.x / width) - topMargin,
-                    10f,
+                    radius,
                     greenPaint
                 )
             }

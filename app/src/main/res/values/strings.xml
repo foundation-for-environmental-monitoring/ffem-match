@@ -29,8 +29,8 @@
     <string name="disable_diagnostics">Disable diagnostics</string>
     <string name="settings_not_clickable">Settings not clickable</string>
     <string name="try_moving_well_lit">Bad lighting. Try moving to a well lit area</string>
-    <string name="correct_camera_tilt">Align camera</string>
-    <string name="color_card_not_found">Check alignment or lighting</string>
+    <string name="correct_camera_tilt">Correct the Tilt</string>
+    <string name="color_card_not_found">Scanning…</string>
     <string name="capture_photo">Capture photo</string>
     <string name="invalid_image">Invalid image</string>
     <string name="submit_result">Submit Result</string>

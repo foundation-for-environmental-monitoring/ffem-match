@@ -7,6 +7,18 @@
     android:layout_height="match_parent"
     tools:context=".ui.BarcodeActivity">
 
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/card_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="270dp"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/card_overlay_2" />
+
     <TextView
         android:id="@+id/message_txt"
         android:layout_width="match_parent"
@@ -21,26 +33,24 @@
         app:layout_constraintBottom_toTopOf="@id/progress_bar"
         tools:visibility="visible" />
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/card_overlay"
-        android:layout_width="match_parent"
-        android:layout_height="270dp"
-        android:adjustViewBounds="true"
-        android:scaleType="centerCrop"
+    <TextView
+        android:id="@+id/message_overlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:background="#2C2C2C"
+        android:gravity="center"
+        android:paddingStart="16dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="10dp"
+        android:text="@string/closer"
+        android:textColor="@color/yellow"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/bottom_overlay"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/card_2_overlay" />
-
-    <io.ffem.lite.camera.ScannerOverlay
-        android:id="@+id/scanner_ovr"
-        android:layout_width="match_parent"
-        android:layout_height="270dp"
-        android:adjustViewBounds="true"
-        android:background="@android:color/transparent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        tools:visibility="visible" />
 
     <ProgressBar
         android:id="@+id/progress_bar"
