@@ -165,10 +165,13 @@ class CameraFragment : Fragment() {
             )
         }
         broadcastManager.registerReceiver(broadcastReceiver, IntentFilter(ERROR_EVENT_BROADCAST))
-        broadcastManager.registerReceiver(
-            capturedPhotoBroadcastReceiver,
-            IntentFilter(CAPTURED_EVENT_BROADCAST)
-        )
+
+        if (!useColorCardVersion2()) {
+            broadcastManager.registerReceiver(
+                capturedPhotoBroadcastReceiver,
+                IntentFilter(CAPTURED_EVENT_BROADCAST)
+            )
+        }
 
         lifecycleScope.launch {
             delay(300)

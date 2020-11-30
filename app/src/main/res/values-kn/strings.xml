@@ -29,7 +29,7 @@
     <string name="result">ಫಲಿತಾಂಶ</string>
     <string name="analyzed_photo">ವಿಶ್ಲೇಷಿಸಿದ ಫೋಟೋ</string>
     <string name="color_extracts">ಬಣ್ಣ ಸಾರಗಳು</string>
-    <string name="no_error">ದೋಷವಿಲ್ಲ</string>
+    <string name="no_error">ದೋಷ ಸಂಭವಿಸಿದೆ</string>
     <string name="no_match">ಹೊಂದಾಣಿಕೆ ಇಲ್ಲ</string>
     <string name="calibration_error">ಮಾಪನಾಂಕ ನಿರ್ಣಯ ದೋಷ</string>
     <string name="image_tilted">ಓರೆಯಾದ ಚಿತ್ರ</string>

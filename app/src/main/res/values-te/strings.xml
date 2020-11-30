@@ -29,7 +29,7 @@
     <string name="result">ఫలితం</string>
     <string name="analyzed_photo">విశ్లేషించిన ఫోటో</string>
     <string name="color_extracts">రంగు సారం</string>
-    <string name="no_error">లోపం లేదు</string>
+    <string name="no_error">లోపం జరిగింది</string>
     <string name="no_match">పోలిక లేదు</string>
     <string name="calibration_error">అమరిక లోపం</string>
     <string name="image_tilted">వంగి ఉన్న చిత్రం</string>

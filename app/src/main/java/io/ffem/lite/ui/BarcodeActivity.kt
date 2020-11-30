@@ -10,6 +10,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.BitmapFactory
 import android.media.MediaActionSound
+import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment.DIRECTORY_PICTURES
@@ -33,6 +34,7 @@ import io.ffem.lite.model.TestInfo
 import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.preference.AppPreferences.isCalibration
 import io.ffem.lite.preference.isTestRunning
+import io.ffem.lite.preference.useColorCardVersion2
 import io.ffem.lite.util.ColorUtil
 import io.ffem.lite.util.PreferencesUtil
 import kotlinx.android.synthetic.main.activity_barcode.*
@@ -58,11 +60,10 @@ class BarcodeActivity : BaseActivity(),
     InstructionFragment.OnStartTestListener,
     ImageConfirmFragment.OnConfirmImageListener {
 
-    private lateinit var db: AppDatabase
-
     private lateinit var broadcastManager: LocalBroadcastManager
     private var testInfo: TestInfo? = null
     lateinit var model: TestInfoViewModel
+    lateinit var mediaPlayer: MediaPlayer
 
     private val capturedPhotoBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -76,10 +77,7 @@ class BarcodeActivity : BaseActivity(),
 
     private val colorCardCapturedBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (!isTestRunning() && !BuildConfig.INSTRUMENTED_TEST_RUNNING.get()) {
-                val sound = MediaActionSound()
-                sound.play(MediaActionSound.SHUTTER_CLICK)
-            }
+            mediaPlayer.start()
             deleteExcessData()
         }
     }
@@ -107,19 +105,19 @@ class BarcodeActivity : BaseActivity(),
 
         setContentView(R.layout.activity_barcode)
 
-        db = AppDatabase.getDatabase(baseContext)
-
         broadcastManager = LocalBroadcastManager.getInstance(this)
 
-        broadcastManager.registerReceiver(
-            capturedPhotoBroadcastReceiver,
-            IntentFilter(CAPTURED_EVENT_BROADCAST)
-        )
-
-        broadcastManager.registerReceiver(
-            colorCardCapturedBroadcastReceiver,
-            IntentFilter(CAPTURED_EVENT_BROADCAST)
-        )
+        if (useColorCardVersion2()) {
+            broadcastManager.registerReceiver(
+                colorCardCapturedBroadcastReceiver,
+                IntentFilter(CARD_CAPTURED_EVENT_BROADCAST)
+            )
+        } else {
+            broadcastManager.registerReceiver(
+                capturedPhotoBroadcastReceiver,
+                IntentFilter(CAPTURED_EVENT_BROADCAST)
+            )
+        }
 
         broadcastManager.registerReceiver(
             resultBroadcastReceiver,
@@ -160,6 +158,8 @@ class BarcodeActivity : BaseActivity(),
                 }
             }
         })
+
+        mediaPlayer = MediaPlayer.create(this, R.raw.short_beep)
     }
 
     fun submitResult(@Suppress("UNUSED_PARAMETER") view: View) {
@@ -188,20 +188,25 @@ class BarcodeActivity : BaseActivity(),
     }
 
     private fun deleteExcessData() {
+        val db = AppDatabase.getDatabase(baseContext)
         // Keep only last 25 results to save drive space
-        for (i in 0..1) {
-            if (db.resultDao().getCount() > 25) {
-                val result = db.resultDao().getOldestResult()
+        try {
+            for (i in 0..1) {
+                if (db.resultDao().getCount() > 25) {
+                    val result = db.resultDao().getOldestResult()
 
-                val path = getExternalFilesDir(DIRECTORY_PICTURES).toString() +
-                        separator + "captures"
-                val directory = File("$path$separator${result.id}$separator")
-                if (directory.exists() && directory.isDirectory) {
-                    directory.deleteRecursively()
+                    val path = getExternalFilesDir(DIRECTORY_PICTURES).toString() +
+                            separator + "captures"
+                    val directory = File("$path$separator${result.id}$separator")
+                    if (directory.exists() && directory.isDirectory) {
+                        directory.deleteRecursively()
+                    }
+
+                    db.resultDao().deleteResult(result.id)
                 }
-
-                db.resultDao().deleteResult(result.id)
             }
+        } finally {
+            db.close()
         }
     }
 
@@ -254,12 +259,12 @@ class BarcodeActivity : BaseActivity(),
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onPause() {
+        super.onPause()
         // Unregister the broadcast receivers and listeners
+        broadcastManager.unregisterReceiver(colorCardCapturedBroadcastReceiver)
         broadcastManager.unregisterReceiver(capturedPhotoBroadcastReceiver)
         broadcastManager.unregisterReceiver(resultBroadcastReceiver)
-        db.close()
     }
 
     private fun pageBack() {

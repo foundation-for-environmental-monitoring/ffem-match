@@ -102,8 +102,9 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 //                    }
 
                     val testInfo = App.getTestInfo(testId)
-
-                    savePhoto(bitmap, testInfo!!)
+                    if (testInfo != null) {
+                        savePhoto(bitmap, testInfo)
+                    }
 
                     croppedBitmap = perspectiveTransform(bitmap, pattern!!)
                     bitmap.recycle()
@@ -111,12 +112,20 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                     ImageColorUtil.getResult(context, testInfo, ErrorType.NO_ERROR, croppedBitmap)
                     croppedBitmap.recycle()
 
-                    if (testInfo.resultInfo.result > -2) {
+                    if (testInfo != null && testInfo.resultInfo.result > -2) {
+                        sendMessage(context.getString(R.string.analyzing_photo))
                         done = true
                         val intent = Intent(CARD_CAPTURED_EVENT_BROADCAST)
                         intent.putExtra(TEST_INFO_KEY, testInfo)
                         localBroadcastManager.sendBroadcast(
                             intent
+                        )
+
+                        val resultIntent = Intent(RESULT_EVENT_BROADCAST)
+                        resultIntent.putExtra(TEST_INFO_KEY, testInfo)
+                        resultIntent.putExtra(TEST_VALUE_KEY, testInfo.resultInfo.result)
+                        localBroadcastManager.sendBroadcast(
+                            resultIntent
                         )
                     } else {
                         sendMessage(context.getString(R.string.color_card_not_found))

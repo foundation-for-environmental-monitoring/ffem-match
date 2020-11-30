@@ -3,26 +3,20 @@
 package io.ffem.lite.util
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.*
 import android.graphics.Paint.Style
 import androidx.core.content.ContextCompat.getColor
 import androidx.core.graphics.blue
 import androidx.core.graphics.green
 import androidx.core.graphics.red
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import io.ffem.lite.R
 import io.ffem.lite.app.App.Companion.getCardColors
 import io.ffem.lite.camera.Utilities
-import io.ffem.lite.common.RESULT_EVENT_BROADCAST
-import io.ffem.lite.common.TEST_INFO_KEY
-import io.ffem.lite.common.TEST_VALUE_KEY
 import io.ffem.lite.data.AppDatabase
 import io.ffem.lite.data.Calibration
 import io.ffem.lite.data.TestResult
 import io.ffem.lite.model.*
-import io.ffem.lite.model.ErrorType.NO_ERROR
-import io.ffem.lite.model.ErrorType.NO_MATCH
+import io.ffem.lite.model.ErrorType.*
 import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.preference.getCalibrationColorDistanceTolerance
 import io.ffem.lite.preference.getColorDistanceTolerance
@@ -42,7 +36,6 @@ object ImageColorUtil {
         error: ErrorType = NO_ERROR,
         bitmap: Bitmap? = null
     ) {
-        val intent = Intent(RESULT_EVENT_BROADCAST)
         if (testInfo != null && bitmap != null) {
 
             try {
@@ -61,27 +54,38 @@ object ImageColorUtil {
                 testInfo.resultInfo = analyzeColor(extractedColors)
                 if (testInfo.resultInfo.result > -2) {
 
-                    var calibration: Calibration? = null
-                    if (!AppPreferences.isCalibration()) {
-                        val db = AppDatabase.getDatabase(context)
-                        try {
-                            calibration = db.resultDao().getCalibration(testInfo.uuid)
-                        } finally {
-                            db.close()
+                    if (testInfo.resultInfo.result > -1) {
+                        var calibration: Calibration? = null
+                        if (!AppPreferences.isCalibration()) {
+                            val db = AppDatabase.getDatabase(context)
+                            try {
+                                calibration = db.resultDao().getCalibration(testInfo.uuid)
+                            } finally {
+                                db.close()
+                            }
                         }
-                    }
 
-                    // if calibrated then calculate also the result by adding the color differences
-                    if (calibration != null) {
-                        extractedColors.swatches.removeAt(extractedColors.swatches.size - 1)
-                        extractedColors.swatches.removeAt(extractedColors.swatches.size - 1)
-                        extractedColors.sampleColor = Color.rgb(
-                            min(max(0, extractedColors.sampleColor.red + calibration.rDiff), 255),
-                            min(max(0, extractedColors.sampleColor.green + calibration.gDiff), 255),
-                            min(max(0, extractedColors.sampleColor.blue + calibration.bDiff), 255)
-                        )
+                        // if calibrated then calculate also the result by adding the color differences
+                        if (calibration != null) {
+                            extractedColors.swatches.removeAt(extractedColors.swatches.size - 1)
+                            extractedColors.swatches.removeAt(extractedColors.swatches.size - 1)
+                            extractedColors.sampleColor = Color.rgb(
+                                min(
+                                    max(0, extractedColors.sampleColor.red + calibration.rDiff),
+                                    255
+                                ),
+                                min(
+                                    max(0, extractedColors.sampleColor.green + calibration.gDiff),
+                                    255
+                                ),
+                                min(
+                                    max(0, extractedColors.sampleColor.blue + calibration.bDiff),
+                                    255
+                                )
+                            )
 
-                        testInfo.calibratedResultInfo = analyzeColor(extractedColors)
+                            testInfo.calibratedResultInfo = analyzeColor(extractedColors)
+                        }
                     }
 
                     val resultImage = ImageUtil.createResultImage(
@@ -95,15 +99,20 @@ object ImageColorUtil {
                         testInfo.name!!, Utilities.bitmapToBytes(resultImage),
                         "_result"
                     )
-                } else {
-                    return
                 }
             } catch (e: Exception) {
+                Utilities.savePicture(
+                    context.applicationContext, testInfo.fileName,
+                    testInfo.name!!, Utilities.bitmapToBytes(bitmap),
+                    "_swatch"
+                )
+                testInfo.error = CALIBRATION_ERROR
                 return
             }
 
             if (testInfo.resultInfo.result == -1.0) {
                 testInfo.error = NO_MATCH
+                return
             } else {
                 testInfo.error = error
             }
@@ -151,12 +160,7 @@ object ImageColorUtil {
             } finally {
                 db.close()
             }
-            intent.putExtra(TEST_INFO_KEY, testInfo)
-            intent.putExtra(TEST_VALUE_KEY, testInfo.resultInfo.result)
         }
-
-        val localBroadcastManager = LocalBroadcastManager.getInstance(context)
-        localBroadcastManager.sendBroadcast(intent)
     }
 
     private fun extractColors(

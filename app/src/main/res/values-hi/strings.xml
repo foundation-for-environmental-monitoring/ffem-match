@@ -29,7 +29,7 @@
     <string name="result">परिणाम</string>
     <string name="analyzed_photo">फोटो का विश्लेषण करें</string>
     <string name="color_extracts">कलर एक्सट्रेक्ट</string>
-    <string name="no_error">कोई ग़लती नहीं है</string>
+    <string name="no_error">त्रुटि हुई</string>
     <string name="no_match">कोई मेल नहीं है</string>
     <string name="calibration_error">मापांकन ग़लती</string>
     <string name="image_tilted">तिरछी तस्वीर</string>

@@ -50,7 +50,7 @@
     <string name="color_shift">Color shift</string>
 
     <!-- ErrorType -->
-    <string name="no_error" tools:keep="@string/no_error">No error</string>
+    <string name="no_error" tools:keep="@string/no_error">Error</string>
     <string name="no_match" tools:keep="@string/no_match">No match</string>
     <string name="calibration_error" tools:keep="@string/calibration_error">Calibration error</string>
     <string name="bad_lighting" tools:keep="@string/bad_lighting">Bad lighting</string>
