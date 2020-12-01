@@ -8,9 +8,6 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   inkscape:export-ydpi="179.95714"
-   inkscape:export-xdpi="179.95714"
-   inkscape:export-filename="C:\stuff\color-card.png"
    sodipodi:docname="color-card.svg"
    width="130mm"
    height="84.5mm"
@@ -1654,13 +1651,13 @@
   <sodipodi:namedview
      showgrid="false"
      inkscape:document-rotation="0"
-     inkscape:current-layer="svg48"
+     inkscape:current-layer="layer10"
      inkscape:document-units="mm"
-     inkscape:cy="165.88236"
-     inkscape:cx="251.49209"
-     inkscape:zoom="2"
+     inkscape:cy="259.44803"
+     inkscape:cx="374.2837"
+     inkscape:zoom="2.8284271"
      inkscape:pageshadow="2"
-     inkscape:pageopacity="1"
+     inkscape:pageopacity="0"
      borderopacity="1.0"
      bordercolor="#666666"
      pagecolor="#ffffff"
@@ -1677,7 +1674,8 @@
      showguides="true"
      borderlayer="false"
      showborder="true"
-     inkscape:pagecheckerboard="false">
+     inkscape:pagecheckerboard="false"
+     inkscape:snap-bbox="true">
     <inkscape:grid
        type="xygrid"
        id="grid1396" />
@@ -1698,7 +1696,7 @@
      inkscape:groupmode="layer"
      id="layer8"
      inkscape:label="QR Corners &amp; Cuvette"
-     style="display:inline"
+     style="display:none"
      sodipodi:insensitive="true">
     <path
        d="m 22.131246,16.749601 v -3.750002 h 7.5 v 7.500002 h -7.5 z m 6.428573,0 v -2.678573 h -5.357144 v 5.357145 h 5.357144 z m -4.285718,0 v -1.607143 h 3.214292 v 3.214286 h -3.214292 z"
@@ -1732,7 +1730,7 @@
      id="layer1"
      inkscape:groupmode="layer"
      inkscape:label="Swatches &amp; Title"
-     style="display:inline"
+     style="display:none"
      sodipodi:insensitive="true">
     <rect
        style="fill:#ffd5d5;fill-opacity:1;stroke:none;stroke-width:0.5;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:stroke markers fill"
@@ -1846,7 +1844,7 @@
      inkscape:groupmode="layer"
      id="layer7"
      inkscape:label="Datamatrix"
-     style="display:inline"
+     style="display:none"
      sodipodi:insensitive="true">
     <g
        style="display:inline;stroke-width:0.705556;shape-rendering:crispEdges"
@@ -2976,5 +2974,52 @@
          inkscape:export-xdpi="96"
          inkscape:export-ydpi="96" />
     </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer10"
+     inkscape:label="Overlay">
+    <rect
+       style="opacity:0.31045752;fill:#000000;stroke:none;stroke-width:0.793;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke markers fill;stop-color:#000000;fill-opacity:1"
+       id="rect1990"
+       width="100"
+       height="75.405998"
+       x="15"
+       y="4.546875" />
+    <rect
+       style="opacity:1;fill:none;stroke:#00ff00;stroke-width:0.4;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke markers fill;stop-color:#000000"
+       id="rect1965"
+       width="14.160472"
+       height="14.160473"
+       x="101.05778"
+       y="4.3352599" />
+    <rect
+       style="opacity:1;fill:none;stroke:#00ff00;stroke-width:0.4;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke markers fill;stop-color:#000000"
+       id="rect1982"
+       width="14.160472"
+       height="14.160473"
+       x="101.12666"
+       y="66.049355" />
+    <rect
+       style="opacity:1;fill:none;stroke:#66ff00;stroke-width:0.4;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke markers fill;stop-color:#000000"
+       id="rect1984"
+       width="13.49375"
+       height="13.49375"
+       x="14.742604"
+       y="66.70372" />
+    <rect
+       style="opacity:1;fill:none;stroke:#00ff00;stroke-width:0.4;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke markers fill;stop-color:#000000"
+       id="rect1986"
+       width="14.160472"
+       height="14.160473"
+       x="14.781743"
+       y="4.335258" />
+    <rect
+       style="opacity:1;fill:none;stroke:#00ff00;stroke-width:0.4;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke markers fill;stop-color:#000000"
+       id="rect1988"
+       width="19.983385"
+       height="100.68129"
+       x="55.008308"
+       y="-8.0907707" />
   </g>
 </svg>
