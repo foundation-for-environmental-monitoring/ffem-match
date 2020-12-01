@@ -9,7 +9,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.BitmapFactory
-import android.media.MediaActionSound
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
@@ -68,8 +67,7 @@ class BarcodeActivity : BaseActivity(),
     private val capturedPhotoBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (!isTestRunning() && !BuildConfig.INSTRUMENTED_TEST_RUNNING.get()) {
-                val sound = MediaActionSound()
-                sound.play(MediaActionSound.SHUTTER_CLICK)
+                mediaPlayer.start()
             }
             saveImageData(intent)
         }
