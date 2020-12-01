@@ -123,7 +123,6 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
                         val resultIntent = Intent(RESULT_EVENT_BROADCAST)
                         resultIntent.putExtra(TEST_INFO_KEY, testInfo)
-                        resultIntent.putExtra(TEST_VALUE_KEY, testInfo.resultInfo.result)
                         localBroadcastManager.sendBroadcast(
                             resultIntent
                         )
@@ -244,7 +243,7 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                     bitmap.crop(
                         result.topLeft.x.toInt() + (bitmap.width / 5),
                         0,
-                        bitmap.width / 3,
+                        (bitmap.width / 2.4).toInt(),
                         (bitmap.height / 3.7).toInt()
                     ), null
                 )

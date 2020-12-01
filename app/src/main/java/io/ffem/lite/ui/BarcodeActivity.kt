@@ -95,6 +95,8 @@ class BarcodeActivity : BaseActivity(),
                 } else {
                     view_pager.currentItem = CONFIRMATION_PAGE
                 }
+            } else {
+                view_pager.currentItem = RESULT_PAGE
             }
         }
     }
@@ -259,9 +261,8 @@ class BarcodeActivity : BaseActivity(),
         }
     }
 
-    override fun onPause() {
-        super.onPause()
-        // Unregister the broadcast receivers and listeners
+    override fun onDestroy() {
+        super.onDestroy()
         broadcastManager.unregisterReceiver(colorCardCapturedBroadcastReceiver)
         broadcastManager.unregisterReceiver(capturedPhotoBroadcastReceiver)
         broadcastManager.unregisterReceiver(resultBroadcastReceiver)
