@@ -166,7 +166,7 @@ class App : BaseApplication() {
 
             var calibration: List<CalibrationValue> = testConfig.tests[3].values
             for (test in testConfig.tests) {
-                if (test.uuid!!.substring(30) == id) {
+                if (test.uuid == id || test.uuid!!.substring(30) == id) {
                     calibration = test.values
                     break
                 }

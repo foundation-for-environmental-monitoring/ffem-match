@@ -41,7 +41,7 @@ object ImageColorUtil {
             try {
                 val extractedColors = extractColors(
                     bitmap,
-                    testInfo.name!!,
+                    testInfo.uuid!!,
                     context
                 )
 

@@ -256,7 +256,6 @@ class CameraFragment : Fragment() {
 
             // Preview
             preview = Preview.Builder()
-                .setTargetName("Preview")
                 .setTargetAspectRatio(screenAspectRatio)
                 .setTargetRotation(rotation)
                 .build()
@@ -267,16 +266,12 @@ class CameraFragment : Fragment() {
             try {
                 val analysis = if (metrics.widthPixels <= 480) {
                     ImageAnalysis.Builder()
-                        .setTargetName("Analysis")
                         .setTargetRotation(rotation)
-                        .setImageQueueDepth(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                         .build()
                 } else {
                     ImageAnalysis.Builder()
-                        .setTargetName("Analysis")
                         .setTargetAspectRatio(screenAspectRatio)
                         .setTargetRotation(rotation)
-                        .setImageQueueDepth(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                         .build()
                 }
 
