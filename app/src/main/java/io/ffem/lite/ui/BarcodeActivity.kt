@@ -21,12 +21,15 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ServerValue
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.app.App.Companion.getTestInfo
 import io.ffem.lite.camera.CameraFragment
 import io.ffem.lite.common.*
 import io.ffem.lite.data.AppDatabase
+import io.ffem.lite.data.Result
 import io.ffem.lite.model.CalibrationValue
 import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.TestInfo
@@ -166,6 +169,8 @@ class BarcodeActivity : BaseActivity(),
         if (testInfo != null) {
             val resultIntent = Intent()
             if (testInfo!!.getResult() >= 0) {
+                sendResultToCloudDatabase(testInfo!!)
+
                 resultIntent.putExtra(TEST_VALUE_KEY, testInfo!!.getResult().toString())
                 resultIntent.putExtra(
                     testInfo!!.name + "_Result",
@@ -179,6 +184,20 @@ class BarcodeActivity : BaseActivity(),
             setResult(Activity.RESULT_OK, resultIntent)
         }
         finish()
+    }
+
+    private fun sendResultToCloudDatabase(testInfo: TestInfo) {
+        val ref = FirebaseDatabase.getInstance().getReference("result").push()
+        ref.setValue(
+            Result(
+                testInfo.uuid!!,
+                testInfo.name!!,
+                testInfo.getRiskEnglish(this),
+                testInfo.getResult().toString(),
+                testInfo.unit!!,
+                ServerValue.TIMESTAMP
+            )
+        )
     }
 
     private fun saveImageData(data: Intent) {
