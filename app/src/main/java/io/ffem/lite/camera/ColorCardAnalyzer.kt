@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Matrix
+import android.graphics.Rect
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -15,8 +16,12 @@ import io.ffem.lite.common.Constants.MAX_TILT_PERCENTAGE_ALLOWED
 import io.ffem.lite.common.Constants.QR_TO_COLOR_AREA_DISTANCE_PERCENTAGE
 import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.TestInfo
+import io.ffem.lite.preference.getMaximumBrightness
+import io.ffem.lite.preference.getMinimumBrightness
 import io.ffem.lite.util.ImageColorUtil
 import io.ffem.lite.util.ImageUtil.toBitmap
+import io.ffem.lite.util.getAverageBrightness
+import io.ffem.lite.util.getBitmapPixels
 import io.ffem.lite.zxing.BinaryBitmap
 import io.ffem.lite.zxing.LuminanceSource
 import io.ffem.lite.zxing.RGBLuminanceSource
@@ -95,6 +100,68 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                         return
                     }
 
+                    // Check brightness levels of white areas on the card
+                    val whiteAreaStart = bitmap.height * 0.07
+                    val whiteAreaEnd = bitmap.height * 0.17
+                    val whiteAreaWidth = (bitmap.width * 0.2).toInt()
+                    var rect = Rect(
+                        topLeft.x.toInt(),
+                        (topLeft.y + whiteAreaStart).toInt(),
+                        topLeft.x.toInt() + whiteAreaWidth,
+                        (topLeft.y + whiteAreaEnd).toInt()
+                    )
+                    var pixels = getBitmapPixels(bitmap, rect)
+                    var averageBrightness = getAverageBrightness(pixels)
+                    if (averageBrightness < getMinimumBrightness()) {
+                        sendMessage(context.getString(R.string.not_bright))
+                        endProcessing(imageProxy)
+                        return
+                    }
+                    if (averageBrightness > getMaximumBrightness()) {
+                        sendMessage(context.getString(R.string.too_bright))
+                        endProcessing(imageProxy)
+                        return
+                    }
+
+                    rect = Rect(
+                        topRight.x.toInt() - whiteAreaWidth,
+                        (topRight.y + whiteAreaStart).toInt(),
+                        topRight.x.toInt(),
+                        (topRight.y + whiteAreaEnd).toInt(),
+                    )
+
+                    pixels = getBitmapPixels(bitmap, rect)
+                    averageBrightness = getAverageBrightness(pixels)
+                    if (averageBrightness < getMinimumBrightness()) {
+                        sendMessage(context.getString(R.string.not_bright))
+                        endProcessing(imageProxy)
+                        return
+                    }
+                    if (averageBrightness > getMaximumBrightness()) {
+                        sendMessage(context.getString(R.string.too_bright))
+                        endProcessing(imageProxy)
+                        return
+                    }
+
+                    rect = Rect(
+                        bottomLeft.x.toInt(),
+                        (bottomLeft.y - whiteAreaEnd).toInt(),
+                        topRight.x.toInt(),
+                        (bottomLeft.y - whiteAreaStart).toInt(),
+                    )
+                    pixels = getBitmapPixels(bitmap, rect)
+                    averageBrightness = getAverageBrightness(pixels)
+                    if (averageBrightness < getMinimumBrightness()) {
+                        sendMessage(context.getString(R.string.not_bright))
+                        endProcessing(imageProxy)
+                        return
+                    }
+                    if (averageBrightness > getMaximumBrightness()) {
+                        sendMessage(context.getString(R.string.too_bright))
+                        endProcessing(imageProxy)
+                        return
+                    }
+
 //                    if (autoFocusCounter < 10) {
 //                        autoFocusCounter++
 //                        endProcessing(imageProxy, false)
@@ -102,17 +169,29 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 //                    }
 
                     val testInfo = App.getTestInfo(testId)
-                    if (testInfo != null) {
+                    if (testInfo == null) {
+                        if (testId.isNotEmpty()) {
+                            // if test id is not recognized
+                            sendMessage(context.getString(R.string.invalid_barcode))
+                            endProcessing(imageProxy)
+                            return
+                        }
+                    } else {
                         savePhoto(bitmap, testInfo)
                     }
 
                     croppedBitmap = perspectiveTransform(bitmap, pattern!!)
                     bitmap.recycle()
 
-                    ImageColorUtil.getResult(context, testInfo, ErrorType.NO_ERROR, croppedBitmap)
-                    croppedBitmap.recycle()
-
                     if (testInfo != null && testInfo.resultInfo.result > -2) {
+                        ImageColorUtil.getResult(
+                            context,
+                            testInfo,
+                            ErrorType.NO_ERROR,
+                            croppedBitmap
+                        )
+                        croppedBitmap.recycle()
+
                         sendMessage(context.getString(R.string.analyzing_photo))
                         done = true
                         val intent = Intent(CARD_CAPTURED_EVENT_BROADCAST)

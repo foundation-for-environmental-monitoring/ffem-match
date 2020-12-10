@@ -39,6 +39,8 @@ import kotlin.math.*
 const val IMAGE_THRESHOLD = 100
 const val MAX_COLOR_DISTANCE_RGB = 55
 const val MAX_COLOR_DISTANCE_CALIBRATION = 80
+const val DEFAULT_MINIMUM_BRIGHTNESS = 120
+const val DEFAULT_MAXIMUM_BRIGHTNESS = 240
 const val INTERPOLATION_COUNT = 100.0
 const val MAX_DISTANCE = 999
 
@@ -96,6 +98,19 @@ fun isDarkLine(pixels: IntArray): Boolean {
     return (r / pixels.size) < 150
 }
 
+fun getAverageBrightness(pixels: IntArray): Int {
+    var r = 0
+
+    if (pixels.isEmpty()) {
+        return 0
+    }
+
+    for (element in pixels) {
+        r += element.red
+    }
+
+    return r / pixels.size
+}
 
 fun isDark(pixels: IntArray): Boolean {
     var r = 0

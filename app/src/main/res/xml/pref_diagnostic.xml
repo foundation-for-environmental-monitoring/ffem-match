@@ -16,6 +16,30 @@
             app:iconSpaceReserved="false" />
 
         <EditTextPreference
+            android:defaultValue="120"
+            android:dialogMessage="The minimum brightness level"
+            android:inputType="number"
+            android:key="@string/minimum_brightness"
+            android:maxLength="3"
+            android:selectAllOnFocus="true"
+            android:title="Minimum brightness"
+            app:allowDividerAbove="true"
+            app:allowDividerBelow="true"
+            app:iconSpaceReserved="false" />
+
+        <EditTextPreference
+            android:defaultValue="240"
+            android:dialogMessage="The max brightness level"
+            android:inputType="number"
+            android:key="@string/maximum_brightness"
+            android:maxLength="3"
+            android:selectAllOnFocus="true"
+            android:title="Maximum Brightness"
+            app:allowDividerAbove="true"
+            app:allowDividerBelow="true"
+            app:iconSpaceReserved="false" />
+
+        <EditTextPreference
             android:defaultValue="55"
             android:dialogMessage="The max difference between the sample color and the colors on the card"
             android:inputType="number"

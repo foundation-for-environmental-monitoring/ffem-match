@@ -37,7 +37,7 @@ object TestUtil {
         }
     }
 
-    fun checkResult(value: Double): Matcher<View?>? {
+    fun checkResult(value: Double): Matcher<View?> {
         return object : TypeSafeMatcher<View?>() {
             override fun matchesSafely(item: View?): Boolean {
                 if (item !is TextView) return false

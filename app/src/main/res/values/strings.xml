@@ -54,6 +54,8 @@
     <string name="no_match" tools:keep="@string/no_match">No match</string>
     <string name="calibration_error" tools:keep="@string/calibration_error">Calibration error</string>
     <string name="bad_lighting" tools:keep="@string/bad_lighting">Bad lighting</string>
+    <string name="not_bright">Not bright enough</string>
+    <string name="too_bright">Too bright</string>
     <string name="image_tilted" tools:keep="@string/image_tilted">Tilted image</string>
     <string name="invalid_barcode">Wrong color card</string>
     <string name="wrong_card" tools:keep="@string/wrong_card">Wrong color card</string>

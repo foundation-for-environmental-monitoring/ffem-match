@@ -5,9 +5,7 @@ import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.common.IMAGE_FILE_NAME
 import io.ffem.lite.common.IS_CALIBRATION
-import io.ffem.lite.util.MAX_COLOR_DISTANCE_CALIBRATION
-import io.ffem.lite.util.MAX_COLOR_DISTANCE_RGB
-import io.ffem.lite.util.PreferencesUtil
+import io.ffem.lite.util.*
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -95,6 +93,34 @@ fun getCalibrationColorDistanceTolerance(): Int {
         )
     } else {
         MAX_COLOR_DISTANCE_CALIBRATION
+    }
+}
+
+fun getMinimumBrightness(): Int {
+    return if (isDiagnosticMode()) {
+        Integer.parseInt(
+            PreferencesUtil.getString(
+                App.app,
+                R.string.minimum_brightness,
+                DEFAULT_MINIMUM_BRIGHTNESS.toString()
+            )
+        )
+    } else {
+        DEFAULT_MINIMUM_BRIGHTNESS
+    }
+}
+
+fun getMaximumBrightness(): Int {
+    return if (isDiagnosticMode()) {
+        Integer.parseInt(
+            PreferencesUtil.getString(
+                App.app,
+                R.string.maximum_brightness,
+                DEFAULT_MAXIMUM_BRIGHTNESS.toString()
+            )
+        )
+    } else {
+        DEFAULT_MAXIMUM_BRIGHTNESS
     }
 }
 
