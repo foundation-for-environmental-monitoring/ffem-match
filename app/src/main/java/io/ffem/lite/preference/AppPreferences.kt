@@ -124,6 +124,20 @@ fun getMaximumBrightness(): Int {
     }
 }
 
+fun getShadowTolerance(): Int {
+    return if (isDiagnosticMode()) {
+        Integer.parseInt(
+            PreferencesUtil.getString(
+                App.app,
+                R.string.shadow_tolerance,
+                DEFAULT_SHADOW_TOLERANCE.toString()
+            )
+        )
+    } else {
+        DEFAULT_SHADOW_TOLERANCE
+    }
+}
+
 object AppPreferences {
 
     fun enableDiagnosticMode() {

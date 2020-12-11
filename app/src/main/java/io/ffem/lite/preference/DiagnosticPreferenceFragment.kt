@@ -7,10 +7,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.ffem.lite.R.string
 import io.ffem.lite.R.xml
-import io.ffem.lite.util.DEFAULT_MAXIMUM_BRIGHTNESS
-import io.ffem.lite.util.DEFAULT_MINIMUM_BRIGHTNESS
-import io.ffem.lite.util.MAX_COLOR_DISTANCE_CALIBRATION
-import io.ffem.lite.util.MAX_COLOR_DISTANCE_RGB
+import io.ffem.lite.util.*
 
 class DiagnosticPreferenceFragment : PreferenceFragmentCompat() {
 
@@ -28,6 +25,8 @@ class DiagnosticPreferenceFragment : PreferenceFragmentCompat() {
         setupMinimumBrightness()
 
         setupMaximumBrightness()
+
+        setupShadowTolerance()
     }
 
     private fun setupDistancePreference() {
@@ -122,6 +121,30 @@ class DiagnosticPreferenceFragment : PreferenceFragmentCompat() {
                 }
                 maximumBrightnessPref.text = value.toString()
                 maximumBrightnessPref.summary = value.toString()
+                false
+            }
+    }
+
+    private fun setupShadowTolerance() {
+        val shadowTolerancePref =
+            findPreference<Preference>(getString(string.shadow_tolerance)) as EditTextPreference
+
+        shadowTolerancePref.summary = shadowTolerancePref.text
+        shadowTolerancePref.onPreferenceChangeListener =
+            Preference.OnPreferenceChangeListener { _: Preference?, newValue: Any ->
+                var value = newValue
+                try {
+                    if (Integer.parseInt(value.toString()) > MAX_BRIGHTNESS) {
+                        value = MAX_BRIGHTNESS
+                    }
+                    if (Integer.parseInt(value.toString()) < 1) {
+                        value = 1
+                    }
+                } catch (e: Exception) {
+                    value = DEFAULT_SHADOW_TOLERANCE
+                }
+                shadowTolerancePref.text = value.toString()
+                shadowTolerancePref.summary = value.toString()
                 false
             }
     }

@@ -18,6 +18,7 @@ import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.TestInfo
 import io.ffem.lite.preference.getMaximumBrightness
 import io.ffem.lite.preference.getMinimumBrightness
+import io.ffem.lite.preference.getShadowTolerance
 import io.ffem.lite.util.ImageColorUtil
 import io.ffem.lite.util.ImageUtil.toBitmap
 import io.ffem.lite.util.getAverageBrightness
@@ -111,13 +112,13 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                         (topLeft.y + whiteAreaEnd).toInt()
                     )
                     var pixels = getBitmapPixels(bitmap, rect)
-                    var averageBrightness = getAverageBrightness(pixels)
-                    if (averageBrightness < getMinimumBrightness()) {
+                    val averageBrightness1 = getAverageBrightness(pixels)
+                    if (averageBrightness1 < getMinimumBrightness()) {
                         sendMessage(context.getString(R.string.not_bright))
                         endProcessing(imageProxy)
                         return
                     }
-                    if (averageBrightness > getMaximumBrightness()) {
+                    if (averageBrightness1 > getMaximumBrightness()) {
                         sendMessage(context.getString(R.string.too_bright))
                         endProcessing(imageProxy)
                         return
@@ -131,13 +132,13 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                     )
 
                     pixels = getBitmapPixels(bitmap, rect)
-                    averageBrightness = getAverageBrightness(pixels)
-                    if (averageBrightness < getMinimumBrightness()) {
+                    val averageBrightness2 = getAverageBrightness(pixels)
+                    if (averageBrightness2 < getMinimumBrightness()) {
                         sendMessage(context.getString(R.string.not_bright))
                         endProcessing(imageProxy)
                         return
                     }
-                    if (averageBrightness > getMaximumBrightness()) {
+                    if (averageBrightness2 > getMaximumBrightness()) {
                         sendMessage(context.getString(R.string.too_bright))
                         endProcessing(imageProxy)
                         return
@@ -150,14 +151,25 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                         (bottomLeft.y - whiteAreaStart).toInt(),
                     )
                     pixels = getBitmapPixels(bitmap, rect)
-                    averageBrightness = getAverageBrightness(pixels)
-                    if (averageBrightness < getMinimumBrightness()) {
+                    val averageBrightness3 = getAverageBrightness(pixels)
+                    if (averageBrightness3 < getMinimumBrightness()) {
                         sendMessage(context.getString(R.string.not_bright))
                         endProcessing(imageProxy)
                         return
                     }
-                    if (averageBrightness > getMaximumBrightness()) {
+                    if (averageBrightness3 > getMaximumBrightness()) {
                         sendMessage(context.getString(R.string.too_bright))
+                        endProcessing(imageProxy)
+                        return
+                    }
+
+                    // Check for shadows on card
+                    val shadowTolerance = getShadowTolerance()
+                    if (abs(averageBrightness1 - averageBrightness2) > shadowTolerance ||
+                        abs(averageBrightness2 - averageBrightness3) > shadowTolerance ||
+                        abs(averageBrightness1 - averageBrightness3) > shadowTolerance
+                    ) {
+                        sendMessage(context.getString(R.string.too_many_shadows))
                         endProcessing(imageProxy)
                         return
                     }

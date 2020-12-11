@@ -8,6 +8,7 @@ import android.graphics.*
 import android.graphics.Paint.Style
 import android.os.Environment
 import androidx.core.content.ContextCompat.getColor
+import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.blue
 import androidx.core.graphics.green
 import androidx.core.graphics.red
@@ -41,6 +42,7 @@ const val MAX_COLOR_DISTANCE_RGB = 55
 const val MAX_COLOR_DISTANCE_CALIBRATION = 80
 const val DEFAULT_MINIMUM_BRIGHTNESS = 120
 const val DEFAULT_MAXIMUM_BRIGHTNESS = 240
+const val DEFAULT_SHADOW_TOLERANCE = 25
 const val INTERPOLATION_COUNT = 100.0
 const val MAX_DISTANCE = 999
 

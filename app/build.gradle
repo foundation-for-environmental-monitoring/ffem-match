@@ -18,8 +18,8 @@ android {
         applicationId "io.ffem.lite"
         minSdkVersion 23
         targetSdkVersion 30
-        versionCode 99
-        versionName "Alpha 0.59"
+        versionCode 100
+        versionName "Alpha 0.60"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -111,7 +111,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
 
     // Firebase
-    implementation 'com.google.mlkit:barcode-scanning:16.0.3'
+    implementation 'com.google.mlkit:barcode-scanning:16.1.0'
     implementation 'com.google.firebase:firebase-analytics-ktx:18.0.0'
     releaseImplementation 'com.google.firebase:firebase-crashlytics:17.3.0'
 

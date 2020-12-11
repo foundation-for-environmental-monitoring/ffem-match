@@ -461,11 +461,11 @@ object ImageColorUtil {
         colorToFind: Int, swatches: List<Swatch>
     ): ColorCompareInfo {
 
-        var distance = getMaxDistance(getColorDistanceTolerance().toDouble())
+        var lowestDistance = getMaxDistance(getColorDistanceTolerance().toDouble())
 
         var resultValue = -1.0
         var matchedColor = -1
-        var tempDistance: Double
+        var newDistance: Double
         var nearestDistance = MAX_DISTANCE.toDouble()
         var nearestMatchedColor = -1
         var matchedIndex = 0
@@ -473,19 +473,19 @@ object ImageColorUtil {
         for (i in swatches.indices) {
             val tempColor = swatches[i].color
 
-            tempDistance = getColorDistance(tempColor, colorToFind)
-            if (nearestDistance > tempDistance) {
-                nearestDistance = tempDistance
+            newDistance = getColorDistance(tempColor, colorToFind)
+            if (nearestDistance > newDistance) {
+                nearestDistance = newDistance
                 nearestMatchedColor = tempColor
             }
 
-            if (tempDistance == 0.0) {
+            if (newDistance == 0.0) {
                 resultValue = swatches[i].value
                 matchedColor = swatches[i].color
                 matchedIndex = i
                 break
-            } else if (tempDistance < distance) {
-                distance = tempDistance
+            } else if (newDistance < lowestDistance) {
+                lowestDistance = newDistance
                 resultValue = swatches[i].value
                 matchedColor = swatches[i].color
                 matchedIndex = i
@@ -494,10 +494,16 @@ object ImageColorUtil {
 
         //if no result was found add some diagnostic info
         if (resultValue == -1.0) {
-            distance = nearestDistance
+            lowestDistance = nearestDistance
             matchedColor = nearestMatchedColor
         }
-        return ColorCompareInfo(resultValue, colorToFind, matchedColor, distance, matchedIndex)
+        return ColorCompareInfo(
+            resultValue,
+            colorToFind,
+            matchedColor,
+            lowestDistance,
+            matchedIndex
+        )
     }
 
     private fun getMaxDistance(defaultValue: Double): Double {
