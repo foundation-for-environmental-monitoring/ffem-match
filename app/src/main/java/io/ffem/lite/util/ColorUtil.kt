@@ -156,17 +156,55 @@ fun isWhite(pixels: IntArray): Boolean {
     return (r / pixels.size) > 240
 }
 
-fun getAverageColor(pixels: IntArray): Int {
+fun getAverageColor(pixels: IntArray, ignoreDarkPixels: Boolean): Int {
     var list = pixels.toCollection(ArrayList())
     for (i in 40 downTo 10 step 3) {
         list = removeOutliers(list, i)
     }
 
-    // Reject if too few pixels remaining after removing outliers
-    if (list.size < pixels.size / 10) {
-        return Color.TRANSPARENT
+    if (ignoreDarkPixels) {
+        list = removeDarkColors(list)
+        // Reject if too few pixels remaining
+        if (list.size < pixels.size / 25) {
+            return Color.TRANSPARENT
+        }
+    } else {
+
+        // Reject if too few pixels remaining
+        if (list.size < pixels.size / 10) {
+            return Color.TRANSPARENT
+        }
     }
     return getMean(list)
+}
+
+fun removeDarkColors(pixels: ArrayList<Int>): ArrayList<Int> {
+    val newList = ArrayList<Int>()
+
+    var darkLuminance = 1000.0
+    for (element in pixels) {
+        val value = ColorUtils.calculateLuminance(element)
+        if (value < darkLuminance) {
+            darkLuminance = value
+        }
+    }
+
+    var lightLuminance = 0.0
+    for (element in pixels) {
+        val value = ColorUtils.calculateLuminance(element)
+        if (value > lightLuminance) {
+            lightLuminance = value
+        }
+    }
+
+    val luminanceStart = lightLuminance - (abs(lightLuminance - darkLuminance) * 0.3)
+    val luminanceEnd = lightLuminance - (abs(lightLuminance - darkLuminance) * 0.1)
+    for (element in pixels) {
+        if (ColorUtils.calculateLuminance(element) in luminanceStart..luminanceEnd) {
+            newList.add(element)
+        }
+    }
+    return newList
 }
 
 fun removeOutliers(pixels: ArrayList<Int>, distance: Int): ArrayList<Int> {
@@ -663,7 +701,7 @@ object ColorUtil {
 
             val cal = cardColors[calibrationIndex]
             calibrationIndex++
-            cal.color = getAverageColor(pixels)
+            cal.color = getAverageColor(pixels, false)
 
             val canvas = Canvas(bitmap)
             canvas.drawRect(rectangle, paint)
@@ -683,7 +721,7 @@ object ColorUtil {
 
             val cal = cardColors[calibrationIndex]
             calibrationIndex++
-            cal.color = getAverageColor(pixels)
+            cal.color = getAverageColor(pixels, false)
 
             val canvas = Canvas(bitmap)
             canvas.drawRect(rectangle, paint)
@@ -701,7 +739,7 @@ object ColorUtil {
         )
         val pixels = getBitmapPixels(bitmap, rectangle)
 
-        val cuvetteColor = getAverageColor(pixels)
+        val cuvetteColor = getAverageColor(pixels, true)
 
         val swatches: ArrayList<Swatch> = ArrayList()
         val colorInfo = ColorInfo(cuvetteColor, swatches)

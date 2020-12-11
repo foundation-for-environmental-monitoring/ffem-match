@@ -200,7 +200,7 @@ object ImageColorUtil {
 
             val cal = cardColors[calibrationIndex]
             calibrationIndex++
-            cal.color = getAverageColor(pixels)
+            cal.color = getAverageColor(pixels, false)
 
             val canvas = Canvas(bitmap)
             canvas.drawRect(rectangle, paint)
@@ -221,7 +221,7 @@ object ImageColorUtil {
 
             val cal = cardColors[calibrationIndex]
             calibrationIndex++
-            cal.color = getAverageColor(pixels)
+            cal.color = getAverageColor(pixels, false)
 
             val canvas = Canvas(bitmap)
             canvas.drawRect(rectangle, paint)
@@ -240,7 +240,7 @@ object ImageColorUtil {
         )
         val pixels = getBitmapPixels(bitmap, rectangle)
 
-        val cuvetteColor = getAverageColor(pixels)
+        val cuvetteColor = getAverageColor(pixels, true)
 
         val swatches: ArrayList<Swatch> = ArrayList()
         val colorInfo = ColorInfo(cuvetteColor, swatches)
