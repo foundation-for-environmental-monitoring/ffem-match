@@ -53,6 +53,10 @@ class CalibrationTest {
         if (!initialized) {
             TestHelper.clearPreferences()
             clearData()
+            PreferencesUtil.setBoolean(
+                ApplicationProvider.getApplicationContext(),
+                R.string.useColorCardVersion1, true
+            )
             initialized = true
         }
     }

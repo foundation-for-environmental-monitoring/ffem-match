@@ -10,6 +10,9 @@ import androidx.core.graphics.red
 import io.ffem.lite.R
 import io.ffem.lite.app.App.Companion.getCardColors
 import io.ffem.lite.camera.Utilities
+import io.ffem.lite.common.Constants.INTERPOLATION_COUNT
+import io.ffem.lite.common.Constants.MAX_COLOR_DISTANCE_RGB
+import io.ffem.lite.common.Constants.MAX_DISTANCE
 import io.ffem.lite.data.AppDatabase
 import io.ffem.lite.data.Calibration
 import io.ffem.lite.data.TestResult

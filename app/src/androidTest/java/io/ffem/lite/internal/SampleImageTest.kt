@@ -61,6 +61,10 @@ class SampleImageTest {
         if (!initialized) {
             clearPreferences()
             clearData()
+            PreferencesUtil.setBoolean(
+                ApplicationProvider.getApplicationContext(),
+                R.string.useColorCardVersion1, true
+            )
             initialized = true
         }
     }

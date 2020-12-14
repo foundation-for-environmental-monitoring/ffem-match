@@ -45,6 +45,11 @@ fun startTest(imageNumber: Int) {
         R.string.testImageNumberKey, imageNumber.toString()
     )
 
+    PreferencesUtil.setBoolean(
+        ApplicationProvider.getApplicationContext(),
+        R.string.useColorCardVersion1, true
+    )
+
     SystemClock.sleep(1000)
 
     startSurveyApp()

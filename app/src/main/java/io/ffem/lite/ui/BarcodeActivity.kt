@@ -33,8 +33,8 @@ import io.ffem.lite.model.TestInfo
 import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.preference.AppPreferences.isCalibration
 import io.ffem.lite.preference.isTestRunning
-import io.ffem.lite.preference.useColorCardVersion2
-import io.ffem.lite.util.ColorUtil
+import io.ffem.lite.preference.useColorCardVersion1
+import io.ffem.lite.util.BarcodeColorUtil
 import io.ffem.lite.util.PreferencesUtil
 import kotlinx.android.synthetic.main.activity_barcode.*
 import java.io.File
@@ -107,15 +107,15 @@ class BarcodeActivity : BaseActivity(),
 
         broadcastManager = LocalBroadcastManager.getInstance(this)
 
-        if (useColorCardVersion2()) {
-            broadcastManager.registerReceiver(
-                colorCardCapturedBroadcastReceiver,
-                IntentFilter(CARD_CAPTURED_EVENT_BROADCAST)
-            )
-        } else {
+        if (useColorCardVersion1()) {
             broadcastManager.registerReceiver(
                 capturedPhotoBroadcastReceiver,
                 IntentFilter(CAPTURED_EVENT_BROADCAST)
+            )
+        } else {
+            broadcastManager.registerReceiver(
+                colorCardCapturedBroadcastReceiver,
+                IntentFilter(CARD_CAPTURED_EVENT_BROADCAST)
             )
         }
 
@@ -222,7 +222,7 @@ class BarcodeActivity : BaseActivity(),
         val bitmap = BitmapFactory.decodeFile(File(filePath).path)
 
         if (bitmap != null) {
-            ColorUtil.extractImage(this, bitmap)
+            BarcodeColorUtil.extractImage(this, bitmap)
         }
     }
 

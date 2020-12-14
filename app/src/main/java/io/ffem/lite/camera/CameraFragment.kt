@@ -166,7 +166,7 @@ class CameraFragment : Fragment() {
         }
         broadcastManager.registerReceiver(broadcastReceiver, IntentFilter(ERROR_EVENT_BROADCAST))
 
-        if (!useColorCardVersion2()) {
+        if (useColorCardVersion1()) {
             broadcastManager.registerReceiver(
                 capturedPhotoBroadcastReceiver,
                 IntentFilter(CAPTURED_EVENT_BROADCAST)
@@ -275,7 +275,11 @@ class CameraFragment : Fragment() {
                         .build()
                 }
 
-                if (useColorCardVersion2()) {
+                if (useColorCardVersion1()) {
+                    barcodeAnalyzer = BarcodeAnalyzer(requireContext())
+                    barcodeAnalyzer.reset()
+                    analysis.setAnalyzer(executorService, barcodeAnalyzer)
+                } else {
                     colorCardAnalyzer = ColorCardAnalyzer(requireContext())
                     colorCardAnalyzer.previewHeight = camera_preview.measuredHeight
                     colorCardAnalyzer.viewFinderHeight = card_overlay.measuredHeight
@@ -283,10 +287,6 @@ class CameraFragment : Fragment() {
                     colorCardAnalyzer.reset()
                     progress_bar.visibility = GONE
                     analysis.setAnalyzer(executorService, colorCardAnalyzer)
-                } else {
-                    barcodeAnalyzer = BarcodeAnalyzer(requireContext())
-                    barcodeAnalyzer.reset()
-                    analysis.setAnalyzer(executorService, barcodeAnalyzer)
                 }
 
                 // Must unbind use cases before rebinding them.
@@ -362,14 +362,7 @@ class CameraFragment : Fragment() {
             take_photo_btn.visibility = GONE
         }
 
-        if (useColorCardVersion2()) {
-            card_overlay.setImageDrawable(
-                ContextCompat.getDrawable(
-                    requireContext(),
-                    R.drawable.card_overlay_2
-                )
-            )
-        } else {
+        if (useColorCardVersion1()) {
             card_overlay.setImageDrawable(
                 ContextCompat.getDrawable(
                     requireContext(),
@@ -387,6 +380,13 @@ class CameraFragment : Fragment() {
                         }
                     }
                 })
+        } else {
+            card_overlay.setImageDrawable(
+                ContextCompat.getDrawable(
+                    requireContext(),
+                    R.drawable.card_overlay_2
+                )
+            )
         }
     }
 

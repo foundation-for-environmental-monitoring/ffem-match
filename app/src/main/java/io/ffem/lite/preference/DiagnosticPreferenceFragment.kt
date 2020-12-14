@@ -7,7 +7,11 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.ffem.lite.R.string
 import io.ffem.lite.R.xml
-import io.ffem.lite.util.*
+import io.ffem.lite.common.Constants.DEFAULT_MAXIMUM_BRIGHTNESS
+import io.ffem.lite.common.Constants.DEFAULT_MINIMUM_BRIGHTNESS
+import io.ffem.lite.common.Constants.DEFAULT_SHADOW_TOLERANCE
+import io.ffem.lite.common.Constants.MAX_COLOR_DISTANCE_CALIBRATION
+import io.ffem.lite.common.Constants.MAX_COLOR_DISTANCE_RGB
 
 class DiagnosticPreferenceFragment : PreferenceFragmentCompat() {
 

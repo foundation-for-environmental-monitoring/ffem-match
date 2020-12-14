@@ -13,7 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import io.ffem.lite.R
 import io.ffem.lite.app.App
-import io.ffem.lite.preference.useColorCardVersion2
+import io.ffem.lite.preference.useColorCardVersion1
 import io.ffem.lite.util.snackBar
 import io.ffem.lite.util.snackBarAction
 import kotlinx.android.synthetic.main.fragment_instruction.*
@@ -51,18 +51,18 @@ class InstructionFragment : Fragment() {
             instruction_txt.visibility = GONE
         }
 
-        if (useColorCardVersion2()) {
+        if (useColorCardVersion1()) {
             example_img.setImageDrawable(
                 ContextCompat.getDrawable(
                     requireContext(),
-                    R.drawable.card_2_overlay
+                    R.drawable.card_overlay
                 )
             )
         } else {
             example_img.setImageDrawable(
                 ContextCompat.getDrawable(
                     requireContext(),
-                    R.drawable.card_overlay
+                    R.drawable.card_2_overlay
                 )
             )
         }

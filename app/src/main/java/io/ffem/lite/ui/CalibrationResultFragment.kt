@@ -1,5 +1,6 @@
 package io.ffem.lite.ui
 
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
@@ -117,6 +118,11 @@ class CalibrationResultFragment : Fragment() {
 
         if (extractImagePath.exists()) {
             extract_img.setImageURI(Uri.fromFile(extractImagePath))
+            val bitmap = BitmapFactory.decodeFile(extractImagePath.path)
+            if (bitmap.height > bitmap.width) {
+                extract_img.rotation = -90f
+            }
+            bitmap.recycle()
             extract_img.refreshDrawableState()
         }
 

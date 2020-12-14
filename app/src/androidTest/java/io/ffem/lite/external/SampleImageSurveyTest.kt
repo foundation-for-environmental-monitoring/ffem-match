@@ -3,6 +3,7 @@ package io.ffem.lite.external
 
 import android.content.Context
 import android.os.Environment
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -61,6 +62,10 @@ class SampleImageSurveyTest : BaseTest() {
         if (!initialized) {
             clearPreferences()
             clearData()
+            PreferencesUtil.setBoolean(
+                ApplicationProvider.getApplicationContext(),
+                R.string.useColorCardVersion1, true
+            )
             initialized = true
         }
     }

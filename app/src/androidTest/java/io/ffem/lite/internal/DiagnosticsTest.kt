@@ -2,6 +2,7 @@ package io.ffem.lite.internal
 
 
 import android.os.SystemClock
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
@@ -22,6 +23,7 @@ import io.ffem.lite.common.clearData
 import io.ffem.lite.common.residualChlorine
 import io.ffem.lite.preference.isDiagnosticMode
 import io.ffem.lite.ui.ResultListActivity
+import io.ffem.lite.util.PreferencesUtil
 import io.ffem.lite.util.toLocalString
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.allOf
@@ -51,6 +53,10 @@ class DiagnosticsTest {
         if (!CalibrationTest.initialized) {
             TestHelper.clearPreferences()
             clearData()
+            PreferencesUtil.setBoolean(
+                ApplicationProvider.getApplicationContext(),
+                R.string.useColorCardVersion1, true
+            )
             CalibrationTest.initialized = true
         }
     }

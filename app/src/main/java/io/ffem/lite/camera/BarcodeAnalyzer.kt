@@ -25,10 +25,10 @@ import io.ffem.lite.model.TestInfo
 import io.ffem.lite.preference.getSampleTestImageNumberInt
 import io.ffem.lite.preference.isDiagnosticMode
 import io.ffem.lite.preference.manualCaptureOnly
-import io.ffem.lite.util.ColorUtil.fixBoundary
-import io.ffem.lite.util.ColorUtil.isBarcodeTilted
-import io.ffem.lite.util.ColorUtil.isBarcodeValid
-import io.ffem.lite.util.ColorUtil.isTilted
+import io.ffem.lite.util.BarcodeColorUtil.fixBoundary
+import io.ffem.lite.util.BarcodeColorUtil.isBarcodeTilted
+import io.ffem.lite.util.BarcodeColorUtil.isBarcodeValid
+import io.ffem.lite.util.BarcodeColorUtil.isTilted
 import io.ffem.lite.util.ImageUtil.resizeBitmap
 import io.ffem.lite.util.ImageUtil.toBitmap
 import io.ffem.lite.util.getBitmapPixels
@@ -38,6 +38,7 @@ import java.util.*
 
 const val MAX_ANGLE = 14
 
+@Deprecated("Use QR color card instead")
 class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
     companion object {
@@ -259,9 +260,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                                                     analyzeBarcode(
                                                         imageProxy,
                                                         bitmap,
-                                                        rightBarcode,
-                                                        leftBoundingBox,
-                                                        rightBoundingBox
+                                                        rightBarcode
                                                     )
                                                 }
                                             }
@@ -329,8 +328,7 @@ class BarcodeAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
 
     private fun analyzeBarcode(
         image: ImageProxy,
-        bitmap: Bitmap, LeftBarcode: Barcode,
-        rightBoundingBox: Rect, leftBoundingBox: Rect
+        bitmap: Bitmap, LeftBarcode: Barcode
     ) {
         if (!LeftBarcode.rawValue.isNullOrEmpty()) {
             val testInfo = getTestInfo(LeftBarcode.displayValue!!)

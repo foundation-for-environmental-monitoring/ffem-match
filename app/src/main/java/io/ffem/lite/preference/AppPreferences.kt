@@ -3,15 +3,20 @@ package io.ffem.lite.preference
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.app.App
+import io.ffem.lite.common.Constants.DEFAULT_MAXIMUM_BRIGHTNESS
+import io.ffem.lite.common.Constants.DEFAULT_MINIMUM_BRIGHTNESS
+import io.ffem.lite.common.Constants.DEFAULT_SHADOW_TOLERANCE
+import io.ffem.lite.common.Constants.MAX_COLOR_DISTANCE_CALIBRATION
+import io.ffem.lite.common.Constants.MAX_COLOR_DISTANCE_RGB
 import io.ffem.lite.common.IMAGE_FILE_NAME
 import io.ffem.lite.common.IS_CALIBRATION
-import io.ffem.lite.util.*
+import io.ffem.lite.util.PreferencesUtil
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 fun getSampleTestImageNumber(): Int {
     var testImageNumber = -1
-    if (isTestRunning() && !useColorCardVersion2()) {
+    if (isTestRunning() && useColorCardVersion1()) {
         testImageNumber = try {
             PreferencesUtil
                 .getString(App.app, R.string.testImageNumberKey, " -1").toInt()
@@ -34,10 +39,10 @@ fun isTestRunning(): Boolean {
     return BuildConfig.DEBUG && (isDiagnosticMode() || BuildConfig.INSTRUMENTED_TEST_RUNNING.get())
 }
 
-fun useColorCardVersion2(): Boolean {
-    return isDiagnosticMode() && PreferencesUtil.getBoolean(
+fun useColorCardVersion1(): Boolean {
+    return PreferencesUtil.getBoolean(
         App.app,
-        R.string.useColorCardVersion2,
+        R.string.useColorCardVersion1,
         false
     )
 }
@@ -65,7 +70,7 @@ fun manualCaptureOnly(): Boolean {
     return PreferencesUtil.getBoolean(
         App.app,
         R.string.manualCaptureOnlyKey, false
-    ) && !useColorCardVersion2()
+    ) && useColorCardVersion1()
 }
 
 fun getColorDistanceTolerance(): Int {
@@ -151,6 +156,7 @@ object AppPreferences {
     fun disableDiagnosticMode() {
         PreferencesUtil.setBoolean(App.app, R.string.diagnosticModeKey, false)
         PreferencesUtil.setBoolean(App.app, R.string.testModeOnKey, false)
+        PreferencesUtil.setBoolean(App.app, R.string.useColorCardVersion1, false)
         PreferencesUtil.removeKey(App.app, R.string.testImageNumberKey)
     }
 

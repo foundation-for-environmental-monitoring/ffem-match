@@ -37,7 +37,7 @@ import io.ffem.lite.model.toLocalString
 import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.preference.SettingsActivity
 import io.ffem.lite.preference.useDummyImage
-import io.ffem.lite.util.ColorUtil
+import io.ffem.lite.util.BarcodeColorUtil
 import io.ffem.lite.util.FileUtil.getPathFromURI
 import io.ffem.lite.util.PreferencesUtil
 import io.ffem.lite.util.toast
@@ -314,7 +314,7 @@ class ResultListActivity : AppUpdateActivity() {
                             if (bitmapFromFile != null) {
                                 AppPreferences.generateImageFileName()
                                 progress_lyt.visibility = VISIBLE
-                                ColorUtil.extractImage(this, bitmapFromFile)
+                                BarcodeColorUtil.extractImage(this, bitmapFromFile)
                                 MainScope().launch {
                                     delay(3500)
                                     refreshList()

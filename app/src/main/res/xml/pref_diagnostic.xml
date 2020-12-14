@@ -7,14 +7,6 @@
         app:allowDividerBelow="true"
         app:iconSpaceReserved="false">
 
-        <CheckBoxPreference
-            android:key="@string/useColorCardVersion2"
-            android:summary="Color card with QR code corners"
-            android:title="Use version 2 color card"
-            app:allowDividerAbove="true"
-            app:allowDividerBelow="true"
-            app:iconSpaceReserved="false" />
-
         <EditTextPreference
             android:defaultValue="120"
             android:dialogMessage="The minimum brightness (0 - 255)"
@@ -75,16 +67,16 @@
             app:allowDividerBelow="true"
             app:iconSpaceReserved="false" />
 
-        <PreferenceCategory
-            android:key="preferenceCategoryCamera"
-            android:title="@string/camera"
-            app:allowDividerAbove="true"
-            app:iconSpaceReserved="false">
-            <SwitchPreferenceCompat
-                android:key="@string/useFlashModeKey"
-                android:title="Torch mode"
-                app:iconSpaceReserved="false" />
-        </PreferenceCategory>
+    </PreferenceCategory>
 
+    <PreferenceCategory
+        android:key="preferenceCategoryCamera"
+        android:title="@string/camera"
+        app:allowDividerAbove="true"
+        app:iconSpaceReserved="false">
+        <SwitchPreferenceCompat
+            android:key="@string/useFlashModeKey"
+            android:title="Torch mode"
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
 </PreferenceScreen>
