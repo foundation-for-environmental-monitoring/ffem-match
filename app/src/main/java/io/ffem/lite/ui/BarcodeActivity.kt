@@ -40,6 +40,7 @@ import io.ffem.lite.preference.useColorCardVersion2
 import io.ffem.lite.util.ColorUtil
 import io.ffem.lite.util.PreferencesUtil
 import kotlinx.android.synthetic.main.activity_barcode.*
+import kotlinx.android.synthetic.main.fragment_result.*
 import java.io.File
 import java.io.File.separator
 import java.util.*
@@ -169,6 +170,7 @@ class BarcodeActivity : BaseActivity(),
         if (testInfo != null) {
             val resultIntent = Intent()
             if (testInfo!!.getResult() >= 0) {
+
                 sendResultToCloudDatabase(testInfo!!)
 
                 resultIntent.putExtra(TEST_VALUE_KEY, testInfo!!.getResult().toString())
@@ -182,6 +184,9 @@ class BarcodeActivity : BaseActivity(),
                 resultIntent.putExtra(TEST_VALUE_KEY, "")
             }
             setResult(Activity.RESULT_OK, resultIntent)
+        }
+        submit_btn.setOnClickListener{
+            sendResultToCloudDatabase(testInfo = TestInfo())
         }
         finish()
     }
@@ -199,6 +204,8 @@ class BarcodeActivity : BaseActivity(),
             )
         )
     }
+
+
 
     private fun saveImageData(data: Intent) {
         val testInfo = data.getParcelableExtra<TestInfo>(TEST_INFO_KEY) ?: return
