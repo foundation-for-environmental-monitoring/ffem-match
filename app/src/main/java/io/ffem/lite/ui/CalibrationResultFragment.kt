@@ -10,6 +10,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -18,6 +19,7 @@ import io.ffem.lite.app.App.Companion.getTestInfo
 import io.ffem.lite.common.TEST_ID_KEY
 import io.ffem.lite.data.AppDatabase
 import io.ffem.lite.data.Calibration
+import io.ffem.lite.databinding.FragmentCalibrationResultBinding
 import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.TestInfo
 import io.ffem.lite.model.toLocalString
@@ -25,23 +27,25 @@ import io.ffem.lite.preference.isDiagnosticMode
 import io.ffem.lite.util.PreferencesUtil
 import io.ffem.lite.util.toLocalString
 import io.ffem.lite.util.toast
-import kotlinx.android.synthetic.main.app_bar_layout.*
-import kotlinx.android.synthetic.main.fragment_calibration_result.*
 import java.io.File
 
 class CalibrationResultFragment : Fragment() {
+    private var _binding: FragmentCalibrationResultBinding? = null
+    private val binding get() = _binding!!
     private val model: TestInfoViewModel by activityViewModels()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_calibration_result, container, false)
+    ): View {
+        _binding = FragmentCalibrationResultBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
         if (isDiagnosticMode()) {
             toolbar.setBackgroundColor(
                 ContextCompat.getColor(
@@ -57,14 +61,14 @@ class CalibrationResultFragment : Fragment() {
                 )
             )
         }
-        submit_btn.visibility = VISIBLE
+        binding.submitBtn.visibility = VISIBLE
 
         val testInfo = model.test.get()!!
 
         toolbar.visibility = VISIBLE
         toolbar.setTitle(R.string.confirm_calibration)
 
-        submit_btn.setOnClickListener {
+        binding.submitBtn.setOnClickListener {
             if (model.test.get()!!.error == ErrorType.NO_ERROR) {
                 val result = testInfo.resultInfo
                 val calibratedValue = testInfo.calibratedResultInfo.calibratedValue
@@ -113,61 +117,66 @@ class CalibrationResultFragment : Fragment() {
         val analyzedImagePath = File(path + testInfo.fileName + File.separator + fileName + ".jpg")
 
         if (analyzedImagePath.exists()) {
-            full_photo_img.setImageURI(Uri.fromFile(analyzedImagePath))
+            binding.fullPhotoImg.setImageURI(Uri.fromFile(analyzedImagePath))
         }
 
         if (extractImagePath.exists()) {
-            extract_img.setImageURI(Uri.fromFile(extractImagePath))
+            binding.extractImg.setImageURI(Uri.fromFile(extractImagePath))
             val bitmap = BitmapFactory.decodeFile(extractImagePath.path)
             if (bitmap.height > bitmap.width) {
-                extract_img.rotation = -90f
+                binding.extractImg.rotation = -90f
             }
             bitmap.recycle()
-            extract_img.refreshDrawableState()
+            binding.extractImg.refreshDrawableState()
         }
 
         if (testInfo.error == ErrorType.NO_ERROR && testInfo.resultInfo.result >= 0) {
             val calibrationValue = testInfo.calibratedResultInfo.calibratedValue.value
-            name_txt.text = testInfo.name!!.toLocalString()
-            name2_txt.text = ""
-            value_txt.text = calibrationValue.toString()
-            error_message_lyt.visibility = GONE
-            result_lyt.visibility = VISIBLE
+            binding.nameTxt.text = testInfo.name!!.toLocalString()
+            binding.name2Txt.text = ""
+            binding.valueTxt.text = calibrationValue.toString()
+            binding.errorMessageLyt.visibility = GONE
+            binding.resultLyt.visibility = VISIBLE
 
             for (swatch in testInfo.resultInfo.swatches!!) {
                 if (swatch.value == calibrationValue) {
-                    btn_card_color.setBackgroundColor(swatch.color)
+                    binding.btnCardColor.setBackgroundColor(swatch.color)
                     break
                 }
             }
 
-            btn_calibrated_color.setBackgroundColor(testInfo.resultInfo.sampleColor)
-            submit_btn.setText(R.string.confirm)
+            binding.btnCalibratedColor.setBackgroundColor(testInfo.resultInfo.sampleColor)
+            binding.submitBtn.setText(R.string.confirm)
 
         } else {
             val requestedTestId = PreferencesUtil.getString(context, TEST_ID_KEY, "")
-            name_txt.text = ""
+            binding.nameTxt.text = ""
             if (testInfo.uuid != requestedTestId) {
                 val requestedTest = getTestInfo(requestedTestId!!)
                 if (requestedTest != null) {
-                    name2_txt.text = requestedTest.name!!.toLocalString()
+                    binding.name2Txt.text = requestedTest.name!!.toLocalString()
                 } else {
-                    name2_txt.text = testInfo.name!!.toLocalString()
+                    binding.name2Txt.text = testInfo.name!!.toLocalString()
                 }
             } else {
-                name2_txt.text = testInfo.name!!.toLocalString()
+                binding.name2Txt.text = testInfo.name!!.toLocalString()
             }
 
-            error_txt.text = testInfo.error.toLocalString(requireContext())
-            error_message_lyt.visibility = VISIBLE
-            result_lyt.visibility = GONE
+            binding.errorTxt.text = testInfo.error.toLocalString(requireContext())
+            binding.errorMessageLyt.visibility = VISIBLE
+            binding.resultLyt.visibility = GONE
             if (!extractImagePath.exists()) {
-                color_extracts_lyt.visibility = GONE
+                binding.colorExtractsLyt.visibility = GONE
             }
             if (!analyzedImagePath.exists()) {
-                analyzed_photo_lyt.visibility = GONE
+                binding.analyzedPhotoLyt.visibility = GONE
             }
-            submit_btn.setText(R.string.close)
+            binding.submitBtn.setText(R.string.close)
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

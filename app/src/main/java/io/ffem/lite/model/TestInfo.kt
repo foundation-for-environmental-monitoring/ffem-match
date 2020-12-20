@@ -3,7 +3,7 @@ package io.ffem.lite.model
 import android.content.Context
 import android.os.Parcelable
 import io.ffem.lite.util.getStringByLocale
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.max

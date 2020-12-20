@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.BarcodeActivity">
 
-
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/card_overlay"
         android:layout_width="match_parent"

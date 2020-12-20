@@ -5,25 +5,28 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import androidx.appcompat.widget.Toolbar
 import io.ffem.lite.R
+import io.ffem.lite.databinding.ActivitySettingsBinding
 import io.ffem.lite.ui.BaseActivity
 import io.ffem.lite.util.toast
-import kotlinx.android.synthetic.main.activity_settings.*
-import kotlinx.android.synthetic.main.app_bar_layout.*
 
 class SettingsActivity : BaseActivity() {
+    private lateinit var binding: ActivitySettingsBinding
 
     private fun removeAllFragments() {
-        layoutDiagnostics.visibility = GONE
-        layoutTesting.visibility = GONE
-        layoutData.visibility = GONE
+        binding.layoutDiagnostics.visibility = GONE
+        binding.layoutTesting.visibility = GONE
+        binding.layoutData.visibility = GONE
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setTitle(R.string.settings)
 
-        setContentView(R.layout.activity_settings)
+        binding = ActivitySettingsBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
         setupActivity()
     }
@@ -52,16 +55,17 @@ class SettingsActivity : BaseActivity() {
                 .replace(R.id.layoutData, DataPreferenceFragment())
                 .commit()
 
-            layoutDiagnostics.visibility = VISIBLE
-            layoutTesting.visibility = VISIBLE
-            layoutData.visibility = VISIBLE
+            binding.layoutDiagnostics.visibility = VISIBLE
+            binding.layoutTesting.visibility = VISIBLE
+            binding.layoutData.visibility = VISIBLE
         } else {
-            layoutDiagnostics.visibility = GONE
-            layoutTesting.visibility = GONE
-            layoutData.visibility = GONE
+            binding.layoutDiagnostics.visibility = GONE
+            binding.layoutTesting.visibility = GONE
+            binding.layoutData.visibility = GONE
         }
 
         try {
+            val toolbar = findViewById<Toolbar>(R.id.toolbar)
             setSupportActionBar(toolbar)
         } catch (ignored: Exception) {
             //Ignore crash in some devices

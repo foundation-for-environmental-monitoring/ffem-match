@@ -5,38 +5,43 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import io.ffem.lite.R
+import io.ffem.lite.databinding.FragmentCalibrationListBinding
 import io.ffem.lite.model.CalibrationValue
 import io.ffem.lite.model.TestInfo
 import io.ffem.lite.preference.isDiagnosticMode
-import kotlinx.android.synthetic.main.app_bar_layout.*
-import kotlinx.android.synthetic.main.fragment_calibration_list.*
 
 class CalibrationItemFragment : Fragment() {
+    private var _binding: FragmentCalibrationListBinding? = null
+    private val binding get() = _binding!!
     private val model: TestInfoViewModel by activityViewModels()
     private var mListener: OnCalibrationSelectedListener? = null
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_calibration_list, container, false)
+    ): View {
+        _binding = FragmentCalibrationListBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (context != null) {
-            calibrationList.addItemDecoration(DividerItemDecoration(context, 1))
+            binding.calibrationList.addItemDecoration(DividerItemDecoration(context, 1))
         }
 
         loadDetails()
 
-        text_title.text = model.test.get()!!.name
+        binding.textTitle.text = model.test.get()!!.name
 
+        val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
         if (isDiagnosticMode()) {
             toolbar.setBackgroundColor(
                 ContextCompat.getColor(
@@ -84,10 +89,15 @@ class CalibrationItemFragment : Fragment() {
     }
 
     private fun setAdapter(testInfo: TestInfo) {
-        calibrationList.adapter = CalibrationViewAdapter(testInfo, mListener)
+        binding.calibrationList.adapter = CalibrationViewAdapter(testInfo, mListener)
     }
 
     interface OnCalibrationSelectedListener {
         fun onCalibrationSelected(calibrationValue: CalibrationValue)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

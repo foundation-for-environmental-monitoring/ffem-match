@@ -5,26 +5,28 @@ import android.view.MenuItem
 import android.view.View
 import io.ffem.lite.R
 import io.ffem.lite.app.App
+import io.ffem.lite.databinding.ActivityAboutBinding
 import io.ffem.lite.helper.ApkHelper.isTestDevice
 import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.preference.isDiagnosticMode
 import io.ffem.lite.util.toast
-import kotlinx.android.synthetic.main.activity_about.*
 
 /**
  * Activity to display info about the app.
  */
 class AboutActivity : BaseActivity() {
-
+    private lateinit var binding: ActivityAboutBinding
     private var clickCount = 0
 
     private var dialog: NoticesDialogFragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_about)
+        binding = ActivityAboutBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
-        textVersion.text = App.getAppVersion()
+        binding.textVersion.text = App.getAppVersion()
 
         setTitle(R.string.about)
     }
@@ -84,10 +86,10 @@ class AboutActivity : BaseActivity() {
      */
     private fun switchLayoutForDiagnosticOrUserMode() {
         if (isDiagnosticMode()) {
-            layoutDiagnostics.visibility = View.VISIBLE
+            binding.layoutDiagnostics.visibility = View.VISIBLE
         } else {
-            if (layoutDiagnostics.visibility == View.VISIBLE) {
-                layoutDiagnostics.visibility = View.GONE
+            if (binding.layoutDiagnostics.visibility == View.VISIBLE) {
+                binding.layoutDiagnostics.visibility = View.GONE
             }
         }
     }

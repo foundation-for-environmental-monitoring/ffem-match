@@ -13,12 +13,23 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import io.ffem.lite.R
 import io.ffem.lite.app.App
+import io.ffem.lite.databinding.FragmentInstructionBinding
 import io.ffem.lite.preference.useColorCardVersion1
 import io.ffem.lite.util.snackBar
 import io.ffem.lite.util.snackBarAction
-import kotlinx.android.synthetic.main.fragment_instruction.*
 
 class InstructionFragment : Fragment() {
+    private var _binding: FragmentInstructionBinding? = null
+    private val binding get() = _binding!!
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentInstructionBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     interface OnStartTestListener {
         fun onStartTest()
@@ -34,32 +45,25 @@ class InstructionFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_instruction, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        start_test_btn.setOnClickListener {
+        binding.startTestBtn.setOnClickListener {
             requestCameraPermission.launch(Manifest.permission.CAMERA)
         }
         if (requireActivity().window.decorView.measuredHeight < 1300) {
-            instruction_txt.visibility = GONE
+            binding.instructionTxt.visibility = GONE
         }
 
         if (useColorCardVersion1()) {
-            example_img.setImageDrawable(
+            binding.exampleImg.setImageDrawable(
                 ContextCompat.getDrawable(
                     requireContext(),
                     R.drawable.card_overlay
                 )
             )
         } else {
-            example_img.setImageDrawable(
+            binding.exampleImg.setImageDrawable(
                 ContextCompat.getDrawable(
                     requireContext(),
                     R.drawable.card_2_overlay
@@ -84,6 +88,11 @@ class InstructionFragment : Fragment() {
                 }
             }
         }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
     class MyUndoListener : View.OnClickListener {
         override fun onClick(v: View) {
