@@ -11,6 +11,9 @@
     <string name="ok">ओके , ठीक है</string>
     <string name="close">बंद करे</string>
     <string name="camera">कैमरा</string>
+    <string name="delete">हटाएं</string>
+    <string name="delete_selected_result">चयनित परिणाम हटाएं?</string>
+    <string name="deleted">हटाए गए</string>
     <string name="software_notices">सॉफ्टवेयर नोटिस, सॉफ्टवेयर  सूचना</string>
     <string name="camera_permission">कैमरा की अनुमति आवश्यक है</string>
     <string name="version_expired">वर्शन  एक्स्पायर्ड</string>

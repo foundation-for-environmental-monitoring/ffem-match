@@ -11,6 +11,9 @@
     <string name="ok">ಸರಿ</string>
     <string name="close">ಮುಚ್ಚಿ</string>
     <string name="camera">ಕ್ಯಾಮೆರಾ</string>
+    <string name="delete">ಅಳಿಸಿ</string>
+    <string name="delete_selected_result">ಆಯ್ದ ಫಲಿತಾಂಶವನ್ನು ಅಳಿಸುವುದೇ?</string>
+    <string name="deleted">ಅಳಿಸಲಾಗಿದೆ</string>
     <string name="software_notices">ಸಾಫ್ಟ್‌ವೇರ್ ಪ್ರಕಟಣೆಗಳು</string>
     <string name="camera_permission">ಕ್ಯಾಮೆರಾ ಅನುಮತಿ ಅಗತ್ಯವಿದೆ</string>
     <string name="version_expired">ಆವೃತ್ತಿ ಅವಧಿ ಮೀರಿದೆ</string>

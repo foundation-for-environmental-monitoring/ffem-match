@@ -11,7 +11,6 @@
     <string name="data_deleted">Data deleted</string>
     <string name="data">Data</string>
     <string name="delete_data">Delete all data and photos</string>
-    <string name="delete">Delete</string>
     <string name="dummy_image_message">Analyzing debug sample image</string>
     <string name="sample_image_not_found">Sample image not found</string>
 

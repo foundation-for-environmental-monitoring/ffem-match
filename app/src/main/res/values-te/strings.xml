@@ -11,6 +11,9 @@
     <string name="ok">అలాగే</string>
     <string name="close">దగ్గరగా</string>
     <string name="camera">కెమెరా</string>
+    <string name="delete">తొలగించు</string>
+    <string name="delete_selected_result">ఎంచుకున్న ఫలితాన్ని తొలగించాలా?</string>
+    <string name="deleted">తొలగించబడింది</string>
     <string name="software_notices">సాఫ్ట్‌వేర్ నోటీసులు</string>
     <string name="camera_permission">కెమెరా అనుమతి అవసరం</string>
     <string name="version_expired">సంస్కరణ గడువు ముగిసింది</string>

@@ -11,6 +11,9 @@
     <string name="ok">OK</string>
     <string name="close">Close</string>
     <string name="camera">Camera</string>
+    <string name="delete">Delete</string>
+    <string name="delete_selected_result">Delete selected result?</string>
+    <string name="deleted">Deleted</string>
 
     <!-- Software notices -->
     <string name="software_notices">Software Notices</string>

@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment.DIRECTORY_PICTURES
@@ -103,10 +104,41 @@ class ResultListActivity : AppUpdateActivity() {
         }
     }
 
+    private fun onDeleteResultClick(position: Int): Boolean {
+        val row = binding.testResultsLst.layoutManager?.findViewByPosition(position)
+        row?.background = ColorDrawable(Color.LTGRAY)
+        val builder = androidx.appcompat.app.AlertDialog.Builder(this)
+        builder.setTitle(getString(R.string.delete))
+        builder.setMessage(getString(R.string.delete_selected_result))
+        builder.setPositiveButton(R.string.delete) { _, _ ->
+            val item = adapter.getItemAt(position)
+            db.resultDao().deleteResult(item.id)
+            val path =
+                getExternalFilesDir(DIRECTORY_PICTURES).toString() + File.separator + "captures"
+            val directory = File("$path${File.separator}${item.id}${File.separator}")
+            if (directory.exists() && directory.isDirectory) {
+                directory.deleteRecursively()
+            }
+
+            refreshList()
+            toast(getString(R.string.deleted))
+        }
+
+        builder.setNegativeButton(android.R.string.cancel) { _, _ ->
+            row?.background = ColorDrawable(Color.TRANSPARENT)
+        }
+
+        builder.setOnCancelListener {
+            row?.background = ColorDrawable(Color.TRANSPARENT)
+        }
+
+        builder.show()
+        return true
+    }
+
     private fun onResultClick(position: Int) {
         MainScope().launch {
             delay(300)
-
             val item = adapter.getItemAt(position)
             val intent = Intent(baseContext, ResultViewActivity::class.java)
 
@@ -123,9 +155,9 @@ class ResultListActivity : AppUpdateActivity() {
         }
     }
 
-    private var adapter: ResultAdapter = ResultAdapter(clickListener = {
-        onResultClick(it)
-    })
+    private var adapter: ResultAdapter = ResultAdapter(
+        clickListener = { onResultClick(it) },
+        longClickListener = { onDeleteResultClick(it) })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

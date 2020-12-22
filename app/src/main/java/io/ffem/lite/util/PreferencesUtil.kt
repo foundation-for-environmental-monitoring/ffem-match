@@ -69,9 +69,9 @@ object PreferencesUtil {
     }
 
     @JvmStatic
-    fun getString(context: Context?, keyId: String?, defaultValue: String?): String? {
+    fun getString(context: Context?, key: String?, defaultValue: String?): String? {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-        return sharedPreferences.getString(keyId, defaultValue)
+        return sharedPreferences.getString(key, defaultValue)
     }
 
     /**
