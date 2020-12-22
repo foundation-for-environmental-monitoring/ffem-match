@@ -5,9 +5,12 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.graphics.Rect
+import android.graphics.drawable.BitmapDrawable
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
+import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.common.*
@@ -16,9 +19,7 @@ import io.ffem.lite.common.Constants.MAX_TILT_PERCENTAGE_ALLOWED
 import io.ffem.lite.common.Constants.QR_TO_COLOR_AREA_DISTANCE_PERCENTAGE
 import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.TestInfo
-import io.ffem.lite.preference.getMaximumBrightness
-import io.ffem.lite.preference.getMinimumBrightness
-import io.ffem.lite.preference.getShadowTolerance
+import io.ffem.lite.preference.*
 import io.ffem.lite.util.ImageColorUtil
 import io.ffem.lite.util.ImageUtil.toBitmap
 import io.ffem.lite.util.getAverageBrightness
@@ -31,6 +32,7 @@ import io.ffem.lite.zxing.common.HybridBinarizer
 import io.ffem.lite.zxing.datamatrix.decoder.DataMatrixReader
 import io.ffem.lite.zxing.qrcode.QRCodeReader
 import io.ffem.lite.zxing.qrcode.detector.FinderPatternInfo
+import java.util.*
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -64,7 +66,40 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         localBroadcastManager = LocalBroadcastManager.getInstance(context)
 
         try {
-            bitmap = getBitmap(imageProxy, previewHeight, previewWidth)
+            bitmap =
+                if (BuildConfig.DEBUG && (isDiagnosticMode() || BuildConfig.INSTRUMENTED_TEST_RUNNING.get())) {
+                    val imageNumber = getSampleTestImageNumberInt()
+                    if (imageNumber > -1) {
+                        try {
+                            val drawable = ContextCompat.getDrawable(
+                                context, context.resources.getIdentifier(
+                                    "qr_test_${
+                                        java.lang.String.format(
+                                            Locale.ROOT,
+                                            "%03d",
+                                            imageNumber
+                                        )
+                                    }",
+                                    "drawable", context.packageName
+                                )
+                            )
+                            getBitmap(
+                                (drawable as BitmapDrawable).bitmap,
+                                previewHeight,
+                                previewWidth
+                            )
+                        } catch (ex: Exception) {
+                            sendMessage(context.getString(R.string.sample_image_not_found))
+                            endProcessing(imageProxy)
+                            throw Exception()
+                        }
+                    } else {
+                        getBitmap(imageProxy.toBitmap(), previewHeight, previewWidth)
+                    }
+                } else {
+                    getBitmap(imageProxy.toBitmap(), previewHeight, previewWidth)
+                }
+
             pattern = getPatternFromBitmap(bitmap)
             if (pattern != null) {
 
@@ -235,16 +270,16 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         endProcessing(imageProxy)
     }
 
-    private fun getBitmap(imageProxy: ImageProxy, previewHeight: Int, previewWidth: Int): Bitmap {
-        val actualHeight = (imageProxy.height * previewHeight) / previewWidth
-        val margin = if (actualHeight < imageProxy.width) {
-            imageProxy.width - actualHeight
+    private fun getBitmap(bitmap: Bitmap, previewHeight: Int, previewWidth: Int): Bitmap {
+        val actualHeight = (bitmap.height * previewHeight) / previewWidth
+        val margin = if (actualHeight < bitmap.width) {
+            bitmap.width - actualHeight
         } else {
             0
         }
         val height = min(
-            imageProxy.height,
-            ((imageProxy.width * imageProxy.height) / actualHeight)
+            bitmap.height,
+            ((bitmap.width * bitmap.height) / actualHeight)
         )
         val width = min(
             viewFinderHeight,
@@ -252,7 +287,7 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         )
 
         return Bitmap.createBitmap(
-            imageProxy.toBitmap(), margin / 2, (imageProxy.height - height) / 2,
+            bitmap, margin / 2, (bitmap.height - height) / 2,
             width, height
         )
     }

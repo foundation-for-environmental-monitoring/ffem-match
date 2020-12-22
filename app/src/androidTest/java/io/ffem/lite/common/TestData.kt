@@ -61,6 +61,10 @@ val testDataList = mutableMapOf(
     500 to TestData(pH, expectedScanError = R.string.sample_image_not_found)
 )
 
+val qrTestDataList = mutableMapOf(
+    0 to TestData(residualChlorine, 2.0, 0.25, risk = RiskLevel.HIGH),
+)
+
 data class TestData(
     var testDetails: TestDetails,
     var expectedResult: Double = -1.0,

@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit
 
 fun getSampleTestImageNumber(): Int {
     var testImageNumber = -1
-    if (isTestRunning() && useColorCardVersion1()) {
+    if (isTestRunning()) {
         testImageNumber = try {
             PreferencesUtil
                 .getString(App.app, R.string.testImageNumberKey, " -1").toInt()
