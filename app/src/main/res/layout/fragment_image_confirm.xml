@@ -47,6 +47,6 @@
         android:layout_marginTop="30dp"
         android:minWidth="200dp"
         android:padding="10dp"
-        android:text="@string/accept"
+        android:text="@string/continue_on"
         android:textSize="17sp" />
 </LinearLayout>

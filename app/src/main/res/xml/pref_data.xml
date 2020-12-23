@@ -32,7 +32,7 @@
             android:dependency="@string/useColorCardVersion1"
             android:key="@string/manualCaptureOnlyKey"
             android:summary="For barcode color card, turn this on if the auto photo capture is not working well on this phone"
-            android:title="For Barcode Card, use manual capture"
+            android:title="@string/manual_photo_capture"
             app:allowDividerAbove="true"
             app:allowDividerBelow="true"
             app:iconSpaceReserved="false" />
