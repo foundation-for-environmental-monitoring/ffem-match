@@ -105,7 +105,7 @@ class ResultListTest {
 
         val materialButton3 = onView(
             allOf(
-                withId(R.id.accept_btn), withText(R.string.accept),
+                withId(R.id.accept_btn), withText(R.string.continue_on),
                 childAtPosition(
                     allOf(
                         withId(R.id.instruction_lyt),
@@ -325,6 +325,7 @@ class ResultListTest {
                 folder.deleteRecursively()
             }
             clearData()
+            TestHelper.clearPreferences()
         }
 
         @JvmStatic

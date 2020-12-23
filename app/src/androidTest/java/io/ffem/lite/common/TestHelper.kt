@@ -199,6 +199,13 @@ object TestHelper {
         }
     }
 
+    fun swipeUp() {
+        for (i in 0..2) {
+            mDevice.waitForIdle()
+            mDevice.swipe(300, 750, 300, 400, 4)
+        }
+    }
+
     private fun swipeDown() {
         for (i in 0..2) {
             mDevice.waitForIdle()

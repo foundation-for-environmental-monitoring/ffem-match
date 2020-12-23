@@ -85,7 +85,8 @@ fun startTest(imageNumber: Int) {
         if (testData.expectedResultError != ErrorType.BAD_LIGHTING &&
             testData.expectedResultError != ErrorType.IMAGE_TILTED
         ) {
-            Espresso.onView(ViewMatchers.withText(R.string.accept)).perform(ViewActions.click())
+            Espresso.onView(ViewMatchers.withText(R.string.continue_on))
+                .perform(ViewActions.click())
         }
 
         Espresso.onView(ViewMatchers.withText(testData.testDetails.name.toLocalString()))

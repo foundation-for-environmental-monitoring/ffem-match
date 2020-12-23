@@ -19,6 +19,7 @@ import android.view.View.VISIBLE
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.databinding.BindingAdapter
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -42,6 +43,7 @@ import io.ffem.lite.preference.useDummyImage
 import io.ffem.lite.util.BarcodeColorUtil
 import io.ffem.lite.util.FileUtil.getPathFromURI
 import io.ffem.lite.util.PreferencesUtil
+import io.ffem.lite.util.snackBar
 import io.ffem.lite.util.toast
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
@@ -121,7 +123,9 @@ class ResultListActivity : AppUpdateActivity() {
             }
 
             refreshList()
-            toast(getString(R.string.deleted))
+
+            findViewById<CoordinatorLayout>(R.id.coordinator_lyt)
+                ?.snackBar(getString(R.string.deleted))
         }
 
         builder.setNegativeButton(android.R.string.cancel) { _, _ ->

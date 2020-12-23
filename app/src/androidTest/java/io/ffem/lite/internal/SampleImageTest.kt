@@ -245,7 +245,7 @@ class SampleImageTest {
             if (testData.expectedResultError != ErrorType.BAD_LIGHTING &&
                 testData.expectedResultError != ErrorType.IMAGE_TILTED
             ) {
-                onView(withText(R.string.accept)).perform(click())
+                onView(withText(R.string.continue_on)).perform(click())
             }
 
             onView(withText(testData.testDetails.name.toLocalString())).check(matches(isDisplayed()))
@@ -388,6 +388,7 @@ class SampleImageTest {
                 folder.deleteRecursively()
             }
             clearData()
+            clearPreferences()
         }
 
         @JvmStatic
