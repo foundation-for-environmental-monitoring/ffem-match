@@ -284,12 +284,8 @@
           "risk": 0
         },
         {
-          "value": 10,
+          "value": 100,
           "risk": 1
-        },
-        {
-          "value": 30.1,
-          "risk": 2
         }
       ],
       "values": [
