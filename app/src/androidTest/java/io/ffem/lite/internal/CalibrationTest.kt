@@ -61,10 +61,10 @@ class CalibrationTest {
         }
     }
 
-//    @Test
-//    fun image_024_Fluoride_0_Point_5() {
-//        startCalibrationTest(24)
-//    }
+    @Test
+    fun image_000_Chlorine_0_Point_5() {
+        startCalibrationTest(0)
+    }
 
     @Test
     fun image_001_pH_NoMatch() {
@@ -90,7 +90,7 @@ class CalibrationTest {
 
         onView(withText(R.string.start)).perform(click())
 
-        sleep(TIME_DELAY)
+        sleep(QR_TIME_DELAY)
 
         if (testData.expectedResultError == ErrorType.NO_ERROR) {
             onView(withText(R.string.continue_on)).perform(click())
@@ -145,11 +145,11 @@ class CalibrationTest {
 
         onView(withText(R.string.start)).perform(click())
 
-        sleep(TIME_DELAY / 2)
+        sleep(QR_TIME_DELAY / 2)
 
         takeScreenshot(screenshotName)
 
-        sleep(TIME_DELAY / 2)
+        sleep(QR_TIME_DELAY / 2)
 
         onView(withText(R.string.continue_on)).perform(click())
 
@@ -182,7 +182,7 @@ class CalibrationTest {
 
         onView(withText(R.string.start)).perform(click())
 
-        sleep(TIME_DELAY)
+        sleep(QR_TIME_DELAY)
 
         onView(withText(R.string.continue_on)).perform(click())
 
@@ -230,7 +230,7 @@ class CalibrationTest {
 
         onView(withText(R.string.start)).perform(click())
 
-        sleep(TIME_DELAY)
+        sleep(QR_TIME_DELAY)
 
         if (testData.expectedResultError != ErrorType.BAD_LIGHTING &&
             testData.expectedResultError != ErrorType.IMAGE_TILTED
@@ -269,11 +269,11 @@ class CalibrationTest {
 
         onView(withText(R.string.start)).perform(click())
 
-        sleep(TIME_DELAY / 2)
+        sleep(QR_TIME_DELAY / 2)
 
         takeScreenshot(screenshotName)
 
-        sleep(TIME_DELAY / 2)
+        sleep(QR_TIME_DELAY / 2)
 
         if (testData.expectedResultError != ErrorType.BAD_LIGHTING &&
             testData.expectedResultError != ErrorType.IMAGE_TILTED
@@ -304,7 +304,7 @@ class CalibrationTest {
 
         onView(withText(R.string.start)).perform(click())
 
-        sleep(TIME_DELAY)
+        sleep(QR_TIME_DELAY)
 
         if (testData.expectedResultError != ErrorType.BAD_LIGHTING &&
             testData.expectedResultError != ErrorType.IMAGE_TILTED
