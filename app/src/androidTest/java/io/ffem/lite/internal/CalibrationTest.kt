@@ -53,16 +53,12 @@ class CalibrationTest {
         if (!initialized) {
             TestHelper.clearPreferences()
             clearData()
-            PreferencesUtil.setBoolean(
-                ApplicationProvider.getApplicationContext(),
-                R.string.useColorCardVersion1, true
-            )
             initialized = true
         }
     }
 
     @Test
-    fun image_000_Chlorine_0_Point_5() {
+    fun image_000_Chlorine_1_Point_0() {
         startCalibrationTest(0)
     }
 
@@ -189,7 +185,7 @@ class CalibrationTest {
         onView(withText(testData.testDetails.name.toLocalString())).check(matches(isDisplayed()))
 
         val resultTextView2 = onView(withId(R.id.result_txt))
-        resultTextView2.check(matches(TestUtil.checkResult(testData.expectedResult)))
+        resultTextView2.check(matches(TestUtil.checkResult(1.0)))
 
         onView(allOf(withId(R.id.unit_txt), withText("mg/l")))
             .check(matches(isDisplayed()))
