@@ -272,6 +272,77 @@
       ]
     },
     {
+      "name": "Potassium",
+      "type": "water",
+      "uuid": "487b0bc2-7781-48a0-80ae-1cb973c354d3",
+      "unit": "mg/l",
+      "minMarginError": 0.16,
+      "riskType": "safety",
+      "risks": [
+        {
+          "value": 0,
+          "risk": 0
+        },
+        {
+          "value": 100,
+          "risk": 1
+        }
+      ],
+      "values": [
+        {
+          "value": 0
+        },
+        {
+          "value": 10
+        },
+        {
+          "value": 20
+        },
+        {
+          "value": 30
+        }
+      ]
+    },
+    {
+      "name": "Ammonia",
+      "type": "water",
+      "uuid": "a4e3f71a-15e8-4b48-b6d7-26225d36f9e7",
+      "unit": "mg/l",
+      "minMarginError": 0.26,
+      "riskType": "safety",
+      "risks": [
+        {
+          "value": 0,
+          "risk": 0
+        },
+        {
+          "value": 0.59,
+          "risk": 1
+        },
+        {
+          "value": 0.6,
+          "risk": 2
+        }
+      ],
+      "values": [
+        {
+          "value": 0
+        },
+        {
+          "value": 1.0
+        },
+        {
+          "value": 2.0
+        },
+        {
+          "value": 3.0
+        },
+        {
+          "value": 4.0
+        }
+      ]
+    },
+    {
       "name": "Unknown",
       "type": "water",
       "uuid": "d1b25de4-5605-498e-99f1-8412d7e19db2",
