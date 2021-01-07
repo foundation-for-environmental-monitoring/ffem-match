@@ -1,7 +1,9 @@
 package io.ffem.lite.internal
 
 
+import android.os.Environment
 import android.os.SystemClock
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
@@ -10,6 +12,7 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import io.ffem.lite.R
 import io.ffem.lite.common.TestHelper
@@ -22,14 +25,17 @@ import io.ffem.lite.common.clearData
 import io.ffem.lite.common.residualChlorine
 import io.ffem.lite.preference.isDiagnosticMode
 import io.ffem.lite.ui.ResultListActivity
+import io.ffem.lite.util.PreferencesUtil
 import io.ffem.lite.util.toLocalString
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.core.IsInstanceOf
+import org.junit.AfterClass
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.io.File
 
 
 @LargeTest
@@ -51,6 +57,10 @@ class DiagnosticsTest {
         if (!CalibrationTest.initialized) {
             TestHelper.clearPreferences()
             clearData()
+            PreferencesUtil.setBoolean(
+                ApplicationProvider.getApplicationContext(),
+                R.string.useColorCardVersion1, true
+            )
             CalibrationTest.initialized = true
         }
     }
@@ -121,11 +131,11 @@ class DiagnosticsTest {
                     1
                 )
             )
-        ).perform(scrollTo(), replaceText("1"))
+        ).perform(scrollTo(), replaceText("0"))
 
         val appCompatEditText2 = onView(
             allOf(
-                withId(android.R.id.edit), withText("1"),
+                withId(android.R.id.edit), withText("0"),
                 childAtPosition(
                     childAtPosition(
                         withClassName(`is`("android.widget.ScrollView")),
@@ -168,7 +178,7 @@ class DiagnosticsTest {
 
         SystemClock.sleep(TIME_DELAY)
 
-        onView(withText(R.string.accept)).perform(click())
+        onView(withText(R.string.continue_on)).perform(click())
 
         val textView = onView(
             allOf(
@@ -187,11 +197,11 @@ class DiagnosticsTest {
 
         val textView2 = onView(
             allOf(
-                withId(R.id.result_txt), withText("0.0"),
+                withId(R.id.result_txt), withText("1.99"),
                 isDisplayed()
             )
         )
-        textView2.check(matches(withText("0.0")))
+        textView2.check(matches(withText("1.99")))
 
         val textView3 = onView(
             allOf(
@@ -203,11 +213,11 @@ class DiagnosticsTest {
 
         val textView4 = onView(
             allOf(
-                withId(R.id.value_txt), withText(R.string.medium_quantity),
+                withId(R.id.value_txt), withText(R.string.high_quantity),
                 isDisplayed()
             )
         )
-        textView4.check(matches(withText(R.string.medium_quantity)))
+        textView4.check(matches(withText(R.string.high_quantity)))
 
         val textView5 = onView(
             allOf(
@@ -237,7 +247,7 @@ class DiagnosticsTest {
                 isDisplayed()
             )
         )
-        textView6.check(matches(TestUtil.checkResult(0.3)))
+        textView6.check(matches(TestUtil.checkResult(0.25)))
 
         onView(
             allOf(
@@ -249,6 +259,7 @@ class DiagnosticsTest {
 
     @Test
     fun testManualCapture() {
+
         startDiagnosticMode()
 
         sleep(400)
@@ -256,6 +267,12 @@ class DiagnosticsTest {
         Espresso.pressBack()
 
         sleep(400)
+
+        onView(withId(R.id.scrollViewSettings)).perform(swipeUp())
+
+        sleep(2000)
+
+        onView(withText("Use the older Barcode Color card")).perform(click())
 
         onView(withText(R.string.manual_photo_capture)).perform(click())
 
@@ -405,6 +422,25 @@ class DiagnosticsTest {
                 )
             )
         ).perform(scrollTo(), click())
+    }
+
+    companion object {
+
+        @JvmStatic
+        @AfterClass
+        fun teardown() {
+            val context = InstrumentationRegistry.getInstrumentation().targetContext
+            val folder = File(
+                context.getExternalFilesDir(
+                    Environment.DIRECTORY_PICTURES
+                ).toString() + File.separator + "captures"
+            )
+            if (folder.exists() && folder.isDirectory) {
+                folder.deleteRecursively()
+            }
+            clearData()
+            TestHelper.clearPreferences()
+        }
     }
 }
 

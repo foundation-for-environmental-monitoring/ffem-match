@@ -57,24 +57,24 @@
                     android:orientation="horizontal">
 
                     <Button
-                        android:id="@+id/btn_card_color"
+                        android:id="@+id/btn_calibrated_color"
                         style="?android:attr/buttonBarButtonStyle"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:layout_marginStart="16dp"
                         android:clickable="false"
                         android:focusable="false"
-                        tools:background="#000" />
+                        tools:backgroundTint="#000" />
 
                     <Button
-                        android:id="@+id/btn_calibrated_color"
+                        android:id="@+id/btn_card_color"
                         style="?android:attr/buttonBarButtonStyle"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:layout_marginEnd="16dp"
                         android:clickable="false"
                         android:focusable="false"
-                        tools:background="#000" />
+                        tools:backgroundTint="#000" />
 
                 </LinearLayout>
 
@@ -179,8 +179,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/analyzed_image"
-                    android:minHeight="250dp"
-                    android:rotation="-90" />
+                    android:minHeight="250dp" />
 
             </LinearLayout>
 

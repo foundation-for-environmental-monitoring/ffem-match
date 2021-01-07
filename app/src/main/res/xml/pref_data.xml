@@ -14,4 +14,28 @@
             app:allowDividerBelow="true"
             app:iconSpaceReserved="false" />
     </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="preferenceCategoryLegacy"
+        android:title="Legacy"
+        app:allowDividerAbove="true"
+        app:iconSpaceReserved="false">
+        <CheckBoxPreference
+            android:key="@string/useColorCardVersion1"
+            android:summary="Use older barcode color card"
+            android:title="Use the older Barcode Color card"
+            app:allowDividerAbove="true"
+            app:allowDividerBelow="true"
+            app:iconSpaceReserved="false" />
+
+        <CheckBoxPreference
+            android:dependency="@string/useColorCardVersion1"
+            android:key="@string/manualCaptureOnlyKey"
+            android:summary="For barcode color card, turn this on if the auto photo capture is not working well on this phone"
+            android:title="@string/manual_photo_capture"
+            app:allowDividerAbove="true"
+            app:allowDividerBelow="true"
+            app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
 </androidx.preference.PreferenceScreen>

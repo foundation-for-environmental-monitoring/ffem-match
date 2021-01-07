@@ -8,7 +8,10 @@ import io.ffem.lite.R
 import io.ffem.lite.data.TestResult
 import io.ffem.lite.databinding.RowResultBinding
 
-class ResultAdapter(private val clickListener: (Int) -> Unit) :
+class ResultAdapter(
+    private val clickListener: (Int) -> Unit,
+    private val longClickListener: (Int) -> Boolean
+) :
     RecyclerView.Adapter<ResultAdapter.TestResultViewHolder>() {
 
     private var testList: List<TestResult>? = null
@@ -31,6 +34,7 @@ class ResultAdapter(private val clickListener: (Int) -> Unit) :
         holder.binding.result = testList!![position]
         holder.binding.executePendingBindings()
         holder.binding.layout.setOnClickListener { clickListener(position) }
+        holder.binding.layout.setOnLongClickListener { longClickListener(position) }
     }
 
     override fun getItemCount(): Int {
@@ -41,5 +45,6 @@ class ResultAdapter(private val clickListener: (Int) -> Unit) :
         return testList!![i]
     }
 
-    class TestResultViewHolder(val binding: RowResultBinding) : RecyclerView.ViewHolder(binding.root)
+    class TestResultViewHolder(val binding: RowResultBinding) :
+        RecyclerView.ViewHolder(binding.root)
 }

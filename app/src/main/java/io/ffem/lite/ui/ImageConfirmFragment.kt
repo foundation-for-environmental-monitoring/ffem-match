@@ -8,14 +8,16 @@ import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import io.ffem.lite.R
-import kotlinx.android.synthetic.main.app_bar_layout.*
-import kotlinx.android.synthetic.main.fragment_image_confirm.*
+import io.ffem.lite.databinding.FragmentImageConfirmBinding
 import java.io.File
 
 class ImageConfirmFragment : Fragment() {
+    private var _binding: FragmentImageConfirmBinding? = null
+    private val binding get() = _binding!!
     private val model: TestInfoViewModel by activityViewModels()
 
     interface OnConfirmImageListener {
@@ -33,27 +35,30 @@ class ImageConfirmFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_image_confirm, container, false)
+    ): View {
+        _binding = FragmentImageConfirmBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        accept_btn.setOnClickListener {
+        binding.acceptBtn.setOnClickListener {
             listener?.onConfirmImage(Activity.RESULT_OK)
         }
 
-        redo_btn.setOnClickListener {
+        binding.redoBtn.setOnClickListener {
             listener?.onConfirmImage(Activity.RESULT_CANCELED)
         }
     }
 
     override fun onResume() {
         super.onResume()
-        toolbar.setTitle(R.string.confirm)
+        val toolbar = view?.findViewById<Toolbar>(R.id.toolbar)
+        toolbar?.setTitle(R.string.confirm)
 
         if (model.test.get() != null) {
             val path =
@@ -65,9 +70,14 @@ class ImageConfirmFragment : Fragment() {
                 File(path + model.test.get()?.fileName + File.separator + fileName + "_swatch.jpg")
 
             if (extractImagePath.exists()) {
-                color_extract_img.setImageURI(Uri.fromFile(extractImagePath))
-                color_extract_img.refreshDrawableState()
+                binding.colorExtractImg.setImageURI(Uri.fromFile(extractImagePath))
+                binding.colorExtractImg.refreshDrawableState()
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

@@ -29,6 +29,7 @@ import io.ffem.lite.app.App.Companion.getTestInfo
 import io.ffem.lite.camera.CameraFragment
 import io.ffem.lite.common.*
 import io.ffem.lite.data.AppDatabase
+import io.ffem.lite.databinding.ActivityBarcodeBinding
 import io.ffem.lite.data.Result
 import io.ffem.lite.model.CalibrationValue
 import io.ffem.lite.model.ErrorType
@@ -36,11 +37,9 @@ import io.ffem.lite.model.TestInfo
 import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.preference.AppPreferences.isCalibration
 import io.ffem.lite.preference.isTestRunning
-import io.ffem.lite.preference.useColorCardVersion2
-import io.ffem.lite.util.ColorUtil
+import io.ffem.lite.preference.useColorCardVersion1
+import io.ffem.lite.util.BarcodeColorUtil
 import io.ffem.lite.util.PreferencesUtil
-import kotlinx.android.synthetic.main.activity_barcode.*
-import kotlinx.android.synthetic.main.fragment_result.*
 import java.io.File
 import java.io.File.separator
 import java.util.*
@@ -63,6 +62,7 @@ class BarcodeActivity : BaseActivity(),
     InstructionFragment.OnStartTestListener,
     ImageConfirmFragment.OnConfirmImageListener {
 
+    private lateinit var binding: ActivityBarcodeBinding
     private lateinit var broadcastManager: LocalBroadcastManager
     private var testInfo: TestInfo? = null
     lateinit var model: TestInfoViewModel
@@ -93,12 +93,12 @@ class BarcodeActivity : BaseActivity(),
                 if (testInfo!!.error == ErrorType.BAD_LIGHTING ||
                     testInfo!!.error == ErrorType.IMAGE_TILTED
                 ) {
-                    view_pager.currentItem = RESULT_PAGE
+                    binding.viewPager.currentItem = RESULT_PAGE
                 } else {
-                    view_pager.currentItem = CONFIRMATION_PAGE
+                    binding.viewPager.currentItem = CONFIRMATION_PAGE
                 }
             } else {
-                view_pager.currentItem = RESULT_PAGE
+                binding.viewPager.currentItem = RESULT_PAGE
             }
         }
     }
@@ -107,19 +107,21 @@ class BarcodeActivity : BaseActivity(),
         super.onCreate(savedInstanceState)
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
 
-        setContentView(R.layout.activity_barcode)
+        binding = ActivityBarcodeBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
         broadcastManager = LocalBroadcastManager.getInstance(this)
 
-        if (useColorCardVersion2()) {
-            broadcastManager.registerReceiver(
-                colorCardCapturedBroadcastReceiver,
-                IntentFilter(CARD_CAPTURED_EVENT_BROADCAST)
-            )
-        } else {
+        if (useColorCardVersion1()) {
             broadcastManager.registerReceiver(
                 capturedPhotoBroadcastReceiver,
                 IntentFilter(CAPTURED_EVENT_BROADCAST)
+            )
+        } else {
+            broadcastManager.registerReceiver(
+                colorCardCapturedBroadcastReceiver,
+                IntentFilter(CARD_CAPTURED_EVENT_BROADCAST)
             )
         }
 
@@ -145,11 +147,11 @@ class BarcodeActivity : BaseActivity(),
             TestInfoViewModel::class.java
         )
 
-        view_pager.isUserInputEnabled = false
+        binding.viewPager.isUserInputEnabled = false
         val testPagerAdapter = TestPagerAdapter(this)
-        view_pager.adapter = testPagerAdapter
+        binding.viewPager.adapter = testPagerAdapter
 
-        view_pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+        binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageScrollStateChanged(state: Int) {
             }
 
@@ -248,7 +250,7 @@ class BarcodeActivity : BaseActivity(),
         val bitmap = BitmapFactory.decodeFile(File(filePath).path)
 
         if (bitmap != null) {
-            ColorUtil.extractImage(this, bitmap)
+            BarcodeColorUtil.extractImage(this, bitmap)
         }
     }
 
@@ -293,20 +295,20 @@ class BarcodeActivity : BaseActivity(),
     }
 
     private fun pageBack() {
-        if (view_pager.currentItem in CAMERA_PAGE..CONFIRMATION_PAGE) {
+        if (binding.viewPager.currentItem in CAMERA_PAGE..CONFIRMATION_PAGE) {
             val testPagerAdapter = TestPagerAdapter(this)
-            view_pager.adapter = testPagerAdapter
+            binding.viewPager.adapter = testPagerAdapter
         } else {
-            view_pager.currentItem = view_pager.currentItem - 1
+            binding.viewPager.currentItem = binding.viewPager.currentItem - 1
         }
     }
 
     private fun pageNext() {
-        view_pager.currentItem = view_pager.currentItem + 1
+        binding.viewPager.currentItem = binding.viewPager.currentItem + 1
     }
 
     override fun onBackPressed() {
-        if (view_pager.currentItem > INSTRUCTION_PAGE) {
+        if (binding.viewPager.currentItem > INSTRUCTION_PAGE) {
             pageBack()
         } else {
             super.onBackPressed()
@@ -357,23 +359,23 @@ class BarcodeActivity : BaseActivity(),
     }
 
     override fun onStartTest() {
-        view_pager.currentItem = CAMERA_PAGE
+        binding.viewPager.currentItem = CAMERA_PAGE
     }
 
     override fun onConfirmImage(action: Int) {
         if (action == RESULT_OK) {
             if (isCalibration()) {
                 if (model.test.get()?.error == ErrorType.NO_ERROR) {
-                    view_pager.currentItem = CALIBRATE_LIST_PAGE
+                    binding.viewPager.currentItem = CALIBRATE_LIST_PAGE
                 } else {
-                    view_pager.currentItem = RESULT_PAGE
+                    binding.viewPager.currentItem = RESULT_PAGE
                 }
             } else {
-                view_pager.currentItem = CALIBRATE_LIST_PAGE
+                binding.viewPager.currentItem = CALIBRATE_LIST_PAGE
             }
         } else {
             val testPagerAdapter = TestPagerAdapter(this)
-            view_pager.adapter = testPagerAdapter
+            binding.viewPager.adapter = testPagerAdapter
         }
     }
 }

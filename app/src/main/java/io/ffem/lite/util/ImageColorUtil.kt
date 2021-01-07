@@ -1,5 +1,3 @@
-@file:Suppress("SpellCheckingInspection")
-
 package io.ffem.lite.util
 
 import android.content.Context
@@ -12,6 +10,9 @@ import androidx.core.graphics.red
 import io.ffem.lite.R
 import io.ffem.lite.app.App.Companion.getCardColors
 import io.ffem.lite.camera.Utilities
+import io.ffem.lite.common.Constants.INTERPOLATION_COUNT
+import io.ffem.lite.common.Constants.MAX_COLOR_DISTANCE_RGB
+import io.ffem.lite.common.Constants.MAX_DISTANCE
 import io.ffem.lite.data.AppDatabase
 import io.ffem.lite.data.Calibration
 import io.ffem.lite.data.TestResult
@@ -202,7 +203,7 @@ object ImageColorUtil {
 
             val cal = cardColors[calibrationIndex]
             calibrationIndex++
-            cal.color = getAverageColor(pixels)
+            cal.color = getAverageColor(pixels, false)
 
             val canvas = Canvas(bitmap)
             canvas.drawRect(rectangle, paint)
@@ -223,7 +224,7 @@ object ImageColorUtil {
 
             val cal = cardColors[calibrationIndex]
             calibrationIndex++
-            cal.color = getAverageColor(pixels)
+            cal.color = getAverageColor(pixels, false)
 
             val canvas = Canvas(bitmap)
             canvas.drawRect(rectangle, paint)
@@ -242,7 +243,7 @@ object ImageColorUtil {
         )
         val pixels = getBitmapPixels(bitmap, rectangle)
 
-        val cuvetteColor = getAverageColor(pixels)
+        val cuvetteColor = getAverageColor(pixels, true)
 
         val swatches: ArrayList<Swatch> = ArrayList()
         val colorInfo = ColorInfo(cuvetteColor, swatches)
@@ -463,11 +464,11 @@ object ImageColorUtil {
         colorToFind: Int, swatches: List<Swatch>
     ): ColorCompareInfo {
 
-        var distance = getMaxDistance(getColorDistanceTolerance().toDouble())
+        var lowestDistance = getMaxDistance(getColorDistanceTolerance().toDouble())
 
         var resultValue = -1.0
         var matchedColor = -1
-        var tempDistance: Double
+        var newDistance: Double
         var nearestDistance = MAX_DISTANCE.toDouble()
         var nearestMatchedColor = -1
         var matchedIndex = 0
@@ -475,19 +476,19 @@ object ImageColorUtil {
         for (i in swatches.indices) {
             val tempColor = swatches[i].color
 
-            tempDistance = getColorDistance(tempColor, colorToFind)
-            if (nearestDistance > tempDistance) {
-                nearestDistance = tempDistance
+            newDistance = getColorDistance(tempColor, colorToFind)
+            if (nearestDistance > newDistance) {
+                nearestDistance = newDistance
                 nearestMatchedColor = tempColor
             }
 
-            if (tempDistance == 0.0) {
+            if (newDistance == 0.0) {
                 resultValue = swatches[i].value
                 matchedColor = swatches[i].color
                 matchedIndex = i
                 break
-            } else if (tempDistance < distance) {
-                distance = tempDistance
+            } else if (newDistance < lowestDistance) {
+                lowestDistance = newDistance
                 resultValue = swatches[i].value
                 matchedColor = swatches[i].color
                 matchedIndex = i
@@ -496,10 +497,16 @@ object ImageColorUtil {
 
         //if no result was found add some diagnostic info
         if (resultValue == -1.0) {
-            distance = nearestDistance
+            lowestDistance = nearestDistance
             matchedColor = nearestMatchedColor
         }
-        return ColorCompareInfo(resultValue, colorToFind, matchedColor, distance, matchedIndex)
+        return ColorCompareInfo(
+            resultValue,
+            colorToFind,
+            matchedColor,
+            lowestDistance,
+            matchedIndex
+        )
     }
 
     private fun getMaxDistance(defaultValue: Double): Double {

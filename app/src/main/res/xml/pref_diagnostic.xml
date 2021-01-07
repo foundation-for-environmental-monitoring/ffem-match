@@ -7,48 +7,76 @@
         app:allowDividerBelow="true"
         app:iconSpaceReserved="false">
 
-        <CheckBoxPreference
-            android:key="@string/useColorCardVersion2"
-            android:summary="Color card with QR code corners"
-            android:title="Use version 2 color card"
+        <EditTextPreference
+            android:defaultValue="120"
+            android:dialogMessage="The minimum brightness (0 - 255)"
+            android:inputType="number"
+            android:key="@string/minimum_brightness"
+            android:maxLength="3"
+            android:selectAllOnFocus="true"
+            android:title="Minimum brightness"
+            app:allowDividerAbove="true"
+            app:allowDividerBelow="true"
+            app:iconSpaceReserved="false" />
+
+        <EditTextPreference
+            android:defaultValue="240"
+            android:dialogMessage="The max brightness (0 - 255)"
+            android:inputType="number"
+            android:key="@string/maximum_brightness"
+            android:maxLength="3"
+            android:selectAllOnFocus="true"
+            android:title="Maximum brightness"
+            app:allowDividerAbove="true"
+            app:allowDividerBelow="true"
+            app:iconSpaceReserved="false" />
+
+        <EditTextPreference
+            android:defaultValue="25"
+            android:dialogMessage="Shadow tolerance (0 - 255)"
+            android:inputType="number"
+            android:key="@string/shadow_tolerance"
+            android:maxLength="3"
+            android:selectAllOnFocus="true"
+            android:title="Shadow tolerance"
             app:allowDividerAbove="true"
             app:allowDividerBelow="true"
             app:iconSpaceReserved="false" />
 
         <EditTextPreference
             android:defaultValue="55"
-            android:dialogMessage="The max difference between the sample color and the colors on the card"
+            android:dialogMessage="The max difference between the sample color &amp; card colors"
             android:inputType="number"
             android:key="@string/colorDistanceToleranceKey"
             android:maxLength="3"
             android:selectAllOnFocus="true"
-            android:title="Max sample color distance"
+            android:title="No Match Error tolerance"
             app:allowDividerAbove="true"
             app:allowDividerBelow="true"
             app:iconSpaceReserved="false" />
 
         <EditTextPreference
             android:defaultValue="80"
-            android:dialogMessage="The max difference between the colors on the left and right columns of the color card"
+            android:dialogMessage="The max difference between left &amp; right colors columns"
             android:inputType="number"
             android:key="@string/maxCardColorDistanceAllowedKey"
             android:maxLength="3"
             android:selectAllOnFocus="true"
-            android:title="Max card color calibration distance"
+            android:title="Calibration Error tolerance"
             app:allowDividerAbove="true"
             app:allowDividerBelow="true"
             app:iconSpaceReserved="false" />
 
-        <PreferenceCategory
-            android:key="preferenceCategoryCamera"
-            android:title="@string/camera"
-            app:allowDividerAbove="true"
-            app:iconSpaceReserved="false">
-            <SwitchPreferenceCompat
-                android:key="@string/useFlashModeKey"
-                android:title="Torch mode"
-                app:iconSpaceReserved="false" />
-        </PreferenceCategory>
+    </PreferenceCategory>
 
+    <PreferenceCategory
+        android:key="preferenceCategoryCamera"
+        android:title="@string/camera"
+        app:allowDividerAbove="true"
+        app:iconSpaceReserved="false">
+        <SwitchPreferenceCompat
+            android:key="@string/useFlashModeKey"
+            android:title="Torch mode"
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
 </PreferenceScreen>

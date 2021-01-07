@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment.DIRECTORY_PICTURES
@@ -18,6 +19,7 @@ import android.view.View.VISIBLE
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.databinding.BindingAdapter
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -30,6 +32,7 @@ import io.ffem.lite.common.RESULT_EVENT_BROADCAST
 import io.ffem.lite.common.TEST_INFO_KEY
 import io.ffem.lite.data.AppDatabase
 import io.ffem.lite.data.TestResult
+import io.ffem.lite.databinding.ActivityResultListBinding
 import io.ffem.lite.helper.ApkHelper.isNonStoreVersion
 import io.ffem.lite.model.ResultInfo
 import io.ffem.lite.model.TestInfo
@@ -37,11 +40,11 @@ import io.ffem.lite.model.toLocalString
 import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.preference.SettingsActivity
 import io.ffem.lite.preference.useDummyImage
-import io.ffem.lite.util.ColorUtil
+import io.ffem.lite.util.BarcodeColorUtil
 import io.ffem.lite.util.FileUtil.getPathFromURI
 import io.ffem.lite.util.PreferencesUtil
+import io.ffem.lite.util.snackBar
 import io.ffem.lite.util.toast
-import kotlinx.android.synthetic.main.activity_result_list.*
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -72,7 +75,7 @@ fun getResultString(view: TextView, result: TestResult) {
 }
 
 class ResultListActivity : AppUpdateActivity() {
-
+    private lateinit var binding: ActivityResultListBinding
     private lateinit var db: AppDatabase
     private var appIsClosing: Boolean = false
     private lateinit var broadcastManager: LocalBroadcastManager
@@ -103,10 +106,43 @@ class ResultListActivity : AppUpdateActivity() {
         }
     }
 
+    private fun onDeleteResultClick(position: Int): Boolean {
+        val row = binding.testResultsLst.layoutManager?.findViewByPosition(position)
+        row?.background = ColorDrawable(Color.LTGRAY)
+        val builder = androidx.appcompat.app.AlertDialog.Builder(this)
+        builder.setTitle(getString(R.string.delete))
+        builder.setMessage(getString(R.string.delete_selected_result))
+        builder.setPositiveButton(R.string.delete) { _, _ ->
+            val item = adapter.getItemAt(position)
+            db.resultDao().deleteResult(item.id)
+            val path =
+                getExternalFilesDir(DIRECTORY_PICTURES).toString() + File.separator + "captures"
+            val directory = File("$path${File.separator}${item.id}${File.separator}")
+            if (directory.exists() && directory.isDirectory) {
+                directory.deleteRecursively()
+            }
+
+            refreshList()
+
+            findViewById<CoordinatorLayout>(R.id.coordinator_lyt)
+                ?.snackBar(getString(R.string.deleted))
+        }
+
+        builder.setNegativeButton(android.R.string.cancel) { _, _ ->
+            row?.background = ColorDrawable(Color.TRANSPARENT)
+        }
+
+        builder.setOnCancelListener {
+            row?.background = ColorDrawable(Color.TRANSPARENT)
+        }
+
+        builder.show()
+        return true
+    }
+
     private fun onResultClick(position: Int) {
         MainScope().launch {
             delay(300)
-
             val item = adapter.getItemAt(position)
             val intent = Intent(baseContext, ResultViewActivity::class.java)
 
@@ -123,13 +159,15 @@ class ResultListActivity : AppUpdateActivity() {
         }
     }
 
-    private var adapter: ResultAdapter = ResultAdapter(clickListener = {
-        onResultClick(it)
-    })
+    private var adapter: ResultAdapter = ResultAdapter(
+        clickListener = { onResultClick(it) },
+        longClickListener = { onDeleteResultClick(it) })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_result_list)
+        binding = ActivityResultListBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
         title = getString(R.string.app_name) + " - " + getVersionName()
 
@@ -171,7 +209,7 @@ class ResultListActivity : AppUpdateActivity() {
             }
         }
 
-        test_results_lst.addItemDecoration(
+        binding.testResultsLst.addItemDecoration(
             DividerItemDecoration(
                 this,
                 DividerItemDecoration.VERTICAL
@@ -181,20 +219,20 @@ class ResultListActivity : AppUpdateActivity() {
         db = AppDatabase.getDatabase(baseContext)
         val resultList = db.resultDao().getResults()
         adapter.setTestList(resultList)
-        test_results_lst.adapter = adapter
+        binding.testResultsLst.adapter = adapter
 
         showHideList()
     }
 
     private fun showHideList() {
         if (adapter.itemCount > 0) {
-            test_results_lst.visibility = VISIBLE
-            launch_info_txt.visibility = GONE
-            no_result_txt.visibility = GONE
+            binding.testResultsLst.visibility = VISIBLE
+            binding.launchInfoTxt.visibility = GONE
+            binding.noResultTxt.visibility = GONE
         } else {
-            test_results_lst.visibility = GONE
-            launch_info_txt.visibility = VISIBLE
-            no_result_txt.visibility = VISIBLE
+            binding.testResultsLst.visibility = GONE
+            binding.launchInfoTxt.visibility = VISIBLE
+            binding.noResultTxt.visibility = VISIBLE
         }
     }
 
@@ -215,14 +253,14 @@ class ResultListActivity : AppUpdateActivity() {
             IntentFilter(RESULT_EVENT_BROADCAST)
         )
 
-        test_results_lst.adapter = adapter
+        binding.testResultsLst.adapter = adapter
 
         showHideList()
 
         if (useDummyImage()) {
-            load_image_fab.visibility = VISIBLE
+            binding.loadImageFab.visibility = VISIBLE
         } else {
-            load_image_fab.visibility = GONE
+            binding.loadImageFab.visibility = GONE
         }
     }
 
@@ -244,7 +282,7 @@ class ResultListActivity : AppUpdateActivity() {
 
     private fun refreshList() {
         adapter.setTestList(db.resultDao().getResults())
-        test_results_lst.adapter = adapter
+        binding.testResultsLst.adapter = adapter
         adapter.notifyDataSetChanged()
         showHideList()
     }
@@ -313,12 +351,12 @@ class ResultListActivity : AppUpdateActivity() {
                         try {
                             if (bitmapFromFile != null) {
                                 AppPreferences.generateImageFileName()
-                                progress_lyt.visibility = VISIBLE
-                                ColorUtil.extractImage(this, bitmapFromFile)
+                                binding.progressLyt.visibility = VISIBLE
+                                BarcodeColorUtil.extractImage(this, bitmapFromFile)
                                 MainScope().launch {
                                     delay(3500)
                                     refreshList()
-                                    progress_lyt.visibility = GONE
+                                    binding.progressLyt.visibility = GONE
                                     onResultClick(0)
                                 }
                             } else {

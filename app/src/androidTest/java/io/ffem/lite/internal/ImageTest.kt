@@ -23,7 +23,7 @@ import io.ffem.lite.common.TestUtil.checkResult
 import io.ffem.lite.common.TestUtil.childAtPosition
 import io.ffem.lite.common.clearData
 import io.ffem.lite.common.pH
-import io.ffem.lite.common.testDataList
+import io.ffem.lite.common.qrTestDataList
 import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.ErrorType.NO_ERROR
 import io.ffem.lite.model.toLocalString
@@ -39,12 +39,10 @@ import org.junit.runner.RunWith
 import org.junit.runners.MethodSorters
 import java.io.File
 
-const val TIME_DELAY = 11000L
-
 @LargeTest
 @RunWith(AndroidJUnit4::class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-class SampleImageTest {
+class ImageTest {
 
     @get:Rule
     val mActivityTestRule = activityScenarioRule<ResultListActivity>()
@@ -61,171 +59,17 @@ class SampleImageTest {
         if (!initialized) {
             clearPreferences()
             clearData()
-            PreferencesUtil.setBoolean(
-                ApplicationProvider.getApplicationContext(),
-                R.string.useColorCardVersion1, true
-            )
             initialized = true
         }
     }
 
     @Test
-    fun image_000_Chlorine_0_Point_5() {
+    fun image_000_Chlorine_2_Point_0() {
         startInternalTest(0)
     }
 
-    @Test
-    fun image_001_Chlorine_0() {
-        startInternalTest(1)
-    }
-
-    @Test
-    fun image_002_InvalidBarcode() {
-        startInternalTest(2)
-    }
-
-    @Test
-    fun image_003_InvalidBarcode() {
-        startInternalTest(3)
-    }
-
-    @Test
-    fun image_004_pH_NoMatch() {
-        startInternalTest(4)
-    }
-
-    @Test
-    fun image_005_Waiting() {
-        startInternalTest(5)
-    }
-
-    @Test
-    fun image_006_Chlorine_NoMatch() {
-        startInternalTest(6)
-    }
-
-    @Test
-    fun image_007_Chlorine_Point_5() {
-        startInternalTest(7)
-    }
-
-    @Test
-    fun image_008_Chlorine_1_Point_5() {
-        startInternalTest(8)
-    }
-
-    @Test
-    fun image_009_BadLight() {
-        startInternalTest(9)
-    }
-
-    @Test
-    fun image_010_Chlorine_CalibrationError() {
-        startInternalTest(10)
-    }
-
-    @Test
-    fun image_011_Tilted() {
-        startInternalTest(11)
-    }
-
-    @Test
-    fun image_012_Waiting() {
-        startInternalTest(12)
-    }
-
-    @Test
-    fun image_013_Waiting() {
-        startInternalTest(13)
-    }
-
-    @Test
-    fun image_014_pH_6_Point_5() {
-        startInternalTest(14)
-    }
-
-    @Test
-    fun image_015_Chlorine_4_Point_3() {
-        startInternalTest(15)
-    }
-
-    @Test
-    fun image_016_Chlorine_CalibrationError() {
-        startInternalTest(16)
-    }
-
-    @Test
-    fun image_017_BadLighting() {
-        startInternalTest(17)
-    }
-
-    @Test
-    fun image_018_Waiting() {
-        startInternalTest(18)
-    }
-
-    @Test
-    fun image_019_Chlorine_3_Point_0() {
-        startInternalTest(19)
-    }
-
-    @Test
-    fun image_020_Waiting() {
-        startInternalTest(20)
-    }
-
-    @Test
-    fun image_021_Waiting() {
-        startInternalTest(21)
-    }
-
-    @Test
-    fun image_022_Waiting() {
-        startInternalTest(22)
-    }
-
-    @Test
-    fun image_023_FluorideHighRange_NoMatch() {
-        startInternalTest(23)
-    }
-
-    @Test
-    fun image_024_Fluoride_1_Point_0() {
-        startInternalTest(24)
-    }
-
-    @Test
-    fun image_025_Nitrate_0() {
-        startInternalTest(25)
-    }
-
-    @Test
-    fun image_026_Iron_0() {
-        startInternalTest(26)
-    }
-
-    @Test
-    fun image_027_Fluoride_0_Point_5() {
-        startInternalTest(27)
-    }
-
-    @Test
-    fun image_028_pH_7_Point_0() {
-        startInternalTest(28)
-    }
-
-    @Test
-    fun image_029_Phosphate_1_Point_6() {
-        startInternalTest(29)
-    }
-
-    @Test
-    fun imageX_Waiting() {
-        startInternalTest(500)
-    }
-
     private fun startInternalTest(imageNumber: Int) {
-        val testData = testDataList[imageNumber]!!
+        val testData = qrTestDataList[imageNumber]!!
 
         PreferencesUtil.setString(
             ApplicationProvider.getApplicationContext(),

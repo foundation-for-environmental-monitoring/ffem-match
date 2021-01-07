@@ -22,7 +22,7 @@ import io.ffem.lite.common.TestUtil
 import io.ffem.lite.common.TestUtil.childAtPosition
 import io.ffem.lite.common.TestUtil.sleep
 import io.ffem.lite.common.clearData
-import io.ffem.lite.common.testDataList
+import io.ffem.lite.common.qrTestDataList
 import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.toResourceId
 import io.ffem.lite.ui.ResultListActivity
@@ -58,18 +58,18 @@ class CalibrationTest {
     }
 
     @Test
-    fun image_024_Fluoride_0_Point_5() {
-        startCalibrationTest(24)
+    fun image_000_Chlorine_1_Point_0() {
+        startCalibrationTest(0)
     }
 
     @Test
-    fun image_004_pH_NoMatch() {
+    fun image_001_pH_NoMatch() {
         TestHelper.clearPreferences()
-        calibrationNoMatch(4)
+        calibrationNoMatch(1)
     }
 
     private fun startCalibrationTest(@Suppress("SameParameterValue") imageNumber: Int) {
-        val testData = testDataList[imageNumber]!!
+        val testData = qrTestDataList[imageNumber]!!
         val screenshotName = "calibration"
 
         PreferencesUtil.setString(
@@ -86,10 +86,10 @@ class CalibrationTest {
 
         onView(withText(R.string.start)).perform(click())
 
-        sleep(TIME_DELAY)
+        sleep(QR_TIME_DELAY)
 
         if (testData.expectedResultError == ErrorType.NO_ERROR) {
-            onView(withText(R.string.accept)).perform(click())
+            onView(withText(R.string.continue_on)).perform(click())
         }
 
         onView(withText(testData.testDetails.name.toLocalString())).check(matches(isDisplayed()))
@@ -141,13 +141,13 @@ class CalibrationTest {
 
         onView(withText(R.string.start)).perform(click())
 
-        sleep(TIME_DELAY / 2)
+        sleep(QR_TIME_DELAY / 2)
 
         takeScreenshot(screenshotName)
 
-        sleep(TIME_DELAY / 2)
+        sleep(QR_TIME_DELAY / 2)
 
-        onView(withText(R.string.accept)).perform(click())
+        onView(withText(R.string.continue_on)).perform(click())
 
         onView(withText(testData.testDetails.name.toLocalString())).check(matches(isDisplayed()))
 
@@ -178,14 +178,14 @@ class CalibrationTest {
 
         onView(withText(R.string.start)).perform(click())
 
-        sleep(TIME_DELAY)
+        sleep(QR_TIME_DELAY)
 
-        onView(withText(R.string.accept)).perform(click())
+        onView(withText(R.string.continue_on)).perform(click())
 
         onView(withText(testData.testDetails.name.toLocalString())).check(matches(isDisplayed()))
 
         val resultTextView2 = onView(withId(R.id.result_txt))
-        resultTextView2.check(matches(TestUtil.checkResult(testData.expectedResult)))
+        resultTextView2.check(matches(TestUtil.checkResult(1.0)))
 
         onView(allOf(withId(R.id.unit_txt), withText("mg/l")))
             .check(matches(isDisplayed()))
@@ -209,7 +209,7 @@ class CalibrationTest {
     }
 
     private fun calibrationNoMatch(@Suppress("SameParameterValue") imageNumber: Int) {
-        val testData = testDataList[imageNumber]!!
+        val testData = qrTestDataList[imageNumber]!!
         val screenshotName = "calibration"
 
         PreferencesUtil.setString(
@@ -226,12 +226,12 @@ class CalibrationTest {
 
         onView(withText(R.string.start)).perform(click())
 
-        sleep(TIME_DELAY)
+        sleep(QR_TIME_DELAY)
 
         if (testData.expectedResultError != ErrorType.BAD_LIGHTING &&
             testData.expectedResultError != ErrorType.IMAGE_TILTED
         ) {
-            onView(withText(R.string.accept)).perform(click())
+            onView(withText(R.string.continue_on)).perform(click())
         }
 
         sleep(1000)
@@ -265,16 +265,16 @@ class CalibrationTest {
 
         onView(withText(R.string.start)).perform(click())
 
-        sleep(TIME_DELAY / 2)
+        sleep(QR_TIME_DELAY / 2)
 
         takeScreenshot(screenshotName)
 
-        sleep(TIME_DELAY / 2)
+        sleep(QR_TIME_DELAY / 2)
 
         if (testData.expectedResultError != ErrorType.BAD_LIGHTING &&
             testData.expectedResultError != ErrorType.IMAGE_TILTED
         ) {
-            onView(withText(R.string.accept)).perform(click())
+            onView(withText(R.string.continue_on)).perform(click())
         }
 
         sleep(2000)
@@ -300,12 +300,12 @@ class CalibrationTest {
 
         onView(withText(R.string.start)).perform(click())
 
-        sleep(TIME_DELAY)
+        sleep(QR_TIME_DELAY)
 
         if (testData.expectedResultError != ErrorType.BAD_LIGHTING &&
             testData.expectedResultError != ErrorType.IMAGE_TILTED
         ) {
-            onView(withText(R.string.accept)).perform(click())
+            onView(withText(R.string.continue_on)).perform(click())
         }
 
         sleep(2000)

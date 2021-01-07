@@ -11,9 +11,13 @@
     <string name="data_deleted">Data deleted</string>
     <string name="data">Data</string>
     <string name="delete_data">Delete all data and photos</string>
-    <string name="delete">Delete</string>
     <string name="dummy_image_message">Analyzing debug sample image</string>
     <string name="sample_image_not_found">Sample image not found</string>
+    <string name="manual_photo_capture">Manual capture for Barcode Card</string>
+
+    <string name="grayscale_result">Grayscale result</string>
+    <string name="grayscale_extracts">Grayscale Extracts</string>
+    <string name="take_photo">Take photo</string>
 
     <!--Software Notices-->
     <string name="apache_software"><a href="https://source.android.com/setup/licenses">Android&#160;Open&#160;Source&#160;Project</a>&#160;&#160;&#8226;&#160;&#160;<a href="https://github.com/joel-costigliola/assertj-core">AssertJ</a>&#160;&#160;&#8226;&#160;&#160;<a href="https://github.com/google/gson">Gson</a>&#160;&#160;&#8226;&#160;&#160;<a href="https://github.com/JakeWharton/timber">Timber</a>&#160;&#160;&#8226;&#160;&#160;<a href="https://github.com/zxing/zxing">ZXing</a></string>
@@ -29,12 +33,15 @@
     <string name="diagnosticModeKey">diagnosticMode</string>
     <string name="testModeOnKey">testModeOn</string>
     <string name="dummyImageKey">dummyImage</string>
-    <string name="useColorCardVersion2">useColorCardVersion2</string>
+    <string name="useColorCardVersion1">useColorCardVersion1</string>
     <string name="manualCaptureOnlyKey">manualCaptureOnly</string>
     <string name="aboutKey">aboutApp</string>
     <string name="data_delete_key">data_delete</string>
     <string name="colorDistanceToleranceKey">colorDistanceTolerance</string>
     <string name="maxCardColorDistanceAllowedKey">maxCardCalibrationDistance</string>
+    <string name="minimum_brightness">minimumBrightness</string>
+    <string name="maximum_brightness">maximumBrightness</string>
+    <string name="shadow_tolerance">shadowTolerance</string>
     <string name="useFlashModeKey">userFlashMode</string>
     <string name="testImageNumberKey">testImageNumber</string>
     <string name="diagnosticEnableTimeKey">diagnosticEnableTime</string>

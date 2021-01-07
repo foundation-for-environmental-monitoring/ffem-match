@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.provider.Settings
 import android.util.TypedValue
 import android.view.WindowManager
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
@@ -13,10 +15,11 @@ import com.google.firebase.ktx.Firebase
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.preference.isDiagnosticMode
-import kotlinx.android.synthetic.main.app_bar_layout.*
 
 abstract class BaseActivity : AppCompatActivity() {
 
+    private var toolbar: Toolbar? = null
+    private var textToolbarTitle: TextView? = null
     private var mTitle: String? = null
     private lateinit var firebaseAnalytics: FirebaseAnalytics
 
@@ -42,11 +45,11 @@ abstract class BaseActivity : AppCompatActivity() {
         theme.resolveAttribute(android.R.attr.windowBackground, typedValue, true)
         val windowBackground = typedValue.data
         window.setBackgroundDrawable(ColorDrawable(windowBackground))
-
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
+        toolbar = findViewById(R.id.toolbar)
         if (toolbar != null) {
             try {
                 setSupportActionBar(toolbar)
@@ -72,16 +75,18 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     override fun setTitle(title: CharSequence?) {
+        textToolbarTitle = findViewById(R.id.toolbar_title_txt)
         if (textToolbarTitle != null && title != null) {
             mTitle = title.toString()
-            textToolbarTitle.text = title
+            textToolbarTitle!!.text = title
         }
     }
 
     override fun setTitle(titleId: Int) {
+        textToolbarTitle = findViewById(R.id.toolbar_title_txt)
         if (textToolbarTitle != null && titleId != 0) {
             mTitle = getString(titleId)
-            textToolbarTitle.setText(titleId)
+            textToolbarTitle!!.setText(titleId)
         }
     }
 

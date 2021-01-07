@@ -10,9 +10,11 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import io.ffem.lite.R
-import kotlinx.android.synthetic.main.fragment_notices_dialog.*
+import io.ffem.lite.databinding.FragmentNoticesDialogBinding
 
 class NoticesDialogFragment : DialogFragment() {
+    private var _binding: FragmentNoticesDialogBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,16 +22,18 @@ class NoticesDialogFragment : DialogFragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_notices_dialog, container, false)
+    ): View {
+        _binding = FragmentNoticesDialogBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        makeEverythingClickable(about_container)
+        makeEverythingClickable(binding.aboutContainer)
 
-        home_button.setOnClickListener { dismiss() }
+        binding.homeButton.setOnClickListener { dismiss() }
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -61,6 +65,11 @@ class NoticesDialogFragment : DialogFragment() {
         }
 
         super.onResume()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     companion object {

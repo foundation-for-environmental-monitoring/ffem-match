@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_slogan">Water Quality System</string>
     <string name="copyright">Copyright © ffem</string>
     <string name="legal_info">Legal Information</string>
@@ -11,6 +11,9 @@
     <string name="ok">OK</string>
     <string name="close">Close</string>
     <string name="camera">Camera</string>
+    <string name="delete">Delete</string>
+    <string name="delete_selected_result">Delete selected result?</string>
+    <string name="deleted">Deleted</string>
 
     <!-- Software notices -->
     <string name="software_notices">Software Notices</string>
@@ -37,12 +40,22 @@
     <string name="result">Result</string>
     <string name="analyzed_photo">Analyzed Photo</string>
     <string name="color_extracts">Colors detected</string>
+    <string name="confirm_color_extract">If the color detection above is incorrect, redo the capture with better light conditions.</string>
     <string name="result_image">Result image</string>
-    <string name="take_photo">Take photo</string>
     <string name="start">Start</string>
-    <string name="accept">Accept</string>
+    <string name="instructions">Instructions</string>
+    <string name="place_card_and_cuvette">Place the card and cuvette with the water sample on the provided stand.</string>
+    <string name="when_ready_camera">When ready, point the phone camera at it.</string>
+    <string name="click_launch_camera">Click <b>Start</b> below to launch the camera preview.</string>
+    <string name="camera_start_align_card">When the camera starts, align the card in the viewer as shown in the example above.</string>
+    <string name="continue_on">Continue</string>
     <string name="redo">Redo</string>
-    <string name="manual_photo_capture">Manual photo capture</string>
+    <string name="navigate_up">Navigate up</string>
+    <string name="app_in_development">This app is in development. It may be unstable.</string>
+    <string name="analyzing_photo">Analyzing photo…</string>
+    <string name="brightness">Brightness</string>
+    <string name="closer">Closer</string>
+    <string name="too_close">Too close</string>
     <string name="confirm_calibration">Confirm Calibration</string>
     <string name="confirm">Confirm</string>
     <string name="select_calibration_point">Select calibration point</string>
@@ -54,6 +67,9 @@
     <string name="no_match" tools:keep="@string/no_match">No match</string>
     <string name="calibration_error" tools:keep="@string/calibration_error">Calibration error</string>
     <string name="bad_lighting" tools:keep="@string/bad_lighting">Bad lighting</string>
+    <string name="not_bright">Not bright enough</string>
+    <string name="too_bright">Too bright</string>
+    <string name="too_many_shadows">Shadows on card</string>
     <string name="image_tilted" tools:keep="@string/image_tilted">Tilted image</string>
     <string name="invalid_barcode">Wrong color card</string>
     <string name="wrong_card" tools:keep="@string/wrong_card">Wrong color card</string>
@@ -104,18 +120,4 @@
     <string name="view_hierarchy">Go To Prompt</string>
     <string name="calibrate">Calibrate</string>
     <string name="calibrate_summary">Calibrate using a standard</string>
-    <string name="grayscale_result">Grayscale result</string>
-    <string name="grayscale_extracts">Grayscale Extracts</string>
-    <string name="navigate_up">Navigate up</string>
-    <string name="app_in_development">This app is in development. It may be unstable.</string>
-    <string name="instructions">Instructions</string>
-    <string name="place_card_and_cuvette">Place the card and cuvette with the water sample on the provided stand.</string>
-    <string name="when_ready_camera">When ready, point the phone camera at it.</string>
-    <string name="click_launch_camera">Click <b>Start</b> below to launch the camera preview.</string>
-    <string name="camera_start_align_card">When the camera starts, align the card in the viewer as shown in the example above.</string>
-    <string name="confirm_color_extract">If the color detection above is incorrect, redo the capture with better light conditions.</string>
-    <string name="analyzing_photo">Analyzing photo…</string>
-    <string name="brightness">Brightness</string>
-    <string name="closer">Closer</string>
-    <string name="too_close">Too close</string>
 </resources>

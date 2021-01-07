@@ -2,7 +2,7 @@ package io.ffem.lite.model
 
 import android.os.Parcelable
 import io.ffem.lite.data.Calibration
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class ResultInfo(

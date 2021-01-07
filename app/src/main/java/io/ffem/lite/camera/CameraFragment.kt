@@ -20,23 +20,25 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
+import android.widget.ProgressBar
+import android.widget.TextView
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.view.PreviewView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.google.android.material.button.MaterialButton
 import io.ffem.lite.R
 import io.ffem.lite.common.*
 import io.ffem.lite.data.AppDatabase
 import io.ffem.lite.data.TestResult
+import io.ffem.lite.databinding.FragmentCameraBinding
 import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.TestInfo
 import io.ffem.lite.preference.*
-import kotlinx.android.synthetic.main.fragment_camera.*
-import kotlinx.android.synthetic.main.preview_overlay.*
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
@@ -58,7 +60,8 @@ import kotlin.math.min
  * - Image analysis
  */
 class CameraFragment : Fragment() {
-
+    private var _binding: FragmentCameraBinding? = null
+    private val binding get() = _binding!!
     private lateinit var metrics: DisplayMetrics
     private var currentLuminosity: Int = -1
     private lateinit var cameraProvider: ProcessCameraProvider
@@ -79,25 +82,34 @@ class CameraFragment : Fragment() {
     private lateinit var colorCardAnalyzer: ColorCardAnalyzer
     private val mainScope = MainScope()
 
+    private var luminosityTextView: TextView? = null
+    private var messageText: TextView? = null
+    private var takePhotoButton: MaterialButton? = null
+    private var cameraContainer: ConstraintLayout? = null
+    private var cardOverlay: AppCompatImageView? = null
+    private var progressBar: ProgressBar? = null
+
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
 
             val message = intent.getStringExtra(ERROR_MESSAGE)
             val scanProgress = intent.getIntExtra(SCAN_PROGRESS, 0)
+            val messageOverlay = view?.findViewById<TextView>(R.id.message_overlay)
 
-            if (message_overlay != null && !message.isNullOrEmpty()) {
-                message_overlay.text = message
-                message_overlay.visibility = VISIBLE
+            if (messageOverlay != null && !message.isNullOrEmpty()) {
+                messageOverlay.text = message
+                messageOverlay.visibility = VISIBLE
             } else {
                 mainScope.cancel(null)
                 mainScope.launch {
                     delay(2000)
-                    if (message_overlay != null) {
-                        message_overlay.visibility = GONE
+                    if (messageOverlay != null) {
+                        messageOverlay.visibility = GONE
                     }
                 }
             }
-            progress_bar.progress = scanProgress
+            val progressBar = view?.findViewById<ProgressBar>(R.id.progress_bar)
+            progressBar?.progress = scanProgress
         }
     }
 
@@ -142,7 +154,7 @@ class CameraFragment : Fragment() {
                     if (currentLuminosity != value) {
                         currentLuminosity = value
                         val lux = getString(R.string.brightness) + ": $value"
-                        luminosity_txt?.text = lux
+                        luminosityTextView?.text = lux
                     }
                 }
 
@@ -166,7 +178,7 @@ class CameraFragment : Fragment() {
         }
         broadcastManager.registerReceiver(broadcastReceiver, IntentFilter(ERROR_EVENT_BROADCAST))
 
-        if (!useColorCardVersion2()) {
+        if (useColorCardVersion1()) {
             broadcastManager.registerReceiver(
                 capturedPhotoBroadcastReceiver,
                 IntentFilter(CAPTURED_EVENT_BROADCAST)
@@ -178,11 +190,11 @@ class CameraFragment : Fragment() {
             startCamera()
         }
 
-        if (take_photo_btn != null) {
+        if (takePhotoButton != null) {
             if (manualCaptureOnly()) {
-                take_photo_btn.visibility = VISIBLE
+                takePhotoButton?.visibility = VISIBLE
             } else {
-                take_photo_btn.visibility = GONE
+                takePhotoButton?.visibility = GONE
             }
         }
     }
@@ -191,7 +203,10 @@ class CameraFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? = inflater.inflate(R.layout.fragment_camera, container, false)
+    ): View {
+        _binding = FragmentCameraBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -199,13 +214,13 @@ class CameraFragment : Fragment() {
     }
 
     private fun startCamera() {
-        camera_preview.post {
-            displayId = view?.findViewById<PreviewView>(R.id.camera_preview)!!.display.displayId
+        binding.cameraPreview.post {
+            displayId = binding.cameraPreview.display.displayId
             updateCameraUi()
             bindCameraUseCases()
 
             if (getSampleTestImageNumberInt() > -1) {
-                message_txt.visibility = VISIBLE
+                messageText?.visibility = VISIBLE
             }
         }
     }
@@ -238,12 +253,12 @@ class CameraFragment : Fragment() {
     private fun bindCameraUseCases() {
 
         // Get screen metrics used to setup camera for full screen resolution
-        metrics = DisplayMetrics().also { camera_preview.display.getRealMetrics(it) }
+        metrics = DisplayMetrics().also { binding.cameraPreview.display?.getRealMetrics(it) }
 //        Timber.d("Screen metrics: ${metrics.widthPixels} x ${metrics.heightPixels}")
         val screenAspectRatio = aspectRatio(metrics.widthPixels, metrics.heightPixels)
 //        Timber.d("Preview aspect ratio: $screenAspectRatio")
 
-        val rotation = camera_preview.display.rotation
+        val rotation = binding.cameraPreview.display?.rotation
 
         // Bind the cameraProvider to the LifeCycleOwner
         val cameraSelector =
@@ -257,10 +272,10 @@ class CameraFragment : Fragment() {
             // Preview
             preview = Preview.Builder()
                 .setTargetAspectRatio(screenAspectRatio)
-                .setTargetRotation(rotation)
+                .setTargetRotation(rotation!!)
                 .build()
                 .also {
-                    it.setSurfaceProvider(camera_preview.surfaceProvider)
+                    it.setSurfaceProvider(binding.cameraPreview.surfaceProvider)
                 }
 
             try {
@@ -275,18 +290,18 @@ class CameraFragment : Fragment() {
                         .build()
                 }
 
-                if (useColorCardVersion2()) {
-                    colorCardAnalyzer = ColorCardAnalyzer(requireContext())
-                    colorCardAnalyzer.previewHeight = camera_preview.measuredHeight
-                    colorCardAnalyzer.viewFinderHeight = card_overlay.measuredHeight
-                    colorCardAnalyzer.previewWidth = metrics.widthPixels
-                    colorCardAnalyzer.reset()
-                    progress_bar.visibility = GONE
-                    analysis.setAnalyzer(executorService, colorCardAnalyzer)
-                } else {
+                if (useColorCardVersion1()) {
                     barcodeAnalyzer = BarcodeAnalyzer(requireContext())
                     barcodeAnalyzer.reset()
                     analysis.setAnalyzer(executorService, barcodeAnalyzer)
+                } else {
+                    colorCardAnalyzer = ColorCardAnalyzer(requireContext())
+                    colorCardAnalyzer.previewHeight = binding.cameraPreview.measuredHeight
+                    colorCardAnalyzer.viewFinderHeight = cardOverlay!!.measuredHeight
+                    colorCardAnalyzer.previewWidth = metrics.widthPixels
+                    colorCardAnalyzer.reset()
+                    progressBar!!.visibility = GONE
+                    analysis.setAnalyzer(executorService, colorCardAnalyzer)
                 }
 
                 // Must unbind use cases before rebinding them.
@@ -299,12 +314,13 @@ class CameraFragment : Fragment() {
                 cameraControl.setLinearZoom(0f)
                 cameraControl.enableTorch(useFlashMode())
 
-                camera_preview.afterMeasured {
+                binding.cameraPreview.afterMeasured {
                     val factory: MeteringPointFactory = SurfaceOrientedMeteringPointFactory(
-                        camera_preview.width.toFloat(), camera_preview.height.toFloat()
+                        binding.cameraPreview.width.toFloat(),
+                        binding.cameraPreview.height.toFloat()
                     )
-                    val centerWidth = camera_preview.width.toFloat() / 2
-                    val centerHeight = camera_preview.height.toFloat() / 5
+                    val centerWidth = binding.cameraPreview.width.toFloat() / 2
+                    val centerHeight = binding.cameraPreview.height.toFloat() / 5
                     //create a point on the center of the view
                     val autoFocusPoint = factory.createPoint(centerWidth, centerHeight)
                     cameraControl.startFocusAndMetering(
@@ -347,46 +363,53 @@ class CameraFragment : Fragment() {
     private fun updateCameraUi() {
 
         // Remove previous UI if any
-        camera_ui_container.let {
+        cameraContainer.let {
             container.removeView(it)
         }
 
-        View.inflate(requireContext(), R.layout.preview_overlay, container)
+        val view = View.inflate(requireContext(), R.layout.preview_overlay, container)
+
+        messageText = view.findViewById(R.id.message_txt)
+        progressBar = view.findViewById(R.id.progress_bar)
+        luminosityTextView = view.findViewById(R.id.luminosity_txt)
+        takePhotoButton = view.findViewById(R.id.take_photo_btn)
+        cameraContainer = view.findViewById(R.id.camera_ui_container)
+        cardOverlay = view.findViewById(R.id.card_overlay)
 
         if (manualCaptureOnly()) {
-            take_photo_btn.visibility = VISIBLE
-            take_photo_btn.setOnClickListener {
+            takePhotoButton!!.visibility = VISIBLE
+            takePhotoButton!!.setOnClickListener {
                 barcodeAnalyzer.takePhoto()
             }
         } else {
-            take_photo_btn.visibility = GONE
+            takePhotoButton!!.visibility = GONE
         }
 
-        if (useColorCardVersion2()) {
-            card_overlay.setImageDrawable(
-                ContextCompat.getDrawable(
-                    requireContext(),
-                    R.drawable.card_overlay_2
-                )
-            )
-        } else {
-            card_overlay.setImageDrawable(
+        if (useColorCardVersion1()) {
+            cardOverlay!!.setImageDrawable(
                 ContextCompat.getDrawable(
                     requireContext(),
                     R.drawable.card_overlay
                 )
             )
-            card_overlay.animate()
+            cardOverlay!!.animate()
                 .setStartDelay(100)
                 .alpha(0.0f)
                 .setDuration(8000)
                 .setListener(object : AnimatorListenerAdapter() {
                     override fun onAnimationEnd(animation: Animator) {
-                        if (card_overlay != null) {
-                            card_overlay.visibility = View.INVISIBLE
+                        if (cardOverlay != null) {
+                            cardOverlay!!.visibility = View.INVISIBLE
                         }
                     }
                 })
+        } else {
+            cardOverlay!!.setImageDrawable(
+                ContextCompat.getDrawable(
+                    requireContext(),
+                    R.drawable.card_overlay_2
+                )
+            )
         }
     }
 
@@ -400,6 +423,11 @@ class CameraFragment : Fragment() {
                 }
             }
         })
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     companion object {
