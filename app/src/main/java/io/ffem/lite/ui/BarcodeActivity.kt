@@ -29,8 +29,8 @@ import io.ffem.lite.app.App.Companion.getTestInfo
 import io.ffem.lite.camera.CameraFragment
 import io.ffem.lite.common.*
 import io.ffem.lite.data.AppDatabase
-import io.ffem.lite.databinding.ActivityBarcodeBinding
 import io.ffem.lite.data.Result
+import io.ffem.lite.databinding.ActivityBarcodeBinding
 import io.ffem.lite.model.CalibrationValue
 import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.TestInfo
@@ -187,9 +187,6 @@ class BarcodeActivity : BaseActivity(),
             }
             setResult(Activity.RESULT_OK, resultIntent)
         }
-        submit_btn.setOnClickListener{
-            sendResultToCloudDatabase(testInfo = TestInfo())
-        }
         finish()
     }
 
@@ -206,8 +203,6 @@ class BarcodeActivity : BaseActivity(),
             )
         )
     }
-
-
 
     private fun saveImageData(data: Intent) {
         val testInfo = data.getParcelableExtra<TestInfo>(TEST_INFO_KEY) ?: return
