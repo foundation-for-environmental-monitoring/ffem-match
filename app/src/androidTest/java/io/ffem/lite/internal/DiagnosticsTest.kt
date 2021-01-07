@@ -14,6 +14,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
+import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.common.TestHelper
 import io.ffem.lite.common.TestHelper.enterDiagnosticMode
@@ -30,10 +31,7 @@ import io.ffem.lite.util.toLocalString
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.core.IsInstanceOf
-import org.junit.AfterClass
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import org.junit.*
 import org.junit.runner.RunWith
 import java.io.File
 
@@ -440,6 +438,12 @@ class DiagnosticsTest {
             }
             clearData()
             TestHelper.clearPreferences()
+        }
+
+        @JvmStatic
+        @BeforeClass
+        fun initialize() {
+            BuildConfig.INSTRUMENTED_TEST_RUNNING.set(true)
         }
     }
 }

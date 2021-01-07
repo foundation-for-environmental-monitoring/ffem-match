@@ -243,8 +243,7 @@ class ResultListActivity : AppUpdateActivity() {
 
     override fun onResume() {
 
-        // TODO: Uncomment this after QR card version is ready
-//        AppPreferences.checkDiagnosticModeExpiry()
+        AppPreferences.checkDiagnosticModeExpiry()
 
         super.onResume()
 

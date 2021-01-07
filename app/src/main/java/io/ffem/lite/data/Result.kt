@@ -6,5 +6,5 @@ data class Result(
     val risk: String,
     val result: String,
     val unit: String,
-    val time: MutableMap<String, String>
+    val time: Long
 )

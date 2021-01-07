@@ -22,7 +22,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ServerValue
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.app.App.Companion.getTestInfo
@@ -191,17 +190,19 @@ class BarcodeActivity : BaseActivity(),
     }
 
     private fun sendResultToCloudDatabase(testInfo: TestInfo) {
-        val ref = FirebaseDatabase.getInstance().getReference("result").push()
-        ref.setValue(
-            Result(
-                testInfo.uuid!!,
-                testInfo.name!!,
-                testInfo.getRiskEnglish(this),
-                testInfo.getResult().toString(),
-                testInfo.unit!!,
-                ServerValue.TIMESTAMP
+        if (!BuildConfig.INSTRUMENTED_TEST_RUNNING.get()) {
+            val ref = FirebaseDatabase.getInstance().getReference("result").push()
+            ref.setValue(
+                Result(
+                    testInfo.uuid!!,
+                    testInfo.name!!,
+                    testInfo.getRiskEnglish(this),
+                    testInfo.getResult().toString(),
+                    testInfo.unit!!,
+                    System.currentTimeMillis()
+                )
             )
-        )
+        }
     }
 
     private fun saveImageData(data: Intent) {
