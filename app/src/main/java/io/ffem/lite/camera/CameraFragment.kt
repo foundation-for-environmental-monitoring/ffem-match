@@ -126,6 +126,7 @@ class CameraFragment : Fragment() {
                         testInfo.name!!,
                         Date().time,
                         -1.0,
+                        testInfo.maxValue,
                         -1.0,
                         0.0,
                         currentLuminosity,

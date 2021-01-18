@@ -15,6 +15,7 @@ data class TestResult(
     val name: String,
     val date: Long,
     val value: Double,
+    val maxValue: Double,
     val valueGrayscale: Double,
     val marginOfError: Double,
     val luminosity: Int = -1,

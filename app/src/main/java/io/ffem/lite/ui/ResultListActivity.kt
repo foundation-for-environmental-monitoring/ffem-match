@@ -70,7 +70,12 @@ fun getResultString(view: TextView, result: TestResult) {
     if (result.value < 0) {
         view.text = result.error.toLocalString(view.context)
     } else {
-        view.text = result.value.toString()
+        if (result.value >= result.maxValue) {
+            val value = "> " + result.value.toString()
+            view.text = value
+        } else {
+            view.text = result.value.toString()
+        }
     }
 }
 

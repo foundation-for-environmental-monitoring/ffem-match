@@ -27,6 +27,11 @@ data class TestInfo(
     var fileName: String = UUID.randomUUID().toString()
 ) : Parcelable {
 
+    val maxValue: Double
+        get() {
+            return values[values.size / 2].value
+        }
+
     fun getResultString(context: Context): String {
         return if (resultInfo.result < 0) {
             error.toLocalString(context)
@@ -34,7 +39,11 @@ data class TestInfo(
             if (calibratedResultInfo.result > -1) {
                 calibratedResultInfo.result.toString()
             } else {
-                resultInfo.result.toString()
+                if (resultInfo.result >= values[values.size / 2].value) {
+                    "> " + values[values.size / 2].value.toString()
+                } else {
+                    resultInfo.result.toString()
+                }
             }
         }
     }

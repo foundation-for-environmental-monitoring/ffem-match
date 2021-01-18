@@ -171,14 +171,9 @@ class BarcodeActivity : BaseActivity(),
         if (testInfo != null) {
             val resultIntent = Intent()
             if (testInfo!!.getResult() >= 0) {
-
                 sendResultToCloudDatabase(testInfo!!)
-
-                resultIntent.putExtra(TEST_VALUE_KEY, testInfo!!.getResult().toString())
-                resultIntent.putExtra(
-                    testInfo!!.name + "_Result",
-                    testInfo!!.getResult().toString()
-                )
+                resultIntent.putExtra(TEST_VALUE_KEY, testInfo!!.getResultString(this))
+                resultIntent.putExtra(testInfo!!.name + "_Result", testInfo!!.getResultString(this))
                 resultIntent.putExtra(testInfo!!.name + "_Risk", testInfo!!.getRiskEnglish(this))
                 resultIntent.putExtra("meta_device", Build.BRAND + ", " + Build.MODEL)
             } else {
@@ -197,7 +192,7 @@ class BarcodeActivity : BaseActivity(),
                     testInfo.uuid!!,
                     testInfo.name!!,
                     testInfo.getRiskEnglish(this),
-                    testInfo.getResult().toString(),
+                    testInfo.getResultString(this),
                     testInfo.unit!!,
                     System.currentTimeMillis()
                 )

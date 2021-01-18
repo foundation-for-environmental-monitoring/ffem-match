@@ -92,6 +92,7 @@ object ImageColorUtil {
                     val resultImage = ImageUtil.createResultImage(
                         testInfo.resultInfo,
                         testInfo.calibratedResultInfo,
+                        testInfo.maxValue,
                         500
                     )
 
@@ -126,7 +127,7 @@ object ImageColorUtil {
                         db.resultDao().insert(
                             TestResult(
                                 testInfo.fileName, testInfo.uuid!!, 0, testInfo.name!!,
-                                Date().time, -1.0, -1.0, 0.0, error = NO_ERROR
+                                Date().time, -1.0, testInfo.maxValue, -1.0, 0.0, error = NO_ERROR
                             )
                         )
 
@@ -363,12 +364,14 @@ object ImageColorUtil {
             swatches.removeAt(0)
         }
 
-        // Predict 2 more points in the calibration list to account for high levels of contamination
-        val swatch1 = swatches[swatches.size - 2]
-        val swatch2 = swatches[swatches.size - 1]
-
-        swatches.add(predictNextColor(swatch1, swatch2))
-        swatches.add(predictNextColor(swatch2, swatches[swatches.size - 1]))
+        // Predict more points in the calibration list to account for high levels of contamination
+        swatches.add(predictNextColor(swatches[swatches.size - 2], swatches[swatches.size - 1]))
+        swatches.add(predictNextColor(swatches[swatches.size - 2], swatches[swatches.size - 1]))
+        swatches.add(predictNextColor(swatches[swatches.size - 2], swatches[swatches.size - 1]))
+        swatches.add(predictNextColor(swatches[swatches.size - 2], swatches[swatches.size - 1]))
+        swatches.add(predictNextColor(swatches[swatches.size - 2], swatches[swatches.size - 1]))
+        swatches.add(predictNextColor(swatches[swatches.size - 2], swatches[swatches.size - 1]))
+        swatches.add(predictNextColor(swatches[swatches.size - 2], swatches[swatches.size - 1]))
 
         for (i in 0 until swatches.size - 1) {
 
@@ -424,6 +427,7 @@ object ImageColorUtil {
         colorInfo: ColorInfo
     ): ResultInfo {
 
+        val maxRange = colorInfo.swatches[colorInfo.swatches.size - 1].value
         val gradientList = generateGradient(colorInfo.swatches)
 
         //Find the color within the generated gradient that matches the sampleColor
@@ -447,8 +451,31 @@ object ImageColorUtil {
             distanceSum += swatch.distance
         }
         resultInfo.swatchDistance = distanceSum / gradientList.size
+
+        if (resultInfo.result > maxRange - (maxRange * 0.05)) {
+            var lastSwatchPosition = 2
+            for (x in 2..colorInfo.swatches.size) {
+                if (colorInfo.swatches[x].value > resultInfo.result) {
+                    lastSwatchPosition = x
+                    break
+                }
+            }
+            for (x in colorInfo.swatches.size - 1 downTo lastSwatchPosition + 1) {
+                colorInfo.swatches.removeAt(x)
+            }
+
+            resultInfo.result = maxRange
+        } else {
+            for (x in colorInfo.swatches.size - 1 downTo 2) {
+                if (colorInfo.swatches[x].value > maxRange) {
+                    colorInfo.swatches.removeAt(x)
+                }
+            }
+        }
+
         resultInfo.matchedPosition =
-            colorCompareInfo.matchedIndex.toFloat() * 100 / gradientList.size
+            (colorCompareInfo.matchedIndex.toFloat() * 100 /
+                    ((colorInfo.swatches.size - 1) * INTERPOLATION_COUNT)).toFloat()
 
         return resultInfo
     }

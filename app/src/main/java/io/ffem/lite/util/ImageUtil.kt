@@ -138,6 +138,7 @@ object ImageUtil {
     fun createResultImage(
         resultInfo: ResultInfo,
         calibratedResultInfo: ResultInfo,
+        maxValue: Double,
         imageWidth: Int
     ): Bitmap {
 
@@ -229,12 +230,14 @@ object ImageUtil {
                 swatchTop + swatchHeight,
                 swatchPaint
             )
-            canvas.drawText(
-                decimalFormat.format(swatch.value),
-                index * swatchWidth + swatchWidth / 2.toFloat(),
-                textTop,
-                textPaint
-            )
+            if (swatch.value <= maxValue) {
+                canvas.drawText(
+                    decimalFormat.format(swatch.value),
+                    index * swatchWidth + swatchWidth / 2.toFloat(),
+                    textTop,
+                    textPaint
+                )
+            }
         }
 
         return result

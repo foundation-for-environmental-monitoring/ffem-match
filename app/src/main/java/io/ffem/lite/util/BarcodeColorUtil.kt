@@ -356,6 +356,7 @@ object BarcodeColorUtil {
                 val resultImage = ImageUtil.createResultImage(
                     testInfo.resultInfo,
                     testInfo.calibratedResultInfo,
+                    testInfo.maxValue,
                     500
                 )
 
@@ -418,7 +419,7 @@ object BarcodeColorUtil {
                         db.resultDao().insert(
                             TestResult(
                                 testInfo.fileName, testInfo.uuid!!, 0, testInfo.name!!,
-                                Date().time, -1.0, -1.0, 0.0, error = NO_ERROR
+                                Date().time, -1.0, testInfo.maxValue, -1.0, 0.0, error = NO_ERROR
                             )
                         )
 
