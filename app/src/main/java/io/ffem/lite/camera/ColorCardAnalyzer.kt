@@ -116,14 +116,29 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                         return
                     }
 
-                    val allowedTilt = max(12.0, MAX_TILT_PERCENTAGE_ALLOWED * imageProxy.height)
+                    val allowedTilt = max(13.0, MAX_TILT_PERCENTAGE_ALLOWED * imageProxy.height)
                     // Check if image is tilted
                     if (abs(topLeft.x - bottomLeft.x) > allowedTilt ||
                         abs(topLeft.y - topRight.y) > allowedTilt ||
                         abs(topRight.x - bottomRight.x) > allowedTilt ||
                         abs(bottomLeft.y - bottomRight.y) > allowedTilt
                     ) {
-                        sendMessage(context.getString(R.string.correct_camera_tilt))
+                        if (bottomLeft.y - topLeft.y < bottomRight.y - topRight.y) {
+                            sendMessage(context.getString(R.string.tilt_forwards))
+                        }
+
+                        if (bottomLeft.y - topLeft.y > bottomRight.y - topRight.y) {
+                            sendMessage(context.getString(R.string.tilt_backwards))
+                        }
+
+                        if (bottomRight.x - bottomLeft.x > topRight.x - topLeft.x) {
+                            sendMessage(context.getString(R.string.tilt_left_backwards))
+                        }
+
+                        if (bottomRight.x - bottomLeft.x < topRight.x - topLeft.x) {
+                            sendMessage(context.getString(R.string.tilt_left_forwards))
+                        }
+
                         endProcessing(imageProxy)
                         return
                     }
