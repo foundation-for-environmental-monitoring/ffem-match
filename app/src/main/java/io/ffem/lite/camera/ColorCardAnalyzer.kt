@@ -22,6 +22,7 @@ import io.ffem.lite.model.TestInfo
 import io.ffem.lite.preference.*
 import io.ffem.lite.util.ImageColorUtil
 import io.ffem.lite.util.ImageUtil.toBitmap
+import io.ffem.lite.util.PreferencesUtil
 import io.ffem.lite.util.getAverageBrightness
 import io.ffem.lite.util.getBitmapPixels
 import io.ffem.lite.zxing.BinaryBitmap
@@ -224,6 +225,12 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                             return
                         }
                     } else {
+                        // if requested test id does not match the card test id
+                        val requestedTestId = PreferencesUtil.getString(context, TEST_ID_KEY, "")
+                        if ((requestedTestId!!.isNotEmpty() && testInfo.uuid != requestedTestId)) {
+                            sendMessage(context.getString(R.string.wrong_card))
+                            return
+                        }
                         savePhoto(bitmap, testInfo)
                     }
 
