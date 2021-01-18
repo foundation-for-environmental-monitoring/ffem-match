@@ -120,4 +120,8 @@
     <string name="view_hierarchy">Go To Prompt</string>
     <string name="calibrate">Calibrate</string>
     <string name="calibrate_summary">Calibrate using a standard</string>
+    <string name="tilt_backwards">Tilt phone backwards</string>
+    <string name="tilt_forwards">Tilt phone forwards</string>
+    <string name="tilt_left_forwards">Tilt phone left side forwards</string>
+    <string name="tilt_left_backwards">Tilt phone left side backwards</string>
 </resources>
