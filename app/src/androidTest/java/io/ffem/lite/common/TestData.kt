@@ -67,7 +67,8 @@ val qrTestDataList = mutableMapOf(
     0 to TestData(residualChlorine, 2.0, 0.25, risk = RiskLevel.HIGH),
     1 to TestData(pH, expectedResultError = ErrorType.NO_MATCH),
     2 to TestData(iron, 0.5, 0.25, risk = RiskLevel.HIGH),
-    3 to TestData(phosphate, 1.8, 0.47, risk = RiskLevel.HIGH)
+    3 to TestData(phosphate, 1.8, 0.47, risk = RiskLevel.HIGH),
+    4 to TestData(iron, 0.5, 0.25, risk = RiskLevel.HIGH)
 )
 
 data class TestData(

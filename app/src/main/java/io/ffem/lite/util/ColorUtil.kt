@@ -165,14 +165,18 @@ fun removeDarkColors(pixels: ArrayList<Int>): ArrayList<Int> {
         }
     }
 
-    val luminanceStart = lightLuminance - (abs(lightLuminance - darkLuminance) * 0.3)
-    val luminanceEnd = lightLuminance - (abs(lightLuminance - darkLuminance) * 0.1)
-    for (element in pixels) {
-        if (ColorUtils.calculateLuminance(element) in luminanceStart..luminanceEnd) {
-            newList.add(element)
+    return if (abs(lightLuminance - darkLuminance) > 0.01) {
+        val luminanceStart = lightLuminance - (abs(lightLuminance - darkLuminance) * 0.5)
+        val luminanceEnd = lightLuminance - (abs(lightLuminance - darkLuminance) * 0.1)
+        for (element in pixels) {
+            if (ColorUtils.calculateLuminance(element) in luminanceStart..luminanceEnd) {
+                newList.add(element)
+            }
         }
+        newList
+    } else {
+        pixels
     }
-    return newList
 }
 
 fun removeOutliers(pixels: ArrayList<Int>, distance: Int): ArrayList<Int> {
