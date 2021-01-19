@@ -187,7 +187,12 @@ class BarcodeActivity : BaseActivity(),
 
     private fun sendResultToCloudDatabase(testInfo: TestInfo) {
         if (!BuildConfig.INSTRUMENTED_TEST_RUNNING.get()) {
-            val ref = FirebaseDatabase.getInstance().getReference("result").push()
+            val path = if (BuildConfig.DEBUG) {
+                "result-debug"
+            } else {
+                "result"
+            }
+            val ref = FirebaseDatabase.getInstance().getReference(path).push()
             ref.setValue(
                 Result(
                     testInfo.uuid!!,
