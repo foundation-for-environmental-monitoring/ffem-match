@@ -80,10 +80,7 @@ class App : BaseApplication() {
                 version = if (isDiagnosticMode()) {
                     String.format("%s (Build %s)", packageInfo.versionName, versionCode)
                 } else {
-                    String.format(
-                        "%s %s", context.getString(R.string.version),
-                        packageInfo.versionName
-                    )
+                    packageInfo.versionName
                 }
             } catch (ignored: PackageManager.NameNotFoundException) {
                 // do nothing

@@ -123,20 +123,25 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                         abs(topRight.x - bottomRight.x) > allowedTilt ||
                         abs(bottomLeft.y - bottomRight.y) > allowedTilt
                     ) {
-                        if (bottomLeft.y - topLeft.y < bottomRight.y - topRight.y) {
-                            sendMessage(context.getString(R.string.tilt_forwards))
-                        }
 
-                        if (bottomLeft.y - topLeft.y > bottomRight.y - topRight.y) {
-                            sendMessage(context.getString(R.string.tilt_backwards))
-                        }
+                        val forward = (bottomRight.y - topRight.y) - (bottomLeft.y - topLeft.y)
+                        val backward = (bottomLeft.y - topLeft.y) - (bottomRight.y - topRight.y)
+                        val leftBackward = (topRight.x - topLeft.x) - (bottomRight.x - bottomLeft.x)
+                        val leftForward = (bottomRight.x - bottomLeft.x) - (topRight.x - topLeft.x)
 
-                        if (bottomRight.x - bottomLeft.x > topRight.x - topLeft.x) {
-                            sendMessage(context.getString(R.string.tilt_left_backwards))
-                        }
-
-                        if (bottomRight.x - bottomLeft.x < topRight.x - topLeft.x) {
-                            sendMessage(context.getString(R.string.tilt_left_forwards))
+                        when (max(max(max(forward, backward), leftBackward), leftForward)) {
+                            forward -> {
+                                sendMessage(context.getString(R.string.tilt_forwards))
+                            }
+                            backward -> {
+                                sendMessage(context.getString(R.string.tilt_backwards))
+                            }
+                            leftBackward -> {
+                                sendMessage(context.getString(R.string.tilt_left_backwards))
+                            }
+                            leftForward -> {
+                                sendMessage(context.getString(R.string.tilt_left_forwards))
+                            }
                         }
 
                         endProcessing(imageProxy)
