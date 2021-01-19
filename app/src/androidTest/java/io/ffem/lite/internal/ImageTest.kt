@@ -68,6 +68,11 @@ class ImageTest {
         startInternalTest(0)
     }
 
+    @Test
+    fun image_002_Iron_0_Point_5() {
+        startInternalTest(2)
+    }
+
     private fun startInternalTest(imageNumber: Int) {
         val testData = qrTestDataList[imageNumber]!!
 

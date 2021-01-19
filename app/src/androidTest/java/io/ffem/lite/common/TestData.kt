@@ -15,7 +15,9 @@ val iron = TestDetails(
     2, riskType = RiskType.SAFETY
 )
 val nitrate = TestDetails("Nitrate", "1b6b24c0fa93", R.string.water_tests_2, 3)
-val pH = TestDetails("pH", "7aa7fc084354", R.string.water_tests_2, 0,riskType = RiskType.ALKALINITY)
+val pH = TestDetails(
+    "pH", "7aa7fc084354", R.string.water_tests_2, 0, riskType = RiskType.ALKALINITY
+)
 val residualChlorine = TestDetails(
     "Residual Chlorine", "ad0d47bcc96b", R.string.water_tests_2,
     1, riskType = RiskType.QUANTITY
@@ -63,7 +65,8 @@ val testDataList = mutableMapOf(
 
 val qrTestDataList = mutableMapOf(
     0 to TestData(residualChlorine, 2.0, 0.25, risk = RiskLevel.HIGH),
-    1 to TestData(pH, expectedResultError = ErrorType.NO_MATCH)
+    1 to TestData(pH, expectedResultError = ErrorType.NO_MATCH),
+    2 to TestData(iron, 0.5, 0.25, risk = RiskLevel.HIGH)
 )
 
 data class TestData(
