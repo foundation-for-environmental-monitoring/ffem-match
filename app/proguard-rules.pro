@@ -22,3 +22,4 @@
 
 #noinspection ShrinkerUnresolvedReference
 -keep class io.ffem.lite.model.**{ *; }
+-keep class io.ffem.lite.data.**{ *; }
