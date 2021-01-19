@@ -24,6 +24,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.firebase.database.FirebaseDatabase
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
+import io.ffem.lite.app.App
 import io.ffem.lite.app.App.Companion.getTestInfo
 import io.ffem.lite.camera.CameraFragment
 import io.ffem.lite.common.*
@@ -194,7 +195,9 @@ class BarcodeActivity : BaseActivity(),
                     testInfo.getRiskEnglish(this),
                     testInfo.getResultString(this),
                     testInfo.unit!!,
-                    System.currentTimeMillis()
+                    System.currentTimeMillis(),
+                    App.getAppVersion(),
+                    Build.MODEL
                 )
             )
         }

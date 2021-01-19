@@ -6,5 +6,7 @@ data class Result(
     val risk: String,
     val result: String,
     val unit: String,
-    val time: Long
+    val time: Long,
+    val appVersion: String,
+    val device: String
 )
