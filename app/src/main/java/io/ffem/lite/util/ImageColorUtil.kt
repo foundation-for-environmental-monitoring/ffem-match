@@ -68,8 +68,6 @@ object ImageColorUtil {
 
                         // if calibrated then calculate also the result by adding the color differences
                         if (calibration != null) {
-                            extractedColors.swatches.removeAt(extractedColors.swatches.size - 1)
-                            extractedColors.swatches.removeAt(extractedColors.swatches.size - 1)
                             extractedColors.sampleColor = Color.rgb(
                                 min(
                                     max(0, extractedColors.sampleColor.red + calibration.rDiff),
@@ -428,6 +426,7 @@ object ImageColorUtil {
     ): ResultInfo {
 
         val maxRange = colorInfo.swatches[colorInfo.swatches.size - 1].value
+        val defaultSwatchSize = colorInfo.swatches.size
         val gradientList = generateGradient(colorInfo.swatches)
 
         //Find the color within the generated gradient that matches the sampleColor
@@ -460,6 +459,9 @@ object ImageColorUtil {
                     break
                 }
             }
+
+            lastSwatchPosition = max(lastSwatchPosition, defaultSwatchSize)
+
             for (x in colorInfo.swatches.size - 1 downTo lastSwatchPosition + 1) {
                 colorInfo.swatches.removeAt(x)
             }
@@ -467,6 +469,9 @@ object ImageColorUtil {
             resultInfo.result = maxRange
         } else {
             for (x in colorInfo.swatches.size - 1 downTo 2) {
+                if (colorInfo.swatches.size <= defaultSwatchSize) {
+                    break
+                }
                 if (colorInfo.swatches[x].value > maxRange) {
                     colorInfo.swatches.removeAt(x)
                 }
