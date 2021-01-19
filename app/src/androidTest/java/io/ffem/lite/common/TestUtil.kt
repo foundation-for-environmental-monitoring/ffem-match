@@ -43,7 +43,7 @@ object TestUtil {
                 if (item !is TextView) return false
                 var text = item.text.toString()
                 if (text.contains(" ")) {
-                    text = text.subSequence(text.lastIndexOf(" "), text.length - 1).toString()
+                    text = text.subSequence(text.lastIndexOf(" ") + 1, text.length).toString()
                 }
                 val convertedValue = try {
                     text.toDouble()
