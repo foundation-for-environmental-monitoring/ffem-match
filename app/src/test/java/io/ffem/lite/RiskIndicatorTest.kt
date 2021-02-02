@@ -187,7 +187,7 @@ class RiskIndicatorTest {
 
         val testInfo = getTestInfo(NITRATE_ID)!!
 
-        Assert.assertEquals(10, testInfo.values.size)
+        Assert.assertEquals(8, testInfo.values.size)
 
         Assert.assertEquals(3, testInfo.risks.size)
 
