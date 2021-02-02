@@ -228,7 +228,7 @@ class SampleImageSurveyTest : BaseTest() {
         nextSurveyPage(3, context.getString(testDetails.group))
 
         sleep(2000)
-        clickLaunchButton(testDetails.buttonIndex)
+        clickLaunchButton(testDetails.name)
 
         sleep(2000)
 

@@ -159,16 +159,14 @@ object TestHelper {
         }
     }
 
-    fun clickLaunchButton(index: Int) {
-        var buttonText =
-            ApplicationProvider.getApplicationContext<Context>().getString(R.string.launch)
+    fun clickLaunchButton(text: String) {
+        var buttonText = "$text >"
         findButtonInScrollable(buttonText)
-        var buttons: List<UiObject2?>? = mDevice.findObjects(By.text(buttonText))
+        val buttons: List<UiObject2?>? = mDevice.findObjects(By.text(buttonText))
         if (buttons?.size == 0) {
             buttonText = buttonText.toUpperCase()
         }
-        buttons = mDevice.findObjects(By.text(buttonText))
-        buttons!![index]!!.click()
+        mDevice.findObject(By.text(buttonText)).click()
         mDevice.waitForWindowUpdate("", 2000)
         SystemClock.sleep(4000)
     }

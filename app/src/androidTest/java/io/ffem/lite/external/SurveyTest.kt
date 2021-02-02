@@ -68,7 +68,7 @@ fun startTest(imageNumber: Int) {
 
     takeScreenshot(screenshotName)
 
-    clickLaunchButton(testData.testDetails.buttonIndex)
+    clickLaunchButton(testData.testDetails.name)
 
     SystemClock.sleep(1000)
 
