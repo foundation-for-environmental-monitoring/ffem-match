@@ -160,7 +160,7 @@ object TestHelper {
     }
 
     fun clickLaunchButton(text: String) {
-        var buttonText = "$text >"
+        var buttonText = text
         findButtonInScrollable(buttonText)
         val buttons: List<UiObject2?>? = mDevice.findObjects(By.text(buttonText))
         if (buttons?.size == 0) {
@@ -197,12 +197,12 @@ object TestHelper {
         }
     }
 
-    fun swipeUp() {
-        for (i in 0..2) {
-            mDevice.waitForIdle()
-            mDevice.swipe(300, 750, 300, 400, 4)
-        }
-    }
+//    fun swipeUp() {
+//        for (i in 0..2) {
+//            mDevice.waitForIdle()
+//            mDevice.swipe(300, 750, 300, 400, 4)
+//        }
+//    }
 
     private fun swipeDown() {
         for (i in 0..2) {

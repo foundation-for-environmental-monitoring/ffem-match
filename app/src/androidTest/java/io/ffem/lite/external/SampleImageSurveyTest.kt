@@ -34,7 +34,6 @@ import io.ffem.lite.model.ErrorType.WRONG_CARD
 import io.ffem.lite.model.toLocalString
 import io.ffem.lite.ui.ResultListActivity
 import io.ffem.lite.util.PreferencesUtil
-import io.ffem.lite.util.toLocalString
 import org.junit.*
 import org.junit.runner.RunWith
 import org.junit.runners.MethodSorters
@@ -189,6 +188,7 @@ class SampleImageSurveyTest : BaseTest() {
     fun image_023_FluorideHighRange_NoMatch() {
         startTest(23)
     }
+
     @Test
     fun image_024_Fluoride_1_Point_0() {
         startTest(24)
@@ -237,8 +237,6 @@ class SampleImageSurveyTest : BaseTest() {
         sleep(TIME_DELAY)
 
         onView(withText(R.string.continue_on)).perform(click())
-
-        onView(withText(testDetails.name.toLocalString())).check(matches(isDisplayed()))
 
         if (expectedResultError > NO_ERROR) {
             onView(withText(expectedResultError.toLocalString(context))).check(

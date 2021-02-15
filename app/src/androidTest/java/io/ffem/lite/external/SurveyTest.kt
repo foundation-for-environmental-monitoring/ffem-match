@@ -18,6 +18,7 @@ import io.ffem.lite.common.TestHelper.gotoSurveySelection
 import io.ffem.lite.common.TestHelper.mDevice
 import io.ffem.lite.common.TestHelper.nextSurveyPage
 import io.ffem.lite.common.TestHelper.selectMenuItem
+import io.ffem.lite.common.TestHelper.sleep
 import io.ffem.lite.common.TestHelper.startSurveyApp
 import io.ffem.lite.common.TestHelper.takeScreenshot
 import io.ffem.lite.common.TestUtil
@@ -130,7 +131,7 @@ fun startTest(imageNumber: Int) {
             val resultTextView = Espresso.onView(ViewMatchers.withId(R.id.result_txt))
 
             resultTextView.check(ViewAssertions.matches(TestUtil.checkResult(testData.expectedResult)))
-            val convertedValue = TestUtil.getText(resultTextView).toDouble()
+            val resultValue = TestUtil.getText(resultTextView)
 
             if (testData.testDetails == pH) {
                 Espresso.onView(ViewMatchers.withId(R.id.unit_txt))
@@ -166,7 +167,15 @@ fun startTest(imageNumber: Int) {
 
             takeScreenshot(screenshotName)
 
-            Assert.assertNotNull(mDevice.findObject(By.text(convertedValue.toString())))
+            Assert.assertNotNull(mDevice.findObject(By.text(resultValue)))
+
+            mDevice.findObject(By.text(testData.testDetails.name)).longClick()
+            sleep(500)
+            mDevice.findObject(By.text("Remove response")).click()
+            sleep(500)
+            mDevice.findObject(By.text("REMOVE RESPONSE")).click()
+
+            sleep(500)
 
             selectMenuItem()
 

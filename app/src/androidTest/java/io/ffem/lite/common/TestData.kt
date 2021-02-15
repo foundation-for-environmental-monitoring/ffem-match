@@ -26,7 +26,7 @@ val phosphate = TestDetails(
     "Phosphate", "0242ac120002", R.string.water_tests_2,
     2, riskType = RiskType.SAFETY
 )
-val invalidTest = TestDetails("Residual Chlorine", "ad0d47bcc96b", R.string.water_tests_2, 2)
+val invalidTest = TestDetails("Invalid Card Test", "ad0d47bcc96b", R.string.water_tests_2, 2)
 
 val testDataList = mutableMapOf(
     0 to TestData(residualChlorine, 0.5, 0.25, risk = RiskLevel.LOW),
@@ -48,7 +48,7 @@ val testDataList = mutableMapOf(
     16 to TestData(residualChlorine, expectedResultError = ErrorType.CALIBRATION_ERROR),
     17 to TestData(residualChlorine, expectedScanError = R.string.color_card_not_found),
     18 to TestData(residualChlorine, expectedScanError = R.string.color_card_not_found),
-    19 to TestData(residualChlorine, 3.0, 0.28, risk = RiskLevel.HIGH),
+    19 to TestData(residualChlorine, 2.5, 0.28, risk = RiskLevel.HIGH),
     20 to TestData(residualChlorine, expectedScanError = R.string.color_card_not_found),
     21 to TestData(residualChlorine, expectedScanError = R.string.color_card_not_found),
     22 to TestData(pH, expectedScanError = R.string.color_card_not_found),
