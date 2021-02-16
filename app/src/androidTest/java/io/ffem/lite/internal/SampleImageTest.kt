@@ -30,7 +30,6 @@ import io.ffem.lite.model.toLocalString
 import io.ffem.lite.model.toResourceId
 import io.ffem.lite.ui.ResultListActivity
 import io.ffem.lite.util.PreferencesUtil
-import io.ffem.lite.util.toLocalString
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.not
 import org.hamcrest.core.IsInstanceOf
@@ -248,7 +247,7 @@ class SampleImageTest {
                 onView(withText(R.string.continue_on)).perform(click())
             }
 
-            onView(withText(testData.testDetails.name.toLocalString())).check(matches(isDisplayed()))
+            onView(withText(testData.testDetails.name)).check(matches(isDisplayed()))
 
             if (testData.expectedResultError > NO_ERROR) {
                 onView(withText(testData.expectedResultError.toLocalString(context))).check(
@@ -257,7 +256,7 @@ class SampleImageTest {
                 onView(withText(R.string.close)).perform(click())
             } else {
 
-                onView(withText(testData.testDetails.name.toLocalString())).check(
+                onView(withText(testData.testDetails.name)).check(
                     matches(
                         isDisplayed()
                     )
@@ -295,7 +294,7 @@ class SampleImageTest {
             onView(
                 allOf(
                     withId(R.id.text_title),
-                    withText("${testData.testDetails.name.toLocalString()} (${imageNumber})"),
+                    withText("${testData.testDetails.name} (${imageNumber})"),
                     childAtPosition(
                         allOf(
                             withId(R.id.layout),
@@ -308,7 +307,7 @@ class SampleImageTest {
                     ),
                     isDisplayed()
                 )
-            ).check(matches(withText("${testData.testDetails.name.toLocalString()} (${imageNumber})")))
+            ).check(matches(withText("${testData.testDetails.name} (${imageNumber})")))
 
             val textView = onView(
                 allOf(

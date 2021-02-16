@@ -86,6 +86,7 @@
     <string name="fluoride">ఫ్లోరైడ్</string>
     <string name="fluoride_high_range">ఫ్లోరైడ్ - అధిక శ్రేణి</string>
     <string name="ph">pH</string>
+    <string name="phosphate">ఫాస్ఫేట్</string>
     <string name="iron">ఐరన్</string>
     <string name="nitrate">నైట్రేట్</string>
     <string name="residual_chlorine">అవశేష క్లోరిన్</string>
@@ -102,4 +103,5 @@
     <string name="low_alkalinity">ఆమ్ల</string>
     <string name="medium_alkalinity">తటస్థ</string>
     <string name="high_alkalinity">ప్రాథమిక</string>
+    <string name="remove_response">ప్రతిస్పందనను  తొలగించు</string>
 </resources>

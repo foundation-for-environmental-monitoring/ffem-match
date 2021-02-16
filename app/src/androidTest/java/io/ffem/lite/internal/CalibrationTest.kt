@@ -27,7 +27,6 @@ import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.toResourceId
 import io.ffem.lite.ui.ResultListActivity
 import io.ffem.lite.util.PreferencesUtil
-import io.ffem.lite.util.toLocalString
 import org.hamcrest.Matchers.allOf
 import org.junit.*
 import org.junit.runner.RunWith
@@ -92,7 +91,7 @@ class CalibrationTest {
             onView(withText(R.string.continue_on)).perform(click())
         }
 
-        onView(withText(testData.testDetails.name.toLocalString())).check(matches(isDisplayed()))
+        onView(withText(testData.testDetails.name)).check(matches(isDisplayed()))
 
         val resultTextView = onView(withId(R.id.result_txt))
         resultTextView.check(matches(TestUtil.checkResult(testData.expectedResult)))
@@ -149,7 +148,7 @@ class CalibrationTest {
 
         onView(withText(R.string.continue_on)).perform(click())
 
-        onView(withText(testData.testDetails.name.toLocalString())).check(matches(isDisplayed()))
+        onView(withText(testData.testDetails.name)).check(matches(isDisplayed()))
 
         takeScreenshot(screenshotName)
 
@@ -182,7 +181,7 @@ class CalibrationTest {
 
         onView(withText(R.string.continue_on)).perform(click())
 
-        onView(withText(testData.testDetails.name.toLocalString())).check(matches(isDisplayed()))
+        onView(withText(testData.testDetails.name)).check(matches(isDisplayed()))
 
         val resultTextView2 = onView(withId(R.id.result_txt))
         resultTextView2.check(matches(TestUtil.checkResult(1.0)))
@@ -235,7 +234,7 @@ class CalibrationTest {
         }
 
         sleep(1000)
-        onView(withText(testData.testDetails.name.toLocalString())).check(matches(isDisplayed()))
+        onView(withText(testData.testDetails.name)).check(matches(isDisplayed()))
 
         onView(withText(R.string.close)).perform(click())
 
@@ -278,7 +277,7 @@ class CalibrationTest {
         }
 
         sleep(2000)
-        onView(allOf(isDisplayed(), withText(testData.testDetails.name.toLocalString())))
+        onView(allOf(isDisplayed(), withText(testData.testDetails.name)))
             .check(matches(isDisplayed()))
 
         takeScreenshot(screenshotName)
@@ -309,7 +308,7 @@ class CalibrationTest {
         }
 
         sleep(2000)
-        onView(allOf(isDisplayed(), withText(testData.testDetails.name.toLocalString())))
+        onView(allOf(isDisplayed(), withText(testData.testDetails.name)))
             .check(matches(isDisplayed()))
 
         onView(withText(R.string.close)).perform(click())

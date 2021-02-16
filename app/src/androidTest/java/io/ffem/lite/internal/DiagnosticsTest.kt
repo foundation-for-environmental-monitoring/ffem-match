@@ -27,7 +27,6 @@ import io.ffem.lite.common.residualChlorine
 import io.ffem.lite.preference.isDiagnosticMode
 import io.ffem.lite.ui.ResultListActivity
 import io.ffem.lite.util.PreferencesUtil
-import io.ffem.lite.util.toLocalString
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.core.IsInstanceOf
@@ -180,7 +179,7 @@ class DiagnosticsTest {
 
         val textView = onView(
             allOf(
-                withId(R.id.name_txt), withText(residualChlorine.name.toLocalString()),
+                withId(R.id.name_txt), withText(residualChlorine.name),
                 childAtPosition(
                     childAtPosition(
                         withId(R.id.result_lyt),
@@ -191,7 +190,7 @@ class DiagnosticsTest {
                 isDisplayed()
             )
         )
-        textView.check(matches(withText(residualChlorine.name.toLocalString())))
+        textView.check(matches(withText(residualChlorine.name)))
 
         val textView2 = onView(
             allOf(

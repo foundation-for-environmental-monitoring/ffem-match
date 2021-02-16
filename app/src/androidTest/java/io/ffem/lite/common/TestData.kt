@@ -5,28 +5,24 @@ import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.RiskLevel
 import io.ffem.lite.model.RiskType
 
-val fluoride = TestDetails("Fluoride", "bcc31cb61159", R.string.water_tests_1, 0)
+val fluoride = TestDetails(R.string.fluoride, "bcc31cb61159", R.string.water_tests_1)
 val fluorideHighRange = TestDetails(
-    "Fluoride - High Range", "b6cb9742737a",
-    R.string.water_tests_1, 1
+    R.string.fluoride_high_range, "b6cb9742737a", R.string.water_tests_1
 )
 val iron = TestDetails(
-    "Iron", "352410b1893d", R.string.water_tests_2,
-    2, riskType = RiskType.SAFETY
+    R.string.iron, "352410b1893d", R.string.water_tests_2, riskType = RiskType.SAFETY
 )
-val nitrate = TestDetails("Nitrate", "1b6b24c0fa93", R.string.water_tests_2, 3)
+val nitrate = TestDetails(R.string.nitrate, "1b6b24c0fa93", R.string.water_tests_2)
 val pH = TestDetails(
-    "pH", "7aa7fc084354", R.string.water_tests_2, 0, riskType = RiskType.ALKALINITY
+    R.string.ph, "7aa7fc084354", R.string.water_tests_2, riskType = RiskType.ALKALINITY
 )
 val residualChlorine = TestDetails(
-    "Residual Chlorine", "ad0d47bcc96b", R.string.water_tests_2,
-    1, riskType = RiskType.QUANTITY
+    R.string.residual_chlorine, "ad0d47bcc96b", R.string.water_tests_2, riskType = RiskType.QUANTITY
 )
 val phosphate = TestDetails(
-    "Phosphate", "0242ac120002", R.string.water_tests_2,
-    2, riskType = RiskType.SAFETY
+    R.string.phosphate, "0242ac120002", R.string.water_tests_2, riskType = RiskType.SAFETY
 )
-val invalidTest = TestDetails("Invalid Card Test", "ad0d47bcc96b", R.string.water_tests_2, 2)
+val invalidTest = TestDetails(R.string.invalid_card_test, "ad0d47bcc96b", R.string.water_tests_2)
 
 val testDataList = mutableMapOf(
     0 to TestData(residualChlorine, 0.5, 0.25, risk = RiskLevel.LOW),
@@ -81,9 +77,8 @@ data class TestData(
 )
 
 data class TestDetails(
-    var name: String,
+    var name: Int,
     var id: String,
     var group: Int,
-    var buttonIndex: Int,
     var riskType: RiskType = RiskType.NORMAL
 )

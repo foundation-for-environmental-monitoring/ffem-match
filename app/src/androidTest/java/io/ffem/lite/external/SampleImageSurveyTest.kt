@@ -19,7 +19,7 @@ import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.common.*
 import io.ffem.lite.common.TestHelper.clearPreferences
-import io.ffem.lite.common.TestHelper.clickLaunchButton
+import io.ffem.lite.common.TestHelper.clickExternalAppButton
 import io.ffem.lite.common.TestHelper.gotoSurveyForm
 import io.ffem.lite.common.TestHelper.gotoSurveySelection
 import io.ffem.lite.common.TestHelper.isDeviceInitialized
@@ -228,7 +228,7 @@ class SampleImageSurveyTest : BaseTest() {
         nextSurveyPage(3, context.getString(testDetails.group))
 
         sleep(2000)
-        clickLaunchButton(testDetails.name)
+        clickExternalAppButton(testDetails.name)
 
         sleep(2000)
 

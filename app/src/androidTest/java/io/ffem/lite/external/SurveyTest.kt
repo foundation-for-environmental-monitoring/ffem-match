@@ -11,12 +11,13 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.uiautomator.By
 import io.ffem.lite.R
 import io.ffem.lite.common.TestHelper
-import io.ffem.lite.common.TestHelper.clickLaunchButton
+import io.ffem.lite.common.TestHelper.clickExternalAppButton
 import io.ffem.lite.common.TestHelper.gotoFormSubmit
 import io.ffem.lite.common.TestHelper.gotoSurveyForm
 import io.ffem.lite.common.TestHelper.gotoSurveySelection
 import io.ffem.lite.common.TestHelper.mDevice
 import io.ffem.lite.common.TestHelper.nextSurveyPage
+import io.ffem.lite.common.TestHelper.removeResponse
 import io.ffem.lite.common.TestHelper.selectMenuItem
 import io.ffem.lite.common.TestHelper.sleep
 import io.ffem.lite.common.TestHelper.startSurveyApp
@@ -30,7 +31,6 @@ import io.ffem.lite.model.toLocalString
 import io.ffem.lite.model.toResourceId
 import io.ffem.lite.ui.ResultListActivity
 import io.ffem.lite.util.PreferencesUtil
-import io.ffem.lite.util.toLocalString
 import org.hamcrest.Matchers
 import org.junit.Assert
 
@@ -69,7 +69,7 @@ fun startTest(imageNumber: Int) {
 
     takeScreenshot(screenshotName)
 
-    clickLaunchButton(testData.testDetails.name)
+    clickExternalAppButton(testData.testDetails.name)
 
     SystemClock.sleep(1000)
 
@@ -90,7 +90,7 @@ fun startTest(imageNumber: Int) {
                 .perform(ViewActions.click())
         }
 
-        Espresso.onView(ViewMatchers.withText(testData.testDetails.name.toLocalString()))
+        Espresso.onView(ViewMatchers.withText(testData.testDetails.name))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
 
         if (testData.expectedResultError > ErrorType.NO_ERROR) {
@@ -121,7 +121,7 @@ fun startTest(imageNumber: Int) {
 
         } else {
 
-            Espresso.onView(ViewMatchers.withText(testData.testDetails.name.toLocalString()))
+            Espresso.onView(ViewMatchers.withText(testData.testDetails.name))
                 .check(
                     ViewAssertions.matches(
                         ViewMatchers.isDisplayed()
@@ -169,11 +169,7 @@ fun startTest(imageNumber: Int) {
 
             Assert.assertNotNull(mDevice.findObject(By.text(resultValue)))
 
-            mDevice.findObject(By.text(testData.testDetails.name)).longClick()
-            sleep(500)
-            mDevice.findObject(By.text("Remove response")).click()
-            sleep(500)
-            mDevice.findObject(By.text("REMOVE RESPONSE")).click()
+            removeResponse(testData.testDetails.name)
 
             sleep(500)
 

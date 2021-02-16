@@ -7,6 +7,7 @@ import android.os.Environment
 import android.os.SystemClock
 import android.widget.ScrollView
 import android.widget.TextView
+import androidx.annotation.StringRes
 import androidx.preference.PreferenceManager
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
@@ -159,16 +160,49 @@ object TestHelper {
         }
     }
 
-    fun clickLaunchButton(text: String) {
-        var buttonText = text
-        findButtonInScrollable(buttonText)
-        val buttons: List<UiObject2?>? = mDevice.findObjects(By.text(buttonText))
-        if (buttons?.size == 0) {
-            buttonText = buttonText.toUpperCase()
+    fun clickExternalAppButton(@StringRes stringId: Int) {
+        try {
+            if (mDevice.findObject(
+                    By.text(
+                        InstrumentationRegistry.getInstrumentation().targetContext.getString(
+                            R.string.redo
+                        )
+                    )
+                ) != null
+            ) {
+                removeResponse(stringId)
+            }
+        } catch (e: Exception) {
         }
-        mDevice.findObject(By.text(buttonText)).click()
-        mDevice.waitForWindowUpdate("", 2000)
-        SystemClock.sleep(4000)
+
+        mDevice.findObject(
+            By.text(
+                InstrumentationRegistry.getInstrumentation().targetContext.getString(
+                    stringId
+                )
+            )
+        ).click()
+    }
+
+    fun removeResponse(stringId: Int) {
+        mDevice.findObject(
+            By.text(
+                InstrumentationRegistry.getInstrumentation().targetContext.getString(
+                    stringId
+                )
+            )
+        ).longClick()
+        sleep(1000)
+        val removeText =
+            InstrumentationRegistry.getInstrumentation().targetContext.getString(R.string.remove_response)
+        mDevice.findObject(By.text(removeText)).click()
+        sleep(1000)
+        try {
+            mDevice.findObject(By.text(removeText)).click()
+        } catch (e: Exception) {
+            mDevice.findObject(By.text(removeText.toUpperCase())).click()
+        }
+        sleep(500)
     }
 
     private fun clickNextButton() {

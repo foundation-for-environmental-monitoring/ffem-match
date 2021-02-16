@@ -109,6 +109,7 @@
     <string name="iron" tools:keep="@string/iron">Iron</string>
     <string name="nitrate" tools:keep="@string/nitrate">Nitrate</string>
     <string name="ph" tools:keep="@string/ph">pH</string>
+    <string name="phosphate" tools:keep="@string/phosphate">Phosphate</string>
     <string name="residual_chlorine" tools:keep="@string/residual_chlorine">Residual Chlorine</string>
 
     <!-- Unit Tests-->
@@ -124,4 +125,5 @@
     <string name="tilt_forwards">Tilt phone forwards</string>
     <string name="tilt_left_forwards">Tilt phone left side forwards</string>
     <string name="tilt_left_backwards">Tilt phone left side backwards</string>
+    <string name="remove_response">Remove response</string>
 </resources>

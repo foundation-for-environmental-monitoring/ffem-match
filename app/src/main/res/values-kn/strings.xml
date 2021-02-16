@@ -86,6 +86,7 @@
     <string name="fluoride">ಫ್ಲೋರೈಡ್</string>
     <string name="fluoride_high_range">ಫ್ಲೋರೈಡ್ - ಹೈ ರೇಂಜ್</string>
     <string name="ph">ಪಿಎಚ್‌</string>
+    <string name="phosphate">ಫಾಸ್ಫೇಟ್</string>
     <string name="iron">ಕಬ್ಬಿಣ</string>
     <string name="nitrate">ನೈಟ್ರೇಟ್</string>
     <string name="residual_chlorine">ಉಳಿದ ಕ್ಲೋರಿನ್</string>
@@ -102,5 +103,6 @@
     <string name="low_alkalinity">ಆಮ್ಲೀಯ</string>
     <string name="medium_alkalinity">ತಟಸ್ಥ</string>
     <string name="high_alkalinity">ಮೂಲ</string>
+    <string name="remove_response">ಪ್ರತಿಕ್ರಿಯೆ ತೆಗೆದುಹಾಕಿ</string>
 </resources>
 
