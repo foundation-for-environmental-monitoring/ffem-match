@@ -19,7 +19,7 @@ android {
         minSdkVersion 23
         targetSdkVersion 30
         versionCode 110
-        versionName "Alpha 0.65.4"
+        versionName "Alpha 0.65.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
