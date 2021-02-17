@@ -120,23 +120,6 @@ class App : BaseApplication() {
             }
         }
 
-        fun getTestName(id: String): String {
-            if (!::testConfig.isInitialized) {
-                val input = app.resources.openRawResource(R.raw.tests)
-                val content = FileUtil.readTextFile(input)
-                testConfig = gson.fromJson(content, TestConfig::class.java)
-            }
-
-            var testName = ""
-            for (test in testConfig.tests) {
-                if (test.uuid!!.substring(30) == id) {
-                    testName = test.name!!
-                    break
-                }
-            }
-            return testName
-        }
-
         fun getTestInfo(id: String): TestInfo? {
 //            if (!::testConfig.isInitialized) {
             val input = app.resources.openRawResource(R.raw.tests)

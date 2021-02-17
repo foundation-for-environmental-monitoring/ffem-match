@@ -54,20 +54,6 @@ fun getBitmapPixels(bitmap: Bitmap, rect: Rect): IntArray {
     return subsetPixels
 }
 
-fun isDarkLine(pixels: IntArray): Boolean {
-    var r = 0
-
-    if (pixels.isEmpty()) {
-        return false
-    }
-
-    for (element in pixels) {
-        r += element.red
-    }
-
-    return (r / pixels.size) < 150
-}
-
 fun getAverageBrightness(pixels: IntArray): Int {
     var r = 0
 
@@ -80,48 +66,6 @@ fun getAverageBrightness(pixels: IntArray): Int {
     }
 
     return r / pixels.size
-}
-
-fun isDark(pixels: IntArray): Boolean {
-    var r = 0
-
-    if (pixels.isEmpty()) {
-        return false
-    }
-
-    for (element in pixels) {
-        r += element.red
-    }
-
-    return (r / pixels.size) < 140
-}
-
-fun isNotBright(pixels: IntArray): Boolean {
-    var r = 0
-
-    if (pixels.isEmpty()) {
-        return false
-    }
-
-    for (element in pixels) {
-        r += element.red
-    }
-
-    return (r / pixels.size) < 110
-}
-
-fun isWhite(pixels: IntArray): Boolean {
-    var r = 0
-
-    if (pixels.isEmpty()) {
-        return false
-    }
-
-    for (element in pixels) {
-        r += element.red
-    }
-
-    return (r / pixels.size) > 240
 }
 
 fun getAverageColor(pixels: IntArray, ignoreDarkPixels: Boolean): Int {

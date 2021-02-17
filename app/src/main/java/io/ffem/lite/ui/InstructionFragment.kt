@@ -14,7 +14,6 @@ import androidx.fragment.app.Fragment
 import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.databinding.FragmentInstructionBinding
-import io.ffem.lite.preference.useColorCardVersion1
 import io.ffem.lite.util.snackBar
 import io.ffem.lite.util.snackBarAction
 
@@ -55,21 +54,12 @@ class InstructionFragment : Fragment() {
             binding.instructionTxt.visibility = GONE
         }
 
-        if (useColorCardVersion1()) {
-            binding.exampleImg.setImageDrawable(
-                ContextCompat.getDrawable(
-                    requireContext(),
-                    R.drawable.card_overlay
-                )
+        binding.exampleImg.setImageDrawable(
+            ContextCompat.getDrawable(
+                requireContext(),
+                R.drawable.card_2_overlay
             )
-        } else {
-            binding.exampleImg.setImageDrawable(
-                ContextCompat.getDrawable(
-                    requireContext(),
-                    R.drawable.card_2_overlay
-                )
-            )
-        }
+        )
     }
 
     private val requestCameraPermission =

@@ -39,14 +39,6 @@ fun isTestRunning(): Boolean {
     return BuildConfig.DEBUG && (isDiagnosticMode() || BuildConfig.INSTRUMENTED_TEST_RUNNING.get())
 }
 
-fun useColorCardVersion1(): Boolean {
-    return PreferencesUtil.getBoolean(
-        App.app,
-        R.string.useColorCardVersion1,
-        false
-    )
-}
-
 fun isDiagnosticMode(): Boolean {
     return PreferencesUtil.getBoolean(App.app, R.string.diagnosticModeKey, false)
 }
@@ -70,7 +62,7 @@ fun manualCaptureOnly(): Boolean {
     return PreferencesUtil.getBoolean(
         App.app,
         R.string.manualCaptureOnlyKey, false
-    ) && useColorCardVersion1()
+    )
 }
 
 fun getColorDistanceTolerance(): Int {
@@ -156,7 +148,6 @@ object AppPreferences {
     fun disableDiagnosticMode() {
         PreferencesUtil.setBoolean(App.app, R.string.diagnosticModeKey, false)
         PreferencesUtil.setBoolean(App.app, R.string.testModeOnKey, false)
-        PreferencesUtil.setBoolean(App.app, R.string.useColorCardVersion1, false)
         PreferencesUtil.removeKey(App.app, R.string.testImageNumberKey)
     }
 

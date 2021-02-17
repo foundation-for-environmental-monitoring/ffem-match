@@ -3,7 +3,6 @@ package io.ffem.lite.external
 
 import android.content.Context
 import android.os.Environment
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -61,137 +60,8 @@ class SampleImageSurveyTest : BaseTest() {
         if (!initialized) {
             clearPreferences()
             clearData()
-            PreferencesUtil.setBoolean(
-                ApplicationProvider.getApplicationContext(),
-                R.string.useColorCardVersion1, true
-            )
             initialized = true
         }
-    }
-
-    @Test
-    fun image_000_Chlorine_0_Point_5() {
-        startTest(0)
-    }
-
-    @Test
-    fun image_001_Chlorine_0() {
-        startTest(1)
-    }
-
-    @Test
-    fun image_002_InvalidBarcode() {
-        startTest(2)
-    }
-
-    @Test
-    fun image_003_InvalidBarcode() {
-        startTest(3)
-    }
-
-    @Test
-    fun image_004_pH_NoMatch() {
-        startTest(4)
-    }
-
-    @Test
-    fun image_005_Waiting() {
-        startTest(5)
-    }
-
-    @Test
-    fun image_006_Chlorine_NoMatch() {
-        startTest(6)
-    }
-
-    @Test
-    fun image_007_Chlorine_Point_5() {
-        startTest(7)
-    }
-
-    @Test
-    fun image_008_Chlorine_1_Point_5() {
-        startTest(8)
-    }
-
-    @Test
-    fun image_009_BadLight() {
-        startTest(9)
-    }
-
-    @Test
-    fun image_010_Chlorine_CalibrationError() {
-        startTest(10)
-    }
-
-    @Test
-    fun image_011_Tilted() {
-        startTest(11)
-    }
-
-    @Test
-    fun image_012_Waiting() {
-        startTest(12)
-    }
-
-    @Test
-    fun image_013_Waiting() {
-        startTest(13)
-    }
-
-    @Test
-    fun image_014_pH_6_Point_5() {
-        startTest(14)
-    }
-
-    @Test
-    fun image_015_Chlorine_4_Point_3() {
-        startTest(15)
-    }
-
-    @Test
-    fun image_016_Chlorine_CalibrationError() {
-        startTest(16)
-    }
-
-    @Test
-    fun image_017_BadLighting() {
-        startTest(17)
-    }
-
-    @Test
-    fun image_018_Waiting() {
-        startTest(18)
-    }
-
-    @Test
-    fun image_019_Chlorine_3_Point_0() {
-        startTest(19)
-    }
-
-    @Test
-    fun image_020_Waiting() {
-        startTest(20)
-    }
-
-    @Test
-    fun image_021_Waiting() {
-        startTest(21)
-    }
-
-    @Test
-    fun image_022_Waiting() {
-        startTest(22)
-    }
-
-    @Test
-    fun image_023_FluorideHighRange_NoMatch() {
-        startTest(23)
-    }
-
-    @Test
-    fun image_024_Fluoride_1_Point_0() {
-        startTest(24)
     }
 
     @Test
@@ -202,11 +72,6 @@ class SampleImageSurveyTest : BaseTest() {
     @Test
     fun invalidCardTest() {
         validityTest(fluoride, 0, WRONG_CARD)
-    }
-
-    @Test
-    fun imageX_Waiting() {
-        startTest(500)
     }
 
     private fun validityTest(

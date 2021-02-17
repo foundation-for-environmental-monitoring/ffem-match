@@ -18,7 +18,6 @@ import androidx.test.uiautomator.*
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.data.AppDatabase
-import org.junit.Assert
 import timber.log.Timber
 import java.io.File
 import java.util.*
@@ -39,7 +38,7 @@ fun clearData() {
 object TestHelper {
 
     lateinit var mDevice: UiDevice
-    var screenshotCount = -1
+    private var screenshotCount = -1
     var screenshotEnabled = false
 
     private val isEmulator: Boolean
@@ -111,23 +110,23 @@ object TestHelper {
         mDevice.waitForIdle()
     }
 
-    fun gotoFormSubmit() {
-        clickListViewItem(TEST_SURVEY_NAME)
-        mDevice.waitForIdle()
-        Thread.sleep(1000)
-        val gotoEndButton: UiObject? = mDevice.findObject(
-            UiSelector()
-                .resourceId("$EXTERNAL_SURVEY_PACKAGE_NAME:id/jumpEndButton")
-        )
-        try {
-            if (gotoEndButton!!.exists() && gotoEndButton.isEnabled) {
-                gotoEndButton.click()
-            }
-        } catch (e: UiObjectNotFoundException) {
-            Timber.e(e)
-        }
-        mDevice.waitForIdle()
-    }
+//    fun gotoFormSubmit() {
+//        clickListViewItem(TEST_SURVEY_NAME)
+//        mDevice.waitForIdle()
+//        Thread.sleep(1000)
+//        val gotoEndButton: UiObject? = mDevice.findObject(
+//            UiSelector()
+//                .resourceId("$EXTERNAL_SURVEY_PACKAGE_NAME:id/jumpEndButton")
+//        )
+//        try {
+//            if (gotoEndButton!!.exists() && gotoEndButton.isEnabled) {
+//                gotoEndButton.click()
+//            }
+//        } catch (e: UiObjectNotFoundException) {
+//            Timber.e(e)
+//        }
+//        mDevice.waitForIdle()
+//    }
 
     private fun clickListViewItem(@Suppress("SameParameterValue") name: String): Boolean {
         val listView = UiScrollable(UiSelector())
@@ -184,7 +183,7 @@ object TestHelper {
         ).click()
     }
 
-    fun removeResponse(stringId: Int) {
+    private fun removeResponse(stringId: Int) {
         mDevice.findObject(
             By.text(
                 InstrumentationRegistry.getInstrumentation().targetContext.getString(
@@ -309,20 +308,20 @@ object TestHelper {
         }
     }
 
-    fun selectMenuItem() {
-        val menuButton = mDevice.findObject(
-            By.desc(
-                ApplicationProvider
-                    .getApplicationContext<Context>().getString(R.string.view_hierarchy)
-            )
-        )
-        if (menuButton != null && menuButton.isClickable) {
-            menuButton.click()
-            menuButton.recycle()
-        } else {
-            Assert.fail()
-        }
-    }
+//    fun selectMenuItem() {
+//        val menuButton = mDevice.findObject(
+//            By.desc(
+//                ApplicationProvider
+//                    .getApplicationContext<Context>().getString(R.string.view_hierarchy)
+//            )
+//        )
+//        if (menuButton != null && menuButton.isClickable) {
+//            menuButton.click()
+//            menuButton.recycle()
+//        } else {
+//            Assert.fail()
+//        }
+//    }
 
     fun sleep(duration: Long) {
         SystemClock.sleep(duration)

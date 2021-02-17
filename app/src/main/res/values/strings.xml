@@ -5,7 +5,6 @@
 
     <string name="testing">Testing</string>
     <string name="align_color_card">Align the color card within the view above</string>
-    <string name="version">Version</string>
     <string name="about">About</string>
     <string name="settings">Settings</string>
     <string name="ok">OK</string>
@@ -31,8 +30,6 @@
     <string name="analyzed_image">Analyzed image</string>
     <string name="disable_diagnostics">Disable diagnostics</string>
     <string name="settings_not_clickable">Settings not clickable</string>
-    <string name="try_moving_well_lit">Bad lighting. Try moving to a well lit area</string>
-    <string name="correct_camera_tilt">Correct the Tilt</string>
     <string name="color_card_not_found">Scanning…</string>
     <string name="capture_photo">Capture photo</string>
     <string name="invalid_image">Invalid image</string>
@@ -113,7 +110,6 @@
     <string name="residual_chlorine" tools:keep="@string/residual_chlorine">Residual Chlorine</string>
 
     <!-- Unit Tests-->
-    <string name="launch">Launch</string>
     <string name="back">Back</string>
     <string name="next">Next</string>
     <string name="water_tests_1">Water Tests 1</string>

@@ -20,6 +20,7 @@ object ApkHelper {
         )
 
         try {
+            @Suppress("DEPRECATION")
             val installer = context.packageManager.getInstallerPackageName(context.packageName)
             return installer == null || !validInstallers.contains(installer)
 

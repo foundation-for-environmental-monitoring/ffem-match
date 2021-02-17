@@ -5,7 +5,6 @@
     <string name="legal_info">ಕಾನೂನು ಮಾಹಿತಿ</string>
     <string name="testing">ಪರೀಕ್ಷೆ</string>
     <string name="align_color_card">ಮೇಲಿನ ವೀಕ್ಷಣೆ ಶೋಧಕದೊಳಗೆ ಬಣ್ಣ ಕಾರ್ಡ್ ಇರಿಸಿ</string>
-    <string name="version">ಆವೃತ್ತಿ</string>
     <string name="about">ಬಗ್ಗೆ</string>
     <string name="settings">ಸಂಯೋಜನೆಗಳು</string>
     <string name="ok">ಸರಿ</string>
@@ -24,7 +23,6 @@
     <string name="analyzed_image">ವಿಶ್ಲೇಷಿಸಿದ ಚಿತ್ರ</string>
     <string name="disable_diagnostics">ರೋಗನಿರ್ಣಯವನ್ನು ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಿ</string>
     <string name="settings_not_clickable">ಸೆಟ್ಟಿಂಗ್‌ಗಳು ಕ್ಲಿಕ್ ಮಾಡಲಾಗುವುದಿಲ್ಲ</string>
-    <string name="correct_camera_tilt">ಕ್ಯಾಮೆರಾ ಓರೆಯಾಗಿದೆ. ಕಾರ್ಡ್ ಮೇಲೆ ಸ್ಥಾನವನ್ನು ಸರಿಯಾಗಿ ಹೊಂದಿಸಿ</string>
     <string name="color_card_not_found">ಬಾರ್‌ಕೋಡ್ ಕಂಡುಬಂದಿಲ್ಲ. ಬೆಳಕನ್ನು ಪರಿಶೀಲಿಸಿ</string>
     <string name="capture_photo">ಫೋಟೋ ಸೆರೆಹಿಡಿಯಿರಿ</string>
     <string name="invalid_image">ಅಮಾನ್ಯ ಚಿತ್ರ</string>
@@ -81,7 +79,6 @@
     <string name="not_bright">ಸಾಕಷ್ಟು ಪ್ರಕಾಶಮಾನವಾಗಿಲ್ಲ</string>
     <string name="too_bright">ತುಂಬಾ ಪ್ರಕಾಶಮಾನವಾಗಿದೆ</string>
     <string name="too_many_shadows">ಕಾರ್ಡ್‌ನಲ್ಲಿ ನೆರಳುಗಳು</string>
-    <string name="try_moving_well_lit">ಸಾಕಷ್ಟು ಬೆಳಕು ಇಲ್ಲ. ಚೆನ್ನಾಗಿ ಬೆಳಗಿದ ಪ್ರದೇಶಕ್ಕೆ ಹೋಗಲು ಪ್ರಯತ್ನಿಸಿ</string>
     <string name="unknown">ಅಜ್ಞಾತ</string>
     <string name="fluoride">ಫ್ಲೋರೈಡ್</string>
     <string name="fluoride_high_range">ಫ್ಲೋರೈಡ್ - ಹೈ ರೇಂಜ್</string>
@@ -90,7 +87,6 @@
     <string name="iron">ಕಬ್ಬಿಣ</string>
     <string name="nitrate">ನೈಟ್ರೇಟ್</string>
     <string name="residual_chlorine">ಉಳಿದ ಕ್ಲೋರಿನ್</string>
-    <string name="launch">ಪ್ರಾರಂಭಿಸಿ</string>
     <string name="back">ಹಿಂದೆ</string>
     <string name="next">ಮುಂದೆ</string>
     <string name="water_tests_1">ನೀರಿನ ಪರೀಕ್ಷೆಗಳು 1</string>
@@ -103,6 +99,10 @@
     <string name="low_alkalinity">ಆಮ್ಲೀಯ</string>
     <string name="medium_alkalinity">ತಟಸ್ಥ</string>
     <string name="high_alkalinity">ಮೂಲ</string>
+    <string name="tilt_backwards">Tilt phone backwards</string>
+    <string name="tilt_forwards">Tilt phone forwards</string>
+    <string name="tilt_left_forwards">Tilt phone left side forwards</string>
+    <string name="tilt_left_backwards">Tilt phone left side backwards</string>
     <string name="remove_response">ಪ್ರತಿಕ್ರಿಯೆ ತೆಗೆದುಹಾಕಿ</string>
 </resources>
 

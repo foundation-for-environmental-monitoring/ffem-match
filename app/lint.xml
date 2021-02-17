@@ -2,5 +2,6 @@
 <lint>
     <issue id="UnusedResources">
         <ignore path="src/debug/res/drawable-nodpi/*.jpg" />
+        <ignore path="src/debug/res/drawable-nodpi/*.png" />
     </issue>
 </lint>

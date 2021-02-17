@@ -5,7 +5,6 @@
     <string name="legal_info">कानूनी जानकारी</string>
     <string name="testing">परिक्षण , जांचना, टेस्टिंग</string>
     <string name="align_color_card">ऊपर व्यू फाइंडर के भीतर कलर कार्ड रखें</string>
-    <string name="version">संस्करण</string>
     <string name="about">के बारे में</string>
     <string name="settings">सेटिंग</string>
     <string name="ok">ओके , ठीक है</string>
@@ -24,7 +23,6 @@
     <string name="analyzed_image">तस्वीर का विश्लेषण करें</string>
     <string name="disable_diagnostics">डायग्नोस्टिक्स को समाप्त करें</string>
     <string name="settings_not_clickable">सेटिंग्स क्लिक करने योग्य नहीं है</string>
-    <string name="correct_camera_tilt">कैमरा तिरछा है I कार्ड पर सीधे कैमरे की स्थिति सेट करें</string>
     <string name="color_card_not_found">बारकोड नहीं मिला। प्रकाश की जाँच करें</string>
     <string name="capture_photo">फोटो खींचना</string>
     <string name="invalid_image">अमान्य तस्वीर</string>
@@ -81,7 +79,6 @@
     <string name="not_bright">चमक पर्याप्त नहीं है</string>
     <string name="too_bright">बहुत अधिक प्रकाश</string>
     <string name="too_many_shadows">कार्ड पर छाया</string>
-    <string name="try_moving_well_lit">अपर्याप्त रोशनी I अच्छी तरह से रोशनी वाली जगह पर जाने की कोशिश करें</string>
     <string name="unknown">अज्ञात</string>
     <string name="fluoride">फ्लोराइड</string>
     <string name="fluoride_high_range">फ्लोराइड - उच्च श्रेणी</string>
@@ -90,7 +87,6 @@
     <string name="iron">आयरन</string>
     <string name="nitrate">नाइट्रेट</string>
     <string name="residual_chlorine">अवशिष्ट क्लोरीन</string>
-    <string name="launch">जारी करें</string>
     <string name="back">वापस</string>
     <string name="next">आगामी</string>
     <string name="water_tests_1">पानी टेस्ट 1</string>
@@ -103,5 +99,9 @@
     <string name="low_alkalinity">अम्लीय</string>
     <string name="medium_alkalinity">तटस्थ</string>
     <string name="high_alkalinity">बुनियादी</string>
+    <string name="tilt_backwards">Tilt phone backwards</string>
+    <string name="tilt_forwards">Tilt phone forwards</string>
+    <string name="tilt_left_forwards">Tilt phone left side forwards</string>
+    <string name="tilt_left_backwards">Tilt phone left side backwards</string>
     <string name="remove_response">प्रतिउत्तर हटायें</string>
 </resources>

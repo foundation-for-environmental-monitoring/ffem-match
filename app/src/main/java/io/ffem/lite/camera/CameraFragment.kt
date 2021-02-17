@@ -1,7 +1,5 @@
 package io.ffem.lite.camera
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Context.SENSOR_SERVICE
@@ -32,7 +30,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.material.button.MaterialButton
 import io.ffem.lite.R
-import io.ffem.lite.common.*
+import io.ffem.lite.common.ERROR_EVENT_BROADCAST
+import io.ffem.lite.common.ERROR_MESSAGE
+import io.ffem.lite.common.SCAN_PROGRESS
+import io.ffem.lite.common.TEST_INFO_KEY
 import io.ffem.lite.data.AppDatabase
 import io.ffem.lite.data.TestResult
 import io.ffem.lite.databinding.FragmentCameraBinding
@@ -78,7 +79,6 @@ class CameraFragment : Fragment() {
     private var displayId: Int = -1
     private var preview: Preview? = null
 
-    private lateinit var barcodeAnalyzer: BarcodeAnalyzer
     private lateinit var colorCardAnalyzer: ColorCardAnalyzer
     private val mainScope = MainScope()
 
@@ -178,13 +178,6 @@ class CameraFragment : Fragment() {
             )
         }
         broadcastManager.registerReceiver(broadcastReceiver, IntentFilter(ERROR_EVENT_BROADCAST))
-
-        if (useColorCardVersion1()) {
-            broadcastManager.registerReceiver(
-                capturedPhotoBroadcastReceiver,
-                IntentFilter(CAPTURED_EVENT_BROADCAST)
-            )
-        }
 
         lifecycleScope.launch {
             delay(300)
@@ -291,19 +284,13 @@ class CameraFragment : Fragment() {
                         .build()
                 }
 
-                if (useColorCardVersion1()) {
-                    barcodeAnalyzer = BarcodeAnalyzer(requireContext())
-                    barcodeAnalyzer.reset()
-                    analysis.setAnalyzer(executorService, barcodeAnalyzer)
-                } else {
-                    colorCardAnalyzer = ColorCardAnalyzer(requireContext())
-                    colorCardAnalyzer.previewHeight = binding.cameraPreview.measuredHeight
-                    colorCardAnalyzer.viewFinderHeight = cardOverlay!!.measuredHeight
-                    colorCardAnalyzer.previewWidth = metrics.widthPixels
-                    colorCardAnalyzer.reset()
-                    progressBar!!.visibility = GONE
-                    analysis.setAnalyzer(executorService, colorCardAnalyzer)
-                }
+                colorCardAnalyzer = ColorCardAnalyzer(requireContext())
+                colorCardAnalyzer.previewHeight = binding.cameraPreview.measuredHeight
+                colorCardAnalyzer.viewFinderHeight = cardOverlay!!.measuredHeight
+                colorCardAnalyzer.previewWidth = metrics.widthPixels
+                colorCardAnalyzer.reset()
+                progressBar!!.visibility = GONE
+                analysis.setAnalyzer(executorService, colorCardAnalyzer)
 
                 // Must unbind use cases before rebinding them.
                 cameraProvider.unbindAll()
@@ -380,38 +367,18 @@ class CameraFragment : Fragment() {
         if (manualCaptureOnly()) {
             takePhotoButton!!.visibility = VISIBLE
             takePhotoButton!!.setOnClickListener {
-                barcodeAnalyzer.takePhoto()
+                // todo: Is manual capture required?
             }
         } else {
             takePhotoButton!!.visibility = GONE
         }
 
-        if (useColorCardVersion1()) {
-            cardOverlay!!.setImageDrawable(
-                ContextCompat.getDrawable(
-                    requireContext(),
-                    R.drawable.card_overlay
-                )
+        cardOverlay!!.setImageDrawable(
+            ContextCompat.getDrawable(
+                requireContext(),
+                R.drawable.card_overlay_2
             )
-            cardOverlay!!.animate()
-                .setStartDelay(100)
-                .alpha(0.0f)
-                .setDuration(8000)
-                .setListener(object : AnimatorListenerAdapter() {
-                    override fun onAnimationEnd(animation: Animator) {
-                        if (cardOverlay != null) {
-                            cardOverlay!!.visibility = View.INVISIBLE
-                        }
-                    }
-                })
-        } else {
-            cardOverlay!!.setImageDrawable(
-                ContextCompat.getDrawable(
-                    requireContext(),
-                    R.drawable.card_overlay_2
-                )
-            )
-        }
+        )
     }
 
     private inline fun View.afterMeasured(crossinline block: () -> Unit) {

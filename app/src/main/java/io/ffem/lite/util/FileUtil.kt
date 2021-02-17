@@ -42,6 +42,7 @@ object FileUtil {
             selectionArgs = null
         }
         try {
+            @Suppress("DEPRECATION")
             val projection = arrayOf(
                 MediaStore.Images.Media.DATA,
                 MediaStore.Images.Media._ID,

@@ -3,7 +3,6 @@ package io.ffem.lite.internal
 
 import android.os.Environment
 import android.os.SystemClock
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
@@ -26,7 +25,6 @@ import io.ffem.lite.common.clearData
 import io.ffem.lite.common.residualChlorine
 import io.ffem.lite.preference.isDiagnosticMode
 import io.ffem.lite.ui.ResultListActivity
-import io.ffem.lite.util.PreferencesUtil
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.core.IsInstanceOf
@@ -54,10 +52,6 @@ class DiagnosticsTest {
         if (!CalibrationTest.initialized) {
             TestHelper.clearPreferences()
             clearData()
-            PreferencesUtil.setBoolean(
-                ApplicationProvider.getApplicationContext(),
-                R.string.useColorCardVersion1, true
-            )
             CalibrationTest.initialized = true
         }
     }
@@ -252,173 +246,6 @@ class DiagnosticsTest {
                 isDisplayed()
             )
         ).perform(click())
-    }
-
-    @Test
-    fun testManualCapture() {
-
-        startDiagnosticMode()
-
-        sleep(400)
-
-        Espresso.pressBack()
-
-        sleep(400)
-
-        onView(withId(R.id.scrollViewSettings)).perform(swipeUp())
-
-        sleep(2000)
-
-        onView(withText("Use the older Barcode Color card")).perform(click())
-
-        onView(withText(R.string.manual_photo_capture)).perform(click())
-
-        sleep(400)
-
-        onView(withId(R.id.scrollViewSettings)).perform(swipeUp())
-
-        Thread.sleep(400)
-
-        pressBack()
-
-        onView(withText("Test Image Number")).perform(click())
-
-        sleep(400)
-
-        onView(
-            allOf(
-                withId(android.R.id.edit),
-                childAtPosition(
-                    childAtPosition(
-                        withClassName(`is`("android.widget.ScrollView")),
-                        0
-                    ),
-                    1
-                )
-            )
-        ).perform(scrollTo(), replaceText(""))
-
-        val appCompatEditText2 = onView(
-            allOf(
-                withId(android.R.id.edit), withText(""),
-                childAtPosition(
-                    childAtPosition(
-                        withClassName(`is`("android.widget.ScrollView")),
-                        0
-                    ),
-                    1
-                ),
-                isDisplayed()
-            )
-        )
-        appCompatEditText2.perform(closeSoftKeyboard())
-
-        val appCompatButton = onView(
-            allOf(
-                withId(android.R.id.button1), withText(R.string.ok),
-                childAtPosition(
-                    childAtPosition(
-                        withId(R.id.buttonPanel),
-                        0
-                    ),
-                    3
-                )
-            )
-        )
-        appCompatButton.perform(scrollTo(), click())
-
-        Espresso.pressBack()
-
-        pressBack()
-
-        val floatingActionButton = onView(
-            allOf(
-                withId(R.id.start_test_fab), withContentDescription(R.string.start_test),
-                isDisplayed()
-            )
-        )
-        floatingActionButton.perform(click())
-
-        onView(withText(R.string.start)).perform(click())
-
-        sleep(TIME_DELAY / 4)
-
-        onView(withText(R.string.take_photo)).perform(click())
-
-        sleep(TIME_DELAY / 4)
-
-        val textView = onView(
-            allOf(
-                withId(R.id.name2_txt), withText(R.string.unknown),
-                childAtPosition(
-                    childAtPosition(
-                        withId(R.id.error_message_lyt),
-                        0
-                    ),
-                    0
-                ),
-                isDisplayed()
-            )
-        )
-        textView.check(matches(withText(R.string.unknown)))
-
-        val textView2 = onView(
-            allOf(
-                withId(R.id.error_txt), withText(R.string.bad_lighting),
-                childAtPosition(
-                    childAtPosition(
-                        withId(R.id.error_message_lyt),
-                        0
-                    ),
-                    1
-                ),
-                isDisplayed()
-            )
-        )
-        textView2.check(matches(withText(R.string.bad_lighting)))
-
-        val textView3 = onView(
-            allOf(
-                withText(R.string.analyzed_photo),
-                childAtPosition(
-                    childAtPosition(
-                        withId(R.id.analyzed_photo_lyt),
-                        0
-                    ),
-                    0
-                ),
-                isDisplayed()
-            )
-        )
-        textView3.check(matches(withText(R.string.analyzed_photo)))
-
-        val imageView = onView(
-            allOf(
-                withId(R.id.full_photo_img), withContentDescription(R.string.analyzed_image),
-                childAtPosition(
-                    childAtPosition(
-                        withId(R.id.analyzed_photo_lyt),
-                        0
-                    ),
-                    1
-                ),
-                isDisplayed()
-            )
-        )
-        imageView.check(matches(isDisplayed()))
-
-        onView(
-            allOf(
-                withId(R.id.submit_btn), withText(R.string.close),
-                childAtPosition(
-                    childAtPosition(
-                        withId(R.id.resultScrollView),
-                        0
-                    ),
-                    4
-                )
-            )
-        ).perform(scrollTo(), click())
     }
 
     companion object {

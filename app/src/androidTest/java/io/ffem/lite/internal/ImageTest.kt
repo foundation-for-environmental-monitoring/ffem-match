@@ -38,6 +38,8 @@ import org.junit.runner.RunWith
 import org.junit.runners.MethodSorters
 import java.io.File
 
+const val TIME_DELAY = 11000L
+
 @LargeTest
 @RunWith(AndroidJUnit4::class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -153,7 +155,7 @@ class ImageTest {
             onView(
                 allOf(
                     withId(R.id.text_title),
-                    withText("${testData.testDetails.name} (${imageNumber})"),
+                    withText("${context.getString(testData.testDetails.name)} (${imageNumber})"),
                     childAtPosition(
                         allOf(
                             withId(R.id.layout),
@@ -166,7 +168,7 @@ class ImageTest {
                     ),
                     isDisplayed()
                 )
-            ).check(matches(withText("${testData.testDetails.name} (${imageNumber})")))
+            ).check(matches(withText("${context.getString(testData.testDetails.name)} (${imageNumber})")))
 
             val textView = onView(
                 allOf(
