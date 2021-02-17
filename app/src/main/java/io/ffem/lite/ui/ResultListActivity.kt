@@ -147,19 +147,21 @@ class ResultListActivity : AppUpdateActivity() {
     private fun onResultClick(position: Int) {
         MainScope().launch {
             delay(300)
-            val item = adapter.getItemAt(position)
-            val intent = Intent(baseContext, ResultViewActivity::class.java)
+            if (adapter.itemCount > position) {
+                val item = adapter.getItemAt(position)
+                val intent = Intent(baseContext, ResultViewActivity::class.java)
 
-            val result = db.resultDao().getResult(item.id)!!
-            val testInfo = App.getTestInfo(item.uuid)
-            testInfo!!.error = item.error
-            testInfo.fileName = item.id
-            testInfo.resultInfo = ResultInfo(result.value, result.luminosity)
-            testInfo.resultInfoGrayscale = ResultInfo(result.valueGrayscale)
-            testInfo.setMarginOfError(result.marginOfError)
+                val result = db.resultDao().getResult(item.id)!!
+                val testInfo = App.getTestInfo(item.uuid)
+                testInfo!!.error = item.error
+                testInfo.fileName = item.id
+                testInfo.resultInfo = ResultInfo(result.value, result.luminosity)
+                testInfo.resultInfoGrayscale = ResultInfo(result.valueGrayscale)
+                testInfo.setMarginOfError(result.marginOfError)
 
-            intent.putExtra(TEST_INFO_KEY, testInfo)
-            startActivity(intent)
+                intent.putExtra(TEST_INFO_KEY, testInfo)
+                startActivity(intent)
+            }
         }
     }
 

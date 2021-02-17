@@ -12,7 +12,8 @@
             android:title="Load a photo file to analyze"
             app:allowDividerAbove="true"
             app:allowDividerBelow="true"
-            app:iconSpaceReserved="false" />
+            app:iconSpaceReserved="false"
+            app:isPreferenceVisible="false" />
         <EditTextPreference
             android:dialogMessage="Enter the sample image number. Enter blank to revert to camera image"
             android:inputType="number"
