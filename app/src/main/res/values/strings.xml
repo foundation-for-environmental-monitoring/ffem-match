@@ -114,7 +114,6 @@
     <string name="next">Next</string>
     <string name="water_tests_1">Water Tests 1</string>
     <string name="water_tests_2">Water Tests 2</string>
-    <string name="view_hierarchy">Go To Prompt</string>
     <string name="calibrate">Calibrate</string>
     <string name="calibrate_summary">Calibrate using a standard</string>
     <string name="tilt_backwards">Tilt phone backwards</string>

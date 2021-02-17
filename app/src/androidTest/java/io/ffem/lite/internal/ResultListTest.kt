@@ -33,7 +33,7 @@ import org.junit.*
 import org.junit.runner.RunWith
 import java.io.File
 
-const val QR_TIME_DELAY = 5000L
+const val SCAN_TIME_DELAY = 5000L
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
@@ -101,7 +101,7 @@ class ResultListTest {
         )
         materialButton2.perform(click())
 
-        sleep(QR_TIME_DELAY)
+        sleep(SCAN_TIME_DELAY)
 
         val materialButton3 = onView(
             allOf(

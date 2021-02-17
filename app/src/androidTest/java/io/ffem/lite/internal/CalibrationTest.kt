@@ -85,7 +85,7 @@ class CalibrationTest {
 
         onView(withText(R.string.start)).perform(click())
 
-        sleep(QR_TIME_DELAY)
+        sleep(SCAN_TIME_DELAY)
 
         if (testData.expectedResultError == ErrorType.NO_ERROR) {
             onView(withText(R.string.continue_on)).perform(click())
@@ -140,11 +140,11 @@ class CalibrationTest {
 
         onView(withText(R.string.start)).perform(click())
 
-        sleep(QR_TIME_DELAY / 2)
+        sleep(SCAN_TIME_DELAY / 2)
 
         takeScreenshot(screenshotName)
 
-        sleep(QR_TIME_DELAY / 2)
+        sleep(SCAN_TIME_DELAY / 2)
 
         onView(withText(R.string.continue_on)).perform(click())
 
@@ -177,7 +177,7 @@ class CalibrationTest {
 
         onView(withText(R.string.start)).perform(click())
 
-        sleep(QR_TIME_DELAY)
+        sleep(SCAN_TIME_DELAY)
 
         onView(withText(R.string.continue_on)).perform(click())
 
@@ -225,7 +225,7 @@ class CalibrationTest {
 
         onView(withText(R.string.start)).perform(click())
 
-        sleep(QR_TIME_DELAY)
+        sleep(SCAN_TIME_DELAY)
 
         if (testData.expectedResultError != ErrorType.BAD_LIGHTING &&
             testData.expectedResultError != ErrorType.IMAGE_TILTED
@@ -264,11 +264,11 @@ class CalibrationTest {
 
         onView(withText(R.string.start)).perform(click())
 
-        sleep(QR_TIME_DELAY / 2)
+        sleep(SCAN_TIME_DELAY / 2)
 
         takeScreenshot(screenshotName)
 
-        sleep(QR_TIME_DELAY / 2)
+        sleep(SCAN_TIME_DELAY / 2)
 
         if (testData.expectedResultError != ErrorType.BAD_LIGHTING &&
             testData.expectedResultError != ErrorType.IMAGE_TILTED
@@ -299,7 +299,7 @@ class CalibrationTest {
 
         onView(withText(R.string.start)).perform(click())
 
-        sleep(QR_TIME_DELAY)
+        sleep(SCAN_TIME_DELAY)
 
         if (testData.expectedResultError != ErrorType.BAD_LIGHTING &&
             testData.expectedResultError != ErrorType.IMAGE_TILTED

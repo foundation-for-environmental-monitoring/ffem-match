@@ -12,6 +12,7 @@
       <w>autofocus</w>
       <w>bahnschrift</w>
       <w>barcodes</w>
+      <w>bbox</w>
       <w>binarized</w>
       <w>binarizer</w>
       <w>bkbru</w>
@@ -35,6 +36,7 @@
       <w>dasharray</w>
       <w>dashoffset</w>
       <w>datamatrix</w>
+      <w>ddff</w>
       <w>defs</w>
       <w>docname</w>
       <w>documentclass</w>
@@ -173,8 +175,6 @@
       <w>ystep</w>
       <w>zarffr</w>
       <w>zosju</w>
-      <w>bbox</w>
-      <w>ddff</w>
     </words>
   </dictionary>
 </component>

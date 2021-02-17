@@ -2,7 +2,6 @@ package io.ffem.lite.internal
 
 
 import android.os.Environment
-import android.os.SystemClock
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
@@ -167,7 +166,7 @@ class DiagnosticsTest {
 
         onView(withText(R.string.start)).perform(click())
 
-        SystemClock.sleep(TIME_DELAY)
+        sleep(SCAN_TIME_DELAY)
 
         onView(withText(R.string.continue_on)).perform(click())
 

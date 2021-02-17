@@ -26,7 +26,7 @@ import io.ffem.lite.common.TestHelper.mDevice
 import io.ffem.lite.common.TestHelper.nextSurveyPage
 import io.ffem.lite.common.TestHelper.startSurveyApp
 import io.ffem.lite.common.TestUtil.sleep
-import io.ffem.lite.internal.TIME_DELAY
+import io.ffem.lite.internal.SCAN_TIME_DELAY
 import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.ErrorType.NO_ERROR
 import io.ffem.lite.model.ErrorType.WRONG_CARD
@@ -99,15 +99,12 @@ class SampleImageSurveyTest : BaseTest() {
 
         onView(withText(R.string.start)).perform(click())
 
-        sleep(TIME_DELAY)
-
-        onView(withText(R.string.continue_on)).perform(click())
+        sleep(SCAN_TIME_DELAY)
 
         if (expectedResultError > NO_ERROR) {
             onView(withText(expectedResultError.toLocalString(context))).check(
                 matches(isDisplayed())
             )
-            onView(withText(R.string.close)).perform(click())
         }
     }
 

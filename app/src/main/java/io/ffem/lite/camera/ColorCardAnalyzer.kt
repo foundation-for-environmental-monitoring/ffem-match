@@ -74,7 +74,7 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                         try {
                             val drawable = ContextCompat.getDrawable(
                                 context, context.resources.getIdentifier(
-                                    "qr_test_${
+                                    "test_${
                                         java.lang.String.format(
                                             Locale.ROOT,
                                             "%03d",

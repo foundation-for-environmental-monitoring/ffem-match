@@ -38,8 +38,6 @@ import org.junit.runner.RunWith
 import org.junit.runners.MethodSorters
 import java.io.File
 
-const val TIME_DELAY = 11000L
-
 @LargeTest
 @RunWith(AndroidJUnit4::class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -100,7 +98,7 @@ class ImageTest {
 
         if (testData.expectedScanError == -1) {
 
-            sleep(TIME_DELAY)
+            sleep(SCAN_TIME_DELAY)
 
             if (testData.expectedResultError != ErrorType.BAD_LIGHTING &&
                 testData.expectedResultError != ErrorType.IMAGE_TILTED
@@ -221,7 +219,7 @@ class ImageTest {
 
         } else {
 
-            sleep(TIME_DELAY)
+            sleep(SCAN_TIME_DELAY)
 
             onView(withText(testData.expectedScanError)).check(matches(isDisplayed()))
 
