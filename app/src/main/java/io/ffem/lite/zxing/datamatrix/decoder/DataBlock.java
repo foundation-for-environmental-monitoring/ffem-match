@@ -23,6 +23,7 @@ package io.ffem.lite.zxing.datamatrix.decoder;
  *
  * @author bbrown@google.com (Brian Brown)
  */
+@SuppressWarnings("ALL")
 final class DataBlock {
 
   private final int numDataCodewords;

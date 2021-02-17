@@ -27,6 +27,7 @@ package io.ffem.lite.zxing.common.reedsolomon;
  * @author Sean Owen
  * @author David Olivier
  */
+@SuppressWarnings("ALL")
 public final class GenericGF {
 
   public static final GenericGF AZTEC_DATA_6 = new GenericGF(0x43, 64, 1); // x^6 + x + 1

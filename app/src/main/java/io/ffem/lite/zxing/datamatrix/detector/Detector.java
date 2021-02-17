@@ -29,6 +29,7 @@ import io.ffem.lite.zxing.common.WhiteRectangleDetector;
  *
  * @author Sean Owen
  */
+@SuppressWarnings("ALL")
 public final class Detector {
 
   private final BitMatrix image;

@@ -21,6 +21,7 @@ package io.ffem.lite.zxing;
  *
  * @author Sean Owen
  */
+@SuppressWarnings("ALL")
 public enum BarcodeFormat {
 
     /** Data Matrix 2D barcode format. */

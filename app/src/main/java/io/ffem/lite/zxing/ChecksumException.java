@@ -22,6 +22,7 @@ package io.ffem.lite.zxing;
  *
  * @author Sean Owen
  */
+@SuppressWarnings("ALL")
 public final class ChecksumException extends ReaderException {
 
   private static final ChecksumException INSTANCE = new ChecksumException();

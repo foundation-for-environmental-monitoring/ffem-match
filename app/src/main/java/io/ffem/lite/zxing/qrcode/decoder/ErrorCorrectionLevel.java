@@ -22,6 +22,7 @@ package io.ffem.lite.zxing.qrcode.decoder;
  *
  * @author Sean Owen
  */
+@SuppressWarnings("ALL")
 public enum ErrorCorrectionLevel {
 
   /** L = ~7% correction */

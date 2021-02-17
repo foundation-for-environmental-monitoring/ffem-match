@@ -36,6 +36,7 @@ import io.ffem.lite.zxing.qrcode.decoder.Version;
  *
  * @author Sean Owen
  */
+@SuppressWarnings("ALL")
 public class Detector {
 
   private final BitMatrix image;

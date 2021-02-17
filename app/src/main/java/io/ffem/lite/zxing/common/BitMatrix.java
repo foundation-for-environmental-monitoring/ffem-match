@@ -33,6 +33,7 @@ import java.util.Arrays;
  * @author Sean Owen
  * @author dswitkin@google.com (Daniel Switkin)
  */
+@SuppressWarnings("ALL")
 public final class BitMatrix implements Cloneable {
 
   private int width;

@@ -32,6 +32,7 @@ import io.ffem.lite.zxing.PerspectiveTransform;
  *
  * @author Sean Owen
  */
+@SuppressWarnings("ALL")
 public abstract class GridSampler {
 
   private static GridSampler gridSampler = new DefaultGridSampler();

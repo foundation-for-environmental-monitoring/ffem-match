@@ -24,6 +24,7 @@ import java.util.Map;
  *
  * @author Sean Owen
  */
+@SuppressWarnings("ALL")
 public final class Result {
 
   private final String text;

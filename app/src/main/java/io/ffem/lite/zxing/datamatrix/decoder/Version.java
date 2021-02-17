@@ -188,6 +188,7 @@ public final class Version {
    * each set of blocks. It also holds the number of error-correction codewords per block since it
    * will be the same across all blocks within one version.</p>
    */
+  @SuppressWarnings("SameParameterValue")
   static final class ECBlocks {
     private final int ecCodewords;
     private final ECB[] ecBlocks;

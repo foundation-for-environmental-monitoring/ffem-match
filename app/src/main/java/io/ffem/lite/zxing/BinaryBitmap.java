@@ -25,6 +25,7 @@ import io.ffem.lite.zxing.common.BitMatrix;
  *
  * @author dswitkin@google.com (Daniel Switkin)
  */
+@SuppressWarnings("ALL")
 public final class BinaryBitmap {
 
   private final Binarizer binarizer;

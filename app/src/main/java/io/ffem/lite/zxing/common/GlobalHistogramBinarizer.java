@@ -31,6 +31,7 @@ import io.ffem.lite.zxing.NotFoundException;
  * @author dswitkin@google.com (Daniel Switkin)
  * @author Sean Owen
  */
+@SuppressWarnings("ALL")
 public class GlobalHistogramBinarizer extends Binarizer {
 
   private static final int LUMINANCE_BITS = 5;

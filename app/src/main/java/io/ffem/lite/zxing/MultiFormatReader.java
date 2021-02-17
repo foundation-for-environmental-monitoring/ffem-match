@@ -32,6 +32,7 @@ import io.ffem.lite.zxing.qrcode.detector.FinderPatternInfo;
  * @author Sean Owen
  * @author dswitkin@google.com (Daniel Switkin)
  */
+@SuppressWarnings("ALL")
 public final class MultiFormatReader implements Reader {
 
   private static final Reader[] EMPTY_READER_ARRAY = new Reader[0];

@@ -24,6 +24,7 @@ import io.ffem.lite.zxing.common.MathUtils;
  *
  * @author Sean Owen
  */
+@SuppressWarnings("ALL")
 public class ResultPoint {
 
   private final float x;

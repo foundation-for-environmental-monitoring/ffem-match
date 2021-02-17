@@ -40,6 +40,7 @@ import static io.ffem.lite.common.Constants.EXPECTED_QR_CORNER_COUNT;
  *
  * @author Sean Owen
  */
+@SuppressWarnings("ALL")
 public class FinderPatternFinder {
 
   protected static final int MIN_SKIP = 3; // 1 pixel/module times 3 modules/center

@@ -23,6 +23,7 @@ import java.util.Arrays;
  *
  * @author Sean Owen
  */
+@SuppressWarnings("ALL")
 public final class BitArray implements Cloneable {
 
   private int[] bits;

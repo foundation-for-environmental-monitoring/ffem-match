@@ -25,6 +25,7 @@ import java.util.List;
  *
  * @author Sean Owen
  */
+@SuppressWarnings("ALL")
 public final class DecoderResult {
 
   private final byte[] rawBytes;

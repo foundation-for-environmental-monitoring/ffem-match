@@ -23,6 +23,7 @@ package io.ffem.lite.zxing;
  *
  * @author Sean Owen
  */
+@SuppressWarnings("ALL")
 public final class FormatException extends ReaderException {
 
   private static final FormatException INSTANCE = new FormatException();

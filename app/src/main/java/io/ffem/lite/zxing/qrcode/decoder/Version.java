@@ -24,6 +24,7 @@ import io.ffem.lite.zxing.common.BitMatrix;
  *
  * @author Sean Owen
  */
+@SuppressWarnings("ALL")
 public final class Version {
 
   /**

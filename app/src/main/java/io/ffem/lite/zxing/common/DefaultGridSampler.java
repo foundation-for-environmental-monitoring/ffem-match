@@ -22,6 +22,7 @@ import io.ffem.lite.zxing.PerspectiveTransform;
 /**
  * @author Sean Owen
  */
+@SuppressWarnings("ALL")
 public final class DefaultGridSampler extends GridSampler {
 
   @Override

@@ -5,6 +5,7 @@
       <w>adjoint</w>
       <w>affero</w>
       <w>ahki</w>
+      <w>ansix</w>
       <w>appinvite</w>
       <w>appspot</w>
       <w>attrib</w>
@@ -24,7 +25,10 @@
       <w>camerax</w>
       <w>cccc</w>
       <w>cccccccccccccccccc</w>
+      <w>chien</w>
       <w>codabar</w>
+      <w>codenotes</w>
+      <w>coeff</w>
       <w>cofactor</w>
       <w>constraintlayout</w>
       <w>cuvette</w>
@@ -35,8 +39,10 @@
       <w>docname</w>
       <w>documentclass</w>
       <w>duplicative</w>
+      <w>edifact</w>
       <w>ehwpw</w>
       <w>ehyp</w>
+      <w>encodation</w>
       <w>epvswg</w>
       <w>esparcia</w>
       <w>etree</w>
@@ -65,6 +71,7 @@
       <w>inkscape</w>
       <w>isstock</w>
       <w>jggg</w>
+      <w>jhall</w>
       <w>kqer</w>
       <w>lateinit</w>
       <w>lbgon</w>
@@ -103,6 +110,7 @@
       <w>parskip</w>
       <w>paulburke</w>
       <w>polymorphically</w>
+      <w>polys</w>
       <w>preallocated</w>
       <w>preimage</w>
       <w>qjgn</w>
@@ -139,6 +147,7 @@
       <w>tradeoff</w>
       <w>tspan</w>
       <w>unmock</w>
+      <w>unrandomize</w>
       <w>unrotated</w>
       <w>unshift</w>
       <w>unskewed</w>
@@ -154,6 +163,7 @@
       <w>wxcgk</w>
       <w>xing</w>
       <w>xlink</w>
+      <w>xoffset</w>
       <w>xpvl</w>
       <w>xstep</w>
       <w>xues</w>
@@ -163,6 +173,8 @@
       <w>ystep</w>
       <w>zarffr</w>
       <w>zosju</w>
+      <w>bbox</w>
+      <w>ddff</w>
     </words>
   </dictionary>
 </component>

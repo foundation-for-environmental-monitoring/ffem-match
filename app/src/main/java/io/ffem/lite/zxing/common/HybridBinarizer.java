@@ -37,6 +37,7 @@ import io.ffem.lite.zxing.NotFoundException;
  *
  * @author dswitkin@google.com (Daniel Switkin)
  */
+@SuppressWarnings("ALL")
 public final class HybridBinarizer extends GlobalHistogramBinarizer {
 
   // This class uses 5x5 blocks to compute local luminance, where each block is 8x8 pixels.

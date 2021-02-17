@@ -25,6 +25,7 @@ package io.ffem.lite.zxing;
  *
  * @author dswitkin@google.com (Daniel Switkin)
  */
+@SuppressWarnings("SameReturnValue")
 public abstract class LuminanceSource {
 
   private final int width;

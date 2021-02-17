@@ -23,6 +23,7 @@ package io.ffem.lite.zxing.qrcode.decoder;
  * @author Sean Owen
  * @see ErrorCorrectionLevel
  */
+@SuppressWarnings("ALL")
 final class FormatInformation {
 
   private static final int FORMAT_INFO_MASK_QR = 0x5412;

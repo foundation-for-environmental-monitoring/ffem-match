@@ -19,6 +19,7 @@ package io.ffem.lite.zxing.common;
 /**
  * General math-related and numeric utility functions.
  */
+@SuppressWarnings("ALL")
 public final class MathUtils {
 
   private MathUtils() {

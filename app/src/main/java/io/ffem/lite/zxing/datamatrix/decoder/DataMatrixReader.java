@@ -40,6 +40,7 @@ import io.ffem.lite.zxing.qrcode.detector.FinderPatternInfo;
  *
  * @author bbrown@google.com (Brian Brown)
  */
+@SuppressWarnings("ALL")
 public final class DataMatrixReader implements Reader {
 
   private static final ResultPoint[] NO_POINTS = new ResultPoint[0];

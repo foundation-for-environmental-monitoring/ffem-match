@@ -35,6 +35,7 @@ import io.ffem.lite.zxing.qrcode.detector.FinderPatternInfo;
  *
  * @author Sean Owen
  */
+@SuppressWarnings("ALL")
 public class QRCodeReader implements Reader {
 
     private static final ResultPoint[] NO_POINTS = new ResultPoint[0];
