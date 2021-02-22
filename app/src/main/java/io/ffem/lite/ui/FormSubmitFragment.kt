@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.os.Bundle
+import android.os.Looper
 import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
@@ -58,8 +59,8 @@ class FormSubmitFragment : Fragment() {
     private var locationProgressDialog: Dialog? = null
     private var requestingLocationUpdates: Boolean = false
     private var fusedLocationClient: FusedLocationProviderClient? = null
-    private var locationRequest: LocationRequest? = null
-    private var locationCallback: LocationCallback? = null
+    private lateinit var locationRequest: LocationRequest
+    private lateinit var locationCallback: LocationCallback
     private lateinit var locationSettingsRequest: LocationSettingsRequest
     private lateinit var settingsClient: SettingsClient
 
@@ -170,12 +171,14 @@ class FormSubmitFragment : Fragment() {
             requireContext(), android.R.layout.simple_list_item_1, waterSource
         )
         b.sourceSelect.setAdapter(adapter)
+
+        createLocationCallback()
     }
 
     override fun setMenuVisibility(menuVisible: Boolean) {
         super.setMenuVisibility(menuVisible)
 
-        if (b.sourceDescEdit.isShown && b.sourceDescEdit.requestFocus()) {
+        if (menuVisible && b.sourceDescEdit.requestFocus()) {
             val imm =
                 b.sourceDescEdit.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
             imm?.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0)
@@ -228,36 +231,34 @@ class FormSubmitFragment : Fragment() {
             override fun onLocationResult(locationResult: LocationResult) {
                 super.onLocationResult(locationResult)
                 val location = locationResult.lastLocation
-                if (location != null) {
-                    if (!location.longitude.isNaN()) {
-                        form.latitude = location.latitude
-                        form.longitude = location.longitude
-                        form.geoAccuracy = location.accuracy
+                if (!location.longitude.isNaN()) {
+                    form.latitude = location.latitude
+                    form.longitude = location.longitude
+                    form.geoAccuracy = location.accuracy
 
-                        b.locationLayout.visibility = VISIBLE
-                        val gpsLocation =
-                            location.latitude.toString() + " / " + location.longitude.toString()
-                        val gpsAccuracy = "${location.accuracy} m"
+                    b.locationLayout.visibility = VISIBLE
+                    val gpsLocation =
+                        location.latitude.toString() + " / " + location.longitude.toString()
+                    val gpsAccuracy = "${location.accuracy} m"
 
-                        b.latitudeText.text = gpsLocation
-                        b.accuracyText.text = gpsAccuracy
+                    b.latitudeText.text = gpsLocation
+                    b.accuracyText.text = gpsAccuracy
 
-                        locationProgressDialog?.findViewById<TextView>(R.id.location_text)
-                            ?.text = gpsLocation
-                        locationProgressDialog?.findViewById<TextView>(R.id.accuracy_text)
-                            ?.text = gpsAccuracy
-                        locationProgressDialog?.findViewById<TextView>(R.id.accept_button)
-                            ?.isEnabled = true
-                        locationProgressDialog?.findViewById<TextView>(R.id.accept_button)
-                            ?.setTextColor(
-                                ContextCompat.getColor(
-                                    requireContext(),
-                                    R.color.link_green
-                                )
+                    locationProgressDialog?.findViewById<TextView>(R.id.location_text)
+                        ?.text = gpsLocation
+                    locationProgressDialog?.findViewById<TextView>(R.id.accuracy_text)
+                        ?.text = gpsAccuracy
+                    locationProgressDialog?.findViewById<TextView>(R.id.accept_button)
+                        ?.isEnabled = true
+                    locationProgressDialog?.findViewById<TextView>(R.id.accept_button)
+                        ?.setTextColor(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.link_green
                             )
-                        val dao = model.db.resultDao()
-                        dao.update(form)
-                    }
+                        )
+                    val dao = model.db.resultDao()
+                    dao.update(form)
                 }
             }
         }
@@ -265,9 +266,6 @@ class FormSubmitFragment : Fragment() {
 
     private fun checkLocationIsTurnedOn() {
         buildLocationSettingsRequest()
-        if (locationCallback == null) {
-            createLocationCallback()
-        }
         settingsClient.checkLocationSettings(locationSettingsRequest)
             .addOnSuccessListener(requireActivity()) {
                 startLocationUpdates()
@@ -347,8 +345,7 @@ class FormSubmitFragment : Fragment() {
     private fun startLocationUpdates() {
         try {
             fusedLocationClient!!.requestLocationUpdates(
-                locationRequest,
-                locationCallback, null
+                locationRequest, locationCallback, Looper.getMainLooper()
             )
         } catch (e: Exception) {
             showHideControls()
@@ -372,14 +369,11 @@ class FormSubmitFragment : Fragment() {
 
     private fun buildLocationSettingsRequest() {
         val builder = LocationSettingsRequest.Builder()
-        if (locationRequest == null) {
-            createLocationRequest()
-        }
-        builder.addLocationRequest(locationRequest!!)
+        createLocationRequest()
+        builder.addLocationRequest(locationRequest)
         locationSettingsRequest = builder.build()
         builder.setAlwaysShow(true)
     }
-
 
     private fun startLocation() {
         cancelLocation()
@@ -415,19 +409,17 @@ class FormSubmitFragment : Fragment() {
 
     private fun createLocationRequest() {
         locationRequest = LocationRequest.create()
-        locationRequest!!.interval = 10000
-        locationRequest!!.fastestInterval = 10000
-        locationRequest!!.numUpdates = 5
-        locationRequest!!.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        locationRequest.interval = 10000
+        locationRequest.fastestInterval = 10000
+        locationRequest.numUpdates = 5
+        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
     }
 
     private fun cancelLocation() {
-        if (locationCallback != null && fusedLocationClient != null) {
-            fusedLocationClient!!.removeLocationUpdates(locationCallback!!)
+        if (fusedLocationClient != null) {
+            fusedLocationClient!!.removeLocationUpdates(locationCallback)
         }
         fusedLocationClient = null
-        locationRequest = null
-        locationCallback = null
     }
 
     override fun onDestroy() {
