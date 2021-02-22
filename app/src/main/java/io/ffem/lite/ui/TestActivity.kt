@@ -130,7 +130,7 @@ class TestActivity : BaseActivity(),
             TestInfoViewModel::class.java
         )
 
-        b.viewPager.isUserInputEnabled = true
+        b.viewPager.isUserInputEnabled = false
         val testPagerAdapter = TestPagerAdapter(this)
         testPagerAdapter.pageIndex = pageIndex
         b.viewPager.adapter = testPagerAdapter
@@ -184,10 +184,10 @@ class TestActivity : BaseActivity(),
             ref.setValue(
                 Result(
                     testInfo.uuid!!,
-                    testInfo.name!!,
+                    testInfo.name,
                     testInfo.getRiskEnglish(this),
                     testInfo.getResultString(this),
-                    testInfo.unit!!,
+                    testInfo.unit,
                     System.currentTimeMillis(),
                     form.source,
                     form.sourceType,
@@ -195,7 +195,7 @@ class TestActivity : BaseActivity(),
                     form.longitude,
                     form.geoAccuracy,
                     form.comment,
-                    App.getAppVersion(),
+                    App.getAppVersion(true),
                     Build.MODEL
                 )
             )

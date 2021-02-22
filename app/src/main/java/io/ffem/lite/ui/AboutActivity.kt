@@ -26,7 +26,7 @@ class AboutActivity : BaseActivity() {
         val view = binding.root
         setContentView(view)
 
-        binding.textVersion.text = App.getAppVersion()
+        binding.textVersion.text = App.getAppVersion(false)
 
         setTitle(R.string.about)
     }

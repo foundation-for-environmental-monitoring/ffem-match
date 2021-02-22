@@ -64,7 +64,7 @@ class App : BaseApplication() {
          *
          * @return The version name and number
          */
-        fun getAppVersion(): String {
+        fun getAppVersion(includeCode: Boolean): String {
             var version = ""
             try {
                 val context = app
@@ -77,10 +77,20 @@ class App : BaseApplication() {
                         packageInfo.versionCode.toLong()
                     }
 
-                version = if (isDiagnosticMode()) {
-                    String.format("%s (Build %s)", packageInfo.versionName, versionCode)
-                } else {
-                    packageInfo.versionName
+                version = when {
+                    includeCode -> {
+                        String.format(
+                            "%s (%s)",
+                            packageInfo.versionName.replace("Alpha", "").trim(),
+                            versionCode
+                        )
+                    }
+                    isDiagnosticMode() -> {
+                        String.format("%s (Build %s)", packageInfo.versionName, versionCode)
+                    }
+                    else -> {
+                        packageInfo.versionName
+                    }
                 }
             } catch (ignored: PackageManager.NameNotFoundException) {
                 // do nothing

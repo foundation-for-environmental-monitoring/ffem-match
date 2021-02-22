@@ -14,6 +14,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.Chronometer
 import android.widget.TextView
@@ -171,15 +172,26 @@ class FormSubmitFragment : Fragment() {
         b.sourceSelect.setAdapter(adapter)
     }
 
+    override fun setMenuVisibility(menuVisible: Boolean) {
+        super.setMenuVisibility(menuVisible)
+
+        if (b.sourceDescEdit.isShown && b.sourceDescEdit.requestFocus()) {
+            val imm =
+                b.sourceDescEdit.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+            imm?.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0)
+        }
+    }
+
     private fun validateDescription() {
         b.descLayout.setStatusColor(
             !b.sourceDescEdit.text.isNullOrEmpty()
-                    && !b.sourceSelect.text.isNullOrEmpty()
+                    && !b.sourceSelect.text.isNullOrEmpty(),
+            true
         )
     }
 
     private fun validateComment() {
-        b.commentLayout.setStatusColor(!b.commentEdit.text.isNullOrEmpty())
+        b.commentLayout.setStatusColor(!b.commentEdit.text.isNullOrEmpty(), false)
     }
 
     private fun submitForm() {
@@ -323,11 +335,11 @@ class FormSubmitFragment : Fragment() {
         if (!b.latitudeText.text.isNullOrEmpty()) {
             b.locationButton.visibility = GONE
             b.redoButton.visibility = VISIBLE
-            b.locationView.setStatusColor(true)
+            b.locationView.setStatusColor(true, required = false)
         } else {
             b.locationButton.visibility = VISIBLE
             b.redoButton.visibility = GONE
-            b.locationView.setStatusColor(false)
+            b.locationView.setStatusColor(false, required = false)
         }
     }
 
@@ -411,7 +423,7 @@ class FormSubmitFragment : Fragment() {
 
     private fun cancelLocation() {
         if (locationCallback != null && fusedLocationClient != null) {
-            fusedLocationClient!!.removeLocationUpdates(locationCallback)
+            fusedLocationClient!!.removeLocationUpdates(locationCallback!!)
         }
         fusedLocationClient = null
         locationRequest = null
