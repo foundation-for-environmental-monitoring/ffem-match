@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
-import io.ffem.lite.app.App
+import io.ffem.lite.app.App.Companion.getTestInfo
 import io.ffem.lite.common.*
 import io.ffem.lite.common.Constants.CALIBRATION_COLOR_AREA_WIDTH_PERCENTAGE
 import io.ffem.lite.common.Constants.MAX_TILT_PERCENTAGE_ALLOWED
@@ -67,6 +67,27 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         localBroadcastManager = LocalBroadcastManager.getInstance(context)
 
         try {
+            if (capturePhoto) {
+                bitmap = getBitmap(imageProxy.toBitmap(), previewHeight, previewWidth)
+                processBitmap(imageProxy)
+                return
+            } else {
+                if (manualCaptureOnly()) {
+                    processing = false
+                    imageProxy.close()
+                    return
+                }
+            }
+        } catch (e: Exception) {
+            return
+        }
+
+        if (manualCaptureOnly()) {
+            endProcessing(imageProxy)
+            return
+        }
+
+        try {
             bitmap =
                 if (BuildConfig.DEBUG && (isDiagnosticMode() || BuildConfig.INSTRUMENTED_TEST_RUNNING.get())) {
                     val imageNumber = getSampleTestImageNumberInt()
@@ -101,11 +122,21 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                     getBitmap(imageProxy.toBitmap(), previewHeight, previewWidth)
                 }
 
-            pattern = getPatternFromBitmap(bitmap)
-            if (pattern != null) {
+            processBitmap(imageProxy)
 
-                pattern?.apply {
+        } catch (e: Exception) {
+            endProcessing(imageProxy)
+            return
+        }
+        endProcessing(imageProxy)
+    }
 
+    private fun processBitmap(imageProxy: ImageProxy) {
+        pattern = getPatternFromBitmap(bitmap)
+        if (pattern != null) {
+            pattern?.apply {
+
+                if (!capturePhoto) {
                     // Check if camera is too close
                     if (topLeft.x < bitmap.width * 0.018 ||
                         bottomRight.y > bitmap.height * 0.96 ||
@@ -123,7 +154,6 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                         abs(topRight.x - bottomRight.x) > allowedTilt ||
                         abs(bottomLeft.y - bottomRight.y) > allowedTilt
                     ) {
-
                         val forward = (bottomRight.y - topRight.y) - (bottomLeft.y - topLeft.y)
                         val backward = (bottomLeft.y - topLeft.y) - (bottomRight.y - topRight.y)
                         val leftBackward = (topRight.x - topLeft.x) - (bottomRight.x - bottomLeft.x)
@@ -229,72 +259,62 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
                         endProcessing(imageProxy)
                         return
                     }
+                }
 
-//                    if (autoFocusCounter < 10) {
-//                        autoFocusCounter++
-//                        endProcessing(imageProxy, false)
-//                        return
-//                    }
-
-                    val testInfo = App.getTestInfo(testId)
-                    if (testInfo == null) {
-                        if (testId.isNotEmpty()) {
-                            // if test id is not recognized
-                            sendMessage(context.getString(R.string.invalid_barcode))
-                            endProcessing(imageProxy)
-                            return
-                        }
-                    } else {
-                        // if requested test id does not match the card test id
-                        val requestedTestId = PreferencesUtil.getString(context, TEST_ID_KEY, "")
-                        if ((requestedTestId!!.isNotEmpty() && testInfo.uuid != requestedTestId)) {
-                            sendMessage(context.getString(R.string.wrong_card))
-                            return
-                        }
-                        savePhoto(bitmap, testInfo)
-                    }
-
-                    croppedBitmap = perspectiveTransform(bitmap, pattern!!)
-                    bitmap.recycle()
-
-                    if (testInfo != null && testInfo.resultInfo.result > -2) {
-                        ImageColorUtil.getResult(
-                            context,
-                            testInfo,
-                            ErrorType.NO_ERROR,
-                            croppedBitmap
-                        )
-                        croppedBitmap.recycle()
-
-                        sendMessage(context.getString(R.string.analyzing_photo))
-                        done = true
-                        val intent = Intent(CARD_CAPTURED_EVENT_BROADCAST)
-                        intent.putExtra(TEST_INFO_KEY, testInfo)
-                        localBroadcastManager.sendBroadcast(
-                            intent
-                        )
-
-                        val resultIntent = Intent(RESULT_EVENT_BROADCAST)
-                        resultIntent.putExtra(TEST_INFO_KEY, testInfo)
-                        localBroadcastManager.sendBroadcast(
-                            resultIntent
-                        )
-                    } else {
-                        sendMessage(context.getString(R.string.color_card_not_found))
+                val testInfo = getTestInfo(testId)
+                if (testInfo == null) {
+                    if (testId.isNotEmpty()) {
+                        // if test id is not recognized
+                        sendMessage(context.getString(R.string.invalid_barcode))
                         endProcessing(imageProxy)
                         return
                     }
+                } else {
+                    // if requested test id does not match the card test id
+                    val requestedTestId = PreferencesUtil.getString(context, TEST_ID_KEY, "")
+                    if ((requestedTestId!!.isNotEmpty() && testInfo.uuid != requestedTestId)) {
+                        sendMessage(context.getString(R.string.wrong_card))
+                        return
+                    }
+                    savePhoto(bitmap, testInfo)
                 }
-            } else {
-                sendMessage(context.getString(R.string.color_card_not_found))
-                endProcessing(imageProxy)
-                return
+
+                croppedBitmap = perspectiveTransform(bitmap, pattern!!)
+                bitmap.recycle()
+
+                if (testInfo != null && testInfo.resultInfo.result > -2) {
+                    ImageColorUtil.getResult(
+                        context,
+                        testInfo,
+                        ErrorType.NO_ERROR,
+                        croppedBitmap
+                    )
+                    croppedBitmap.recycle()
+
+                    sendMessage(context.getString(R.string.analyzing_photo))
+                    done = true
+                    val intent = Intent(CARD_CAPTURED_EVENT_BROADCAST)
+                    intent.putExtra(TEST_INFO_KEY, testInfo)
+                    localBroadcastManager.sendBroadcast(
+                        intent
+                    )
+
+                    val resultIntent = Intent(RESULT_EVENT_BROADCAST)
+                    resultIntent.putExtra(TEST_INFO_KEY, testInfo)
+                    localBroadcastManager.sendBroadcast(
+                        resultIntent
+                    )
+                } else {
+                    sendMessage(context.getString(R.string.color_card_not_found))
+                    endProcessing(imageProxy)
+                    return
+                }
             }
-        } catch (e: Exception) {
+        } else {
+            sendMessage(context.getString(R.string.color_card_not_found))
             endProcessing(imageProxy)
             return
         }
-        endProcessing(imageProxy)
     }
 
     private fun getBitmap(bitmap: Bitmap, previewHeight: Int, previewWidth: Int): Bitmap {
@@ -451,5 +471,9 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         capturePhoto = false
         autoFocusCounter = 0
         autoFocusCounter2 = 0
+    }
+
+    fun takePhoto() {
+        capturePhoto = true
     }
 }

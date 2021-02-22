@@ -33,19 +33,15 @@ import io.ffem.lite.R
 import io.ffem.lite.common.ERROR_EVENT_BROADCAST
 import io.ffem.lite.common.ERROR_MESSAGE
 import io.ffem.lite.common.SCAN_PROGRESS
-import io.ffem.lite.common.TEST_INFO_KEY
-import io.ffem.lite.data.AppDatabase
-import io.ffem.lite.data.TestResult
 import io.ffem.lite.databinding.FragmentCameraBinding
-import io.ffem.lite.model.ErrorType
-import io.ffem.lite.model.TestInfo
-import io.ffem.lite.preference.*
+import io.ffem.lite.preference.getSampleTestImageNumberInt
+import io.ffem.lite.preference.manualCaptureOnly
+import io.ffem.lite.preference.useFlashMode
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.*
 import java.util.concurrent.Executor
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -110,31 +106,6 @@ class CameraFragment : Fragment() {
             }
             val progressBar = view?.findViewById<ProgressBar>(R.id.progress_bar)
             progressBar?.progress = scanProgress
-        }
-    }
-
-    private val capturedPhotoBroadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            val testInfo = intent.getParcelableExtra<TestInfo>(TEST_INFO_KEY) ?: return
-            if (!AppPreferences.isCalibration()) {
-                val db: AppDatabase = AppDatabase.getDatabase(requireContext())
-                db.resultDao().insert(
-                    TestResult(
-                        testInfo.fileName,
-                        testInfo.uuid!!,
-                        0,
-                        testInfo.name!!,
-                        Date().time,
-                        -1.0,
-                        testInfo.maxValue,
-                        -1.0,
-                        0.0,
-                        currentLuminosity,
-                        ErrorType.NO_ERROR,
-                        getSampleTestImageNumber()
-                    )
-                )
-            }
         }
     }
 
@@ -224,7 +195,6 @@ class CameraFragment : Fragment() {
         mainScope.cancel(null)
         cameraProvider.unbindAll()
         broadcastManager.unregisterReceiver(broadcastReceiver)
-        broadcastManager.unregisterReceiver(capturedPhotoBroadcastReceiver)
         if (lightSensor != null) {
             sensorManager.unregisterListener(lightEventListener)
         }
@@ -367,7 +337,7 @@ class CameraFragment : Fragment() {
         if (manualCaptureOnly()) {
             takePhotoButton!!.visibility = VISIBLE
             takePhotoButton!!.setOnClickListener {
-                // todo: Is manual capture required?
+                colorCardAnalyzer.takePhoto()
             }
         } else {
             takePhotoButton!!.visibility = GONE

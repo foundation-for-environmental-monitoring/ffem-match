@@ -9,6 +9,14 @@
         app:allowDividerBelow="true"
         app:iconSpaceReserved="false" />
 
+    <CheckBoxPreference
+        android:key="@string/manualCaptureOnlyKey"
+        android:summary="@string/manual_photo_summary"
+        android:title="@string/manual_photo_capture"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="true"
+        app:iconSpaceReserved="false" />
+
     <Preference
         android:key="@string/aboutKey"
         android:title="@string/about"
