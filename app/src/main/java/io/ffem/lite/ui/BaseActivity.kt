@@ -35,7 +35,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     private fun updateTheme() {
 
-        if (this !is BarcodeActivity) {
+        if (this !is TestActivity) {
             setTheme(R.style.AppTheme_Main)
         }
 

@@ -33,7 +33,6 @@
     <string name="color_card_not_found">Scanning…</string>
     <string name="capture_photo">Capture photo</string>
     <string name="invalid_image">Invalid image</string>
-    <string name="submit_result">Submit Result</string>
     <string name="result">Result</string>
     <string name="analyzed_photo">Analyzed Photo</string>
     <string name="color_extracts">Colors detected</string>
@@ -110,10 +109,11 @@
     <string name="residual_chlorine" tools:keep="@string/residual_chlorine">Residual Chlorine</string>
 
     <!-- Unit Tests-->
-    <string name="back">Back</string>
-    <string name="next">Next</string>
     <string name="water_tests_1">Water Tests 1</string>
     <string name="water_tests_2">Water Tests 2</string>
+
+    <string name="back">Back</string>
+    <string name="next">Next</string>
     <string name="calibrate">Calibrate</string>
     <string name="calibrate_summary">Calibrate using a standard</string>
     <string name="tilt_backwards">Tilt phone backwards</string>
@@ -121,4 +121,33 @@
     <string name="tilt_left_forwards">Tilt phone left side forwards</string>
     <string name="tilt_left_backwards">Tilt phone left side backwards</string>
     <string name="remove_response">Remove response</string>
+    <string name="cancel">Cancel</string>
+    <string name="comment">Comment</string>
+    <string name="location">Location</string>
+    <string name="get_location">GPS location</string>
+    <string name="short_description">Description / Title</string>
+    <string name="source_type">Source type</string>
+    <string name="gps_instructions">Stand near the water source but away from objects that could block the GPS signals</string>
+    <string name="location_permission">Location permission is required</string>
+    <string name="accuracy">Accuracy</string>
+    <string name="getting_location">Getting location</string>
+    <string name="accept_location">Accept</string>
+    <string name="lat_lon">Lat/Lon</string>
+    <string name="save">Save</string>
+    <string name="required_error">This is required</string>
+    <string name="info">Info</string>
+    <string name="manual_photo_capture">Manual photo capture</string>
+    <string name="manual_photo_summary">Turn this on if the auto photo capture is not working well on this phone</string>
+    <string name="airplane_mode_off">Please turn off airplane mode</string>
+
+    <string-array name="WaterSource">
+        <item>Borewell water</item>
+        <item>Drinking water</item>
+        <item>Effluent</item>
+        <item>Ground water</item>
+        <item>Lake water</item>
+        <item>Rain water</item>
+        <item>River water</item>
+        <item>Sewage</item>
+    </string-array>
 </resources>

@@ -9,7 +9,7 @@ import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.common.IS_CALIBRATION
 import io.ffem.lite.ui.AboutActivity
-import io.ffem.lite.ui.BarcodeActivity
+import io.ffem.lite.ui.TestActivity
 import io.ffem.lite.util.PreferencesUtil
 
 class OtherPreferenceFragment : PreferenceFragmentCompat() {
@@ -29,7 +29,7 @@ class OtherPreferenceFragment : PreferenceFragmentCompat() {
                     calibrateClicked = true
 
                     PreferencesUtil.setBoolean(requireContext(), IS_CALIBRATION, true)
-                    val intent = Intent(requireContext(), BarcodeActivity::class.java)
+                    val intent = Intent(requireContext(), TestActivity::class.java)
                     startActivity(intent)
                 }
                 true

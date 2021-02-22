@@ -26,10 +26,11 @@ import io.ffem.lite.util.PreferencesUtil
 import io.ffem.lite.util.toLocalString
 import java.io.File
 
-class ResultFragment : Fragment() {
+class ResultFragment(externalRequest: Boolean) : Fragment() {
     private var _binding: FragmentResultBinding? = null
-    private val binding get() = _binding!!
+    private val b get() = _binding!!
     private val model: TestInfoViewModel by activityViewModels()
+    private val isExternalRequest = externalRequest
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,13 +38,14 @@ class ResultFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentResultBinding.inflate(inflater, container, false)
-        return binding.root
+        return b.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         if (activity is ResultViewActivity) {
-            binding.submitBtn.visibility = GONE
+            b.nextButton.visibility = GONE
         } else {
+            b.infoLayout.visibility = GONE
             val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
             if (toolbar != null) {
                 if (isDiagnosticMode()) {
@@ -62,7 +64,18 @@ class ResultFragment : Fragment() {
                     )
                 }
             }
-            binding.submitBtn.visibility = VISIBLE
+
+            if (model.test.get()!!.error != ErrorType.NO_ERROR || isExternalRequest) {
+                b.nextButton.setText(R.string.close)
+            }
+
+            b.nextButton.setOnClickListener {
+                if (model.test.get()!!.error != ErrorType.NO_ERROR || isExternalRequest) {
+                    (requireActivity() as TestActivity).submitResult()
+                } else {
+                    (requireActivity() as TestActivity).pageNext()
+                }
+            }
         }
 
         displayResult(model.test.get())
@@ -93,103 +106,100 @@ class ResultFragment : Fragment() {
         val analyzedImagePath = File(path + testInfo.fileName + File.separator + fileName + ".jpg")
 
         if (resultImagePath.exists()) {
-            binding.resultImg.setImageURI(Uri.fromFile(resultImagePath))
+            b.resultImg.setImageURI(Uri.fromFile(resultImagePath))
         }
 
         if (analyzedImagePath.exists()) {
-            binding.fullPhotoImg.setImageURI(Uri.fromFile(analyzedImagePath))
+            b.fullPhotoImg.setImageURI(Uri.fromFile(analyzedImagePath))
         }
 
         if (extractImagePath.exists()) {
-            binding.extractImg.setImageURI(Uri.fromFile(extractImagePath))
+            b.extractImg.setImageURI(Uri.fromFile(extractImagePath))
             val bitmap = BitmapFactory.decodeFile(extractImagePath.path)
             if (bitmap.height > bitmap.width) {
-                binding.extractImg.rotation = -90f
+                b.extractImg.rotation = -90f
             }
             bitmap.recycle()
-            binding.extractImg.refreshDrawableState()
+            b.extractImg.refreshDrawableState()
         }
 
         if (isDiagnosticMode()) {
             val gsExtractImagePath =
                 File(path + testInfo.fileName + File.separator + fileName + "_swatch_gs.jpg")
             if (gsExtractImagePath.exists()) {
-                binding.extractGsImg.setImageURI(Uri.fromFile(gsExtractImagePath))
-                binding.extractGsImg.refreshDrawableState()
+                b.extractGsImg.setImageURI(Uri.fromFile(gsExtractImagePath))
+                b.extractGsImg.refreshDrawableState()
             } else {
-                binding.lytColorExtractsGs.visibility = GONE
+                b.lytColorExtractsGs.visibility = GONE
             }
         } else {
-            binding.lytColorExtractsGs.visibility = GONE
+            b.lytColorExtractsGs.visibility = GONE
         }
 
         val requestedTestId = PreferencesUtil.getString(context, TEST_ID_KEY, "")
         if (testInfo.error == ErrorType.NO_ERROR && testInfo.resultInfo.result >= 0) {
-            binding.nameTxt.text = testInfo.name!!.toLocalString()
-            binding.name2Txt.text = ""
-            binding.resultTxt.text = testInfo.getResultString(requireContext())
+            b.nameTxt.text = testInfo.name!!.toLocalString()
+            b.name2Txt.text = ""
+            b.resultTxt.text = testInfo.getResultString(requireContext())
 
             if (isDiagnosticMode()) {
                 val grayscaleResult = testInfo.getResultGrayscaleString()
-                binding.grayscaleResultTxt.text = grayscaleResult
+                b.grayscaleResultTxt.text = grayscaleResult
                 if (grayscaleResult.isNotEmpty()) {
-                    binding.unit2Txt.text = testInfo.unit
+                    b.unit2Txt.text = testInfo.unit
                 }
             } else {
-                binding.grayscaleLyt.visibility = GONE
+                b.grayscaleLyt.visibility = GONE
             }
 
-            binding.unitTxt.text = testInfo.unit
-            binding.valueTxt.text = testInfo.getRisk(requireContext())
+            b.unitTxt.text = testInfo.unit
+            b.valueTxt.text = testInfo.getRisk(requireContext())
             when {
                 testInfo.getRiskType() == RiskLevel.HIGH -> {
-                    binding.valueTxt.setTextColor(resources.getColor(R.color.high_risk, null))
+                    b.valueTxt.setTextColor(resources.getColor(R.color.high_risk, null))
                 }
                 testInfo.getRiskType() == RiskLevel.MEDIUM -> {
-                    binding.valueTxt.setTextColor(resources.getColor(R.color.medium_risk, null))
+                    b.valueTxt.setTextColor(resources.getColor(R.color.medium_risk, null))
                 }
                 testInfo.getRiskType() == RiskLevel.LOW -> {
-                    binding.valueTxt.setTextColor(resources.getColor(R.color.low_risk, null))
+                    b.valueTxt.setTextColor(resources.getColor(R.color.low_risk, null))
                 }
             }
-            binding.errorMarginTxt.text = String.format("%.2f", testInfo.getMarginOfError())
+            b.errorMarginTxt.text = String.format("%.2f", testInfo.getMarginOfError())
             if (testInfo.resultInfo.luminosity > -1) {
-                binding.luminosityTxt.text = testInfo.resultInfo.luminosity.toString()
+                b.luminosityTxt.text = testInfo.resultInfo.luminosity.toString()
             } else {
-                binding.luminosityLyt.visibility = GONE
+                b.luminosityLyt.visibility = GONE
             }
-            binding.errorMessageLyt.visibility = GONE
-            binding.resultLyt.visibility = VISIBLE
-            binding.resultDetailsLyt.visibility = VISIBLE
-            if (requestedTestId.isNullOrEmpty()) {
-                binding.submitBtn.setText(R.string.close)
-            } else {
-                binding.submitBtn.setText(R.string.submit_result)
-            }
+            b.errorMessageLyt.visibility = GONE
+            b.resultLyt.visibility = VISIBLE
+            b.resultDetailsLyt.visibility = VISIBLE
+            b.titleText.text = model.form.source
+            b.sourceTypeText.text = model.form.sourceType
+            b.commentText.text = model.form.comment
         } else {
-            binding.nameTxt.text = ""
+            b.nameTxt.text = ""
             if (testInfo.uuid != requestedTestId) {
                 val requestedTest = getTestInfo(requestedTestId!!)
                 if (requestedTest != null) {
-                    binding.name2Txt.text = requestedTest.name!!.toLocalString()
+                    b.name2Txt.text = requestedTest.name!!.toLocalString()
                 } else {
-                    binding.name2Txt.text = testInfo.name!!.toLocalString()
+                    b.name2Txt.text = testInfo.name!!.toLocalString()
                 }
             } else {
-                binding.name2Txt.text = testInfo.name!!.toLocalString()
+                b.name2Txt.text = testInfo.name!!.toLocalString()
             }
 
-            binding.errorTxt.text = testInfo.error.toLocalString(requireContext())
-            binding.errorMessageLyt.visibility = VISIBLE
-            binding.resultLyt.visibility = GONE
-            binding.resultDetailsLyt.visibility = GONE
+            b.errorTxt.text = testInfo.error.toLocalString(requireContext())
+            b.errorMessageLyt.visibility = VISIBLE
+            b.resultLyt.visibility = GONE
+            b.resultDetailsLyt.visibility = GONE
             if (!extractImagePath.exists()) {
-                binding.colorExtractsLyt.visibility = GONE
+                b.colorExtractsLyt.visibility = GONE
             }
             if (!analyzedImagePath.exists()) {
-                binding.analyzedPhotoLyt.visibility = GONE
+                b.analyzedPhotoLyt.visibility = GONE
             }
-            binding.submitBtn.setText(R.string.close)
         }
     }
 

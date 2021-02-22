@@ -14,4 +14,36 @@
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
+    <style name="CustomCardView" parent="CardView">
+        <item name="cardCornerRadius">3dp</item>
+        <item name="cardBackgroundColor">@color/card_bg</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:layout_marginBottom">5dp</item>
+        <item name="android:layout_marginStart">10dp</item>
+        <item name="android:layout_marginEnd">10dp</item>
+    </style>
+
+    <style name="TextLabel" parent="TextAppearance.Design.Hint">
+        <item name="android:paddingBottom">15dp</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="ButtonThemeOverlay">
+        <item name="colorOnPrimary">@color/white</item>
+    </style>
+
+    <style name="ButtonStyle" parent="Widget.MaterialComponents.Button">
+        <item name="materialThemeOverlay">@style/ButtonThemeOverlay</item>
+    </style>
+
+    <style name="ImpButtonThemeOverlay">
+        <item name="android:backgroundTint">@color/button_state</item>
+        <item name="colorOnPrimary">@color/white</item>
+    </style>
+
+    <style name="ImpButtonStyle" parent="Widget.MaterialComponents.Button">
+        <item name="materialThemeOverlay">@style/ImpButtonThemeOverlay</item>
+    </style>
 </resources>

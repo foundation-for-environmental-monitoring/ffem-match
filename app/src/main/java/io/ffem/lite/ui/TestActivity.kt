@@ -14,7 +14,6 @@ import android.os.Bundle
 import android.os.Environment.DIRECTORY_PICTURES
 import android.os.Handler
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -29,9 +28,11 @@ import io.ffem.lite.camera.CameraFragment
 import io.ffem.lite.common.*
 import io.ffem.lite.data.AppDatabase
 import io.ffem.lite.data.Result
+import io.ffem.lite.data.TestResult
 import io.ffem.lite.databinding.ActivityBarcodeBinding
 import io.ffem.lite.model.CalibrationValue
 import io.ffem.lite.model.ErrorType
+import io.ffem.lite.model.PageIndex
 import io.ffem.lite.model.TestInfo
 import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.preference.AppPreferences.isCalibration
@@ -41,28 +42,21 @@ import java.io.File.separator
 import java.util.*
 import kotlin.math.round
 
-const val DEBUG_MODE = "debugMode"
-const val TEST_ID = "testId"
-
-const val INSTRUCTION_PAGE = 0
-const val CAMERA_PAGE = 1
-const val CONFIRMATION_PAGE = 2
-const val CALIBRATE_LIST_PAGE = 3
-const val RESULT_PAGE = 4
-
 /**
  * Activity to display info about the app.
  */
-class BarcodeActivity : BaseActivity(),
+class TestActivity : BaseActivity(),
     CalibrationItemFragment.OnCalibrationSelectedListener,
     InstructionFragment.OnStartTestListener,
     ImageConfirmFragment.OnConfirmImageListener {
 
-    private lateinit var binding: ActivityBarcodeBinding
+    private lateinit var b: ActivityBarcodeBinding
     private lateinit var broadcastManager: LocalBroadcastManager
     private var testInfo: TestInfo? = null
     lateinit var model: TestInfoViewModel
     lateinit var mediaPlayer: MediaPlayer
+    private val pageIndex = PageIndex()
+    private var isExternalRequest: Boolean = false
 
     private val colorCardCapturedBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -77,15 +71,23 @@ class BarcodeActivity : BaseActivity(),
 
             if (testInfo != null) {
                 model.setTest(testInfo)
+                val db = AppDatabase.getDatabase(context)
+                if (!isCalibration()) {
+                    val testResult = db.resultDao().getResult(testInfo!!.fileName)
+                    if (testResult != null) {
+                        model.form = testResult
+                    }
+                }
+                model.db = db
                 if (testInfo!!.error == ErrorType.BAD_LIGHTING ||
                     testInfo!!.error == ErrorType.IMAGE_TILTED
                 ) {
-                    binding.viewPager.currentItem = RESULT_PAGE
+                    b.viewPager.currentItem = pageIndex.result
                 } else {
-                    binding.viewPager.currentItem = CONFIRMATION_PAGE
+                    b.viewPager.currentItem = pageIndex.confirmation
                 }
             } else {
-                binding.viewPager.currentItem = RESULT_PAGE
+                b.viewPager.currentItem = pageIndex.result
             }
         }
     }
@@ -94,8 +96,8 @@ class BarcodeActivity : BaseActivity(),
         super.onCreate(savedInstanceState)
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
 
-        binding = ActivityBarcodeBinding.inflate(layoutInflater)
-        val view = binding.root
+        b = ActivityBarcodeBinding.inflate(layoutInflater)
+        val view = b.root
         setContentView(view)
 
         broadcastManager = LocalBroadcastManager.getInstance(this)
@@ -117,6 +119,7 @@ class BarcodeActivity : BaseActivity(),
             if (intent.getBooleanExtra(DEBUG_MODE, false)) {
                 sendDummyResultForDebugging(uuid)
             }
+            isExternalRequest = true
             PreferencesUtil.setString(this, TEST_ID_KEY, uuid)
             PreferencesUtil.setBoolean(this, IS_CALIBRATION, false)
         } else {
@@ -127,20 +130,23 @@ class BarcodeActivity : BaseActivity(),
             TestInfoViewModel::class.java
         )
 
-        binding.viewPager.isUserInputEnabled = false
+        b.viewPager.isUserInputEnabled = true
         val testPagerAdapter = TestPagerAdapter(this)
-        binding.viewPager.adapter = testPagerAdapter
+        testPagerAdapter.pageIndex = pageIndex
+        b.viewPager.adapter = testPagerAdapter
 
-        binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+        b.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageScrollStateChanged(state: Int) {
             }
 
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                if (position == CAMERA_PAGE || position == INSTRUCTION_PAGE) {
+                if (position == pageIndex.camera || position == pageIndex.instruction) {
                     window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
+                    view.invalidate()
                 } else {
                     window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
+                    view.invalidate()
                 }
             }
         })
@@ -148,11 +154,13 @@ class BarcodeActivity : BaseActivity(),
         mediaPlayer = MediaPlayer.create(this, R.raw.short_beep)
     }
 
-    fun submitResult(@Suppress("UNUSED_PARAMETER") view: View) {
+    fun submitResult() {
         if (testInfo != null) {
             val resultIntent = Intent()
             if (testInfo!!.getResult() >= 0) {
-                sendResultToCloudDatabase(testInfo!!)
+                val db = AppDatabase.getDatabase(baseContext)
+                val form = db.resultDao().getResult(testInfo!!.fileName)!!
+                sendResultToCloudDatabase(testInfo!!, form)
                 resultIntent.putExtra(TEST_VALUE_KEY, testInfo!!.getResultString(this))
                 resultIntent.putExtra(testInfo!!.name + "_Result", testInfo!!.getResultString(this))
                 resultIntent.putExtra(testInfo!!.name + "_Risk", testInfo!!.getRiskEnglish(this))
@@ -165,8 +173,8 @@ class BarcodeActivity : BaseActivity(),
         finish()
     }
 
-    private fun sendResultToCloudDatabase(testInfo: TestInfo) {
-        if (!BuildConfig.INSTRUMENTED_TEST_RUNNING.get()) {
+    private fun sendResultToCloudDatabase(testInfo: TestInfo, form: TestResult) {
+        if (!BuildConfig.INSTRUMENTED_TEST_RUNNING.get() && !isExternalRequest) {
             val path = if (BuildConfig.DEBUG) {
                 "result-debug"
             } else {
@@ -181,6 +189,12 @@ class BarcodeActivity : BaseActivity(),
                     testInfo.getResultString(this),
                     testInfo.unit!!,
                     System.currentTimeMillis(),
+                    form.source,
+                    form.sourceType,
+                    form.latitude,
+                    form.longitude,
+                    form.geoAccuracy,
+                    form.comment,
                     App.getAppVersion(),
                     Build.MODEL
                 )
@@ -251,20 +265,21 @@ class BarcodeActivity : BaseActivity(),
     }
 
     private fun pageBack() {
-        if (binding.viewPager.currentItem in CAMERA_PAGE..CONFIRMATION_PAGE) {
+        if (b.viewPager.currentItem in pageIndex.camera..pageIndex.confirmation) {
             val testPagerAdapter = TestPagerAdapter(this)
-            binding.viewPager.adapter = testPagerAdapter
+            testPagerAdapter.pageIndex = pageIndex
+            b.viewPager.adapter = testPagerAdapter
         } else {
-            binding.viewPager.currentItem = binding.viewPager.currentItem - 1
+            b.viewPager.currentItem = b.viewPager.currentItem - 1
         }
     }
 
-    private fun pageNext() {
-        binding.viewPager.currentItem = binding.viewPager.currentItem + 1
+    fun pageNext() {
+        b.viewPager.currentItem = b.viewPager.currentItem + 1
     }
 
     override fun onBackPressed() {
-        if (binding.viewPager.currentItem > INSTRUCTION_PAGE) {
+        if (b.viewPager.currentItem > pageIndex.instruction) {
             pageBack()
         } else {
             super.onBackPressed()
@@ -272,42 +287,66 @@ class BarcodeActivity : BaseActivity(),
     }
 
     class TestPagerAdapter(
-        activity: AppCompatActivity
+        activity: TestActivity
     ) : FragmentStateAdapter(activity) {
 
         var testInfo: TestInfo? = null
+        private val barcodeActivity = activity
+        lateinit var pageIndex: PageIndex
 
         override fun getItemCount(): Int {
             return if (isCalibration()) {
                 5
             } else {
-                4
+                if (barcodeActivity.testInfo == null) {
+                    4
+                } else {
+                    if (barcodeActivity.testInfo?.error == ErrorType.NO_ERROR) {
+                        if (barcodeActivity.isExternalRequest) {
+                            4
+                        } else {
+                            5
+                        }
+                    } else {
+                        4
+                    }
+                }
             }
         }
 
         override fun createFragment(position: Int): Fragment {
             return when (position) {
-                INSTRUCTION_PAGE -> {
+                pageIndex.instruction -> {
                     InstructionFragment()
                 }
-                CAMERA_PAGE -> {
+                pageIndex.camera -> {
                     CameraFragment()
                 }
-                CONFIRMATION_PAGE -> {
+                pageIndex.confirmation -> {
                     ImageConfirmFragment()
                 }
-                CALIBRATE_LIST_PAGE -> {
+                pageIndex.result -> {
                     if (isCalibration()) {
                         CalibrationItemFragment()
                     } else {
-                        ResultFragment()
+                        ResultFragment(barcodeActivity.isExternalRequest)
                     }
+                }
+                pageIndex.calibration -> {
+                    if (isCalibration()) {
+                        CalibrationResultFragment()
+                    } else {
+                        FormSubmitFragment()
+                    }
+                }
+                pageIndex.submit -> {
+                    FormSubmitFragment()
                 }
                 else -> {
                     if (isCalibration()) {
                         CalibrationResultFragment()
                     } else {
-                        ResultFragment()
+                        ResultFragment(barcodeActivity.isExternalRequest)
                     }
                 }
             }
@@ -315,23 +354,16 @@ class BarcodeActivity : BaseActivity(),
     }
 
     override fun onStartTest() {
-        binding.viewPager.currentItem = CAMERA_PAGE
+        b.viewPager.currentItem = pageIndex.camera
     }
 
     override fun onConfirmImage(action: Int) {
         if (action == RESULT_OK) {
-            if (isCalibration()) {
-                if (model.test.get()?.error == ErrorType.NO_ERROR) {
-                    binding.viewPager.currentItem = CALIBRATE_LIST_PAGE
-                } else {
-                    binding.viewPager.currentItem = RESULT_PAGE
-                }
-            } else {
-                binding.viewPager.currentItem = CALIBRATE_LIST_PAGE
-            }
+            b.viewPager.currentItem = pageIndex.result
         } else {
             val testPagerAdapter = TestPagerAdapter(this)
-            binding.viewPager.adapter = testPagerAdapter
+            testPagerAdapter.pageIndex = pageIndex
+            b.viewPager.adapter = testPagerAdapter
         }
     }
 }

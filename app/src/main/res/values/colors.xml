@@ -24,6 +24,14 @@
     <color name="medium_risk">#B52A00</color>
     <color name="high_risk">#9A0101</color>
 
+    <color name="card_bg">#FFFFFF</color>
+    <color name="survey_bg">#F4F4F4</color>
+    <color name="main_text">#2E2E2E</color>
+    <color name="sub_text">#323131</color>
+    <color name="risk_red">#980000</color>
+    <color name="safe_green">#387700</color>
+    <color name="link_green">#2E6100</color>
+
     <!-- Diagnostic -->
     <color name="diagnostic">#910228</color>
     <color name="diagnostic_status">#830023</color>

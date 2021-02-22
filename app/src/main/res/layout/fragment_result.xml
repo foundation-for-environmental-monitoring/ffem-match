@@ -1,384 +1,448 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/resultScrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F6F6F6"
-    tools:context=".ui.BarcodeActivity"
-    tools:ignore="Overdraw">
+    android:orientation="vertical"
+    tools:context=".ui.TestActivity">
 
-    <LinearLayout
+    <include layout="@layout/app_bar_layout" />
+
+    <ScrollView
+        android:id="@+id/resultScrollView"
         android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/next_button"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="5dp">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/result_lyt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/name_txt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:fontFamily="sans-serif-black"
+                        android:textColor="#333"
+                        android:textSize="20sp"
+                        android:textStyle="normal"
+                        tools:text="Fluoride - High Range" />
+
+                    <TextView
+                        android:id="@+id/value_txt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="12dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:textIsSelectable="false"
+                        android:textSize="27sp"
+                        tools:text="Low" />
+
+                    <ImageView
+                        android:id="@+id/result_img"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:adjustViewBounds="true"
+                        android:contentDescription="@string/result_image" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/result_details_lyt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginBottom="16dp"
+                        android:fontFamily="sans-serif-black"
+                        android:text="@string/details"
+                        android:textAllCaps="true"
+                        android:textColor="#222"
+                        android:textSize="16sp"
+                        android:textStyle="normal" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/text_risk_txt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
+                            android:text="@string/result"
+                            android:textColor="#2C2B2B"
+                            android:textSize="17sp"
+                            android:textStyle="normal" />
+
+                        <TextView
+                            android:id="@+id/result_txt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:textSize="18sp"
+                            android:textStyle="normal"
+                            tools:text="20.59" />
+
+                        <TextView
+                            android:id="@+id/unit_txt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:textColor="#666"
+                            android:textIsSelectable="false"
+                            android:textSize="15sp"
+                            tools:text="mg/l" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/grayscale_lyt"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
+                            android:text="@string/grayscale_result"
+                            android:textColor="#2C2B2B"
+                            android:textSize="17sp"
+                            android:textStyle="normal" />
+
+                        <TextView
+                            android:id="@+id/grayscale_result_txt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:textSize="18sp"
+                            android:textStyle="normal"
+                            tools:text="20.59" />
+
+                        <TextView
+                            android:id="@+id/unit2_txt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:textColor="#666"
+                            android:textIsSelectable="false"
+                            android:textSize="15sp"
+                            tools:text="mg/l" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
+                            android:text="@string/margin_of_error"
+                            android:textColor="#2C2B2B"
+                            android:textSize="17sp"
+                            android:textStyle="normal" />
+
+                        <TextView
+                            android:id="@+id/error_margin_txt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:textSize="18sp"
+                            android:textStyle="normal"
+                            tools:text="0.5" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/luminosity_lyt"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
+                            android:text="@string/brightness"
+                            android:textColor="#2C2B2B"
+                            android:textSize="17sp"
+                            android:textStyle="normal" />
+
+                        <TextView
+                            android:id="@+id/luminosity_txt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:textSize="18sp"
+                            android:textStyle="normal"
+                            tools:text="0.5" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/info_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginBottom="16dp"
+                        android:fontFamily="sans-serif-black"
+                        android:text="@string/info"
+                        android:textAllCaps="true"
+                        android:textColor="#222"
+                        android:textSize="16sp"
+                        android:textStyle="normal" />
+
+                    <TextView
+                        android:id="@+id/title_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:textStyle="normal"
+                        tools:text="Description" />
+
+                    <TextView
+                        android:id="@+id/source_type_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:textStyle="normal"
+                        tools:text="Drinking water" />
+
+                    <TextView
+                        android:id="@+id/comment_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:textStyle="normal"
+                        tools:text="Remarks" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/error_message_lyt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/name2_txt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:fontFamily="sans-serif-black"
+                        android:textColor="#333"
+                        android:textSize="20sp"
+                        android:textStyle="normal"
+                        tools:text="Fluoride - High Range" />
+
+                    <TextView
+                        android:id="@+id/error_txt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="sans-serif-black"
+                        android:text="@string/invalid_barcode"
+                        android:textAllCaps="true"
+                        android:textColor="#B80404"
+                        android:textSize="15sp"
+                        android:textStyle="normal" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:background="#fff"
+                        android:lineSpacingExtra="5dp"
+                        android:text="@string/check_color_card"
+                        android:textAlignment="textStart"
+                        android:textColor="#666"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/color_extracts_lyt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    tools:ignore="UseCompoundDrawables">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginBottom="10dp"
+                        android:fontFamily="sans-serif-black"
+                        android:text="@string/color_extracts"
+                        android:textAllCaps="true"
+                        android:textColor="#333"
+                        android:textSize="16sp"
+                        android:textStyle="normal" />
+
+                    <ImageView
+                        android:id="@+id/extract_img"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/analyzed_image"
+                        android:minHeight="250dp" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/lyt_color_extracts_gs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    tools:ignore="UseCompoundDrawables">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginBottom="10dp"
+                        android:fontFamily="sans-serif-black"
+                        android:text="@string/grayscale_extracts"
+                        android:textAllCaps="true"
+                        android:textColor="#333"
+                        android:textSize="16sp"
+                        android:textStyle="normal" />
+
+                    <ImageView
+                        android:id="@+id/extract_gs_img"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/analyzed_image"
+                        android:minHeight="250dp"
+                        android:rotation="-90" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/analyzed_photo_lyt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    tools:ignore="UseCompoundDrawables">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginBottom="10dp"
+                        android:fontFamily="sans-serif-black"
+                        android:text="@string/analyzed_photo"
+                        android:textAllCaps="true"
+                        android:textColor="#333"
+                        android:textSize="16sp"
+                        android:textStyle="normal" />
+
+                    <ImageView
+                        android:id="@+id/full_photo_img"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/analyzed_image"
+                        android:minHeight="250dp" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
+    </ScrollView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/next_button"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_gravity="center_horizontal"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:minWidth="200dp"
+        android:padding="10dp"
+        android:text="@string/next"
+        android:textColor="@color/white"
+        android:textSize="17sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/resultScrollView" />
 
-        <include layout="@layout/app_bar_layout" />
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/result_lyt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:id="@+id/name_txt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:fontFamily="sans-serif-black"
-                    android:textColor="#333"
-                    android:textSize="20sp"
-                    android:textStyle="normal"
-                    tools:text="Fluoride - High Range" />
-
-                <TextView
-                    android:id="@+id/value_txt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="12dp"
-                    android:fontFamily="sans-serif-medium"
-                    android:textIsSelectable="false"
-                    android:textSize="27sp"
-                    tools:text="Low" />
-
-                <ImageView
-                    android:id="@+id/result_img"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/result_image" />
-
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/result_details_lyt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginBottom="16dp"
-                    android:fontFamily="sans-serif-black"
-                    android:text="@string/details"
-                    android:textAllCaps="true"
-                    android:textColor="#222"
-                    android:textSize="16sp"
-                    android:textStyle="normal" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/text_risk_txt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:text="@string/result"
-                        android:textColor="#2C2B2B"
-                        android:textSize="17sp"
-                        android:textStyle="normal" />
-
-                    <TextView
-                        android:id="@+id/result_txt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-medium"
-                        android:textSize="18sp"
-                        android:textStyle="normal"
-                        tools:text="20.59" />
-
-                    <TextView
-                        android:id="@+id/unit_txt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:textColor="#666"
-                        android:textIsSelectable="false"
-                        android:textSize="15sp"
-                        tools:text="mg/l" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/grayscale_lyt"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:text="@string/grayscale_result"
-                        android:textColor="#2C2B2B"
-                        android:textSize="17sp"
-                        android:textStyle="normal" />
-
-                    <TextView
-                        android:id="@+id/grayscale_result_txt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-medium"
-                        android:textSize="18sp"
-                        android:textStyle="normal"
-                        tools:text="20.59" />
-
-                    <TextView
-                        android:id="@+id/unit2_txt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:textColor="#666"
-                        android:textIsSelectable="false"
-                        android:textSize="15sp"
-                        tools:text="mg/l" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:text="@string/margin_of_error"
-                        android:textColor="#2C2B2B"
-                        android:textSize="17sp"
-                        android:textStyle="normal" />
-
-                    <TextView
-                        android:id="@+id/error_margin_txt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-medium"
-                        android:textSize="18sp"
-                        android:textStyle="normal"
-                        tools:text="0.5" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/luminosity_lyt"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:text="@string/brightness"
-                        android:textColor="#2C2B2B"
-                        android:textSize="17sp"
-                        android:textStyle="normal" />
-
-                    <TextView
-                        android:id="@+id/luminosity_txt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-medium"
-                        android:textSize="18sp"
-                        android:textStyle="normal"
-                        tools:text="0.5" />
-                </LinearLayout>
-
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/error_message_lyt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:id="@+id/name2_txt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:fontFamily="sans-serif-black"
-                    android:textColor="#333"
-                    android:textSize="20sp"
-                    android:textStyle="normal"
-                    tools:text="Fluoride - High Range" />
-
-                <TextView
-                    android:id="@+id/error_txt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginTop="10dp"
-                    android:fontFamily="sans-serif-black"
-                    android:text="@string/invalid_barcode"
-                    android:textAllCaps="true"
-                    android:textColor="#B80404"
-                    android:textSize="15sp"
-                    android:textStyle="normal" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:background="#fff"
-                    android:lineSpacingExtra="5dp"
-                    android:text="@string/check_color_card"
-                    android:textAlignment="textStart"
-                    android:textColor="#666"
-                    android:textSize="16sp" />
-
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <Button
-            android:id="@+id/submit_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="32dp"
-            android:layout_marginBottom="32dp"
-            android:minWidth="230dp"
-            android:minHeight="60dp"
-            android:onClick="submitResult"
-            android:text="@string/submit_result"
-            android:textSize="18sp"
-            android:theme="?primaryButtonStyle" />
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/color_extracts_lyt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp"
-                tools:ignore="UseCompoundDrawables">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginBottom="10dp"
-                    android:fontFamily="sans-serif-black"
-                    android:text="@string/color_extracts"
-                    android:textAllCaps="true"
-                    android:textColor="#333"
-                    android:textSize="16sp"
-                    android:textStyle="normal" />
-
-                <ImageView
-                    android:id="@+id/extract_img"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@string/analyzed_image"
-                    android:minHeight="250dp" />
-
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/lyt_color_extracts_gs"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp"
-                tools:ignore="UseCompoundDrawables">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginBottom="10dp"
-                    android:fontFamily="sans-serif-black"
-                    android:text="@string/grayscale_extracts"
-                    android:textAllCaps="true"
-                    android:textColor="#333"
-                    android:textSize="16sp"
-                    android:textStyle="normal" />
-
-                <ImageView
-                    android:id="@+id/extract_gs_img"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@string/analyzed_image"
-                    android:minHeight="250dp"
-                    android:rotation="-90" />
-
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/analyzed_photo_lyt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp"
-                tools:ignore="UseCompoundDrawables">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginBottom="10dp"
-                    android:fontFamily="sans-serif-black"
-                    android:text="@string/analyzed_photo"
-                    android:textAllCaps="true"
-                    android:textColor="#333"
-                    android:textSize="16sp"
-                    android:textStyle="normal" />
-
-                <ImageView
-                    android:id="@+id/full_photo_img"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@string/analyzed_image"
-                    android:minHeight="250dp" />
-
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
-    </LinearLayout>
-</ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

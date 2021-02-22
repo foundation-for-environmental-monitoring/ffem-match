@@ -25,16 +25,15 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
-import io.ffem.lite.app.App
 import io.ffem.lite.app.App.Companion.getVersionName
 import io.ffem.lite.common.IS_CALIBRATION
 import io.ffem.lite.common.RESULT_EVENT_BROADCAST
+import io.ffem.lite.common.RESULT_ID
 import io.ffem.lite.common.TEST_INFO_KEY
 import io.ffem.lite.data.AppDatabase
 import io.ffem.lite.data.TestResult
 import io.ffem.lite.databinding.ActivityResultListBinding
 import io.ffem.lite.helper.ApkHelper.isNonStoreVersion
-import io.ffem.lite.model.ResultInfo
 import io.ffem.lite.model.TestInfo
 import io.ffem.lite.model.toLocalString
 import io.ffem.lite.preference.AppPreferences
@@ -150,16 +149,7 @@ class ResultListActivity : AppUpdateActivity() {
             if (adapter.itemCount > position) {
                 val item = adapter.getItemAt(position)
                 val intent = Intent(baseContext, ResultViewActivity::class.java)
-
-                val result = db.resultDao().getResult(item.id)!!
-                val testInfo = App.getTestInfo(item.uuid)
-                testInfo!!.error = item.error
-                testInfo.fileName = item.id
-                testInfo.resultInfo = ResultInfo(result.value, result.luminosity)
-                testInfo.resultInfoGrayscale = ResultInfo(result.valueGrayscale)
-                testInfo.setMarginOfError(result.marginOfError)
-
-                intent.putExtra(TEST_INFO_KEY, testInfo)
+                intent.putExtra(RESULT_ID, item.id)
                 startActivity(intent)
             }
         }
@@ -281,7 +271,7 @@ class ResultListActivity : AppUpdateActivity() {
 
     fun onStartClick(@Suppress("UNUSED_PARAMETER") view: View) {
         PreferencesUtil.setBoolean(this, IS_CALIBRATION, false)
-        val intent = Intent(baseContext, BarcodeActivity::class.java)
+        val intent = Intent(baseContext, TestActivity::class.java)
         startTest.launch(intent)
     }
 

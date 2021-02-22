@@ -130,7 +130,7 @@ class CalibrationResultFragment : Fragment() {
             binding.extractImg.refreshDrawableState()
         }
 
-        if (testInfo.error == ErrorType.NO_ERROR && testInfo.resultInfo.result >= 0) {
+        if (testInfo.error < ErrorType.CALIBRATION_ERROR) {
             val calibrationValue = testInfo.calibratedResultInfo.calibratedValue.value
             binding.nameTxt.text = testInfo.name!!.toLocalString()
             binding.name2Txt.text = ""

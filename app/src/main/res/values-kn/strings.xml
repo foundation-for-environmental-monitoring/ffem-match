@@ -26,7 +26,6 @@
     <string name="color_card_not_found">ಬಾರ್‌ಕೋಡ್ ಕಂಡುಬಂದಿಲ್ಲ. ಬೆಳಕನ್ನು ಪರಿಶೀಲಿಸಿ</string>
     <string name="capture_photo">ಫೋಟೋ ಸೆರೆಹಿಡಿಯಿರಿ</string>
     <string name="invalid_image">ಅಮಾನ್ಯ ಚಿತ್ರ</string>
-    <string name="submit_result">ಫಲಿತಾಂಶವನ್ನು ಸಲ್ಲಿಸಿ</string>
     <string name="result">ಫಲಿತಾಂಶ</string>
     <string name="analyzed_photo">ವಿಶ್ಲೇಷಿಸಿದ ಫೋಟೋ</string>
     <string name="color_extracts">ಬಣ್ಣ ಸಾರಗಳು</string>
@@ -103,5 +102,23 @@
     <string name="tilt_left_forwards">Tilt phone left side forwards</string>
     <string name="tilt_left_backwards">Tilt phone left side backwards</string>
     <string name="remove_response">ಪ್ರತಿಕ್ರಿಯೆ ತೆಗೆದುಹಾಕಿ</string>
+    <string name="cancel">ರದ್ದುಗೊಳಿಸಿ</string>
+    <string name="comment">ಕಾಮೆಂಟ್</string>
+    <string name="location">ಸ್ಥಳ</string>
+    <string name="get_location">ಜಿಪಿಎಸ್ ಸ್ಥಳ</string>
+    <string name="short_description">ವಿವರಣೆ / ಶೀರ್ಷಿಕೆ</string>
+    <string name="source_type">ಮೂಲ ಪ್ರಕಾರ</string>
+    <string name="gps_instructions">ನೀರಿನ ಮೂಲದ ಬಳಿ ನಿಂತು ಆದರೆ ಜಿಪಿಎಸ್ ಸಂಕೇತಗಳನ್ನು ನಿರ್ಬಂಧಿಸುವ ವಸ್ತುಗಳಿಂದ ದೂರವಿರಿ</string>
+    <string name="location_permission">ಸ್ಥಳ ಅನುಮತಿ ಅಗತ್ಯವಿದೆ</string>
+    <string name="accuracy">ನಿಖರತೆ</string>
+    <string name="getting_location">ಸ್ಥಳವನ್ನು ಪಡೆಯಲಾಗುತ್ತಿದೆ</string>
+    <string name="accept_location">ಒಪ್ಪಿಕೊಳ್ಳಿ</string>
+    <string name="lat_lon">ಲ್ಯಾಟ್/ಲೋನ್</string>
+    <string name="save">ಡೇಟಾವನ್ನು ಉಳಿಸಿ</string>
+    <string name="required_error">ಇದು ಅಗತ್ಯವಿದೆ</string>
+    <string name="info">ಮಾಹಿತಿ</string>
+    <string name="manual_photo_capture">ಹಸ್ತಚಾಲಿತ ಫೋಟೋ</string>
+    <string name="manual_photo_summary">ಈ ಫೋನ್‌ನಲ್ಲಿ ಆಟೋ ಫೋಟೋ ಕ್ಯಾಪ್ಚರ್ ಸರಿಯಾಗಿ ಕಾರ್ಯನಿರ್ವಹಿಸದಿದ್ದರೆ ಇದನ್ನು ಆನ್ ಮಾಡಿ</string>
+    <string name="airplane_mode_off">ದಯವಿಟ್ಟು ವಿಮಾನ ಮೋಡ್ ಆಫ್ ಮಾಡಿ</string>
 </resources>
 

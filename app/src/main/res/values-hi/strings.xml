@@ -26,7 +26,6 @@
     <string name="color_card_not_found">बारकोड नहीं मिला। प्रकाश की जाँच करें</string>
     <string name="capture_photo">फोटो खींचना</string>
     <string name="invalid_image">अमान्य तस्वीर</string>
-    <string name="submit_result">परिणाम प्रस्तुत करें</string>
     <string name="result">परिणाम</string>
     <string name="analyzed_photo">फोटो का विश्लेषण करें</string>
     <string name="color_extracts">कलर एक्सट्रेक्ट</string>
@@ -103,4 +102,22 @@
     <string name="tilt_left_forwards">Tilt phone left side forwards</string>
     <string name="tilt_left_backwards">Tilt phone left side backwards</string>
     <string name="remove_response">प्रतिउत्तर हटायें</string>
+    <string name="cancel">रद्द करें</string>
+    <string name="comment">टिप्पणी</string>
+    <string name="location">स्थान</string>
+    <string name="get_location">जीपीएस स्थान</string>
+    <string name="short_description">विवरण / शीर्षक</string>
+    <string name="source_type">स्रोत प्रकार</string>
+    <string name="gps_instructions">पानी के स्रोत के पास खड़े रहें, लेकिन जीपीएस सिग्नल को ब्लॉक करने वाली वस्तुओं से दूर रहें</string>
+    <string name="location_permission">स्थान की अनुमति आवश्यक है</string>
+    <string name="accuracy">शुद्धता</string>
+    <string name="getting_location">स्थान प्राप्त करना</string>
+    <string name="accept_location">स्वीकार करना</string>
+    <string name="lat_lon">अक्षांश/देशांतर</string>
+    <string name="save">डेटा सहेजें</string>
+    <string name="required_error">यह आवश्यक है</string>
+    <string name="info">जानकारी</string>
+    <string name="manual_photo_capture">मैनुअल फोटो कैप्चर</string>
+    <string name="manual_photo_summary">यदि इस फोन पर ऑटो फोटो कैप्चर ठीक से काम नहीं कर रहा है, तो इसे चालू करें</string>
+    <string name="airplane_mode_off">कृपया हवाई जहाज मोड बंद करें</string>
 </resources>

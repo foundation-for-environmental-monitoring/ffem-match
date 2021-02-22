@@ -14,4 +14,6 @@ object Constants {
     const val DEFAULT_SHADOW_TOLERANCE = 25
     const val INTERPOLATION_COUNT = 100.0
     const val MAX_DISTANCE = 999
+
+    const val BROADCAST_HIDE_KEYBOARD = "hide_keyboard"
 }

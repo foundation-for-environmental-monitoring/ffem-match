@@ -20,5 +20,11 @@ data class TestResult(
     val marginOfError: Double,
     val luminosity: Int = -1,
     val error: ErrorType,
-    val testImageNumber: Int = -1
+    val testImageNumber: Int = -1,
+    var source: String = "",
+    var sourceType: String = "",
+    var latitude: Double? = Double.NaN,
+    var longitude: Double? = Double.NaN,
+    var geoAccuracy: Float? = Float.NaN,
+    var comment: String? = null
 )

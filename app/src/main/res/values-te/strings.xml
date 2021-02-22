@@ -26,7 +26,6 @@
     <string name="color_card_not_found">బార్‌కోడ్ కనుగొనబడలేదు. లైటింగ్‌ను తనిఖీ చేయండి</string>
     <string name="capture_photo">ఫోటో తీయండి</string>
     <string name="invalid_image">చెల్లని చిత్రం</string>
-    <string name="submit_result">ఫలితాన్ని సమర్పించండి</string>
     <string name="result">ఫలితం</string>
     <string name="analyzed_photo">విశ్లేషించిన ఫోటో</string>
     <string name="color_extracts">రంగు సారం</string>
@@ -103,4 +102,22 @@
     <string name="tilt_left_forwards">Tilt phone left side forwards</string>
     <string name="tilt_left_backwards">Tilt phone left side backwards</string>
     <string name="remove_response">ప్రతిస్పందనను  తొలగించు</string>
+    <string name="cancel">రద్దు చేయండి</string>
+    <string name="comment">వ్యాఖ్య</string>
+    <string name="location">స్థానం</string>
+    <string name="get_location">GPS స్థానం</string>
+    <string name="short_description">వివరణ / శీర్షిక</string>
+    <string name="source_type">మూలం రకం</string>
+    <string name="gps_instructions">నీటి వనరు దగ్గర నిలబడండి కాని GPS సంకేతాలను నిరోధించే వస్తువులను నివారించండి</string>
+    <string name="location_permission">స్థాన అనుమతి అవసరం</string>
+    <string name="accuracy">ఖచ్చితత్వం</string>
+    <string name="getting_location">స్థానం పొందడం</string>
+    <string name="accept_location">అంగీకరించు</string>
+    <string name="lat_lon">అక్షాంశం/రేఖాంశం</string>
+    <string name="save">డేటాను సేవ్ చేయండి</string>
+    <string name="required_error">ఇది అవసరం</string>
+    <string name="info">మరిన్ని వివరాలు</string>
+    <string name="manual_photo_capture">మాన్యువల్ ఫోటో క్యాప్చర్</string>
+    <string name="manual_photo_summary">ఈ ఫోన్‌లో ఆటో ఫోటో క్యాప్చర్ సరిగ్గా పనిచేయకపోతే, దీన్ని ఆన్ చేయండి</string>
+    <string name="airplane_mode_off">దయచేసి విమానం మోడ్‌ను ఆపివేయండి</string>
 </resources>

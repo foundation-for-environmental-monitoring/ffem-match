@@ -41,9 +41,20 @@
                 android:layout_height="wrap_content"
                 android:clickable="false"
                 android:focusable="false"
-                android:text="@{result.testImageNumber == -1 ? ExtensionUtilKt.toLocalString(result.name) : ExtensionUtilKt.toLocalString(result.name) +` (` + result.testImageNumber + `)`}"
+                android:text="@{result.source}"
                 android:textIsSelectable="false"
                 android:textSize="18sp"
+                tools:text="Description" />
+
+            <TextView
+                android:id="@+id/text_test"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:focusable="false"
+                android:text="@{result.testImageNumber == -1 ? ExtensionUtilKt.toLocalString(result.name) : ExtensionUtilKt.toLocalString(result.name) +` (` + result.testImageNumber + `)`}"
+                android:textIsSelectable="false"
+                android:textSize="15sp"
                 tools:text="Contaminant" />
 
             <TextView

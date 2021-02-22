@@ -2,7 +2,9 @@ package io.ffem.lite.common
 
 const val ERROR_MESSAGE = "error_message"
 const val SCAN_PROGRESS = "scan_progress"
-
+const val DEBUG_MODE = "debugMode"
+const val TEST_ID = "testId"
+const val RESULT_ID = "resultID"
 
 const val TEST_INFO_KEY = "test_info"
 const val TEST_ID_KEY = "test_id"
