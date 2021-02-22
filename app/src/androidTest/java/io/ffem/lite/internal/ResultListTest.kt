@@ -20,6 +20,7 @@ import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.common.TestHelper
 import io.ffem.lite.common.TestHelper.sleep
+import io.ffem.lite.common.TestUtil
 import io.ffem.lite.common.clearData
 import io.ffem.lite.ui.ResultListActivity
 import io.ffem.lite.util.PreferencesUtil
@@ -121,24 +122,40 @@ class ResultListTest {
         )
         materialButton3.perform(click())
 
-        val materialButton4 = onView(
+        onView(withText(R.string.next)).perform(click())
+        TestUtil.sleep(1000)
+
+        val textInputEditText = onView(
             allOf(
-                withId(R.id.submit_btn), withText(R.string.close),
-                childAtPosition(
-                    childAtPosition(
-                        withId(R.id.resultScrollView),
-                        0
-                    ),
-                    4
-                )
+                withId(R.id.source_desc_edit),
+                isDisplayed()
             )
         )
-        materialButton4.perform(scrollTo(), click())
+        textInputEditText.perform(
+            replaceText("Description"),
+            closeSoftKeyboard()
+        )
+
+        val appCompatAutoCompleteTextView = onView(
+            allOf(
+                withId(R.id.source_select),
+                isDisplayed()
+            )
+        )
+        appCompatAutoCompleteTextView.perform(
+            replaceText("Drinking water"),
+            closeSoftKeyboard()
+        )
+
+        appCompatAutoCompleteTextView.perform(pressImeActionButton())
+
+        TestUtil.sleep(1000)
+        onView(withText(R.string.save)).perform(click())
 
         val resultName = context.getString(R.string.residual_chlorine) + " (0)"
         val textView = onView(
             allOf(
-                withId(R.id.text_title), withText(resultName),
+                withText(resultName),
                 withParent(
                     allOf(
                         withId(R.id.layout),

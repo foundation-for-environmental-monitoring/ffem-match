@@ -239,12 +239,7 @@ class DiagnosticsTest {
         )
         textView6.check(matches(TestUtil.checkResult(0.25)))
 
-        onView(
-            allOf(
-                withId(R.id.submit_btn), withText(R.string.close),
-                isDisplayed()
-            )
-        ).perform(click())
+        onView(withText(R.string.next)).perform(click())
     }
 
     companion object {

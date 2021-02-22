@@ -19,6 +19,7 @@ import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.common.TestHelper.clearPreferences
 import io.ffem.lite.common.TestHelper.sleep
+import io.ffem.lite.common.TestUtil
 import io.ffem.lite.common.TestUtil.checkResult
 import io.ffem.lite.common.TestUtil.childAtPosition
 import io.ffem.lite.common.clearData
@@ -32,7 +33,6 @@ import io.ffem.lite.ui.ResultListActivity
 import io.ffem.lite.util.PreferencesUtil
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.not
-import org.hamcrest.core.IsInstanceOf
 import org.junit.*
 import org.junit.runner.RunWith
 import org.junit.runners.MethodSorters
@@ -145,25 +145,42 @@ class ImageTest {
                     matches(isDisplayed())
                 )
 
-                onView(withText(R.string.close)).perform(click())
+                onView(withText(R.string.next)).perform(click())
+                TestUtil.sleep(1000)
+
+                val textInputEditText = onView(
+                    allOf(
+                        withId(R.id.source_desc_edit),
+                        isDisplayed()
+                    )
+                )
+                textInputEditText.perform(
+                    ViewActions.replaceText("Description"),
+                    ViewActions.closeSoftKeyboard()
+                )
+
+                val appCompatAutoCompleteTextView = onView(
+                    allOf(
+                        withId(R.id.source_select),
+                        isDisplayed()
+                    )
+                )
+                appCompatAutoCompleteTextView.perform(
+                    ViewActions.replaceText("Drinking water"),
+                    ViewActions.closeSoftKeyboard()
+                )
+
+                appCompatAutoCompleteTextView.perform(ViewActions.pressImeActionButton())
+
+                TestUtil.sleep(1000)
+                onView(withText(R.string.save)).perform(click())
             }
 
             sleep(1000)
 
             onView(
                 allOf(
-                    withId(R.id.text_title),
                     withText("${context.getString(testData.testDetails.name)} (${imageNumber})"),
-                    childAtPosition(
-                        allOf(
-                            withId(R.id.layout),
-                            childAtPosition(
-                                IsInstanceOf.instanceOf(android.view.ViewGroup::class.java),
-                                0
-                            )
-                        ),
-                        0
-                    ),
                     isDisplayed()
                 )
             ).check(matches(withText("${context.getString(testData.testDetails.name)} (${imageNumber})")))
@@ -197,6 +214,9 @@ class ImageTest {
             textView.perform(click())
 
             sleep(2000)
+
+            onView(withId(R.id.resultScrollView))
+                .perform(ViewActions.swipeUp())
 
             val imageView = onView(
                 allOf(

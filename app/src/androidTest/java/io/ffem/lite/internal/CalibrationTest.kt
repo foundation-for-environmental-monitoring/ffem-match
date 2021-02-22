@@ -5,6 +5,7 @@ import android.os.Environment
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -112,7 +113,39 @@ class CalibrationTest {
             matches(isDisplayed())
         )
 
-        onView(withText(R.string.close)).perform(click())
+        if (testData.expectedResultError == ErrorType.NO_ERROR) {
+            onView(withText(R.string.next)).perform(click())
+            sleep(1000)
+
+            val textInputEditText = onView(
+                allOf(
+                    withId(R.id.source_desc_edit),
+                    isDisplayed()
+                )
+            )
+            textInputEditText.perform(
+                ViewActions.replaceText("Description"),
+                ViewActions.closeSoftKeyboard()
+            )
+
+            val appCompatAutoCompleteTextView = onView(
+                allOf(
+                    withId(R.id.source_select),
+                    isDisplayed()
+                )
+            )
+            appCompatAutoCompleteTextView.perform(
+                ViewActions.replaceText("Drinking water"),
+                ViewActions.closeSoftKeyboard()
+            )
+
+            appCompatAutoCompleteTextView.perform(ViewActions.pressImeActionButton())
+
+            sleep(1000)
+            onView(withText(R.string.save)).perform(click())
+        } else {
+            onView(withText(R.string.close)).perform(click())
+        }
 
         sleep(2000)
 
@@ -202,7 +235,7 @@ class CalibrationTest {
             matches(isDisplayed())
         )
 
-        onView(withText(R.string.close)).perform(click())
+        onView(withText(R.string.next)).perform(click())
 
         sleep(2000)
     }
@@ -282,7 +315,11 @@ class CalibrationTest {
 
         takeScreenshot(screenshotName)
 
-        onView(withText(R.string.close)).perform(click())
+        onView(withText("6.00")).perform(click())
+
+        sleep(1000)
+
+        onView(withText(R.string.confirm)).perform(click())
 
         sleep(1000)
 
