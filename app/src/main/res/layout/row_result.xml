@@ -44,6 +44,7 @@
                 android:text="@{result.source}"
                 android:textIsSelectable="false"
                 android:textSize="18sp"
+                android:visibility="@{result.source.isEmpty() ? View.GONE : View.VISIBLE}"
                 tools:text="Description" />
 
             <TextView
@@ -90,8 +91,8 @@
             android:layout_marginEnd="@dimen/activity_horizontal_margin"
             android:clickable="false"
             android:focusable="false"
-            android:resultSize="@{result.value}"
             android:result="@{result}"
+            android:resultSize="@{result.value}"
             android:textIsSelectable="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"

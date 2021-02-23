@@ -282,7 +282,7 @@ class TestActivity : BaseActivity(),
         if (b.viewPager.currentItem > pageIndex.instruction) {
             pageBack()
         } else {
-            super.onBackPressed()
+            finish()
         }
     }
 

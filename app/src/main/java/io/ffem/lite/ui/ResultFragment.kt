@@ -174,9 +174,14 @@ class ResultFragment(externalRequest: Boolean) : Fragment() {
             b.errorMessageLyt.visibility = GONE
             b.resultLyt.visibility = VISIBLE
             b.resultDetailsLyt.visibility = VISIBLE
-            b.titleText.text = model.form.source
-            b.sourceTypeText.text = model.form.sourceType
-            b.commentText.text = model.form.comment
+
+            if (model.form.source.isEmpty()) {
+                b.infoLayout.visibility = GONE
+            } else {
+                b.titleText.text = model.form.source
+                b.sourceTypeText.text = model.form.sourceType
+                b.commentText.text = model.form.comment
+            }
         } else {
             b.nameTxt.text = ""
             if (testInfo.uuid != requestedTestId) {
