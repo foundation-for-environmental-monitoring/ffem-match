@@ -29,7 +29,7 @@ import io.ffem.lite.common.*
 import io.ffem.lite.data.AppDatabase
 import io.ffem.lite.data.Result
 import io.ffem.lite.data.TestResult
-import io.ffem.lite.databinding.ActivityBarcodeBinding
+import io.ffem.lite.databinding.ActivityTestBinding
 import io.ffem.lite.model.CalibrationValue
 import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.PageIndex
@@ -50,7 +50,7 @@ class TestActivity : BaseActivity(),
     InstructionFragment.OnStartTestListener,
     ImageConfirmFragment.OnConfirmImageListener {
 
-    private lateinit var b: ActivityBarcodeBinding
+    private lateinit var b: ActivityTestBinding
     private lateinit var broadcastManager: LocalBroadcastManager
     private var testInfo: TestInfo? = null
     lateinit var model: TestInfoViewModel
@@ -96,7 +96,7 @@ class TestActivity : BaseActivity(),
         super.onCreate(savedInstanceState)
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
 
-        b = ActivityBarcodeBinding.inflate(layoutInflater)
+        b = ActivityTestBinding.inflate(layoutInflater)
         val view = b.root
         setContentView(view)
 
@@ -291,18 +291,18 @@ class TestActivity : BaseActivity(),
     ) : FragmentStateAdapter(activity) {
 
         var testInfo: TestInfo? = null
-        private val barcodeActivity = activity
+        private val testActivity = activity
         lateinit var pageIndex: PageIndex
 
         override fun getItemCount(): Int {
             return if (isCalibration()) {
                 5
             } else {
-                if (barcodeActivity.testInfo == null) {
+                if (testActivity.testInfo == null) {
                     4
                 } else {
-                    if (barcodeActivity.testInfo?.error == ErrorType.NO_ERROR) {
-                        if (barcodeActivity.isExternalRequest) {
+                    if (testActivity.testInfo?.error == ErrorType.NO_ERROR) {
+                        if (testActivity.isExternalRequest) {
                             4
                         } else {
                             5
@@ -329,7 +329,7 @@ class TestActivity : BaseActivity(),
                     if (isCalibration()) {
                         CalibrationItemFragment()
                     } else {
-                        ResultFragment(barcodeActivity.isExternalRequest)
+                        ResultFragment(testActivity.isExternalRequest)
                     }
                 }
                 pageIndex.calibration -> {
@@ -346,7 +346,7 @@ class TestActivity : BaseActivity(),
                     if (isCalibration()) {
                         CalibrationResultFragment()
                     } else {
-                        ResultFragment(barcodeActivity.isExternalRequest)
+                        ResultFragment(testActivity.isExternalRequest)
                     }
                 }
             }

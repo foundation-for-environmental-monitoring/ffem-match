@@ -63,7 +63,7 @@ class CameraFragment : Fragment() {
     private var currentLuminosity: Int = -1
     private lateinit var cameraProvider: ProcessCameraProvider
     private lateinit var container: ConstraintLayout
-    private lateinit var broadcastManager: LocalBroadcastManager
+    private var broadcastManager: LocalBroadcastManager? = null
 
     private var lightSensor: Sensor? = null
     private lateinit var lightEventListener: SensorEventListener
@@ -148,7 +148,7 @@ class CameraFragment : Fragment() {
                 SensorManager.SENSOR_DELAY_FASTEST
             )
         }
-        broadcastManager.registerReceiver(broadcastReceiver, IntentFilter(ERROR_EVENT_BROADCAST))
+        broadcastManager!!.registerReceiver(broadcastReceiver, IntentFilter(ERROR_EVENT_BROADCAST))
 
         lifecycleScope.launch {
             delay(300)
@@ -193,8 +193,10 @@ class CameraFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         mainScope.cancel(null)
-        cameraProvider.unbindAll()
-        broadcastManager.unregisterReceiver(broadcastReceiver)
+        if (::cameraProvider.isInitialized) {
+            cameraProvider.unbindAll()
+        }
+        broadcastManager!!.unregisterReceiver(broadcastReceiver)
         if (lightSensor != null) {
             sensorManager.unregisterListener(lightEventListener)
         }

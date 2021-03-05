@@ -126,7 +126,7 @@ abstract class BaseActivity : AppCompatActivity() {
             if ("true" == testLabSetting) {
                 return true
             }
-        } catch (e: IllegalStateException) {
+        } catch (e: Exception) {
         }
         return false
     }
