@@ -15,51 +15,44 @@ import io.ffem.lite.util.toast
  * Activity to display info about the app.
  */
 class AboutActivity : BaseActivity() {
-    private lateinit var binding: ActivityAboutBinding
+    private lateinit var b: ActivityAboutBinding
     private var clickCount = 0
 
     private var dialog: NoticesDialogFragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityAboutBinding.inflate(layoutInflater)
-        val view = binding.root
+        b = ActivityAboutBinding.inflate(layoutInflater)
+        val view = b.root
         setContentView(view)
 
-        binding.textVersion.text = App.getAppVersion(false)
-
         setTitle(R.string.about)
-    }
 
-    /**
-     * Displays legal information.
-     */
-    fun onSoftwareNoticesClick(@Suppress("UNUSED_PARAMETER") view: View) {
-        if (!isTestDevice(this)) {
-            dialog = NoticesDialogFragment.newInstance()
-            dialog!!.show(supportFragmentManager, "NoticesDialog")
+        b.versionText.setOnClickListener {
+            switchToDiagnosticMode()
         }
-    }
 
-    /**
-     * Disables diagnostic mode.
-     */
-    fun disableDiagnosticsMode(@Suppress("UNUSED_PARAMETER") view: View) {
-        toast(getString(R.string.diagnosticModeDisabled))
+        b.noticesLinkText.setOnClickListener {
+            // Display legal info
+            if (!isTestDevice(this)) {
+                dialog = NoticesDialogFragment.newInstance()
+                dialog!!.show(supportFragmentManager, "NoticesDialog")
+            }
+        }
 
-        AppPreferences.disableDiagnosticMode()
-
-        switchLayoutForDiagnosticOrUserMode()
-
-        changeActionBarStyleBasedOnCurrentMode()
-
-        finish()
+        b.disableDiagnosticsFab.setOnClickListener {
+            toast(getString(R.string.diagnosticModeDisabled))
+            AppPreferences.disableDiagnosticMode()
+            switchLayoutForDiagnosticOrUserMode()
+            changeActionBarStyleBasedOnCurrentMode()
+            finish()
+        }
     }
 
     /**
      * Turn on diagnostic mode if user clicks on version section CHANGE_MODE_MIN_CLICKS times.
      */
-    fun switchToDiagnosticMode(@Suppress("UNUSED_PARAMETER") view: View) {
+    private fun switchToDiagnosticMode() {
         if (!isDiagnosticMode()) {
             clickCount++
 
@@ -68,9 +61,7 @@ class AboutActivity : BaseActivity() {
                 toast(getString(R.string.diagnosticModeEnabled))
 
                 AppPreferences.enableDiagnosticMode()
-
                 changeActionBarStyleBasedOnCurrentMode()
-
                 switchLayoutForDiagnosticOrUserMode()
             }
         }
@@ -86,12 +77,13 @@ class AboutActivity : BaseActivity() {
      */
     private fun switchLayoutForDiagnosticOrUserMode() {
         if (isDiagnosticMode()) {
-            binding.layoutDiagnostics.visibility = View.VISIBLE
+            b.layoutDiagnostics.visibility = View.VISIBLE
         } else {
-            if (binding.layoutDiagnostics.visibility == View.VISIBLE) {
-                binding.layoutDiagnostics.visibility = View.GONE
+            if (b.layoutDiagnostics.visibility == View.VISIBLE) {
+                b.layoutDiagnostics.visibility = View.GONE
             }
         }
+        b.versionText.text = App.getAppVersion(false)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
