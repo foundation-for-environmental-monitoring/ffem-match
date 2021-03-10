@@ -14,14 +14,11 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
-import io.ffem.lite.common.TestHelper
+import io.ffem.lite.common.*
 import io.ffem.lite.common.TestHelper.enterDiagnosticMode
 import io.ffem.lite.common.TestHelper.leaveDiagnosticMode
 import io.ffem.lite.common.TestHelper.sleep
-import io.ffem.lite.common.TestUtil
 import io.ffem.lite.common.TestUtil.childAtPosition
-import io.ffem.lite.common.clearData
-import io.ffem.lite.common.residualChlorine
 import io.ffem.lite.preference.isDiagnosticMode
 import io.ffem.lite.ui.ResultListActivity
 import org.hamcrest.Matchers.`is`
@@ -237,7 +234,7 @@ class DiagnosticsTest {
                 isDisplayed()
             )
         )
-        textView6.check(matches(TestUtil.checkResult(0.25)))
+        textView6.check(matches(TestUtil.checkResult(testDataList[0]!!, 0.25)))
 
         onView(withText(R.string.next)).perform(click())
     }

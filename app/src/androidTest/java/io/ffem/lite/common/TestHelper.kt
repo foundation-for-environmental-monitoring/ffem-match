@@ -52,7 +52,7 @@ object TestHelper {
 
     fun enterDiagnosticMode() {
         for (i in 0..9) {
-            onView(withId(R.id.textVersion)).perform(click())
+            onView(withId(R.id.version_text)).perform(click())
         }
     }
 

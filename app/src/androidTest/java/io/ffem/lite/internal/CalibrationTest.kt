@@ -23,7 +23,7 @@ import io.ffem.lite.common.TestUtil
 import io.ffem.lite.common.TestUtil.childAtPosition
 import io.ffem.lite.common.TestUtil.sleep
 import io.ffem.lite.common.clearData
-import io.ffem.lite.common.qrTestDataList
+import io.ffem.lite.common.testDataList
 import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.toResourceId
 import io.ffem.lite.ui.ResultListActivity
@@ -69,7 +69,7 @@ class CalibrationTest {
     }
 
     private fun startCalibrationTest(@Suppress("SameParameterValue") imageNumber: Int) {
-        val testData = qrTestDataList[imageNumber]!!
+        val testData = testDataList[imageNumber]!!
         val screenshotName = "calibration"
 
         PreferencesUtil.setString(
@@ -95,13 +95,17 @@ class CalibrationTest {
         onView(withText(testData.testDetails.name)).check(matches(isDisplayed()))
 
         val resultTextView = onView(withId(R.id.result_txt))
-        resultTextView.check(matches(TestUtil.checkResult(testData.expectedResult)))
+        resultTextView.check(matches(TestUtil.checkResult(testData)))
 
         onView(allOf(withId(R.id.unit_txt), withText("mg/l")))
             .check(matches(isDisplayed()))
 
         val marginOfErrorView = onView(withId(R.id.error_margin_txt))
-        marginOfErrorView.check(matches(TestUtil.checkResult(testData.expectedMarginOfError)))
+        marginOfErrorView.check(
+            matches(
+                TestUtil.checkMarginOfError(testData)
+            )
+        )
 
         onView(
             withText(
@@ -217,13 +221,17 @@ class CalibrationTest {
         onView(withText(testData.testDetails.name)).check(matches(isDisplayed()))
 
         val resultTextView2 = onView(withId(R.id.result_txt))
-        resultTextView2.check(matches(TestUtil.checkResult(1.0)))
+        resultTextView2.check(matches(TestUtil.checkResult(testData, testData.calibratedResult)))
 
         onView(allOf(withId(R.id.unit_txt), withText("mg/l")))
             .check(matches(isDisplayed()))
 
         val marginOfErrorView2 = onView(withId(R.id.error_margin_txt))
-        marginOfErrorView2.check(matches(TestUtil.checkResult(testData.expectedMarginOfError)))
+        marginOfErrorView2.check(
+            matches(
+                TestUtil.checkMarginOfError(testData)
+            )
+        )
 
         onView(
             withText(
@@ -241,7 +249,7 @@ class CalibrationTest {
     }
 
     private fun calibrationNoMatch(@Suppress("SameParameterValue") imageNumber: Int) {
-        val testData = qrTestDataList[imageNumber]!!
+        val testData = testDataList[imageNumber]!!
         val screenshotName = "calibration"
 
         PreferencesUtil.setString(

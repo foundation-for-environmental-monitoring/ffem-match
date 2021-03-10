@@ -33,7 +33,7 @@ object TestUtil {
         }
     }
 
-    fun checkResult(value: Double): Matcher<View?> {
+    fun checkResult(testData: TestData, checkResult: Double = -1.0): Matcher<View?> {
         return object : TypeSafeMatcher<View?>() {
             override fun matchesSafely(item: View?): Boolean {
                 if (item !is TextView) return false
@@ -46,12 +46,49 @@ object TestUtil {
                 } catch (e: Exception) {
                     return false
                 }
-                val delta = abs(convertedValue - value)
-                return delta < 0.20f
+
+                val expectedResult = if (checkResult > 0) {
+                    checkResult
+                } else {
+                    testData.expectedResult
+                }
+
+                val delta = abs(convertedValue - expectedResult)
+                var resultOk = if (testData.maxResult > 0) {
+                    delta <= testData.maxResult * 0.1
+                } else {
+                    delta <= testData.expectedMarginOfError
+                }
+                if (testData.maxResult > 0 && resultOk && convertedValue >= testData.maxResult * 0.9) {
+                    resultOk = item.text.toString().startsWith("> ")
+                }
+                return resultOk
             }
 
             override fun describeTo(description: Description) {
                 description.appendText("Result does not match expected value")
+            }
+        }
+    }
+
+    fun checkMarginOfError(testData: TestData): Matcher<View?> {
+        return object : TypeSafeMatcher<View?>() {
+            override fun matchesSafely(item: View?): Boolean {
+                if (item !is TextView) return false
+                var text = item.text.toString()
+                if (text.contains(" ")) {
+                    text = text.subSequence(text.lastIndexOf(" ") + 1, text.length).toString()
+                }
+                val convertedValue = try {
+                    text.toDouble()
+                } catch (e: Exception) {
+                    return false
+                }
+                return abs(convertedValue - testData.expectedMarginOfError) <= 0.2
+            }
+
+            override fun describeTo(description: Description) {
+                description.appendText("Margin of error does not match expected value")
             }
         }
     }

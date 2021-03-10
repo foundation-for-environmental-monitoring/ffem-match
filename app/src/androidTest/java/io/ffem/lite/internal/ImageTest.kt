@@ -20,11 +20,12 @@ import io.ffem.lite.R
 import io.ffem.lite.common.TestHelper.clearPreferences
 import io.ffem.lite.common.TestHelper.sleep
 import io.ffem.lite.common.TestUtil
+import io.ffem.lite.common.TestUtil.checkMarginOfError
 import io.ffem.lite.common.TestUtil.checkResult
 import io.ffem.lite.common.TestUtil.childAtPosition
 import io.ffem.lite.common.clearData
 import io.ffem.lite.common.pH
-import io.ffem.lite.common.qrTestDataList
+import io.ffem.lite.common.testDataList
 import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.ErrorType.NO_ERROR
 import io.ffem.lite.model.toLocalString
@@ -82,8 +83,13 @@ class ImageTest {
         startInternalTest(4)
     }
 
+    @Test
+    fun image_005_Iron_0_Point_5() {
+        startInternalTest(5)
+    }
+
     private fun startInternalTest(imageNumber: Int) {
-        val testData = qrTestDataList[imageNumber]!!
+        val testData = testDataList[imageNumber]!!
 
         PreferencesUtil.setString(
             ApplicationProvider.getApplicationContext(),
@@ -122,7 +128,7 @@ class ImageTest {
                 )
 
                 val resultTextView = onView(withId(R.id.result_txt))
-                resultTextView.check(matches(checkResult(testData.expectedResult)))
+                resultTextView.check(matches(checkResult(testData)))
 
                 if (testData.testDetails == pH) {
                     onView(withId(R.id.unit_txt)).check(matches(not(isDisplayed())))
@@ -132,7 +138,7 @@ class ImageTest {
                 }
 
                 val marginOfErrorView = onView(withId(R.id.error_margin_txt))
-                marginOfErrorView.check(matches(checkResult(testData.expectedMarginOfError)))
+                marginOfErrorView.check(matches(checkMarginOfError(testData)))
 
                 onView(
                     withText(
@@ -205,7 +211,7 @@ class ImageTest {
             sleep(3000)
 
             if (testData.expectedResultError == NO_ERROR) {
-                textView.check(matches(checkResult(testData.expectedResult)))
+                textView.check(matches(checkResult(testData)))
             } else {
                 val context = InstrumentationRegistry.getInstrumentation().targetContext
                 textView.check(matches(withText(testData.expectedResultError.toLocalString(context))))
