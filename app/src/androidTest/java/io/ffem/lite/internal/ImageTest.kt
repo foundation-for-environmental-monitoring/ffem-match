@@ -84,7 +84,7 @@ class ImageTest {
     }
 
     @Test
-    fun image_005_Iron_0_Point_5() {
+    fun image_005_Chlorine_2_Point_5() {
         startInternalTest(5)
     }
 

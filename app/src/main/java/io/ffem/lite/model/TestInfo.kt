@@ -37,13 +37,13 @@ data class TestInfo(
             error.toLocalString(context)
         } else {
             if (calibratedResultInfo.result > -1) {
-                if (calibratedResultInfo.result >= values[values.size / 2].value * 0.9) {
+                if (calibratedResultInfo.result >= values[values.size / 2].value) {
                     "> " + values[values.size / 2].value.toString()
                 } else {
                     calibratedResultInfo.result.toString()
                 }
             } else {
-                if (resultInfo.result >= values[values.size / 2].value * 0.9) {
+                if (resultInfo.result >= values[values.size / 2].value) {
                     "> " + values[values.size / 2].value.toString()
                 } else {
                     resultInfo.result.toString()

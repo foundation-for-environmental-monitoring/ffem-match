@@ -451,7 +451,7 @@ object ImageColorUtil {
         }
         resultInfo.swatchDistance = distanceSum / gradientList.size
 
-        if (resultInfo.result > maxRange - (maxRange * 0.05)) {
+        if (resultInfo.result > maxRange - (maxRange * 0.1)) {
             var lastSwatchPosition = 2
             for (x in 2..colorInfo.swatches.size) {
                 if (colorInfo.swatches[x].value > resultInfo.result) {

@@ -57,7 +57,7 @@ object TestHelper {
     }
 
     fun leaveDiagnosticMode() {
-        onView(withId(R.id.fabDisableDiagnostics)).perform(click())
+        onView(withId(R.id.disable_diagnostics_fab)).perform(click())
     }
 
     fun clearPreferences() {
