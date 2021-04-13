@@ -274,15 +274,19 @@
       "uuid": "487b0bc2-7781-48a0-80ae-1cb973c354d3",
       "unit": "mg/l",
       "minMarginError": 0.16,
-      "riskType": "safety",
+      "riskType": "quantity",
       "risks": [
         {
           "value": 0,
-          "risk": 0
+          "risk": 1
         },
         {
-          "value": 100,
+          "value": 10,
           "risk": 1
+        },
+        {
+          "value": 10.1,
+          "risk": 0
         }
       ],
       "values": [
@@ -301,11 +305,11 @@
       ]
     },
     {
-      "name": "Ammonia",
+      "name": "Ammonia ffem",
       "type": "water",
       "uuid": "a4e3f71a-15e8-4b48-b6d7-26225d36f9e7",
       "unit": "mg/l",
-      "minMarginError": 0.26,
+      "minMarginError": 0.38,
       "riskType": "safety",
       "risks": [
         {
@@ -313,11 +317,11 @@
           "risk": 0
         },
         {
-          "value": 0.59,
+          "value": 1.0,
           "risk": 1
         },
         {
-          "value": 0.6,
+          "value": 1.1,
           "risk": 2
         }
       ],
@@ -326,16 +330,175 @@
           "value": 0
         },
         {
+          "value": 0.25
+        },
+        {
+          "value": 0.5
+        },
+        {
           "value": 1.0
         },
         {
           "value": 2.0
         },
         {
-          "value": 3.0
+          "value": 4.0
+        }
+      ]
+    },
+    {
+      "name": "Ammonia",
+      "type": "water",
+      "uuid": "06a4dcb9-bd06-43cc-97bc-58b7ef524ba5",
+      "unit": "mg/l",
+      "minMarginError": 0.6,
+      "riskType": "safety",
+      "risks": [
+        {
+          "value": 0,
+          "risk": 0
+        },
+        {
+          "value": 1.0,
+          "risk": 1
+        },
+        {
+          "value": 1.1,
+          "risk": 2
+        }
+      ],
+      "values": [
+        {
+          "value": 0
+        },
+        {
+          "value": 0.25
+        },
+        {
+          "value": 0.5
+        },
+        {
+          "value": 1.0
+        },
+        {
+          "value": 2.0
         },
         {
           "value": 4.0
+        }
+      ]
+    },
+    {
+      "name": "Nitrite ffem",
+      "type": "water",
+      "uuid": "be32dd42-4f22-4af0-8a10-3355024422ff",
+      "unit": "mg/l",
+      "minMarginError": 0.17,
+      "riskType": "safety",
+      "risks": [
+        {
+          "value": 0,
+          "risk": 0
+        },
+        {
+          "value": 0.25,
+          "risk": 1
+        },
+        {
+          "value": 0.26,
+          "risk": 2
+        }
+      ],
+      "values": [
+        {
+          "value": 0
+        },
+        {
+          "value": 0.05
+        },
+        {
+          "value": 0.1
+        },
+        {
+          "value": 0.25
+        },
+        {
+          "value": 0.5
+        }
+      ]
+    },
+    {
+      "name": "Nitrite",
+      "type": "water",
+      "uuid": "b4701a37-03d5-4516-b235-2b1772e43eba",
+      "unit": "mg/l",
+      "minMarginError": 0.18,
+      "riskType": "safety",
+      "risks": [
+        {
+          "value": 0,
+          "risk": 0
+        },
+        {
+          "value": 0.25,
+          "risk": 1
+        },
+        {
+          "value": 0.26,
+          "risk": 2
+        }
+      ],
+      "values": [
+        {
+          "value": 0
+        },
+        {
+          "value": 0.05
+        },
+        {
+          "value": 0.1
+        },
+        {
+          "value": 0.25
+        },
+        {
+          "value": 0.5
+        }
+      ]
+    },
+    {
+      "name": "Dissolved Oxygen",
+      "type": "water",
+      "uuid": "1910b0e1-b457-4dde-ab62-d840012cb7d2",
+      "unit": "mg/l",
+      "minMarginError": 0.16,
+      "riskType": "safety",
+      "risks": [
+        {
+          "value": 4,
+          "risk": 0
+        },
+        {
+          "value": 12,
+          "risk": 1
+        },
+        {
+          "value": 12.1,
+          "risk": 2
+        }
+      ],
+      "values": [
+        {
+          "value": 0
+        },
+        {
+          "value": 4
+        },
+        {
+          "value": 8
+        },
+        {
+          "value": 12
         }
       ]
     },
