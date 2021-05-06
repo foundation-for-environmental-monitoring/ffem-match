@@ -17,8 +17,8 @@ enum class RiskLevel {
 
 fun RiskLevel.toResourceId(context: Context, riskType: RiskType): Int {
     return context.resources.getIdentifier(
-        if (riskType == RiskType.NORMAL) toString().toLowerCase(Locale.ROOT)
-        else (toString() + "_" + riskType.name).toLowerCase(Locale.ROOT),
+        if (riskType == RiskType.NORMAL) toString().lowercase(Locale.getDefault())
+        else (toString() + "_" + riskType.name).lowercase(Locale.getDefault()),
         "string", context.packageName
     )
 }

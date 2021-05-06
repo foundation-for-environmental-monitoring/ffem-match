@@ -305,7 +305,7 @@
       ]
     },
     {
-      "name": "Ammonia ffem",
+      "name": "Ammonia",
       "type": "water",
       "uuid": "a4e3f71a-15e8-4b48-b6d7-26225d36f9e7",
       "unit": "mg/l",
@@ -389,7 +389,7 @@
       ]
     },
     {
-      "name": "Nitrite ffem",
+      "name": "Nitrite",
       "type": "water",
       "uuid": "be32dd42-4f22-4af0-8a10-3355024422ff",
       "unit": "mg/l",

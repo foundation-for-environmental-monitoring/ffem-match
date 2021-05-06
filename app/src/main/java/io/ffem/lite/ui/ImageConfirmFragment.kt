@@ -9,13 +9,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import io.ffem.lite.R
 import io.ffem.lite.databinding.FragmentImageConfirmBinding
 import java.io.File
 
-class ImageConfirmFragment : Fragment() {
+class ImageConfirmFragment : BaseFragment() {
     private var _binding: FragmentImageConfirmBinding? = null
     private val binding get() = _binding!!
     private val model: TestInfoViewModel by activityViewModels()
