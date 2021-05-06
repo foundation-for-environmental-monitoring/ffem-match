@@ -554,15 +554,15 @@
       "minMarginError": 0.16,
       "risks": [
         {
-          "value": 0,
+          "value": 80,
           "risk": 0
         },
         {
-          "value": 20,
+          "value": 134,
           "risk": 1
         },
         {
-          "value": 20.1,
+          "value": 134.1,
           "risk": 2
         }
       ],
@@ -669,15 +669,15 @@
       "minMarginError": 0.21,
       "risks": [
         {
-          "value": 0,
+          "value": 125,
           "risk": 0
         },
         {
-          "value": 30,
+          "value": 188,
           "risk": 1
         },
         {
-          "value": 31,
+          "value": 188.1,
           "risk": 2
         }
       ],
