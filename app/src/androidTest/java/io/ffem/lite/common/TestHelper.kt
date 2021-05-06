@@ -199,7 +199,7 @@ object TestHelper {
         try {
             mDevice.findObject(By.text(removeText)).click()
         } catch (e: Exception) {
-            mDevice.findObject(By.text(removeText.toUpperCase())).click()
+            mDevice.findObject(By.text(removeText.uppercase(Locale.getDefault()))).click()
         }
         sleep(500)
     }
@@ -209,7 +209,7 @@ object TestHelper {
             var buttonText =
                 ApplicationProvider.getApplicationContext<Context>().getString(R.string.next)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                buttonText = buttonText.toUpperCase()
+                buttonText = buttonText.uppercase(Locale.getDefault())
             }
             findButtonInScrollable(buttonText)
             mDevice.findObject(UiSelector().text(buttonText)).click()

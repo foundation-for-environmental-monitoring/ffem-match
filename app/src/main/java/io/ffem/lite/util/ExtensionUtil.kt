@@ -5,7 +5,7 @@ import java.util.*
 
 
 fun String.toLocalString(): String {
-    val value = this.toLowerCase(Locale.ROOT)
+    val value = this.lowercase(Locale.getDefault())
         .replace(")", "")
         .replace("(", "")
         .replace("- ", "")

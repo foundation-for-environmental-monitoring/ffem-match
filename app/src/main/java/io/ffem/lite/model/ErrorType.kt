@@ -17,7 +17,7 @@ enum class ErrorType {
 fun ErrorType.toLocalString(context: Context): String {
     val resourceId =
         context.resources.getIdentifier(
-            this.toString().toLowerCase(Locale.ROOT),
+            this.toString().lowercase(Locale.getDefault()),
             "string", context.packageName
         )
     return context.getString(resourceId)
