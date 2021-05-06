@@ -107,10 +107,23 @@
     <string name="ph" tools:keep="@string/ph">pH</string>
     <string name="phosphate" tools:keep="@string/phosphate">Phosphate</string>
     <string name="residual_chlorine" tools:keep="@string/residual_chlorine">Residual Chlorine</string>
+    <string name="potassium" tools:keep="@string/potassium" translatable="false">Potassium</string>
+    <string name="nitrite" tools:keep="@string/nitrite" translatable="false">Nitrite</string>
+    <string name="ammonia" tools:keep="@string/ammonia" translatable="false">Ammonia</string>
+    <string name="dissolved_oxygen" tools:keep="@string/dissolved_oxygen" translatable="false">Dissolved Oxygen</string>
+    <string name="organic_carbon" tools:keep="@string/organic_carbon" translatable="false">Organic Carbon</string>
+    <string name="ph_soil" tools:keep="@string/ph_soil" translatable="false">pH Soil</string>
+    <string name="phosphate_soil" tools:keep="@string/phosphate_soil" translatable="false">Phosphate Soil</string>
+    <string name="nitrogen_soil" tools:keep="@string/nitrogen_soil" translatable="false">Nitrogen Soil</string>
+    <string name="potassium_soil" tools:keep="@string/potassium_soil" translatable="false">Potassium Soil</string>
+    <string name="ammonia_soil" tools:keep="@string/ammonia_soil" translatable="false">Ammonia Soil</string>
+
+
 
     <!-- Unit Tests-->
     <string name="water_tests_1">Water Tests 1</string>
     <string name="water_tests_2">Water Tests 2</string>
+    <string name="soil_tests_1" translatable="false">Soil Tests 1</string>
 
     <string name="back">Back</string>
     <string name="next">Next</string>
