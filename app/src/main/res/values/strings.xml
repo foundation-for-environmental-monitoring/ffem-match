@@ -123,7 +123,6 @@
     <!-- Unit Tests-->
     <string name="water_tests_1">Water Tests 1</string>
     <string name="water_tests_2">Water Tests 2</string>
-    <string name="soil_tests_1" translatable="false">Soil Tests 1</string>
 
     <string name="back">Back</string>
     <string name="next">Next</string>

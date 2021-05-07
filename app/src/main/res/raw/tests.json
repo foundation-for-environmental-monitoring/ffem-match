@@ -552,6 +552,7 @@
       "uuid": "9bf80ac7-4a3e-475e-81dc-9d9f37cd6be9",
       "unit": "mg/l",
       "minMarginError": 0.16,
+      "formula": "(%1$f * 5)",
       "risks": [
         {
           "value": 80,
@@ -629,6 +630,7 @@
       "uuid": "9eff6e8f-a281-4f50-9717-7daeb34813a6",
       "unit": "mg/l",
       "minMarginError": 0.322,
+      "formula": "(%1$f * 5)",
       "risks": [
         {
           "value": 5.8,
@@ -667,6 +669,7 @@
       "uuid": "30223161-b7f8-4c32-9d5e-4fa6c85040ba",
       "unit": "mg/l",
       "minMarginError": 0.21,
+      "formula": "(%1$f * 5)",
       "risks": [
         {
           "value": 125,
