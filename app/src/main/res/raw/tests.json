@@ -555,15 +555,15 @@
       "formula": "(%1$f * 5)",
       "risks": [
         {
-          "value": 80,
+          "value": 0,
           "risk": 0
         },
         {
-          "value": 134,
+          "value": 80,
           "risk": 1
         },
         {
-          "value": 134.1,
+          "value": 134,
           "risk": 2
         }
       ],
@@ -633,15 +633,15 @@
       "formula": "(%1$f * 5)",
       "risks": [
         {
-          "value": 5.8,
+          "value": 0,
           "risk": 0
         },
         {
-          "value": 9.8,
+          "value": 13,
           "risk": 1
         },
         {
-          "value": 9.81,
+          "value": 22,
           "risk": 2
         }
       ],
@@ -672,15 +672,15 @@
       "formula": "(%1$f * 5)",
       "risks": [
         {
-          "value": 125,
+          "value": 0,
           "risk": 0
         },
         {
-          "value": 188,
+          "value": 125,
           "risk": 1
         },
         {
-          "value": 188.1,
+          "value": 188,
           "risk": 2
         }
       ],
