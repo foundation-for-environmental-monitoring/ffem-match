@@ -23,10 +23,10 @@ const val PH_ID = "ff96e965-13a3-4507-9edf-7aa7fc084354"
 const val RESIDUAL_CHLORINE_ID = "f1d64b11-64c4-4a34-806e-ad0d47bcc96b"
 const val NITRATE_ID = "d69ca7a2-e357-4820-a99b-1b6b24c0fa93"
 const val IRON_ID = "7fd5d20d-73e3-4c95-86ef-352410b1893d"
-const val PHOSPHATE_ID = "b396de78-0de6-11eb-adc1-0242ac120002"
+const val PHOSPHATE_ID = "9eff6e8f-a281-4f50-9717-7daeb34813a6"
 const val POTASSIUM_SOIL_ID = "9bf80ac7-4a3e-475e-81dc-9d9f37cd6be9"
 const val NITROGEN_SOIL_ID = "30223161-b7f8-4c32-9d5e-4fa6c85040ba"
-const val PHOSPHOROUS_SOIL_ID = "9eff6e8f-a281-4f50-9717-7daeb34813a6"
+const val PHOSPHOROUS_SOIL_ID = "b396de78-0de6-11eb-adc1-0242ac120002"
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.O_MR1])

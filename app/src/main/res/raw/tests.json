@@ -239,7 +239,7 @@
     {
       "name": "Phosphate",
       "type": "water",
-      "uuid": "b396de78-0de6-11eb-adc1-0242ac120002",
+      "uuid": "9eff6e8f-a281-4f50-9717-7daeb34813a6",
       "unit": "mg/l",
       "minMarginError": 0.47,
       "riskType": "safety",
@@ -627,7 +627,7 @@
     {
       "name": "Phosphorous Soil",
       "type": "soil",
-      "uuid": "9eff6e8f-a281-4f50-9717-7daeb34813a6",
+      "uuid": "b396de78-0de6-11eb-adc1-0242ac120002",
       "unit": "mg/l",
       "minMarginError": 0.322,
       "formula": "(%1$f * 5)",
