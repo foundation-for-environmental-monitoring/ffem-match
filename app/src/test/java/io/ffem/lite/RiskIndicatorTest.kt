@@ -17,16 +17,16 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.android.controller.ActivityController
 import org.robolectric.annotation.Config
 
-const val FLUORIDE_ID = "f0f3c1dd-89af-49f1-83e7-bcc31cb61159"
-const val FLUORIDE_HIGH_RANGE_ID = "93cec3c4-b3e4-4924-b722-b6cb9742737a"
-const val PH_ID = "ff96e965-13a3-4507-9edf-7aa7fc084354"
-const val RESIDUAL_CHLORINE_ID = "f1d64b11-64c4-4a34-806e-ad0d47bcc96b"
-const val NITRATE_ID = "d69ca7a2-e357-4820-a99b-1b6b24c0fa93"
-const val IRON_ID = "7fd5d20d-73e3-4c95-86ef-352410b1893d"
-const val PHOSPHATE_ID = "b396de78-0de6-11eb-adc1-0242ac120002"
-const val POTASSIUM_SOIL_ID = "9bf80ac7-4a3e-475e-81dc-9d9f37cd6be9"
-const val NITROGEN_SOIL_ID = "30223161-b7f8-4c32-9d5e-4fa6c85040ba"
-const val PHOSPHOROUS_SOIL_ID = "9eff6e8f-a281-4f50-9717-7daeb34813a6"
+const val FLUORIDE_ID = "b61159"
+const val FLUORIDE_HIGH_RANGE_ID = "42737a"
+const val PH_ID = "084354"
+const val RESIDUAL_CHLORINE_ID = "bcc96b"
+const val NITRATE_ID = "c0fa93"
+const val IRON_ID = "b1893d"
+const val PHOSPHATE_ID = "120002"
+const val POTASSIUM_SOIL_ID = "cd6be9"
+const val NITROGEN_SOIL_ID = "5040ba"
+const val PHOSPHOROUS_SOIL_ID = "4813a6"
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.O_MR1])

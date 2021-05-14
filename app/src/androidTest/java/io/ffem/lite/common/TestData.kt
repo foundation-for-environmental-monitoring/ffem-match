@@ -5,20 +5,20 @@ import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.RiskLevel
 import io.ffem.lite.model.RiskType
 
-val fluoride = TestDetails(R.string.fluoride, "bcc31cb61159", R.string.water_tests_1)
+val fluoride = TestDetails(R.string.fluoride, "b61159", R.string.water_tests_1)
 val iron = TestDetails(
-    R.string.iron, "352410b1893d", R.string.water_tests_2, riskType = RiskType.SAFETY
+    R.string.iron, "b1893d", R.string.water_tests_2, riskType = RiskType.SAFETY
 )
 val pH = TestDetails(
-    R.string.ph, "7aa7fc084354", R.string.water_tests_2, riskType = RiskType.ALKALINITY
+    R.string.ph, "084354", R.string.water_tests_2, riskType = RiskType.ALKALINITY
 )
 val residualChlorine = TestDetails(
-    R.string.residual_chlorine, "ad0d47bcc96b", R.string.water_tests_2, riskType = RiskType.QUANTITY
+    R.string.residual_chlorine, "bcc96b", R.string.water_tests_2, riskType = RiskType.QUANTITY
 )
 val phosphate = TestDetails(
-    R.string.phosphate, "0242ac120002", R.string.water_tests_2, riskType = RiskType.SAFETY
+    R.string.phosphate, "120002", R.string.water_tests_2, riskType = RiskType.SAFETY
 )
-val invalidTest = TestDetails(R.string.invalid_card_test, "ad0d47bcc96b", R.string.water_tests_2)
+val invalidTest = TestDetails(R.string.invalid_card_test, "bcc96b", R.string.water_tests_2)
 
 val testDataList = mutableMapOf(
     0 to TestData(residualChlorine, 2.0, 0.25, risk = RiskLevel.HIGH, calibratedResult = 1.0),
