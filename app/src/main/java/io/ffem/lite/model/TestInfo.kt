@@ -2,6 +2,7 @@ package io.ffem.lite.model
 
 import android.content.Context
 import android.os.Parcelable
+import io.ffem.lite.util.MathUtil
 import io.ffem.lite.util.getStringByLocale
 import kotlinx.parcelize.Parcelize
 import java.util.*
@@ -30,7 +31,11 @@ data class TestInfo(
 
     val maxValue: Double
         get() {
-            return values[values.size / 2].value
+            var max = values[values.size / 2].value
+            if (formula.isNotEmpty()) {
+                max = MathUtil.eval(String.format(Locale.US, formula, max))
+            }
+            return max
         }
 
     fun getResultString(context: Context): String {
@@ -38,14 +43,14 @@ data class TestInfo(
             error.toLocalString(context)
         } else {
             if (calibratedResultInfo.result > -1) {
-                if (calibratedResultInfo.result >= values[values.size / 2].value) {
-                    "> " + values[values.size / 2].value.toString()
+                if (calibratedResultInfo.result >= maxValue) {
+                    "> $maxValue"
                 } else {
                     calibratedResultInfo.result.toString()
                 }
             } else {
-                if (resultInfo.result >= values[values.size / 2].value) {
-                    "> " + values[values.size / 2].value.toString()
+                if (resultInfo.result >= maxValue) {
+                    "> $maxValue"
                 } else {
                     resultInfo.result.toString()
                 }

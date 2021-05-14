@@ -1,8 +1,19 @@
 package io.ffem.lite.util
 
+import java.util.*
 import kotlin.math.*
 
 object MathUtil {
+
+    fun applyFormula(value: Double, formula: String?): Double {
+        if (value == -1.0 || java.lang.Double.isNaN(value)) {
+            return value
+        }
+        return if (formula!!.isNotEmpty()) {
+            eval(String.format(Locale.US, formula, value))
+        } else value
+    }
+
     /**
      * Evaluates a math expression in a string.
      * http://stackoverflow.com/questions/3422673/evaluating-a-math-expression-given-in-string-form#answer-26227947
@@ -10,7 +21,6 @@ object MathUtil {
      * @param str the string to evaluate
      * @return evaluated result
      */
-    @JvmStatic
     fun eval(str: String): Double {
         return object : Any() {
             private var pos = -1

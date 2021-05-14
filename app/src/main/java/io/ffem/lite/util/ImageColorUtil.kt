@@ -52,7 +52,8 @@ object ImageColorUtil {
                     "_swatch"
                 )
 
-                testInfo.resultInfo = analyzeColor(extractedColors, testInfo.formula)
+                testInfo.resultInfo =
+                    analyzeColor(extractedColors, testInfo.formula, testInfo.maxValue)
                 if (testInfo.resultInfo.result > -2) {
 
                     if (testInfo.resultInfo.result > -1) {
@@ -85,7 +86,8 @@ object ImageColorUtil {
 
                             testInfo.calibratedResultInfo = analyzeColor(
                                 extractedColors,
-                                testInfo.formula
+                                testInfo.formula,
+                                testInfo.maxValue
                             )
                         }
                     }
@@ -426,7 +428,8 @@ object ImageColorUtil {
     @Suppress("SameParameterValue")
     private fun analyzeColor(
         colorInfo: ColorInfo,
-        formula: String
+        formula: String,
+        maxValue: Double
     ): ResultInfo {
 
         val maxRange = colorInfo.swatches[colorInfo.swatches.size - 1].value
@@ -482,9 +485,9 @@ object ImageColorUtil {
             }
         }
 
-        resultInfo.result = applyFormula(resultInfo.result, formula)
-        if (resultInfo.result > maxRange - (maxRange * 0.1)) {
-            resultInfo.result = maxRange
+        resultInfo.result = MathUtil.applyFormula(resultInfo.result, formula)
+        if (resultInfo.result > maxValue - (maxValue * 0.1)) {
+            resultInfo.result = maxValue
         }
 
         resultInfo.matchedPosition =
@@ -492,15 +495,6 @@ object ImageColorUtil {
                     ((colorInfo.swatches.size - 1) * INTERPOLATION_COUNT)).toFloat()
 
         return resultInfo
-    }
-
-    private fun applyFormula(value: Double, formula: String?): Double {
-        if (value == -1.0 || java.lang.Double.isNaN(value)) {
-            return value
-        }
-        return if (formula!!.isNotEmpty()) {
-            MathUtil.eval(String.format(Locale.US, formula, value))
-        } else value
     }
 
     /**
