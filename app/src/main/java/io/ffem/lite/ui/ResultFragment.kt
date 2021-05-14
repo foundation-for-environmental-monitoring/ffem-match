@@ -147,6 +147,9 @@ class ResultFragment(externalRequest: Boolean) : Fragment() {
                 b.grayscaleResultTxt.text = grayscaleResult
                 if (grayscaleResult.isNotEmpty()) {
                     b.unit2Txt.text = testInfo.unit
+                    b.grayscaleLyt.visibility = VISIBLE
+                } else {
+                    b.grayscaleLyt.visibility = GONE
                 }
             } else {
                 b.grayscaleLyt.visibility = GONE

@@ -172,15 +172,15 @@ object ImageColorUtil {
         context: Context
     ): ColorInfo {
 
-        val paint = Paint()
-        paint.style = Style.STROKE
-        paint.color = getColor(context, R.color.bright_green)
-        paint.strokeWidth = 3f
+        val greenPaint = Paint()
+        greenPaint.style = Style.STROKE
+        greenPaint.color = getColor(context, R.color.bright_green)
+        greenPaint.strokeWidth = 3f
 
-        val paint1 = Paint()
-        paint1.style = Style.STROKE
-        paint1.color = Color.BLACK
-        paint1.strokeWidth = 1f
+        val blackPaint = Paint()
+        blackPaint.style = Style.STROKE
+        blackPaint.color = Color.BLACK
+        blackPaint.strokeWidth = 1f
 
         val cardColors: List<CalibrationValue> = getCardColors(barcodeValue)
 
@@ -208,8 +208,8 @@ object ImageColorUtil {
             cal.color = getAverageColor(pixels, false)
 
             val canvas = Canvas(bitmap)
-            canvas.drawRect(rectangle, paint)
-            canvas.drawRect(rectangle, paint1)
+            canvas.drawRect(rectangle, greenPaint)
+            canvas.drawRect(rectangle, blackPaint)
         }
 
         // Column 1 color squares
@@ -229,8 +229,8 @@ object ImageColorUtil {
             cal.color = getAverageColor(pixels, false)
 
             val canvas = Canvas(bitmap)
-            canvas.drawRect(rectangle, paint)
-            canvas.drawRect(rectangle, paint1)
+            canvas.drawRect(rectangle, greenPaint)
+            canvas.drawRect(rectangle, blackPaint)
         }
 
         // Cuvette area
@@ -250,8 +250,8 @@ object ImageColorUtil {
         val swatches: ArrayList<Swatch> = ArrayList()
         val colorInfo = ColorInfo(cuvetteColor, swatches)
         val canvas = Canvas(bitmap)
-        canvas.drawRect(rectangle, paint)
-        canvas.drawRect(rectangle, paint1)
+        canvas.drawRect(rectangle, greenPaint)
+        canvas.drawRect(rectangle, blackPaint)
 
         for (cal in cardColors) {
             if (swatches.size >= cardColors.size / 2) {
