@@ -96,6 +96,7 @@ object ImageColorUtil {
                         testInfo.resultInfo,
                         testInfo.calibratedResultInfo,
                         testInfo.maxValue,
+                        testInfo.formula,
                         500
                     )
 
