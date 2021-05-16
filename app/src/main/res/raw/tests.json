@@ -503,6 +503,41 @@
       ]
     },
     {
+      "name": "Organic Carbon",
+      "type": "soil",
+      "uuid": "a8e749a8-c105-4e72-987a-ce28356f45bc",
+      "unit": "mg/l",
+      "minMarginError": 0.33,
+      "risks": [
+        {
+          "value": 0.4,
+          "risk": 0
+        },
+        {
+          "value": 0.8,
+          "risk": 1
+        },
+        {
+          "value": 0.81,
+          "risk": 2
+        }
+      ],
+      "values": [
+        {
+          "value": 0
+        },
+        {
+          "value": 0.5
+        },
+        {
+          "value": 1
+        },
+        {
+          "value": 2
+        }
+      ]
+    },
+    {
       "name": "Unknown",
       "type": "water",
       "uuid": "d1b25de4-5605-498e-99f1-8412d7e19db2",
