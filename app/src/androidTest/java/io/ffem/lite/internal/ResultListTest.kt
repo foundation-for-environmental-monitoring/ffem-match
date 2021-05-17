@@ -152,20 +152,13 @@ class ResultListTest {
         TestUtil.sleep(1000)
         onView(withText(R.string.save)).perform(click())
 
-        val resultName = context.getString(R.string.residual_chlorine) + " (0)"
-        val textView = onView(
+        val resultName = context.getString(R.string.residual_chlorine) + " [0]"
+        onView(
             allOf(
                 withText(resultName),
-                withParent(
-                    allOf(
-                        withId(R.id.layout),
-                        withParent(IsInstanceOf.instanceOf(android.view.ViewGroup::class.java))
-                    )
-                ),
                 isDisplayed()
             )
-        )
-        textView.check(matches(withText(resultName)))
+        ).check(matches(withText(resultName)))
 
         sleep(3000)
 
@@ -215,14 +208,12 @@ class ResultListTest {
         )
         textView4.check(matches(withText("0.25")))
 
-        val textView5 = onView(
+        onView(
             allOf(
                 withId(R.id.name_txt), withText(R.string.residual_chlorine),
-                withParent(withParent(withId(R.id.result_lyt))),
                 isDisplayed()
             )
-        )
-        textView5.check(matches(withText(R.string.residual_chlorine)))
+        ).check(matches(withText(R.string.residual_chlorine)))
 
         Espresso.pressBack()
 

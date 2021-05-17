@@ -200,11 +200,10 @@ class ImageTest {
             sleep(1000)
 
             onView(
-                allOf(
-                    withText("${context.getString(testData.testDetails.name)} (${imageNumber})"),
-                    isDisplayed()
+                withText(
+                    "${context.getString(testData.testDetails.name)} [${imageNumber}]"
                 )
-            ).check(matches(withText("${context.getString(testData.testDetails.name)} (${imageNumber})")))
+            ).check(matches(isDisplayed()))
 
             val textView = onView(
                 allOf(

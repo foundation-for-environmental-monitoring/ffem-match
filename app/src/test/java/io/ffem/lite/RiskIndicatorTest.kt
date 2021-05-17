@@ -27,6 +27,7 @@ const val PHOSPHATE_ID = "120002"
 const val POTASSIUM_SOIL_ID = "cd6be9"
 const val NITROGEN_SOIL_ID = "5040ba"
 const val PHOSPHOROUS_SOIL_ID = "4813a6"
+const val ORGANIC_CARBON_ID = "6f45bc"
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.O_MR1])
@@ -381,6 +382,39 @@ class RiskIndicatorTest {
         assertRisk(testInfo, 20.0, MEDIUM)
     }
 
+    @Test
+    fun organicCarbonRiskIndicator() {
+
+        val testInfo = getTestInfo(ORGANIC_CARBON_ID)!!
+
+        Assert.assertEquals(8, testInfo.values.size)
+
+        Assert.assertEquals(3, testInfo.risks.size)
+
+        assertRisk(testInfo, 0.0, LOW)
+
+        assertRisk(testInfo, 0.39, LOW)
+
+        assertRisk(testInfo, 0.4, LOW)
+
+        assertRisk(testInfo, 0.401, MEDIUM)
+
+        assertRisk(testInfo, 0.41, MEDIUM)
+
+        assertRisk(testInfo, 0.799, MEDIUM)
+
+        assertRisk(testInfo, 0.8, MEDIUM)
+
+        assertRisk(testInfo, 0.801, HIGH)
+
+        assertRisk(testInfo, 0.81, HIGH)
+
+        assertRisk(testInfo, 0.9, HIGH)
+
+        assertRisk(testInfo, 1.0, HIGH)
+
+        assertRisk(testInfo, 20.0, HIGH)
+    }
 
     private fun assertRisk(testInfo: TestInfo, result: Double, risk: RiskLevel) {
         testInfo.resultInfo.result = result
