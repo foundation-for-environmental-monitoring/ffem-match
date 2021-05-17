@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_slogan">पानी की गुणवत्ता प्रणाली</string>
+    <string name="soil">मिट्टी</string>
+    <string name="water">पानी</string>
     <string name="copyright">कॉपीराइट © ffem</string>
     <string name="legal_info">कानूनी जानकारी</string>
     <string name="testing">परिक्षण , जांचना, टेस्टिंग</string>
@@ -78,18 +80,8 @@
     <string name="not_bright">चमक पर्याप्त नहीं है</string>
     <string name="too_bright">बहुत अधिक प्रकाश</string>
     <string name="too_many_shadows">कार्ड पर छाया</string>
-    <string name="unknown">अज्ञात</string>
-    <string name="fluoride">फ्लोराइड</string>
-    <string name="fluoride_high_range">फ्लोराइड - उच्च श्रेणी</string>
-    <string name="ph">पी एच</string>
-    <string name="phosphate">फॉस्फेट</string>
-    <string name="iron">आयरन</string>
-    <string name="nitrate">नाइट्रेट</string>
-    <string name="residual_chlorine">अवशिष्ट क्लोरीन</string>
     <string name="back">वापस</string>
     <string name="next">आगामी</string>
-    <string name="water_tests_1">पानी टेस्ट 1</string>
-    <string name="water_tests_2">पानी टेस्ट 2</string>
     <string name="calibrate">कैलिब्रेट</string>
     <string name="calibrate_summary">मानक का उपयोग करते हुए कैलिब्रेट करें</string>
     <string name="no_data">कोई परीक्षा परिणाम नहीं</string>
@@ -120,4 +112,25 @@
     <string name="manual_photo_capture">मैनुअल फोटो कैप्चर</string>
     <string name="manual_photo_summary">यदि इस फोन पर ऑटो फोटो कैप्चर ठीक से काम नहीं कर रहा है, तो इसे चालू करें</string>
     <string name="airplane_mode_off">कृपया हवाई जहाज मोड बंद करें</string>
+    <string name="calibration_succeeded">अंशांकन पूर्ण</string>
+
+    <string name="ammonia">आम्मोनिय</string>
+    <string name="dissolved_oxygen">विघटित ऑक्सीजन</string>
+    <string name="fluoride">फ्लोराइड</string>
+    <string name="fluoride_high_range">फ्लोराइड - उच्च श्रेणी</string>
+    <string name="iron">आयरन</string>
+    <string name="nitrate">नाइट्रेट</string>
+    <string name="nitrite">नाइट्र्य्ट</string>
+    <string name="nitrogen">नाइट्रोजन</string>
+    <string name="organic_carbon">आर्गेनिक कार्बन</string>
+    <string name="ph">पी एच</string>
+    <string name="phosphate">फॉस्फेट</string>
+    <string name="phosphorous">फ़ास्फ़रोस</string>
+    <string name="potassium">पोटासियम</string>
+    <string name="residual_chlorine">अवशिष्ट क्लोरीन</string>
+    <string name="invalid_card_test">अमान्य कार्ड परीक्षण</string>
+    <string name="unknown">अज्ञात</string>
+    <string name="water_tests_1">पानी टेस्ट 1</string>
+    <string name="water_tests_2">पानी टेस्ट 2</string>
+    <string name="soil_tests_1">मृदा परीक्षण 1</string>
 </resources>

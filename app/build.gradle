@@ -19,7 +19,7 @@ android {
         minSdkVersion 23
         targetSdkVersion 30
         versionCode 118
-        versionName "Alpha 0.68.3"
+        versionName "0.68.3"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 

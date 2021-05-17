@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_slogan">నీటి నాణ్యత వ్యవస్థ</string>
+    <string name="soil">నేల</string>
+    <string name="water">నీటి</string>
     <string name="copyright">కాపీరైట్ © ffem</string>
     <string name="legal_info">చట్టపరమైన సమాచారం</string>
     <string name="testing">టెస్టింగ్</string>
@@ -78,18 +80,8 @@
     <string name="not_bright">ప్రకాశం సరిపోదు</string>
     <string name="too_bright">చాలా ప్రకాశం</string>
     <string name="too_many_shadows">కార్డుపై నీడలు</string>
-    <string name="unknown">తెలియని</string>
-    <string name="fluoride">ఫ్లోరైడ్</string>
-    <string name="fluoride_high_range">ఫ్లోరైడ్ - అధిక శ్రేణి</string>
-    <string name="ph">pH</string>
-    <string name="phosphate">ఫాస్ఫేట్</string>
-    <string name="iron">ఐరన్</string>
-    <string name="nitrate">నైట్రేట్</string>
-    <string name="residual_chlorine">అవశేష క్లోరిన్</string>
     <string name="back">వెనుకకు</string>
     <string name="next">తరువాత</string>
-    <string name="water_tests_1">నీటి పరీక్ష 1</string>
-    <string name="water_tests_2">నీటి పరీక్ష 2</string>
     <string name="calibrate">క్రమాంకనం</string>
     <string name="calibrate_summary">ప్రమాణాన్ని ఉపయోగించి క్రమాంకనం చేయండి</string>
     <string name="no_data">పరీక్ష ఫలితాలు లేవు</string>
@@ -120,4 +112,25 @@
     <string name="manual_photo_capture">మాన్యువల్ ఫోటో క్యాప్చర్</string>
     <string name="manual_photo_summary">ఈ ఫోన్‌లో ఆటో ఫోటో క్యాప్చర్ సరిగ్గా పనిచేయకపోతే, దీన్ని ఆన్ చేయండి</string>
     <string name="airplane_mode_off">దయచేసి విమానం మోడ్‌ను ఆపివేయండి</string>
+    <string name="calibration_succeeded">కేలిబ్రేట్ పూర్తయింది</string>
+
+    <string name="ammonia">అమ్మోనియా</string>
+    <string name="dissolved_oxygen">కరిగిన ఆక్సిజన్</string>
+    <string name="fluoride">ఫ్లోరైడ్</string>
+    <string name="fluoride_high_range">ఫ్లోరైడ్ - అధిక శ్రేణి</string>
+    <string name="iron">ఐరన్</string>
+    <string name="nitrate">నైట్రేట్</string>
+    <string name="nitrite">నైట్రైట్</string>
+    <string name="nitrogen">నత్రజని</string>
+    <string name="organic_carbon">సేంద్రీయ కార్బన్</string>
+    <string name="ph">pH</string>
+    <string name="phosphate">ఫాస్ఫేట్</string>
+    <string name="phosphorous">ఫాస్పరస్</string>
+    <string name="potassium">పొటాషియం</string>
+    <string name="residual_chlorine">అవశేష క్లోరిన్</string>
+    <string name="invalid_card_test">చెల్లని కార్డ్ పరీక్ష</string>
+    <string name="unknown">తెలియని</string>
+    <string name="water_tests_1">నీటి పరీక్ష 1</string>
+    <string name="water_tests_2">నీటి పరీక్ష 2</string>
+    <string name="soil_tests_1">నేల పరీక్షలు 1</string>
 </resources>
