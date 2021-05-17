@@ -17,13 +17,16 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.android.controller.ActivityController
 import org.robolectric.annotation.Config
 
-const val FLUORIDE_ID = "f0f3c1dd-89af-49f1-83e7-bcc31cb61159"
-const val FLUORIDE_HIGH_RANGE_ID = "93cec3c4-b3e4-4924-b722-b6cb9742737a"
-const val PH_ID = "ff96e965-13a3-4507-9edf-7aa7fc084354"
-const val RESIDUAL_CHLORINE_ID = "f1d64b11-64c4-4a34-806e-ad0d47bcc96b"
-const val NITRATE_ID = "d69ca7a2-e357-4820-a99b-1b6b24c0fa93"
-const val IRON_ID = "7fd5d20d-73e3-4c95-86ef-352410b1893d"
-const val PHOSPHATE_ID = "b396de78-0de6-11eb-adc1-0242ac120002"
+const val FLUORIDE_ID = "b61159"
+const val FLUORIDE_HIGH_RANGE_ID = "42737a"
+const val PH_ID = "084354"
+const val RESIDUAL_CHLORINE_ID = "bcc96b"
+const val NITRATE_ID = "c0fa93"
+const val IRON_ID = "b1893d"
+const val PHOSPHATE_ID = "120002"
+const val POTASSIUM_SOIL_ID = "cd6be9"
+const val NITROGEN_SOIL_ID = "5040ba"
+const val PHOSPHOROUS_SOIL_ID = "4813a6"
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.O_MR1])
@@ -275,6 +278,109 @@ class RiskIndicatorTest {
 
         assertRisk(testInfo, 0.9, HIGH)
     }
+
+    @Test
+    fun potassiumSoilRiskIndicator() {
+
+        val testInfo = getTestInfo(POTASSIUM_SOIL_ID)!!
+
+        Assert.assertEquals(8, testInfo.values.size)
+
+        Assert.assertEquals(3, testInfo.risks.size)
+
+        assertRisk(testInfo, 135.0, HIGH)
+
+        assertRisk(testInfo, 140.0, HIGH)
+
+        assertRisk(testInfo, 150.0, HIGH)
+
+        assertRisk(testInfo, 90.0, MEDIUM)
+
+        assertRisk(testInfo, 50.0, LOW)
+
+        assertRisk(testInfo, 160.0, HIGH)
+
+        assertRisk(testInfo, 60.0, LOW)
+
+        assertRisk(testInfo, 70.0, LOW)
+
+        assertRisk(testInfo, 120.0, MEDIUM)
+
+        assertRisk(testInfo, 170.0, HIGH)
+
+        assertRisk(testInfo, 130.0, MEDIUM)
+
+        assertRisk(testInfo, 100.0, MEDIUM)
+    }
+
+    @Test
+    fun nitrogenSoilRiskIndicator() {
+
+        val testInfo = getTestInfo(NITROGEN_SOIL_ID)!!
+
+        Assert.assertEquals(10, testInfo.values.size)
+
+        Assert.assertEquals(3, testInfo.risks.size)
+
+        assertRisk(testInfo, 190.0, HIGH)
+
+        assertRisk(testInfo, 200.0, HIGH)
+
+        assertRisk(testInfo, 130.0, MEDIUM)
+
+        assertRisk(testInfo, 150.0, MEDIUM)
+
+        assertRisk(testInfo, 50.0, LOW)
+
+        assertRisk(testInfo, 210.0, HIGH)
+
+        assertRisk(testInfo, 90.0, LOW)
+
+        assertRisk(testInfo, 100.0, LOW)
+
+        assertRisk(testInfo, 180.0, MEDIUM)
+
+        assertRisk(testInfo, 205.0, HIGH)
+
+        assertRisk(testInfo, 120.0, LOW)
+
+        assertRisk(testInfo, 179.0, MEDIUM)
+    }
+
+    @Test
+    fun phosphorousSoilRiskIndicator() {
+
+        val testInfo = getTestInfo(PHOSPHOROUS_SOIL_ID)!!
+
+        Assert.assertEquals(10, testInfo.values.size)
+
+        Assert.assertEquals(3, testInfo.risks.size)
+
+        assertRisk(testInfo, 30.0, HIGH)
+
+        assertRisk(testInfo, 50.0, HIGH)
+
+        assertRisk(testInfo, 40.0, HIGH)
+
+        assertRisk(testInfo, 14.0, MEDIUM)
+
+        assertRisk(testInfo, 12.9, LOW)
+
+        assertRisk(testInfo, 25.5, HIGH)
+
+        assertRisk(testInfo, 10.0, LOW)
+
+        assertRisk(testInfo, 11.5, LOW)
+
+        assertRisk(testInfo, 15.0, MEDIUM)
+
+        assertRisk(testInfo, 23.0, HIGH)
+
+        assertRisk(testInfo, 21.0, MEDIUM)
+
+        assertRisk(testInfo, 20.0, MEDIUM)
+    }
+
 
     private fun assertRisk(testInfo: TestInfo, result: Double, risk: RiskLevel) {
         testInfo.resultInfo.result = result

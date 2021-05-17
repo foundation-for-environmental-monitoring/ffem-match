@@ -168,7 +168,7 @@
     {
       "name": "Nitrate",
       "type": "water",
-      "uuid": "d69ca7a2-e357-4820-a99b-1b6b24c0fa93",
+      "uuid": "c0fa93",
       "unit": "mg/l",
       "minMarginError": 0.80,
       "risks": [
@@ -391,7 +391,7 @@
     {
       "name": "Nitrite",
       "type": "water",
-      "uuid": "be32dd42-4f22-4af0-8a10-3355024422ff",
+      "uuid": "4422ff",
       "unit": "mg/l",
       "minMarginError": 0.17,
       "riskType": "safety",

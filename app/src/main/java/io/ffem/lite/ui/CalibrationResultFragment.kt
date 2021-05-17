@@ -90,7 +90,7 @@ class CalibrationResultFragment : Fragment() {
                             Color.blue(result.calibratedValue.color) - Color.blue(result.sampleColor)
                         )
                     )
-                    requireContext().toast(testInfo.name + " calibrated successfully")
+                    requireContext().toast(getString(R.string.calibration_succeeded))
                 } finally {
                     db.close()
                 }

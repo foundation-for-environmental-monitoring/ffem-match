@@ -137,7 +137,7 @@ class DiagnosticsTest {
 
         val appCompatButton = onView(
             allOf(
-                withId(android.R.id.button1), withText(R.string.ok),
+                withId(android.R.id.button1), withText(android.R.string.ok),
                 childAtPosition(
                     childAtPosition(
                         withId(R.id.buttonPanel),
