@@ -13,6 +13,7 @@ data class TestResult(
     val uuid: String,
     val status: Int,
     val name: String,
+    val sampleType: String,
     val date: Long,
     val value: Double,
     val maxValue: Double,

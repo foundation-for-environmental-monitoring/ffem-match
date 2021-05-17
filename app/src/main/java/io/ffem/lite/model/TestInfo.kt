@@ -13,7 +13,7 @@ import kotlin.math.round
 @Parcelize
 data class TestInfo(
     var name: String? = null,
-    var type: String? = null,
+    var sampleType: String = "",
     var uuid: String? = null,
     var unit: String? = null,
     var riskType: RiskType = RiskType.NORMAL,
@@ -31,11 +31,7 @@ data class TestInfo(
 
     val maxValue: Double
         get() {
-            var max = values[values.size / 2].value
-            if (formula.isNotEmpty()) {
-                max = MathUtil.eval(String.format(Locale.US, formula, max))
-            }
-            return max
+            return MathUtil.applyFormula(values[values.size / 2].value, formula)
         }
 
     fun getResultString(context: Context): String {

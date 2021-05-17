@@ -99,6 +99,7 @@ class ResultListActivity : AppUpdateActivity() {
                     testInfo.fileName,
                     testInfo.uuid!!,
                     testInfo.name!!,
+                    testInfo.sampleType,
                     testInfo.getResult(),
                     testInfo.resultInfoGrayscale.result,
                     testInfo.getMarginOfError(),

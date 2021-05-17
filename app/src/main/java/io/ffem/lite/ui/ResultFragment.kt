@@ -138,6 +138,7 @@ class ResultFragment(externalRequest: Boolean) : Fragment() {
 
         val requestedTestId = PreferencesUtil.getString(context, TEST_ID_KEY, "")
         if (testInfo.error == ErrorType.NO_ERROR && testInfo.resultInfo.result >= 0) {
+            b.sampleTypeText.text = testInfo.sampleType.toLocalString()
             b.nameTxt.text = testInfo.name!!.toLocalString()
             b.name2Txt.text = ""
             b.resultTxt.text = testInfo.getResultString(requireContext())

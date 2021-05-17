@@ -130,8 +130,17 @@ object ImageColorUtil {
                     if (!AppPreferences.isCalibration()) {
                         db.resultDao().insert(
                             TestResult(
-                                testInfo.fileName, testInfo.uuid!!, 0, testInfo.name!!,
-                                Date().time, -1.0, testInfo.maxValue, -1.0, 0.0, error = NO_ERROR
+                                testInfo.fileName,
+                                testInfo.uuid!!,
+                                0,
+                                testInfo.name!!,
+                                testInfo.sampleType,
+                                Date().time,
+                                -1.0,
+                                testInfo.maxValue,
+                                -1.0,
+                                0.0,
+                                error = NO_ERROR
                             )
                         )
 
@@ -157,6 +166,7 @@ object ImageColorUtil {
                         testInfo.fileName,
                         testInfo.uuid!!,
                         testInfo.name!!,
+                        testInfo.sampleType,
                         testInfo.getResult(),
                         testInfo.resultInfoGrayscale.result,
                         testInfo.getMarginOfError(),

@@ -21,7 +21,7 @@ object MathUtil {
      * @param str the string to evaluate
      * @return evaluated result
      */
-    fun eval(str: String): Double {
+    private fun eval(str: String): Double {
         return object : Any() {
             private var pos = -1
             private var ch = 0
