@@ -3,7 +3,7 @@
     {
       "name": "Fluoride",
       "type": "water",
-      "uuid": "f0f3c1dd-89af-49f1-83e7-bcc31cb61159",
+      "uuid": "b61159",
       "unit": "mg/l",
       "minMarginError": 0.25,
       "risks": [
@@ -41,7 +41,7 @@
     {
       "name": "Fluoride - High Range",
       "type": "water",
-      "uuid": "93cec3c4-b3e4-4924-b722-b6cb9742737a",
+      "uuid": "42737a",
       "unit": "mg/l",
       "minMarginError": 0.3,
       "risks": [
@@ -82,7 +82,7 @@
     {
       "name": "pH",
       "type": "water",
-      "uuid": "ff96e965-13a3-4507-9edf-7aa7fc084354",
+      "uuid": "084354",
       "riskType": "alkalinity",
       "minMarginError": 0.5,
       "risks": [
@@ -126,7 +126,7 @@
     {
       "name": "Residual Chlorine",
       "type": "water",
-      "uuid": "f1d64b11-64c4-4a34-806e-ad0d47bcc96b",
+      "uuid": "bcc96b",
       "unit": "mg/l",
       "riskType": "quantity",
       "minMarginError": 0.25,
@@ -203,7 +203,7 @@
     {
       "name": "Iron",
       "type": "water",
-      "uuid": "7fd5d20d-73e3-4c95-86ef-352410b1893d",
+      "uuid": "b1893d",
       "unit": "mg/l",
       "minMarginError": 0.15,
       "riskType": "safety",
@@ -239,7 +239,7 @@
     {
       "name": "Phosphate",
       "type": "water",
-      "uuid": "b396de78-0de6-11eb-adc1-0242ac120002",
+      "uuid": "120002",
       "unit": "mg/l",
       "minMarginError": 0.47,
       "riskType": "safety",
@@ -271,7 +271,7 @@
     {
       "name": "Potassium",
       "type": "water",
-      "uuid": "487b0bc2-7781-48a0-80ae-1cb973c354d3",
+      "uuid": "c354d3",
       "unit": "mg/l",
       "minMarginError": 0.16,
       "riskType": "quantity",
@@ -307,7 +307,7 @@
     {
       "name": "Ammonia",
       "type": "water",
-      "uuid": "a4e3f71a-15e8-4b48-b6d7-26225d36f9e7",
+      "uuid": "36f9e7",
       "unit": "mg/l",
       "minMarginError": 0.38,
       "riskType": "safety",
@@ -349,7 +349,7 @@
     {
       "name": "Ammonia Biosol",
       "type": "water",
-      "uuid": "06a4dcb9-bd06-43cc-97bc-58b7ef524ba5",
+      "uuid": "524ba5",
       "unit": "mg/l",
       "minMarginError": 0.6,
       "riskType": "safety",
@@ -430,7 +430,7 @@
     {
       "name": "Nitrite Biosol",
       "type": "water",
-      "uuid": "b4701a37-03d5-4516-b235-2b1772e43eba",
+      "uuid": "e43eba",
       "unit": "mg/l",
       "minMarginError": 0.18,
       "riskType": "safety",
@@ -469,7 +469,7 @@
     {
       "name": "Dissolved Oxygen",
       "type": "water",
-      "uuid": "1910b0e1-b457-4dde-ab62-d840012cb7d2",
+      "uuid": "2cb7d2",
       "unit": "mg/l",
       "minMarginError": 0.16,
       "riskType": "safety",
@@ -503,9 +503,209 @@
       ]
     },
     {
+      "name": "pH Soil",
+      "type": "soil",
+      "uuid": "e0aeec",
+      "riskType": "alkalinity",
+      "minMarginError": 0.5,
+      "risks": [
+        {
+          "value": 0,
+          "risk": 0
+        },
+        {
+          "value": 6.8,
+          "risk": 1
+        },
+        {
+          "value": 7.2,
+          "risk": 2
+        }
+      ],
+      "values": [
+        {
+          "value": 4
+        },
+        {
+          "value": 5
+        },
+        {
+          "value": 6
+        },
+        {
+          "value": 7
+        },
+        {
+          "value": 8
+        },
+        {
+          "value": 9
+        },
+        {
+          "value": 10
+        }
+      ]
+    },
+    {
+      "name": "Potassium Soil",
+      "type": "soil",
+      "uuid": "cd6be9",
+      "unit": "mg/l",
+      "minMarginError": 0.16,
+      "formula": "(%1$f * 5)",
+      "risks": [
+        {
+          "value": 0,
+          "risk": 0
+        },
+        {
+          "value": 80,
+          "risk": 1
+        },
+        {
+          "value": 134,
+          "risk": 2
+        }
+      ],
+      "values": [
+        {
+          "value": 0
+        },
+        {
+          "value": 10
+        },
+        {
+          "value": 20
+        },
+        {
+          "value": 30
+        }
+      ]
+    },
+    {
+      "name": "Ammonia Soil",
+      "type": "water",
+      "uuid": "b7126d",
+      "unit": "mg/l",
+      "minMarginError": 0.6,
+      "riskType": "safety",
+      "risks": [
+        {
+          "value": 0,
+          "risk": 0
+        },
+        {
+          "value": 1.0,
+          "risk": 1
+        },
+        {
+          "value": 1.1,
+          "risk": 2
+        }
+      ],
+      "values": [
+        {
+          "value": 0
+        },
+        {
+          "value": 0.25
+        },
+        {
+          "value": 0.5
+        },
+        {
+          "value": 1.0
+        },
+        {
+          "value": 2.0
+        },
+        {
+          "value": 4.0
+        }
+      ]
+    },
+    {
+      "name": "Phosphorous Soil",
+      "type": "soil",
+      "uuid": "4813a6",
+      "unit": "mg/l",
+      "minMarginError": 0.322,
+      "formula": "(%1$f * 5)",
+      "risks": [
+        {
+          "value": 0,
+          "risk": 0
+        },
+        {
+          "value": 13,
+          "risk": 1
+        },
+        {
+          "value": 22,
+          "risk": 2
+        }
+      ],
+      "values": [
+        {
+          "value": 0
+        },
+        {
+          "value": 2.5
+        },
+        {
+          "value": 5.0
+        },
+        {
+          "value": 7.5
+        },
+        {
+          "value": 10
+        }
+      ]
+    },
+    {
+      "name": "Nitrogen Soil",
+      "type": "soil",
+      "uuid": "5040ba",
+      "unit": "mg/l",
+      "minMarginError": 0.21,
+      "formula": "(%1$f * 5)",
+      "risks": [
+        {
+          "value": 0,
+          "risk": 0
+        },
+        {
+          "value": 125,
+          "risk": 1
+        },
+        {
+          "value": 188,
+          "risk": 2
+        }
+      ],
+      "values": [
+        {
+          "value": 0
+        },
+        {
+          "value": 10
+        },
+        {
+          "value": 20
+        },
+        {
+          "value": 40
+        },
+        {
+          "value": 60
+        }
+      ]
+    },
+    {
       "name": "Organic Carbon",
       "type": "soil",
-      "uuid": "a8e749a8-c105-4e72-987a-ce28356f45bc",
+      "uuid": "6f45bc",
       "unit": "mg/l",
       "minMarginError": 0.33,
       "risks": [
@@ -540,7 +740,7 @@
     {
       "name": "Unknown",
       "type": "water",
-      "uuid": "d1b25de4-5605-498e-99f1-8412d7e19db2",
+      "uuid": "e19db2",
       "unit": "mg/l"
     }
   ]
