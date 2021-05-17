@@ -152,7 +152,7 @@
     <string name="manual_photo_capture">Manual photo capture</string>
     <string name="manual_photo_summary">Turn this on if the auto photo capture is not working well on this phone</string>
     <string name="airplane_mode_off">Please turn off airplane mode</string>
-
+    <string name="calibration_succeeded">Calibration succeeded</string>
 
 
     <string-array name="WaterSource">
