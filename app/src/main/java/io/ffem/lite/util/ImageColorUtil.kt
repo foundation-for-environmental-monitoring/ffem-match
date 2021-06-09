@@ -208,9 +208,9 @@ object ImageColorUtil {
         val row2Top = points.y
         for (i in 0 until intervals) {
             val rectangle = Rect(
-                max(1, (squareLeft * i) + (squareLeft / 2) - padding),
+                max(1, ((squareLeft * i) + (squareLeft / 2.0) - padding).toInt()),
                 max(1, row2Top - padding),
-                min(bitmap.width, (squareLeft * i) + (squareLeft / 2) + padding),
+                min(bitmap.width, ((squareLeft * i) + (squareLeft / 2.0) + padding).toInt()),
                 min(bitmap.height, row2Top + padding),
             )
 
@@ -229,9 +229,9 @@ object ImageColorUtil {
         val row1Top = points.x
         for (i in 0 until intervals) {
             val rectangle = Rect(
-                max(1, (squareLeft * i) + (squareLeft / 2) - padding),
+                max(1, ((squareLeft * i) + (squareLeft / 2.0) - padding).toInt()),
                 max(1, row1Top - padding),
-                min(bitmap.width, (squareLeft * i) + (squareLeft / 2) + padding),
+                min(bitmap.width, ((squareLeft * i) + (squareLeft / 2.0) + padding).toInt()),
                 min(bitmap.height, row1Top + padding)
             )
 
@@ -278,8 +278,8 @@ object ImageColorUtil {
     private fun getMarkers(
         bitmap: Bitmap
     ): Point {
-        val leftSquareCenter = (bitmap.height * 0.12).toInt()
-        val rightSquareCenter = bitmap.height - (bitmap.height * 0.12).toInt()
+        val leftSquareCenter = (bitmap.height * 0.11).toInt()
+        val rightSquareCenter = bitmap.height - (bitmap.height * 0.11).toInt()
 
         return Point(leftSquareCenter, rightSquareCenter)
     }
