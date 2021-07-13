@@ -100,9 +100,9 @@ object ImageColorUtil {
                         500
                     )
 
-                    Utilities.savePicture(
+                    Utilities.savePng(
                         context.applicationContext, testInfo.fileName,
-                        testInfo.name!!, Utilities.bitmapToBytes(resultImage),
+                        testInfo.name!!, resultImage,
                         "_result"
                     )
                 }

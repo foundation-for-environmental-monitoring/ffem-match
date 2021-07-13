@@ -424,26 +424,26 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
     }
 
     private fun getPatternFromBinaryBitmap(bitmap: BinaryBitmap): FinderPatternInfo? {
-        var result: FinderPatternInfo? = null
+        var pattern: FinderPatternInfo? = null
         try {
-            result = QRCodeReader().getPatterns(bitmap, null)
-            if (result != null) {
-                result.width = bitmap.width
-                result.height = bitmap.height
-                val dataResult: Result = dataMatrixReader.decode(
+            pattern = QRCodeReader().getPatterns(bitmap, null)
+            if (pattern != null) {
+                pattern.width = bitmap.width
+                pattern.height = bitmap.height
+                val data: Result = dataMatrixReader.decode(
                     bitmap.crop(
-                        result.topLeft.x.toInt() + (bitmap.width / 5),
+                        pattern.topLeft.x.toInt() + (bitmap.width / 5),
                         0,
                         (bitmap.width / 2.4).toInt(),
                         (bitmap.height / 3.7).toInt()
                     ), null
                 )
-                result.testId = dataResult.text
+                pattern.testId = data.text
             }
         } catch (e: Exception) {
-            return result
+            return pattern
         }
-        return result
+        return pattern
     }
 
     private fun endProcessing(imageProxy: ImageProxy) {
