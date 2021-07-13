@@ -41,7 +41,7 @@ object ImageUtil {
             (textTop + textHeight).toInt(),
             Bitmap.Config.ARGB_8888
         )
-        result.eraseColor(Color.WHITE)
+        result.eraseColor(Color.TRANSPARENT)
 
         val canvas = Canvas(result)
 
@@ -93,12 +93,13 @@ object ImageUtil {
         swatchPaint.style = Paint.Style.FILL
 
         val textPaint = Paint()
-        textPaint.color = Color.BLACK
+        textPaint.color = Color.GRAY
         textPaint.textSize = textSize.toFloat()
         textPaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
         textPaint.textAlign = Paint.Align.CENTER
 
         var index = -1
+        var skip = false
         for (swatch in resultInfo.swatches!!) {
             index++
             swatchPaint.color = swatch.color
@@ -109,9 +110,14 @@ object ImageUtil {
                 swatchTop + swatchHeight,
                 swatchPaint
             )
-            if (swatch.value <= maxValue) {
+            val valueText = decimalFormat.format(MathUtil.applyFormula(swatch.value, formula))
+            val width = textPaint.measureText(valueText) * 1.1
+            if (width > swatchWidth) {
+                skip = !skip
+            }
+            if (!skip && swatch.value <= maxValue) {
                 canvas.drawText(
-                    decimalFormat.format(MathUtil.applyFormula(swatch.value, formula)),
+                    valueText,
                     index * swatchWidth + swatchWidth / 2.toFloat(),
                     textTop,
                     textPaint
