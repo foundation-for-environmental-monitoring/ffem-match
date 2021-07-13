@@ -505,6 +505,8 @@ object ImageColorUtil {
             (colorCompareInfo.matchedIndex.toFloat() * 100 /
                     ((colorInfo.swatches.size - 1) * INTERPOLATION_COUNT)).toFloat()
 
+        resultInfo.result = (round(resultInfo.result * 100) / 100.0)
+
         return resultInfo
     }
 
