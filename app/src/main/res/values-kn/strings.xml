@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="soil">ಮಣ್ಣು</string>
+    <string name="water">ನೀರು</string>
     <string name="app_slogan">ನೀರಿನ ಗುಣಮಟ್ಟದ ವ್ಯವಸ್ಥೆ</string>
     <string name="copyright">ಕೃತಿಸ್ವಾಮ್ಯ © ffem</string>
     <string name="legal_info">ಕಾನೂನು ಮಾಹಿತಿ</string>
@@ -78,18 +80,8 @@
     <string name="not_bright">ಸಾಕಷ್ಟು ಪ್ರಕಾಶಮಾನವಾಗಿಲ್ಲ</string>
     <string name="too_bright">ತುಂಬಾ ಪ್ರಕಾಶಮಾನವಾಗಿದೆ</string>
     <string name="too_many_shadows">ಕಾರ್ಡ್‌ನಲ್ಲಿ ನೆರಳುಗಳು</string>
-    <string name="unknown">ಅಜ್ಞಾತ</string>
-    <string name="fluoride">ಫ್ಲೋರೈಡ್</string>
-    <string name="fluoride_high_range">ಫ್ಲೋರೈಡ್ - ಹೈ ರೇಂಜ್</string>
-    <string name="ph">ಪಿಎಚ್‌</string>
-    <string name="phosphate">ಫಾಸ್ಫೇಟ್</string>
-    <string name="iron">ಕಬ್ಬಿಣ</string>
-    <string name="nitrate">ನೈಟ್ರೇಟ್</string>
-    <string name="residual_chlorine">ಉಳಿದ ಕ್ಲೋರಿನ್</string>
     <string name="back">ಹಿಂದೆ</string>
     <string name="next">ಮುಂದೆ</string>
-    <string name="water_tests_1">ನೀರಿನ ಪರೀಕ್ಷೆಗಳು 1</string>
-    <string name="water_tests_2">ನೀರಿನ ಪರೀಕ್ಷೆಗಳು 2</string>
     <string name="calibrate">ಮಾಪನಾಂಕ ನಿರ್ಣಯ</string>
     <string name="calibrate_summary">ಸ್ಟ್ಯಾಂಡರ್ಡ್ ಬಳಸಿ ಮಾಪನಾಂಕ ನಿರ್ಣಯಿಸಿ</string>
     <string name="no_data">ಪರೀಕ್ಷಾ ಫಲಿತಾಂಶಗಳಿಲ್ಲ</string>
@@ -120,5 +112,27 @@
     <string name="manual_photo_capture">ಹಸ್ತಚಾಲಿತ ಫೋಟೋ</string>
     <string name="manual_photo_summary">ಈ ಫೋನ್‌ನಲ್ಲಿ ಆಟೋ ಫೋಟೋ ಕ್ಯಾಪ್ಚರ್ ಸರಿಯಾಗಿ ಕಾರ್ಯನಿರ್ವಹಿಸದಿದ್ದರೆ ಇದನ್ನು ಆನ್ ಮಾಡಿ</string>
     <string name="airplane_mode_off">ದಯವಿಟ್ಟು ವಿಮಾನ ಮೋಡ್ ಆಫ್ ಮಾಡಿ</string>
+
+    <string name="version">ಆವೃತ್ತಿ</string>
+
+    <string name="ammonia">ಅಮೋನಿಯಾ</string>
+    <string name="dissolved_oxygen">ಕರಗಿದ ಆಕ್ಸಿಜನ್</string>
+    <string name="fluoride">ಫ್ಲೋರೈಡ್</string>
+    <string name="fluoride_high_range">ಫ್ಲೋರೈಡ್ - ಹೈ ರೇಂಜ್</string>
+    <string name="iron">ಕಬ್ಬಿಣ</string>
+    <string name="nitrate">ನೈಟ್ರೇಟ್</string>
+    <string name="nitrite">ನೈಟ್ರೈಟ್</string>
+    <string name="nitrogen">ನೈಟ್ರೋಜನ್</string>
+    <string name="organic_carbon">ಆರ್ಗಾನಿಕ್ ಕಾರ್ಬನ್</string>
+    <string name="ph">ಪಿಎಚ್‌</string>
+    <string name="phosphate">ಫಾಸ್ಫೇಟ್</string>
+    <string name="phosphorous">ಫಾಸ್ಫರಸ್</string>
+    <string name="potassium">ಪೊಟ್ಯಾಸಿಯಂ</string>
+    <string name="residual_chlorine">ಉಳಿದ ಕ್ಲೋರಿನ್</string>
+    <string name="invalid_card_test">ಅಮಾನ್ಯ ಕಾರ್ಡ್ ಪರೀಕ್ಷೆ</string>
+    <string name="unknown">ಅಜ್ಞಾತ</string>
+    <string name="water_tests_1">ನೀರಿನ ಪರೀಕ್ಷೆಗಳು 1</string>
+    <string name="water_tests_2">ನೀರಿನ ಪರೀಕ್ಷೆಗಳು 2</string>
+    <string name="soil_tests_1">ಮಣ್ಣಿನ ಪರೀಕ್ಷೆಗಳು 1</string>
 </resources>
 

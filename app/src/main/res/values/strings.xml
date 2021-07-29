@@ -1,4 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="soil">Soil</string>
+    <string name="water">Water</string>
     <string name="app_slogan">Water Quality System</string>
     <string name="copyright">Copyright © ffem</string>
     <string name="legal_info">Legal Information</string>
@@ -99,26 +101,22 @@
     <string name="restart">Restart</string>
     <string name="retry">Retry</string>
 
-    <string name="unknown" tools:keep="@string/unknown">Unknown</string>
+    <string name="ammonia" tools:keep="@string/ammonia">Ammonia</string>
+    <string name="dissolved_oxygen" tools:keep="@string/dissolved_oxygen">Dissolved Oxygen</string>
     <string name="fluoride" tools:keep="@string/fluoride">Fluoride</string>
     <string name="fluoride_high_range" tools:keep="@string/fluoride_high_range">Fluoride - High Range</string>
     <string name="iron" tools:keep="@string/iron">Iron</string>
     <string name="nitrate" tools:keep="@string/nitrate">Nitrate</string>
+    <string name="nitrite" tools:keep="@string/nitrite">Nitrite</string>
+    <string name="nitrogen" tools:keep="@string/nitrogen">Nitrogen</string>
+    <string name="organic_carbon" tools:keep="@string/organic_carbon">Organic Carbon</string>
     <string name="ph" tools:keep="@string/ph">pH</string>
     <string name="phosphate" tools:keep="@string/phosphate">Phosphate</string>
+    <string name="phosphorous" tools:keep="@string/phosphorous">Phosphorous</string>
+    <string name="potassium" tools:keep="@string/potassium">Potassium</string>
     <string name="residual_chlorine" tools:keep="@string/residual_chlorine">Residual Chlorine</string>
-    <string name="potassium" tools:keep="@string/potassium" translatable="false">Potassium</string>
-    <string name="nitrite" tools:keep="@string/nitrite" translatable="false">Nitrite</string>
-    <string name="ammonia" tools:keep="@string/ammonia" translatable="false">Ammonia</string>
-    <string name="dissolved_oxygen" tools:keep="@string/dissolved_oxygen" translatable="false">Dissolved Oxygen</string>
-    <string name="organic_carbon" tools:keep="@string/organic_carbon" translatable="false">Organic Carbon</string>
-    <string name="ph_soil" tools:keep="@string/ph_soil" translatable="false">pH Soil</string>
-    <string name="phosphate_soil" tools:keep="@string/phosphate_soil" translatable="false">Phosphate Soil</string>
-    <string name="nitrogen_soil" tools:keep="@string/nitrogen_soil" translatable="false">Nitrogen Soil</string>
-    <string name="potassium_soil" tools:keep="@string/potassium_soil" translatable="false">Potassium Soil</string>
-    <string name="ammonia_soil" tools:keep="@string/ammonia_soil" translatable="false">Ammonia Soil</string>
-
-
+    <string name="invalid_card_test" tools:keep="@string/invalid_card_test">Invalid Card Test</string>
+    <string name="unknown" tools:keep="@string/unknown">Unknown</string>
 
     <!-- Unit Tests-->
     <string name="water_tests_1">Water Tests 1</string>
@@ -152,6 +150,7 @@
     <string name="manual_photo_capture">Manual photo capture</string>
     <string name="manual_photo_summary">Turn this on if the auto photo capture is not working well on this phone</string>
     <string name="airplane_mode_off">Please turn off airplane mode</string>
+    <string name="version">Version</string>
 
     <string-array name="WaterSource">
         <item>Borewell water</item>
