@@ -2,6 +2,7 @@ package io.ffem.lite.model
 
 import android.content.Context
 import android.os.Parcelable
+import io.ffem.lite.util.MathUtil
 import io.ffem.lite.util.getStringByLocale
 import kotlinx.parcelize.Parcelize
 import java.util.*
@@ -17,6 +18,7 @@ data class TestInfo(
     var unit: String? = null,
     var riskType: RiskType = RiskType.NORMAL,
     var minMarginError: Double = 0.0,
+    var formula: String = "",
     private var marginError: Double = 0.0,
     var risks: List<RiskValue> = ArrayList(),
     var values: List<CalibrationValue> = ArrayList(),
@@ -29,7 +31,7 @@ data class TestInfo(
 
     val maxValue: Double
         get() {
-            return values[values.size / 2].value
+            return MathUtil.applyFormula(values[(values.size / 2) - 1].value, formula)
         }
 
     fun getResultString(context: Context): String {
@@ -86,14 +88,14 @@ data class TestInfo(
         }
 
         // Evaluate the risk level based on the result
-        for (element in risks) {
-            if (result >= element.value) {
-                if (element.risk != null) {
-                    riskType = element.risk!!
+        try {
+            for (i in risks.indices) {
+                if (result < risks[i].value) {
+                    riskType = risks[max(i - 1, 0)].risk!!
+                    break
                 }
-            } else {
-                break
             }
+        } catch (e: Exception) {
         }
 
         return riskType
