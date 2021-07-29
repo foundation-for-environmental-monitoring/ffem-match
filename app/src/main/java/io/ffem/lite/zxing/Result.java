@@ -24,16 +24,15 @@ import java.util.Map;
  *
  * @author Sean Owen
  */
-@SuppressWarnings("ALL")
 public final class Result {
 
   private final String text;
   private final byte[] rawBytes;
   private final int numBits;
-  private final BarcodeFormat format;
-  private final long timestamp;
   private ResultPoint[] resultPoints;
-  private Map<ResultMetadataType,Object> resultMetadata;
+  private final BarcodeFormat format;
+  private Map<ResultMetadataType, Object> resultMetadata;
+  private final long timestamp;
 
   public Result(String text,
                 byte[] rawBytes,

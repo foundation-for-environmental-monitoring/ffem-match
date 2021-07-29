@@ -30,7 +30,7 @@ import io.ffem.lite.zxing.LuminanceSource
 import io.ffem.lite.zxing.RGBLuminanceSource
 import io.ffem.lite.zxing.Result
 import io.ffem.lite.zxing.common.HybridBinarizer
-import io.ffem.lite.zxing.datamatrix.decoder.DataMatrixReader
+import io.ffem.lite.zxing.datamatrix.DataMatrixReader
 import io.ffem.lite.zxing.qrcode.QRCodeReader
 import io.ffem.lite.zxing.qrcode.detector.FinderPatternInfo
 import java.util.*

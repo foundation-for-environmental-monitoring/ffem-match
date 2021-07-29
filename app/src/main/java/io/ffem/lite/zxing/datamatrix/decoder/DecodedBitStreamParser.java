@@ -19,7 +19,9 @@ package io.ffem.lite.zxing.datamatrix.decoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import io.ffem.lite.zxing.FormatException;
 import io.ffem.lite.zxing.common.BitSource;
@@ -36,54 +38,25 @@ import io.ffem.lite.zxing.common.DecoderResult;
  */
 final class DecodedBitStreamParser {
 
-  /**
-   * See ISO 16022:2006, Annex C Table C.1
-   * The C40 Basic Character Set (*'s used for placeholders for the shift values)
-   */
-  private static final char[] C40_BASIC_SET_CHARS = {
-    '*', '*', '*', ' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
-    'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
-  };
-  private static final char[] C40_SHIFT2_SET_CHARS = {
-    '!', '"', '#', '$', '%', '&', '\'', '(', ')', '*',  '+', ',', '-', '.',
-    '/', ':', ';', '<', '=', '>', '?',  '@', '[', '\\', ']', '^', '_'
-  };
-  /**
-   * See ISO 16022:2006, Annex C Table C.2
-   * The Text Basic Character Set (*'s used for placeholders for the shift values)
-   */
-  private static final char[] TEXT_BASIC_SET_CHARS = {
-    '*', '*', '*', ' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
-    'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
-  };
-  // Shift 2 for Text is the same encoding as C40
-  private static final char[] TEXT_SHIFT2_SET_CHARS = C40_SHIFT2_SET_CHARS;
-  private static final char[] TEXT_SHIFT3_SET_CHARS = {
-    '`', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
-    'O',  'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '{', '|', '}', '~', (char) 127
-  };
-
-  private DecodedBitStreamParser() {
-  }
-
   static DecoderResult decode(byte[] bytes) throws FormatException {
     BitSource bits = new BitSource(bytes);
     StringBuilder result = new StringBuilder(100);
     StringBuilder resultTrailer = new StringBuilder(0);
     List<byte[]> byteSegments = new ArrayList<>(1);
     Mode mode = Mode.ASCII_ENCODE;
+    Set<Integer> fnc1Positions = new HashSet<>(); // Would be replaceable by looking directly at 'bytes', if we're sure to not having to account for multi byte values.
+    int symbologyModifier;
+    boolean isECIencoded = false;
     do {
       if (mode == Mode.ASCII_ENCODE) {
-        mode = decodeAsciiSegment(bits, result, resultTrailer);
+        mode = decodeAsciiSegment(bits, result, resultTrailer, fnc1Positions);
       } else {
         switch (mode) {
           case C40_ENCODE:
-            decodeC40Segment(bits, result);
+            decodeC40Segment(bits, result, fnc1Positions);
             break;
           case TEXT_ENCODE:
-            decodeTextSegment(bits, result);
+            decodeTextSegment(bits, result, fnc1Positions);
             break;
           case ANSIX12_ENCODE:
             decodeAnsiX12Segment(bits, result);
@@ -94,6 +67,9 @@ final class DecodedBitStreamParser {
           case BASE256_ENCODE:
             decodeBase256Segment(bits, result, byteSegments);
             break;
+          case ECI_ENCODE:
+            isECIencoded = true; // ECI detection only, atm continue decoding as ASCII
+            break;
           default:
             throw FormatException.getFormatInstance();
         }
@@ -103,7 +79,63 @@ final class DecodedBitStreamParser {
     if (resultTrailer.length() > 0) {
       result.append(resultTrailer);
     }
-    return new DecoderResult(bytes, result.toString(), byteSegments.isEmpty() ? null : byteSegments, null);
+    if (isECIencoded) {
+      // Examples for this numbers can be found in this documentation of a hardware barcode scanner:
+      // https://honeywellaidc.force.com/supportppr/s/article/List-of-barcode-symbology-AIM-Identifiers
+      if (fnc1Positions.contains(0) || fnc1Positions.contains(4)) {
+        symbologyModifier = 5;
+      } else if (fnc1Positions.contains(1) || fnc1Positions.contains(5)) {
+        symbologyModifier = 6;
+      } else {
+        symbologyModifier = 4;
+      }
+    } else {
+      if (fnc1Positions.contains(0) || fnc1Positions.contains(4)) {
+        symbologyModifier = 2;
+      } else if (fnc1Positions.contains(1) || fnc1Positions.contains(5)) {
+        symbologyModifier = 3;
+      } else {
+        symbologyModifier = 1;
+      }
+    }
+
+    return new DecoderResult(bytes, result.toString(), byteSegments.isEmpty() ? null : byteSegments, null, symbologyModifier);
+  }
+
+  /**
+   * See ISO 16022:2006, Annex C Table C.1
+   * The C40 Basic Character Set (*'s used for placeholders for the shift values)
+   */
+  private static final char[] C40_BASIC_SET_CHARS = {
+          '*', '*', '*', ' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+          'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
+          'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
+  };
+
+  private static final char[] C40_SHIFT2_SET_CHARS = {
+          '!', '"', '#', '$', '%', '&', '\'', '(', ')', '*', '+', ',', '-', '.',
+          '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_'
+  };
+
+  /**
+   * See ISO 16022:2006, Annex C Table C.2
+   * The Text Basic Character Set (*'s used for placeholders for the shift values)
+   */
+  private static final char[] TEXT_BASIC_SET_CHARS = {
+          '*', '*', '*', ' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+          'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
+          'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
+  };
+
+  // Shift 2 for Text is the same encoding as C40
+  private static final char[] TEXT_SHIFT2_SET_CHARS = C40_SHIFT2_SET_CHARS;
+
+  private static final char[] TEXT_SHIFT3_SET_CHARS = {
+          '`', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
+          'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '{', '|', '}', '~', (char) 127
+  };
+
+  private DecodedBitStreamParser() {
   }
 
   /**
@@ -111,7 +143,8 @@ final class DecodedBitStreamParser {
    */
   private static Mode decodeAsciiSegment(BitSource bits,
                                          StringBuilder result,
-                                         StringBuilder resultTrailer) throws FormatException {
+                                         StringBuilder resultTrailer,
+                                         Set<Integer> fnc1positions) throws FormatException {
     boolean upperShift = false;
     do {
       int oneByte = bits.readBits(8);
@@ -139,6 +172,7 @@ final class DecodedBitStreamParser {
           case 231: // Latch to Base 256 encodation
             return Mode.BASE256_ENCODE;
           case 232: // FNC1
+            fnc1positions.add(result.length());
             result.append((char) 29); // translate as ASCII 29
             break;
           case 233: // Structured Append
@@ -164,10 +198,7 @@ final class DecodedBitStreamParser {
           case 240: // Latch to EDIFACT encodation
             return Mode.EDIFACT_ENCODE;
           case 241: // ECI Character
-            // TODO: I think we need to support ECI
-            //throw ReaderException.getInstance();
-            // Ignore this symbol for now
-            break;
+            return Mode.ECI_ENCODE;
           default:
             // Not to be used in ASCII encodation
             // but work around encoders that end with 254, latch back to ASCII
@@ -184,10 +215,10 @@ final class DecodedBitStreamParser {
   /**
    * See ISO 16022:2006, 5.2.5 and Annex C, Table C.1
    */
-  private static void decodeC40Segment(BitSource bits, StringBuilder result) throws FormatException {
+  private static void decodeC40Segment(BitSource bits, StringBuilder result, Set<Integer> fnc1positions) throws FormatException {
     // Three C40 values are encoded in a 16-bit value as
     // (1600 * C1) + (40 * C2) + C3 + 1
-    // TODO: The Upper Shift with C40 doesn't work in the 4 value scenario all the time
+    // TODO(bbrown): The Upper Shift with C40 doesn't work in the 4 value scenario all the time
     boolean upperShift = false;
 
     int[] cValues = new int[3];
@@ -244,6 +275,7 @@ final class DecodedBitStreamParser {
             } else {
               switch (cValue) {
                 case 27: // FNC1
+                  fnc1positions.add(result.length());
                   result.append((char) 29); // translate as ASCII 29
                   break;
                 case 30: // Upper Shift
@@ -274,10 +306,10 @@ final class DecodedBitStreamParser {
   /**
    * See ISO 16022:2006, 5.2.6 and Annex C, Table C.2
    */
-  private static void decodeTextSegment(BitSource bits, StringBuilder result) throws FormatException {
+  private static void decodeTextSegment(BitSource bits, StringBuilder result, Set<Integer> fnc1positions) throws FormatException {
     // Three Text values are encoded in a 16-bit value as
     // (1600 * C1) + (40 * C2) + C3 + 1
-    // TODO: The Upper Shift with Text doesn't work in the 4 value scenario all the time
+    // TODO(bbrown): The Upper Shift with Text doesn't work in the 4 value scenario all the time
     boolean upperShift = false;
 
     int[] cValues = new int[3];
@@ -334,6 +366,7 @@ final class DecodedBitStreamParser {
             } else {
               switch (cValue) {
                 case 27: // FNC1
+                  fnc1positions.add(result.length());
                   result.append((char) 29); // translate as ASCII 29
                   break;
                 case 30: // Upper Shift
@@ -364,6 +397,17 @@ final class DecodedBitStreamParser {
         }
       }
     } while (bits.available() > 0);
+  }
+
+  private enum Mode {
+    PAD_ENCODE, // Not really a mode
+    ASCII_ENCODE,
+    C40_ENCODE,
+    TEXT_ENCODE,
+    ANSIX12_ENCODE,
+    EDIFACT_ENCODE,
+    BASE256_ENCODE,
+    ECI_ENCODE
   }
 
   /**
@@ -502,16 +546,6 @@ final class DecodedBitStreamParser {
     int pseudoRandomNumber = ((149 * base256CodewordPosition) % 255) + 1;
     int tempVariable = randomizedBase256Codeword - pseudoRandomNumber;
     return tempVariable >= 0 ? tempVariable : tempVariable + 256;
-  }
-
-  private enum Mode {
-    PAD_ENCODE, // Not really a mode
-    ASCII_ENCODE,
-    C40_ENCODE,
-    TEXT_ENCODE,
-    ANSIX12_ENCODE,
-    EDIFACT_ENCODE,
-    BASE256_ENCODE
   }
 
 }

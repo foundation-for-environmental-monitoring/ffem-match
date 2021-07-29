@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.ffem.lite.zxing.datamatrix.decoder;
+package io.ffem.lite.zxing.datamatrix;
 
 import java.util.List;
 import java.util.Map;
@@ -32,6 +32,7 @@ import io.ffem.lite.zxing.ResultPoint;
 import io.ffem.lite.zxing.common.BitMatrix;
 import io.ffem.lite.zxing.common.DecoderResult;
 import io.ffem.lite.zxing.common.DetectorResult;
+import io.ffem.lite.zxing.datamatrix.decoder.Decoder;
 import io.ffem.lite.zxing.datamatrix.detector.Detector;
 import io.ffem.lite.zxing.qrcode.detector.FinderPatternInfo;
 
@@ -40,7 +41,6 @@ import io.ffem.lite.zxing.qrcode.detector.FinderPatternInfo;
  *
  * @author bbrown@google.com (Brian Brown)
  */
-@SuppressWarnings("ALL")
 public final class DataMatrixReader implements Reader {
 
   private static final ResultPoint[] NO_POINTS = new ResultPoint[0];
@@ -117,7 +117,7 @@ public final class DataMatrixReader implements Reader {
    *
    * @return a String representing the content encoded by the Data Matrix code
    * @throws NotFoundException if a Data Matrix code cannot be found
-   * @throws FormatException if a Data Matrix code cannot be decoded
+   * @throws FormatException   if a Data Matrix code cannot be decoded
    * @throws ChecksumException if error correction fails
    */
   @Override
@@ -126,8 +126,8 @@ public final class DataMatrixReader implements Reader {
   }
 
   @Override
-  public Result decode(BinaryBitmap image, Map<DecodeHintType,?> hints)
-      throws NotFoundException, ChecksumException, FormatException {
+  public Result decode(BinaryBitmap image, Map<DecodeHintType, ?> hints)
+          throws NotFoundException, ChecksumException, FormatException {
     DecoderResult decoderResult;
     ResultPoint[] points;
     if (hints != null && hints.containsKey(DecodeHintType.PURE_BARCODE)) {
@@ -140,7 +140,7 @@ public final class DataMatrixReader implements Reader {
       points = detectorResult.getPoints();
     }
     Result result = new Result(decoderResult.getText(), decoderResult.getRawBytes(), points,
-        BarcodeFormat.DATA_MATRIX);
+            BarcodeFormat.DATA_MATRIX);
     List<byte[]> byteSegments = decoderResult.getByteSegments();
     if (byteSegments != null) {
       result.putMetadata(ResultMetadataType.BYTE_SEGMENTS, byteSegments);
@@ -149,17 +149,18 @@ public final class DataMatrixReader implements Reader {
     if (ecLevel != null) {
       result.putMetadata(ResultMetadataType.ERROR_CORRECTION_LEVEL, ecLevel);
     }
+    result.putMetadata(ResultMetadataType.SYMBOLOGY_IDENTIFIER, "]d" + decoderResult.getSymbologyModifier());
     return result;
-  }
-
-  @Override
-  public FinderPatternInfo getPatterns(BinaryBitmap image, Map<DecodeHintType, ?> hints) {
-    return null;
   }
 
   @Override
   public void reset() {
     // do nothing
+  }
+
+  @Override
+  public FinderPatternInfo getPatterns(BinaryBitmap image, Map<DecodeHintType, ?> hints) {
+    return null;
   }
 
 }

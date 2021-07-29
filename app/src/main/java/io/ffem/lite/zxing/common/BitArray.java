@@ -23,7 +23,6 @@ import java.util.Arrays;
  *
  * @author Sean Owen
  */
-@SuppressWarnings("ALL")
 public final class BitArray implements Cloneable {
 
   private int[] bits;
@@ -43,10 +42,6 @@ public final class BitArray implements Cloneable {
   BitArray(int[] bits, int size) {
     this.bits = bits;
     this.size = size;
-  }
-
-  private static int[] makeArray(int size) {
-    return new int[(size + 31) / 32];
   }
 
   public int getSize() {
@@ -322,6 +317,10 @@ public final class BitArray implements Cloneable {
       newBits[oldBitsLen - 1] = currentInt;
     }
     bits = newBits;
+  }
+
+  private static int[] makeArray(int size) {
+    return new int[(size + 31) / 32];
   }
 
   @Override

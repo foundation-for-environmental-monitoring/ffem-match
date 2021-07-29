@@ -33,7 +33,6 @@ import java.util.Arrays;
  * @author Sean Owen
  * @author dswitkin@google.com (Daniel Switkin)
  */
-@SuppressWarnings("ALL")
 public final class BitMatrix implements Cloneable {
 
   private int width;
@@ -191,6 +190,16 @@ public final class BitMatrix implements Cloneable {
   }
 
   /**
+   * <p>Flips every bit in the matrix.</p>
+   */
+  public void flip() {
+    int max = bits.length;
+    for (int i = 0; i < max; i++) {
+      bits[i] = ~bits[i];
+    }
+  }
+
+  /**
    * Exclusive-or (XOR): Flip the bit in this {@code BitMatrix} if the corresponding
    * mask bit is set.
    *
@@ -308,10 +317,8 @@ public final class BitMatrix implements Cloneable {
       for (int x = 0; x < width; x++) {
         int offset = y * rowSize + (x / 32);
         if (((bits[offset] >>> (x & 0x1f)) & 1) != 0) {
-          int newY = newHeight - 1 - x;
-          int newX = y;
-          int newOffset = newY * newRowSize + (newX / 32);
-          newBits[newOffset] |= 1 << (newX & 0x1f);
+          int newOffset = (newHeight - 1 - x) * newRowSize + (y / 32);
+          newBits[newOffset] |= 1 << (y & 0x1f);
         }
       }
     }

@@ -21,7 +21,7 @@ import io.ffem.lite.zxing.ResultPoint;
 import io.ffem.lite.zxing.common.BitMatrix;
 import io.ffem.lite.zxing.common.DetectorResult;
 import io.ffem.lite.zxing.common.GridSampler;
-import io.ffem.lite.zxing.common.WhiteRectangleDetector;
+import io.ffem.lite.zxing.common.detector.WhiteRectangleDetector;
 
 /**
  * <p>Encapsulates logic that can detect a Data Matrix Code in an image, even if the Data Matrix Code
@@ -29,7 +29,6 @@ import io.ffem.lite.zxing.common.WhiteRectangleDetector;
  *
  * @author Sean Owen
  */
-@SuppressWarnings("ALL")
 public final class Detector {
 
   private final BitMatrix image;
@@ -94,54 +93,6 @@ public final class Detector {
                               bottomRight.getY(),
                               bottomLeft.getX(),
                               bottomLeft.getY());
-  }
-
-  /**
-   * <p>Detects a Data Matrix Code in an image.</p>
-   *
-   * @return {@link DetectorResult} encapsulating results of detecting a Data Matrix Code
-   * @throws NotFoundException if no Data Matrix Code can be found
-   */
-  public DetectorResult detect() throws NotFoundException {
-
-    ResultPoint[] cornerPoints = rectangleDetector.detect();
-
-    ResultPoint[] points = detectSolid1(cornerPoints);
-    points = detectSolid2(points);
-    points[3] = correctTopRight(points);
-    if (points[3] == null) {
-      throw NotFoundException.getNotFoundInstance();
-    }
-    points = shiftToModuleCenter(points);
-
-    ResultPoint topLeft = points[0];
-    ResultPoint bottomLeft = points[1];
-    ResultPoint bottomRight = points[2];
-    ResultPoint topRight = points[3];
-
-    int dimensionTop = transitionsBetween(topLeft, topRight) + 1;
-    int dimensionRight = transitionsBetween(bottomRight, topRight) + 1;
-    if ((dimensionTop & 0x01) == 1) {
-      dimensionTop += 1;
-    }
-    if ((dimensionRight & 0x01) == 1) {
-      dimensionRight += 1;
-    }
-
-    if (4 * dimensionTop < 7 * dimensionRight && 4 * dimensionRight < 7 * dimensionTop) {
-      // The matrix is square
-      dimensionTop = dimensionRight = Math.max(dimensionTop, dimensionRight);
-    }
-
-    BitMatrix bits = sampleGrid(image,
-                                topLeft,
-                                bottomLeft,
-                                bottomRight,
-                                topRight,
-                                dimensionTop,
-                                dimensionRight);
-
-    return new DetectorResult(bits, new ResultPoint[]{topLeft, bottomLeft, bottomRight, topRight});
   }
 
   /**
@@ -334,6 +285,54 @@ public final class Detector {
 
   private boolean isValid(ResultPoint p) {
     return p.getX() >= 0 && p.getX() < image.getWidth() && p.getY() > 0 && p.getY() < image.getHeight();
+  }
+
+  /**
+   * <p>Detects a Data Matrix Code in an image.</p>
+   *
+   * @return {@link DetectorResult} encapsulating results of detecting a Data Matrix Code
+   * @throws NotFoundException if no Data Matrix Code can be found
+   */
+  public DetectorResult detect() throws NotFoundException {
+
+    ResultPoint[] cornerPoints = rectangleDetector.detect();
+
+    ResultPoint[] points = detectSolid1(cornerPoints);
+    points = detectSolid2(points);
+    points[3] = correctTopRight(points);
+    if (points[3] == null) {
+      throw NotFoundException.getNotFoundInstance();
+    }
+    points = shiftToModuleCenter(points);
+
+    ResultPoint topLeft = points[0];
+    ResultPoint bottomLeft = points[1];
+    ResultPoint bottomRight = points[2];
+    ResultPoint topRight = points[3];
+
+    int dimensionTop = transitionsBetween(topLeft, topRight) + 1;
+    int dimensionRight = transitionsBetween(bottomRight, topRight) + 1;
+    if ((dimensionTop & 0x01) == 1) {
+      dimensionTop += 1;
+    }
+    if ((dimensionRight & 0x01) == 1) {
+      dimensionRight += 1;
+    }
+
+    if (4 * dimensionTop < 6 * dimensionRight && 4 * dimensionRight < 6 * dimensionTop) {
+      // The matrix is square
+      dimensionTop = dimensionRight = Math.max(dimensionTop, dimensionRight);
+    }
+
+    BitMatrix bits = sampleGrid(image,
+            topLeft,
+            bottomLeft,
+            bottomRight,
+            topRight,
+            dimensionTop,
+            dimensionRight);
+
+    return new DetectorResult(bits, new ResultPoint[]{topLeft, bottomLeft, bottomRight, topRight});
   }
 
   /**

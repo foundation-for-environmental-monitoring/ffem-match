@@ -23,7 +23,6 @@ package io.ffem.lite.zxing;
  * @author dswitkin@google.com (Daniel Switkin)
  * @author Betaminos
  */
-@SuppressWarnings("ALL")
 public final class RGBLuminanceSource extends LuminanceSource {
 
   private final byte[] luminances;

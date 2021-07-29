@@ -27,7 +27,6 @@ import java.util.List;
  * @author dswitkin@google.com (Daniel Switkin)
  * @see Reader#decode(BinaryBitmap,java.util.Map)
  */
-@SuppressWarnings("ALL")
 public enum DecodeHintType {
 
   /**
@@ -98,6 +97,12 @@ public enum DecodeHintType {
    * at all.
    */
   ALLOWED_EAN_EXTENSIONS(int[].class),
+
+  /**
+   * If true, also tries to decode as inverted image. All configured decoders are simply called a
+   * second time with an inverted image. Doesn't matter what it maps to; use {@link Boolean#TRUE}.
+   */
+  ALSO_INVERTED(Void.class),
 
   // End of enumeration values.
   ;

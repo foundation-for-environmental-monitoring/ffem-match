@@ -26,7 +26,6 @@ package io.ffem.lite.zxing;
  *
  * @author dswitkin@google.com (Daniel Switkin)
  */
-@SuppressWarnings("ALL")
 public final class PlanarYUVLuminanceSource extends LuminanceSource {
 
   private static final int THUMBNAIL_SCALE_FACTOR = 2;

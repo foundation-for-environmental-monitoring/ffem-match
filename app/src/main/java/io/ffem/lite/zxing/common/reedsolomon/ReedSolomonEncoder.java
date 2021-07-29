@@ -25,7 +25,6 @@ import java.util.List;
  * @author Sean Owen
  * @author William Rucklidge
  */
-@SuppressWarnings("ALL")
 public final class ReedSolomonEncoder {
 
   private final GenericGF field;
