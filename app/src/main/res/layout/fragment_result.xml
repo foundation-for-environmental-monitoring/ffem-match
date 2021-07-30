@@ -34,16 +34,43 @@
                     android:orientation="vertical"
                     android:padding="16dp">
 
-                    <TextView
-                        android:id="@+id/name_txt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:fontFamily="sans-serif-black"
-                        android:textColor="#333"
-                        android:textSize="20sp"
-                        android:textStyle="normal"
-                        tools:text="Fluoride - High Range" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/sample_type_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:fontFamily="sans-serif-black"
+                            android:textColor="#333"
+                            android:textSize="20sp"
+                            android:textStyle="normal"
+                            tools:text="Water" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:fontFamily="sans-serif-black"
+                            android:text=": "
+                            android:textColor="#333"
+                            android:textSize="20sp"
+                            android:textStyle="normal"
+                            tools:ignore="HardcodedText" />
+
+                        <TextView
+                            android:id="@+id/name_txt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:fontFamily="sans-serif-black"
+                            android:textColor="#333"
+                            android:textSize="20sp"
+                            android:textStyle="normal"
+                            tools:text="Fluoride - High Range" />
+                    </LinearLayout>
 
                     <TextView
                         android:id="@+id/value_txt"

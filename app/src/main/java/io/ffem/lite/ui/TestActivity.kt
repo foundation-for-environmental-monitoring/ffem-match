@@ -185,6 +185,7 @@ class TestActivity : BaseActivity(),
                 Result(
                     testInfo.uuid!!,
                     testInfo.name,
+                    testInfo.sampleType,
                     testInfo.getRiskEnglish(this),
                     testInfo.getResultString(this),
                     testInfo.unit,

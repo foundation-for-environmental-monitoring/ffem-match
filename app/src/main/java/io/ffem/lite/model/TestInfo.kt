@@ -13,7 +13,7 @@ import kotlin.math.round
 @Parcelize
 data class TestInfo(
     var name: String? = null,
-    var type: String? = null,
+    var sampleType: String = "",
     var uuid: String? = null,
     var unit: String? = null,
     var riskType: RiskType = RiskType.NORMAL,
@@ -39,14 +39,14 @@ data class TestInfo(
             error.toLocalString(context)
         } else {
             if (calibratedResultInfo.result > -1) {
-                if (calibratedResultInfo.result >= values[values.size / 2].value) {
-                    "> " + values[values.size / 2].value.toString()
+                if (calibratedResultInfo.result >= maxValue) {
+                    "> $maxValue"
                 } else {
                     calibratedResultInfo.result.toString()
                 }
             } else {
-                if (resultInfo.result >= values[values.size / 2].value) {
-                    "> " + values[values.size / 2].value.toString()
+                if (resultInfo.result >= maxValue) {
+                    "> $maxValue"
                 } else {
                     resultInfo.result.toString()
                 }

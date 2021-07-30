@@ -52,7 +52,7 @@ object ImageColorUtil {
                     "_swatch"
                 )
 
-                testInfo.resultInfo = analyzeColor(extractedColors)
+                testInfo.resultInfo = analyzeColor(extractedColors, testInfo.formula, testInfo.maxValue)
                 if (testInfo.resultInfo.result > -2) {
 
                     if (testInfo.resultInfo.result > -1) {
@@ -83,7 +83,12 @@ object ImageColorUtil {
                                 )
                             )
 
-                            testInfo.calibratedResultInfo = analyzeColor(extractedColors)
+                            testInfo.calibratedResultInfo =
+                                analyzeColor(
+                                extractedColors,
+                                testInfo.formula,
+                                testInfo.maxValue
+                                )
                         }
                     }
 
@@ -91,6 +96,7 @@ object ImageColorUtil {
                         testInfo.resultInfo,
                         testInfo.calibratedResultInfo,
                         testInfo.maxValue,
+                        testInfo.formula,
                         500
                     )
 
@@ -124,8 +130,17 @@ object ImageColorUtil {
                     if (!AppPreferences.isCalibration()) {
                         db.resultDao().insert(
                             TestResult(
-                                testInfo.fileName, testInfo.uuid!!, 0, testInfo.name!!,
-                                Date().time, -1.0, testInfo.maxValue, -1.0, 0.0, error = NO_ERROR
+                                testInfo.fileName,
+                                testInfo.uuid!!,
+                                0,
+                                testInfo.name!!,
+                                testInfo.sampleType,
+                                Date().time,
+                                -1.0,
+                                testInfo.maxValue,
+                                -1.0,
+                                0.0,
+                                error = NO_ERROR
                             )
                         )
 
@@ -151,6 +166,7 @@ object ImageColorUtil {
                         testInfo.fileName,
                         testInfo.uuid!!,
                         testInfo.name!!,
+                        testInfo.sampleType,
                         testInfo.getResult(),
                         testInfo.resultInfoGrayscale.result,
                         testInfo.getMarginOfError(),
@@ -169,15 +185,15 @@ object ImageColorUtil {
         context: Context
     ): ColorInfo {
 
-        val paint = Paint()
-        paint.style = Style.STROKE
-        paint.color = getColor(context, R.color.bright_green)
-        paint.strokeWidth = 3f
+        val greenPaint = Paint()
+        greenPaint.style = Style.STROKE
+        greenPaint.color = getColor(context, R.color.bright_green)
+        greenPaint.strokeWidth = 3f
 
-        val paint1 = Paint()
-        paint1.style = Style.STROKE
-        paint1.color = Color.BLACK
-        paint1.strokeWidth = 1f
+        val blackPaint = Paint()
+        blackPaint.style = Style.STROKE
+        blackPaint.color = Color.BLACK
+        blackPaint.strokeWidth = 1f
 
         val cardColors: List<CalibrationValue> = getCardColors(barcodeValue)
 
@@ -205,8 +221,8 @@ object ImageColorUtil {
             cal.color = getAverageColor(pixels, false)
 
             val canvas = Canvas(bitmap)
-            canvas.drawRect(rectangle, paint)
-            canvas.drawRect(rectangle, paint1)
+            canvas.drawRect(rectangle, greenPaint)
+            canvas.drawRect(rectangle, blackPaint)
         }
 
         // Column 1 color squares
@@ -226,8 +242,8 @@ object ImageColorUtil {
             cal.color = getAverageColor(pixels, false)
 
             val canvas = Canvas(bitmap)
-            canvas.drawRect(rectangle, paint)
-            canvas.drawRect(rectangle, paint1)
+            canvas.drawRect(rectangle, greenPaint)
+            canvas.drawRect(rectangle, blackPaint)
         }
 
         // Cuvette area
@@ -247,8 +263,8 @@ object ImageColorUtil {
         val swatches: ArrayList<Swatch> = ArrayList()
         val colorInfo = ColorInfo(cuvetteColor, swatches)
         val canvas = Canvas(bitmap)
-        canvas.drawRect(rectangle, paint)
-        canvas.drawRect(rectangle, paint1)
+        canvas.drawRect(rectangle, greenPaint)
+        canvas.drawRect(rectangle, blackPaint)
 
         for (cal in cardColors) {
             if (swatches.size >= cardColors.size / 2) {
@@ -422,7 +438,9 @@ object ImageColorUtil {
      */
     @Suppress("SameParameterValue")
     private fun analyzeColor(
-        colorInfo: ColorInfo
+        colorInfo: ColorInfo,
+        formula: String,
+        maxValue: Double
     ): ResultInfo {
 
         val maxRange = colorInfo.swatches[colorInfo.swatches.size - 1].value
@@ -476,6 +494,10 @@ object ImageColorUtil {
                     colorInfo.swatches.removeAt(x)
                 }
             }
+        }
+        resultInfo.result = MathUtil.applyFormula(resultInfo.result, formula)
+        if (resultInfo.result > maxValue - (maxValue * 0.1)) {
+            resultInfo.result = maxValue
         }
 
         resultInfo.matchedPosition =

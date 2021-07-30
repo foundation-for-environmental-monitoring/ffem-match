@@ -32,7 +32,7 @@
             android:paddingTop="6dp"
             android:paddingEnd="@dimen/activity_horizontal_margin"
             android:paddingBottom="4dp"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndtOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
@@ -47,16 +47,43 @@
                 android:visibility="@{result.source.isEmpty() ? View.GONE : View.VISIBLE}"
                 tools:text="Description" />
 
-            <TextView
-                android:id="@+id/text_test"
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:clickable="false"
-                android:focusable="false"
-                android:text="@{result.testImageNumber == -1 ? ExtensionUtilKt.toLocalString(result.name) : ExtensionUtilKt.toLocalString(result.name) +` (` + result.testImageNumber + `)`}"
-                android:textIsSelectable="false"
-                android:textSize="15sp"
-                tools:text="Contaminant" />
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/text_test"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:text="@{result.testImageNumber == -1 ? ExtensionUtilKt.toLocalString(result.name) : ExtensionUtilKt.toLocalString(result.name) + ` [` + result.testImageNumber + `]`}"
+                    android:textIsSelectable="false"
+                    android:textSize="15sp"
+                    tools:text="Contaminant" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:text=": "
+                    android:textIsSelectable="false"
+                    android:textSize="15sp"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:id="@+id/sample_type_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:text="@{ExtensionUtilKt.toLocalString(result.sampleType)}"
+                    android:textIsSelectable="false"
+                    android:textSize="15sp"
+                    tools:text="Water" />
+
+            </LinearLayout>
 
             <TextView
                 android:layout_width="match_parent"

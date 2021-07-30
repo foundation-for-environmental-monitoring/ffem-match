@@ -1,6 +1,7 @@
 package io.ffem.lite.preference
 
 import android.os.Bundle
+import android.text.InputType
 import android.view.View
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
@@ -20,9 +21,12 @@ class TestingPreferenceFragment : PreferenceFragmentCompat() {
 
     private fun setupTestImagePreference() {
         val testImagePreference =
-            findPreference<Preference>(getString(R.string.testImageNumberKey)) as EditTextPreference
+            findPreference<EditTextPreference>(getString(R.string.testImageNumberKey))
         @Suppress("ConstantConditionIf")
         if (BuildConfig.DEBUG) {
+            testImagePreference!!.setOnBindEditTextListener { editText ->
+                editText.inputType = InputType.TYPE_CLASS_NUMBER
+            }
             getSampleImageSummary(testImagePreference.text, testImagePreference)
             testImagePreference.onPreferenceChangeListener =
                 Preference.OnPreferenceChangeListener { _: Preference?, newValue: Any ->
@@ -31,7 +35,7 @@ class TestingPreferenceFragment : PreferenceFragmentCompat() {
                     false
                 }
         } else {
-            testImagePreference.isVisible = false
+            testImagePreference?.isVisible = false
         }
     }
 

@@ -15,6 +15,7 @@ import io.ffem.lite.databinding.FragmentCalibrationListBinding
 import io.ffem.lite.model.CalibrationValue
 import io.ffem.lite.model.TestInfo
 import io.ffem.lite.preference.isDiagnosticMode
+import io.ffem.lite.util.toLocalString
 
 class CalibrationItemFragment : Fragment() {
     private var _binding: FragmentCalibrationListBinding? = null
@@ -39,7 +40,7 @@ class CalibrationItemFragment : Fragment() {
 
         loadDetails()
 
-        binding.textTitle.text = model.test.get()!!.name
+        binding.textTitle.text = model.test.get()!!.name?.toLocalString()
 
         val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
         if (isDiagnosticMode()) {
