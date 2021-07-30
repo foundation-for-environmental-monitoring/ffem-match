@@ -147,22 +147,9 @@ class App : BaseApplication() {
             return null
         }
 
-        fun getCardColors(id: String): List<CalibrationValue> {
-//            if (!::testConfig.isInitialized) {
-            val input = app.resources.openRawResource(R.raw.tests)
-            val content = FileUtil.readTextFile(input)
-            testConfig = gson.fromJson(content, TestConfig::class.java)
-//            }
-
-            var calibration: List<CalibrationValue> = testConfig.tests[3].values
-            for (test in testConfig.tests) {
-                if (test.uuid == id || test.uuid!!.substring(30) == id) {
-                    calibration = test.values
-                    break
-                }
-            }
-
-            return calibration
+        fun getParameterValues(id: String): List<CalibrationValue> {
+            val test = getTestInfo(id)
+            return test?.values ?: emptyList()
         }
     }
 }
