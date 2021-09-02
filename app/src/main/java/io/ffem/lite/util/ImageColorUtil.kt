@@ -52,7 +52,9 @@ object ImageColorUtil {
                     "_swatch"
                 )
 
-                testInfo.resultInfo = analyzeColor(extractedColors, testInfo.formula, testInfo.maxValue)
+
+                testInfo.resultInfo =
+                    analyzeColor(extractedColors, testInfo.formula, testInfo.maxValue)
                 if (testInfo.resultInfo.result > -2) {
 
                     if (testInfo.resultInfo.result > -1) {
@@ -89,6 +91,7 @@ object ImageColorUtil {
                                 testInfo.formula,
                                 testInfo.maxValue
                                 )
+
                         }
                     }
 
@@ -100,9 +103,9 @@ object ImageColorUtil {
                         500
                     )
 
-                    Utilities.savePicture(
+                    Utilities.savePng(
                         context.applicationContext, testInfo.fileName,
-                        testInfo.name!!, Utilities.bitmapToBytes(resultImage),
+                        testInfo.name!!, resultImage,
                         "_result"
                     )
                 }
@@ -208,9 +211,9 @@ object ImageColorUtil {
         val row2Top = points.y
         for (i in 0 until intervals) {
             val rectangle = Rect(
-                max(1, (squareLeft * i) + (squareLeft / 2) - padding),
+                max(1, ((squareLeft * i) + (squareLeft / 2.0) - padding).toInt()),
                 max(1, row2Top - padding),
-                min(bitmap.width, (squareLeft * i) + (squareLeft / 2) + padding),
+                min(bitmap.width, ((squareLeft * i) + (squareLeft / 2.0) + padding).toInt()),
                 min(bitmap.height, row2Top + padding),
             )
 
@@ -229,9 +232,9 @@ object ImageColorUtil {
         val row1Top = points.x
         for (i in 0 until intervals) {
             val rectangle = Rect(
-                max(1, (squareLeft * i) + (squareLeft / 2) - padding),
+                max(1, ((squareLeft * i) + (squareLeft / 2.0) - padding).toInt()),
                 max(1, row1Top - padding),
-                min(bitmap.width, (squareLeft * i) + (squareLeft / 2) + padding),
+                min(bitmap.width, ((squareLeft * i) + (squareLeft / 2.0) + padding).toInt()),
                 min(bitmap.height, row1Top + padding)
             )
 
@@ -278,8 +281,8 @@ object ImageColorUtil {
     private fun getMarkers(
         bitmap: Bitmap
     ): Point {
-        val leftSquareCenter = (bitmap.height * 0.12).toInt()
-        val rightSquareCenter = bitmap.height - (bitmap.height * 0.12).toInt()
+        val leftSquareCenter = (bitmap.height * 0.11).toInt()
+        val rightSquareCenter = bitmap.height - (bitmap.height * 0.11).toInt()
 
         return Point(leftSquareCenter, rightSquareCenter)
     }
@@ -500,9 +503,16 @@ object ImageColorUtil {
             resultInfo.result = maxValue
         }
 
+        resultInfo.result = MathUtil.applyFormula(resultInfo.result, formula)
+        if (resultInfo.result > maxValue - (maxValue * 0.1)) {
+            resultInfo.result = maxValue
+        }
+
         resultInfo.matchedPosition =
             (colorCompareInfo.matchedIndex.toFloat() * 100 /
                     ((colorInfo.swatches.size - 1) * INTERPOLATION_COUNT)).toFloat()
+
+        resultInfo.result = (round(resultInfo.result * 100) / 100.0)
 
         return resultInfo
     }

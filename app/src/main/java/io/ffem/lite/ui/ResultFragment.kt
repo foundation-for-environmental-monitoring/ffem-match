@@ -99,7 +99,7 @@ class ResultFragment(externalRequest: Boolean) : Fragment() {
 
         val fileName = testInfo.name!!.replace(" ", "")
         val resultImagePath =
-            File(path + testInfo.fileName + File.separator + fileName + "_result.jpg")
+            File(path + testInfo.fileName + File.separator + fileName + "_result.png")
         val extractImagePath =
             File(path + testInfo.fileName + File.separator + fileName + "_swatch.jpg")
 

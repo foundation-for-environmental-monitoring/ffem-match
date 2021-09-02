@@ -25,14 +25,13 @@ import io.ffem.lite.zxing.qrcode.detector.FinderPatternInfo;
  * the String it encodes. For example, QRCodeReader can
  * decode a QR code. The decoder may optionally receive hints from the caller which may help
  * it decode more quickly or accurately.
- *
+ * <p>
  * See {@link}, which attempts to determine what barcode
  * format is present within the image as well, and then decodes it accordingly.
  *
  * @author Sean Owen
  * @author dswitkin@google.com (Daniel Switkin)
  */
-@SuppressWarnings("ALL")
 public interface Reader {
 
   /**
@@ -60,12 +59,11 @@ public interface Reader {
    * @throws ChecksumException if a potential barcode is found but does not pass its checksum
    * @throws FormatException if a potential barcode is found but format is invalid
    */
-  Result decode(BinaryBitmap image, Map<DecodeHintType,?> hints)
+  Result decode(BinaryBitmap image, Map<DecodeHintType, ?> hints)
           throws NotFoundException, ChecksumException, FormatException;
 
-  FinderPatternInfo getPatterns(BinaryBitmap image, Map<DecodeHintType,?> hints)
-          throws NotFoundException, ChecksumException, FormatException;
-
+    FinderPatternInfo getPatterns(BinaryBitmap image, Map<DecodeHintType, ?> hints)
+            throws NotFoundException, ChecksumException, FormatException;
 
   /**
    * Resets any internal state the implementation has after a decode, to prepare it

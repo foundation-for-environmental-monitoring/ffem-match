@@ -23,7 +23,6 @@ package io.ffem.lite.zxing;
  *
  * @author Sean Owen
  */
-@SuppressWarnings("ALL")
 public abstract class ReaderException extends Exception {
 
     // disable stack traces when not running inside test units

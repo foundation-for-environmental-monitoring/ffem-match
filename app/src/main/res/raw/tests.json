@@ -103,8 +103,43 @@
       ],
       "values": [
         {
-          "value": 4,
-          "color": "#F27060"
+          "value": 4
+        },
+        {
+          "value": 5
+        },
+        {
+          "value": 6
+        },
+        {
+          "value": 7
+        },
+        {
+          "value": 8
+        },
+        {
+          "value": 9
+        },
+        {
+          "value": 10
+        }
+      ]
+    },
+    {
+      "name": "Residual Chlorine",
+      "sampleType": "water",
+      "uuid": "bcc96b",
+      "unit": "mg/l",
+      "riskType": "quantity",
+      "minMarginError": 0.25,
+      "risks": [
+        {
+          "value": 0,
+          "risk": 1
+        },
+        {
+          "value": 0.2,
+          "risk": 0
         },
         {
           "value": 5,
@@ -710,9 +745,244 @@
       ]
     },
     {
+      "name": "pH",
+      "sampleType": "soil",
+      "uuid": "e0aeec",
+      "riskType": "alkalinity",
+      "minMarginError": 0.5,
+      "risks": [
+        {
+          "value": 0,
+          "risk": 0
+        },
+        {
+          "value": 6.8,
+          "risk": 1
+        },
+        {
+          "value": 7.2,
+          "risk": 2
+        }
+      ],
+      "values": [
+        {
+          "value": 4
+        },
+        {
+          "value": 5
+        },
+        {
+          "value": 6
+        },
+        {
+          "value": 7
+        },
+        {
+          "value": 8
+        },
+        {
+          "value": 9
+        },
+        {
+          "value": 10
+        }
+      ]
+    },
+    {
+      "name": "Potassium",
+      "sampleType": "soil",
+      "uuid": "cd6be9",
+      "unit": "mg/l",
+      "minMarginError": 0.16,
+      "formula": "(%1$f * 5)",
+      "risks": [
+        {
+          "value": 0,
+          "risk": 0
+        },
+        {
+          "value": 80,
+          "risk": 1
+        },
+        {
+          "value": 134,
+          "risk": 2
+        }
+      ],
+      "values": [
+        {
+          "value": 0
+        },
+        {
+          "value": 10
+        },
+        {
+          "value": 20
+        },
+        {
+          "value": 30
+        }
+      ]
+    },
+    {
+      "name": "Ammonia",
+      "sampleType": "soil",
+      "uuid": "b7126d",
+      "unit": "mg/l",
+      "minMarginError": 0.6,
+      "riskType": "safety",
+      "risks": [
+        {
+          "value": 0,
+          "risk": 0
+        },
+        {
+          "value": 1.0,
+          "risk": 1
+        },
+        {
+          "value": 1.1,
+          "risk": 2
+        }
+      ],
+      "values": [
+        {
+          "value": 0
+        },
+        {
+          "value": 0.25
+        },
+        {
+          "value": 0.5
+        },
+        {
+          "value": 1.0
+        },
+        {
+          "value": 2.0
+        },
+        {
+          "value": 4.0
+        }
+      ]
+    },
+    {
+      "name": "Phosphorous",
+      "sampleType": "soil",
+      "uuid": "4813a6",
+      "unit": "mg/l",
+      "minMarginError": 0.322,
+      "formula": "(%1$f * 5)",
+      "risks": [
+        {
+          "value": 0,
+          "risk": 0
+        },
+        {
+          "value": 13,
+          "risk": 1
+        },
+        {
+          "value": 22,
+          "risk": 2
+        }
+      ],
+      "values": [
+        {
+          "value": 0
+        },
+        {
+          "value": 2.5
+        },
+        {
+          "value": 5.0
+        },
+        {
+          "value": 7.5
+        },
+        {
+          "value": 10
+        }
+      ]
+    },
+    {
+      "name": "Nitrogen",
+      "sampleType": "soil",
+      "uuid": "5040ba",
+      "unit": "mg/l",
+      "minMarginError": 0.21,
+      "formula": "(%1$f * 5)",
+      "risks": [
+        {
+          "value": 0,
+          "risk": 0
+        },
+        {
+          "value": 125,
+          "risk": 1
+        },
+        {
+          "value": 188,
+          "risk": 2
+        }
+      ],
+      "values": [
+        {
+          "value": 0
+        },
+        {
+          "value": 10
+        },
+        {
+          "value": 20
+        },
+        {
+          "value": 40
+        },
+        {
+          "value": 60
+        }
+      ]
+    },
+    {
+      "name": "Organic Carbon",
+      "sampleType": "soil",
+      "uuid": "6f45bc",
+      "unit": "mg/l",
+      "minMarginError": 0.33,
+      "risks": [
+        {
+          "value": 0,
+          "risk": 0
+        },
+        {
+          "value": 0.401,
+          "risk": 1
+        },
+        {
+          "value": 0.801,
+          "risk": 2
+        }
+      ],
+      "values": [
+        {
+          "value": 0
+        },
+        {
+          "value": 0.5
+        },
+        {
+          "value": 1
+        },
+        {
+          "value": 2
+        }
+      ]
+    },
+    {
       "name": "Unknown",
-      "type": "water",
-      "uuid": "d1b25de4-5605-498e-99f1-8412d7e19db2",
+      "sampleType": "water",
+      "uuid": "e19db2",
       "unit": "mg/l"
     }
   ]

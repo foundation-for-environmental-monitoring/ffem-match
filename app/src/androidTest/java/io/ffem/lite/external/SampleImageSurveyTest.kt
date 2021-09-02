@@ -66,7 +66,7 @@ class SampleImageSurveyTest : BaseTest() {
 
     @Test
     fun invalidTest() {
-        validityTest(invalidTest, 1, WRONG_CARD)
+        validityTest(invalidTest, 2, WRONG_CARD)
     }
 
     @Test

@@ -16,7 +16,7 @@
 
 package io.ffem.lite.zxing;
 
-import io.ffem.lite.zxing.common.MathUtils;
+import io.ffem.lite.zxing.common.detector.MathUtils;
 
 /**
  * <p>Encapsulates a point of interest in an image containing a barcode. Typically, this
@@ -24,7 +24,6 @@ import io.ffem.lite.zxing.common.MathUtils;
  *
  * @author Sean Owen
  */
-@SuppressWarnings("ALL")
 public class ResultPoint {
 
   private final float x;
@@ -33,6 +32,33 @@ public class ResultPoint {
   public ResultPoint(float x, float y) {
     this.x = x;
     this.y = y;
+  }
+
+  public final float getX() {
+    return x;
+  }
+
+  public final float getY() {
+    return y;
+  }
+
+  @Override
+  public final boolean equals(Object other) {
+    if (other instanceof ResultPoint) {
+      ResultPoint otherPoint = (ResultPoint) other;
+      return x == otherPoint.x && y == otherPoint.y;
+    }
+    return false;
+  }
+
+  @Override
+  public final int hashCode() {
+    return 31 * Float.floatToIntBits(x) + Float.floatToIntBits(y);
+  }
+
+  @Override
+  public final String toString() {
+    return "(" + x + ',' + y + ')';
   }
 
   /**
@@ -99,33 +125,6 @@ public class ResultPoint {
     float bX = pointB.x;
     float bY = pointB.y;
     return ((pointC.x - bX) * (pointA.y - bY)) - ((pointC.y - bY) * (pointA.x - bX));
-  }
-
-  public final float getX() {
-    return x;
-  }
-
-  public final float getY() {
-    return y;
-  }
-
-  @Override
-  public final boolean equals(Object other) {
-    if (other instanceof ResultPoint) {
-      ResultPoint otherPoint = (ResultPoint) other;
-      return x == otherPoint.x && y == otherPoint.y;
-    }
-    return false;
-  }
-
-  @Override
-  public final int hashCode() {
-    return 31 * Float.floatToIntBits(x) + Float.floatToIntBits(y);
-  }
-
-  @Override
-  public final String toString() {
-    return "(" + x + ',' + y + ')';
   }
 
 }

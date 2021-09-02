@@ -78,14 +78,6 @@ final class AlignmentPatternFinder {
   }
 
   /**
-   * Given a count of black/white/black pixels just seen and an end position,
-   * figures the location of the center of this black/white/black run.
-   */
-  private static float centerFromEnd(int[] stateCount, int end) {
-    return (end - stateCount[2]) - stateCount[1] / 2.0f;
-  }
-
-  /**
    * <p>This method attempts to find the bottom-right alignment pattern in the image. It is a bit messy since
    * it's pretty performance-critical and so is written to be fast foremost.</p>
    *
@@ -162,9 +154,17 @@ final class AlignmentPatternFinder {
   }
 
   /**
+   * Given a count of black/white/black pixels just seen and an end position,
+   * figures the location of the center of this black/white/black run.
+   */
+  private static float centerFromEnd(int[] stateCount, int end) {
+    return (end - stateCount[2]) - stateCount[1] / 2.0f;
+  }
+
+  /**
    * @param stateCount count of black/white/black pixels just read
    * @return true iff the proportions of the counts is close enough to the 1/1/1 ratios
-   *         used by alignment patterns to be considered a match
+   * used by alignment patterns to be considered a match
    */
   private boolean foundPatternCross(int[] stateCount) {
     float moduleSize = this.moduleSize;

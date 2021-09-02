@@ -30,7 +30,6 @@ import io.ffem.lite.zxing.common.reedsolomon.ReedSolomonException;
  *
  * @author bbrown@google.com (Brian Brown)
  */
-@SuppressWarnings("ALL")
 public final class Decoder {
 
   private final ReedSolomonDecoder rsDecoder;

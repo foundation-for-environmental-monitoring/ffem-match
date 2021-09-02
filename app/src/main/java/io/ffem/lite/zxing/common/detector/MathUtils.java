@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package io.ffem.lite.zxing.common;
+package io.ffem.lite.zxing.common.detector;
 
 /**
  * General math-related and numeric utility functions.
  */
-@SuppressWarnings("ALL")
 public final class MathUtils {
 
   private MathUtils() {

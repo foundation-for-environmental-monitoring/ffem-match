@@ -37,7 +37,6 @@ import io.ffem.lite.zxing.NotFoundException;
  *
  * @author dswitkin@google.com (Daniel Switkin)
  */
-@SuppressWarnings("ALL")
 public final class HybridBinarizer extends GlobalHistogramBinarizer {
 
   // This class uses 5x5 blocks to compute local luminance, where each block is 8x8 pixels.
@@ -52,66 +51,6 @@ public final class HybridBinarizer extends GlobalHistogramBinarizer {
 
   public HybridBinarizer(LuminanceSource source) {
     super(source);
-  }
-
-  /**
-   * For each block in the image, calculate the average black point using a 5x5 grid
-   * of the blocks around it. Also handles the corner cases (fractional blocks are computed based
-   * on the last pixels in the row/column which are also used in the previous block).
-   */
-  private static void calculateThresholdForBlock(byte[] luminances,
-                                                 int subWidth,
-                                                 int subHeight,
-                                                 int width,
-                                                 int height,
-                                                 int[][] blackPoints,
-                                                 BitMatrix matrix) {
-    int maxYOffset = height - BLOCK_SIZE;
-    int maxXOffset = width - BLOCK_SIZE;
-    for (int y = 0; y < subHeight; y++) {
-      int yoffset = y << BLOCK_SIZE_POWER;
-      if (yoffset > maxYOffset) {
-        yoffset = maxYOffset;
-      }
-      int top = cap(y, subHeight - 3);
-      for (int x = 0; x < subWidth; x++) {
-        int xoffset = x << BLOCK_SIZE_POWER;
-        if (xoffset > maxXOffset) {
-          xoffset = maxXOffset;
-        }
-        int left = cap(x, subWidth - 3);
-        int sum = 0;
-        for (int z = -2; z <= 2; z++) {
-          int[] blackRow = blackPoints[top + z];
-          sum += blackRow[left - 2] + blackRow[left - 1] + blackRow[left] + blackRow[left + 1] + blackRow[left + 2];
-        }
-        int average = sum / 25;
-        thresholdBlock(luminances, xoffset, yoffset, average, width, matrix);
-      }
-    }
-  }
-
-  private static int cap(int value, int max) {
-    return value < 2 ? 2 : Math.min(value, max);
-  }
-
-  /**
-   * Applies a single threshold to a block of pixels.
-   */
-  private static void thresholdBlock(byte[] luminances,
-                                     int xoffset,
-                                     int yoffset,
-                                     int threshold,
-                                     int stride,
-                                     BitMatrix matrix) {
-    for (int y = 0, offset = yoffset * stride + xoffset; y < BLOCK_SIZE; y++, offset += stride) {
-      for (int x = 0; x < BLOCK_SIZE; x++) {
-        // Comparison needs to be <= so that black == 0 pixels are black even if the threshold is 0.
-        if ((luminances[offset + x] & 0xFF) <= threshold) {
-          matrix.set(xoffset + x, yoffset + y);
-        }
-      }
-    }
   }
 
   /**
@@ -220,19 +159,79 @@ public final class HybridBinarizer extends GlobalHistogramBinarizer {
       }
       int[][] blackPoints = calculateBlackPoints(luminances, subWidth, subHeight, width, height);
 
-      BitMatrix newMatrix = new BitMatrix(width, height);
-      calculateThresholdForBlock(luminances, subWidth, subHeight, width, height, blackPoints, newMatrix);
-      matrix = newMatrix;
+        BitMatrix newMatrix = new BitMatrix(width, height);
+        calculateThresholdForBlock(luminances, subWidth, subHeight, width, height, blackPoints, newMatrix);
+        matrix = newMatrix;
     } else {
-      // If the image is too small, fall back to the global histogram approach.
-      matrix = super.getBlackMatrix();
+        // If the image is too small, fall back to the global histogram approach.
+        matrix = super.getBlackMatrix();
     }
-    return matrix;
+      return matrix;
   }
 
-  @Override
-  public Binarizer createBinarizer(LuminanceSource source) {
-    return new HybridBinarizer(source);
-  }
+    /**
+     * For each block in the image, calculate the average black point using a 5x5 grid
+     * of the blocks around it. Also handles the corner cases (fractional blocks are computed based
+     * on the last pixels in the row/column which are also used in the previous block).
+     */
+    private static void calculateThresholdForBlock(byte[] luminances,
+                                                   int subWidth,
+                                                   int subHeight,
+                                                   int width,
+                                                   int height,
+                                                   int[][] blackPoints,
+                                                   BitMatrix matrix) {
+        int maxYOffset = height - BLOCK_SIZE;
+        int maxXOffset = width - BLOCK_SIZE;
+        for (int y = 0; y < subHeight; y++) {
+            int yoffset = y << BLOCK_SIZE_POWER;
+            if (yoffset > maxYOffset) {
+                yoffset = maxYOffset;
+            }
+            int top = cap(y, subHeight - 3);
+            for (int x = 0; x < subWidth; x++) {
+                int xoffset = x << BLOCK_SIZE_POWER;
+                if (xoffset > maxXOffset) {
+                    xoffset = maxXOffset;
+                }
+                int left = cap(x, subWidth - 3);
+                int sum = 0;
+                for (int z = -2; z <= 2; z++) {
+                    int[] blackRow = blackPoints[top + z];
+                    sum += blackRow[left - 2] + blackRow[left - 1] + blackRow[left] + blackRow[left + 1] + blackRow[left + 2];
+                }
+                int average = sum / 25;
+                thresholdBlock(luminances, xoffset, yoffset, average, width, matrix);
+            }
+        }
+    }
+
+    private static int cap(int value, int max) {
+        return value < 2 ? 2 : Math.min(value, max);
+    }
+
+    /**
+     * Applies a single threshold to a block of pixels.
+     */
+    private static void thresholdBlock(byte[] luminances,
+                                       int xoffset,
+                                       int yoffset,
+                                       int threshold,
+                                       int stride,
+                                       BitMatrix matrix) {
+        for (int y = 0, offset = yoffset * stride + xoffset; y < BLOCK_SIZE; y++, offset += stride) {
+            for (int x = 0; x < BLOCK_SIZE; x++) {
+                // Comparison needs to be <= so that black == 0 pixels are black even if the threshold is 0.
+                if ((luminances[offset + x] & 0xFF) <= threshold) {
+                    matrix.set(xoffset + x, yoffset + y);
+                }
+            }
+        }
+    }
+
+    @Override
+    public Binarizer createBinarizer(LuminanceSource source) {
+        return new HybridBinarizer(source);
+    }
 
 }

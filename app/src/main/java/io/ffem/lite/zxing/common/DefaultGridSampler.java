@@ -17,12 +17,10 @@
 package io.ffem.lite.zxing.common;
 
 import io.ffem.lite.zxing.NotFoundException;
-import io.ffem.lite.zxing.PerspectiveTransform;
 
 /**
  * @author Sean Owen
  */
-@SuppressWarnings("ALL")
 public final class DefaultGridSampler extends GridSampler {
 
   @Override

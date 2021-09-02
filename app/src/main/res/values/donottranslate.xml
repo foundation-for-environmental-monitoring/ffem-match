@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
     <string name="app_name">ffem Lite</string>)
 
@@ -48,7 +48,5 @@
     <string name="_2">2.</string>
     <string name="_3">3.</string>
     <string name="_4">4.</string>
-
-    <string name="invalid_card_test" tools:keep="@string/invalid_card_test">Invalid Card Test</string>
 
 </resources>

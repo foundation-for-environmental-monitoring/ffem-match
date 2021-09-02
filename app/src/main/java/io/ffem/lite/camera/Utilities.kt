@@ -13,6 +13,44 @@ import java.io.IOException
 
 object Utilities {
 
+    fun savePng(
+        context: Context,
+        id: String,
+        name: String,
+        bmp: Bitmap,
+        nameExt: String
+    ) {
+        try {
+            val path = context.getExternalFilesDir(DIRECTORY_PICTURES).toString() +
+                    separator + "captures" + separator
+
+            val basePath = File(path)
+            if (!basePath.exists())
+                Timber.d(if (basePath.mkdirs()) "Success" else "Failed")
+
+            val fixedName = name.replace(" ", "")
+            val fileName = fixedName + nameExt
+
+            val filePath = File("$path$id")
+
+            if (!filePath.exists())
+                Timber.d(if (filePath.mkdirs()) "Success" else "Failed")
+
+            val byteStream = ByteArrayOutputStream()
+            bmp.compress(Bitmap.CompressFormat.PNG, 100, byteStream)
+            val bytes = byteStream.toByteArray()
+
+            val stream = FileOutputStream(filePath.path + separator + "$fileName.png")
+            stream.write(bytes)
+            stream.flush()
+            stream.fd.sync()
+            stream.close()
+
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
+
     /**
      * Saves a specified picture on external disk.
      */

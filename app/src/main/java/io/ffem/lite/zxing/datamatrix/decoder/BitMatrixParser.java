@@ -43,6 +43,10 @@ final class BitMatrixParser {
     this.readMappingMatrix = new BitMatrix(this.mappingBitMatrix.getWidth(), this.mappingBitMatrix.getHeight());
   }
 
+  Version getVersion() {
+    return version;
+  }
+
   /**
    * <p>Creates the version object based on the dimension of the original bit matrix from
    * the datamatrix code.</p>
@@ -58,10 +62,6 @@ final class BitMatrixParser {
     int numRows = bitMatrix.getHeight();
     int numColumns = bitMatrix.getWidth();
     return Version.getVersionForDimensions(numRows, numColumns);
-  }
-
-  Version getVersion() {
-    return version;
   }
 
   /**
@@ -160,6 +160,9 @@ final class BitMatrixParser {
     if (column < 0) {
       column += numColumns;
       row += 4 - ((numColumns + 4) & 0x07);
+    }
+    if (row >= numRows) {
+      row -= numRows;
     }
     readMappingMatrix.set(column, row);
     return mappingBitMatrix.get(column, row);

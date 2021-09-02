@@ -88,6 +88,21 @@ class ImageTest {
         startInternalTest(5)
     }
 
+    @Test
+    fun image_006_PhosphorousSoil_12_Point_5() {
+        startInternalTest(6)
+    }
+
+    @Test
+    fun image_007_NitrogenSoil_300_Point_0() {
+        startInternalTest(7)
+    }
+
+    @Test
+    fun image_008_PotassiumSoil_100_Point_0() {
+        startInternalTest(8)
+    }
+
     private fun startInternalTest(imageNumber: Int) {
         val testData = testDataList[imageNumber]!!
 
@@ -185,11 +200,10 @@ class ImageTest {
             sleep(1000)
 
             onView(
-                allOf(
-                    withText("${context.getString(testData.testDetails.name)} (${imageNumber})"),
-                    isDisplayed()
+                withText(
+                    "${context.getString(testData.testDetails.name)} [${imageNumber}]"
                 )
-            ).check(matches(withText("${context.getString(testData.testDetails.name)} (${imageNumber})")))
+            ).check(matches(isDisplayed()))
 
             val textView = onView(
                 allOf(

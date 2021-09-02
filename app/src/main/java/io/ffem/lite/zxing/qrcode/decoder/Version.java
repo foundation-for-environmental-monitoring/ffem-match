@@ -24,7 +24,6 @@ import io.ffem.lite.zxing.common.BitMatrix;
  *
  * @author Sean Owen
  */
-@SuppressWarnings("ALL")
 public final class Version {
 
   /**
@@ -61,57 +60,6 @@ public final class Version {
       total += ecBlock.getCount() * (ecBlock.getDataCodewords() + ecCodewords);
     }
     this.totalCodewords = total;
-  }
-
-  /**
-   * <p>Deduces version information purely from QR Code dimensions.</p>
-   *
-   * @param dimension dimension in modules
-   * @return Version for a QR Code of that dimension
-   * @throws FormatException if dimension is not 1 mod 4
-   */
-  public static Version getProvisionalVersionForDimension(int dimension) throws FormatException {
-    if (dimension % 4 != 1) {
-      throw FormatException.getFormatInstance();
-    }
-    try {
-      return getVersionForNumber((dimension - 17) / 4);
-    } catch (IllegalArgumentException ignored) {
-      throw FormatException.getFormatInstance();
-    }
-  }
-
-  public static Version getVersionForNumber(int versionNumber) {
-    if (versionNumber < 1 || versionNumber > 40) {
-      throw new IllegalArgumentException();
-    }
-    return VERSIONS[versionNumber - 1];
-  }
-
-  static Version decodeVersionInformation(int versionBits) {
-    int bestDifference = Integer.MAX_VALUE;
-    int bestVersion = 0;
-    for (int i = 0; i < VERSION_DECODE_INFO.length; i++) {
-      int targetVersion = VERSION_DECODE_INFO[i];
-      // Do the version info bits match exactly? done.
-      if (targetVersion == versionBits) {
-        return getVersionForNumber(i + 7);
-      }
-      // Otherwise see if this is the closest to a real version info bit string
-      // we have seen so far
-      int bitsDifference = FormatInformation.numBitsDiffering(versionBits, targetVersion);
-      if (bitsDifference < bestDifference) {
-        bestVersion = i + 7;
-        bestDifference = bitsDifference;
-      }
-    }
-    // We can tolerate up to 3 bits of error since no two version info codewords will
-    // differ in less than 8 bits.
-    if (bestDifference <= 3) {
-      return getVersionForNumber(bestVersion);
-    }
-    // If we didn't find a close enough match, fail
-    return null;
   }
 
   /**
@@ -458,23 +406,74 @@ public final class Version {
     return alignmentPatternCenters;
   }
 
-  public int getTotalCodewords() {
-    return totalCodewords;
-  }
+    public int getTotalCodewords() {
+        return totalCodewords;
+    }
 
-  public int getDimensionForVersion() {
-    return 17 + 4 * versionNumber;
-  }
+    public int getDimensionForVersion() {
+        return 17 + 4 * versionNumber;
+    }
 
-  public ECBlocks getECBlocksForLevel(ErrorCorrectionLevel ecLevel) {
-    return ecBlocks[ecLevel.ordinal()];
-  }
+    /**
+     * <p>Deduces version information purely from QR Code dimensions.</p>
+     *
+     * @param dimension dimension in modules
+     * @return Version for a QR Code of that dimension
+     * @throws FormatException if dimension is not 1 mod 4
+     */
+    public static Version getProvisionalVersionForDimension(int dimension) throws FormatException {
+        if (dimension % 4 != 1) {
+            throw FormatException.getFormatInstance();
+        }
+        try {
+            return getVersionForNumber((dimension - 17) / 4);
+        } catch (IllegalArgumentException ignored) {
+            throw FormatException.getFormatInstance();
+        }
+    }
 
-  /**
-   * See ISO 18004:2006 Annex E
-   */
-  BitMatrix buildFunctionPattern() {
-    int dimension = getDimensionForVersion();
+    public static Version getVersionForNumber(int versionNumber) {
+        if (versionNumber < 1 || versionNumber > 40) {
+            throw new IllegalArgumentException();
+        }
+        return VERSIONS[versionNumber - 1];
+    }
+
+    static Version decodeVersionInformation(int versionBits) {
+        int bestDifference = Integer.MAX_VALUE;
+        int bestVersion = 0;
+        for (int i = 0; i < VERSION_DECODE_INFO.length; i++) {
+            int targetVersion = VERSION_DECODE_INFO[i];
+            // Do the version info bits match exactly? done.
+            if (targetVersion == versionBits) {
+                return getVersionForNumber(i + 7);
+            }
+            // Otherwise see if this is the closest to a real version info bit string
+            // we have seen so far
+            int bitsDifference = FormatInformation.numBitsDiffering(versionBits, targetVersion);
+            if (bitsDifference < bestDifference) {
+                bestVersion = i + 7;
+                bestDifference = bitsDifference;
+            }
+        }
+        // We can tolerate up to 3 bits of error since no two version info codewords will
+        // differ in less than 8 bits.
+        if (bestDifference <= 3) {
+            return getVersionForNumber(bestVersion);
+        }
+        // If we didn't find a close enough match, fail
+        return null;
+    }
+
+    public ECBlocks getECBlocksForLevel(ErrorCorrectionLevel ecLevel) {
+        return ecBlocks[ecLevel.ordinal()];
+    }
+
+    /**
+     * See ISO 18004:2006 Annex E
+     */
+    BitMatrix buildFunctionPattern() {
+        int dimension = getDimensionForVersion();
     BitMatrix bitMatrix = new BitMatrix(dimension);
 
     // Top left finder pattern + separator + format

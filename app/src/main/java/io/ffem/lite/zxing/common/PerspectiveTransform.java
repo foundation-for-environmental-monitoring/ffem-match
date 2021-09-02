@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.ffem.lite.zxing;
+package io.ffem.lite.zxing.common;
 
 /**
  * <p>This class implements a perspective transform in two dimensions. Given four source and four

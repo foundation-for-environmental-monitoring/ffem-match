@@ -3,6 +3,8 @@
     <string name="soil">ಮಣ್ಣು</string>
     <string name="water">ನೀರು</string>
     <string name="app_slogan">ನೀರಿನ ಗುಣಮಟ್ಟದ ವ್ಯವಸ್ಥೆ</string>
+    <string name="soil">ಮಣ್ಣು</string>
+    <string name="water">ನೀರು</string>
     <string name="copyright">ಕೃತಿಸ್ವಾಮ್ಯ © ffem</string>
     <string name="legal_info">ಕಾನೂನು ಮಾಹಿತಿ</string>
     <string name="testing">ಪರೀಕ್ಷೆ</string>
@@ -112,8 +114,8 @@
     <string name="manual_photo_capture">ಹಸ್ತಚಾಲಿತ ಫೋಟೋ</string>
     <string name="manual_photo_summary">ಈ ಫೋನ್‌ನಲ್ಲಿ ಆಟೋ ಫೋಟೋ ಕ್ಯಾಪ್ಚರ್ ಸರಿಯಾಗಿ ಕಾರ್ಯನಿರ್ವಹಿಸದಿದ್ದರೆ ಇದನ್ನು ಆನ್ ಮಾಡಿ</string>
     <string name="airplane_mode_off">ದಯವಿಟ್ಟು ವಿಮಾನ ಮೋಡ್ ಆಫ್ ಮಾಡಿ</string>
-
     <string name="version">ಆವೃತ್ತಿ</string>
+    <string name="calibration_succeeded">ಮಾಪನಾಂಕ ಪೂರ್ಣಗೊಂಡಿದೆ</string>
 
     <string name="ammonia">ಅಮೋನಿಯಾ</string>
     <string name="dissolved_oxygen">ಕರಗಿದ ಆಕ್ಸಿಜನ್</string>

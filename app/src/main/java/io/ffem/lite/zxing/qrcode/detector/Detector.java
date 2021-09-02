@@ -21,13 +21,13 @@ import java.util.Map;
 import io.ffem.lite.zxing.DecodeHintType;
 import io.ffem.lite.zxing.FormatException;
 import io.ffem.lite.zxing.NotFoundException;
-import io.ffem.lite.zxing.PerspectiveTransform;
 import io.ffem.lite.zxing.ResultPoint;
 import io.ffem.lite.zxing.ResultPointCallback;
 import io.ffem.lite.zxing.common.BitMatrix;
 import io.ffem.lite.zxing.common.DetectorResult;
 import io.ffem.lite.zxing.common.GridSampler;
-import io.ffem.lite.zxing.common.MathUtils;
+import io.ffem.lite.zxing.common.PerspectiveTransform;
+import io.ffem.lite.zxing.common.detector.MathUtils;
 import io.ffem.lite.zxing.qrcode.decoder.Version;
 
 /**
@@ -36,7 +36,6 @@ import io.ffem.lite.zxing.qrcode.decoder.Version;
  *
  * @author Sean Owen
  */
-@SuppressWarnings("ALL")
 public class Detector {
 
   private final BitMatrix image;
@@ -134,7 +133,7 @@ public class Detector {
    *
    * @return {@link DetectorResult} encapsulating results of detecting a QR Code
    * @throws NotFoundException if QR Code cannot be found
-   * @throws FormatException if a QR Code cannot be decoded
+   * @throws FormatException   if a QR Code cannot be decoded
    */
   public FinderPatternInfo detect() throws NotFoundException, FormatException {
     return detect(null);
@@ -146,9 +145,9 @@ public class Detector {
    * @param hints optional hints to detector
    * @return {@link DetectorResult} encapsulating results of detecting a QR Code
    * @throws NotFoundException if QR Code cannot be found
-   * @throws FormatException if a QR Code cannot be decoded
+   * @throws FormatException   if a QR Code cannot be decoded
    */
-  public final FinderPatternInfo detect(Map<DecodeHintType,?> hints) throws NotFoundException, FormatException {
+  public final FinderPatternInfo detect(Map<DecodeHintType, ?> hints) throws NotFoundException, FormatException {
 
     resultPointCallback = hints == null ? null :
             (ResultPointCallback) hints.get(DecodeHintType.NEED_RESULT_POINT_CALLBACK);

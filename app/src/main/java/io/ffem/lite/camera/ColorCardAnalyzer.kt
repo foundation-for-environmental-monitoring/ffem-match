@@ -30,14 +30,13 @@ import io.ffem.lite.zxing.LuminanceSource
 import io.ffem.lite.zxing.RGBLuminanceSource
 import io.ffem.lite.zxing.Result
 import io.ffem.lite.zxing.common.HybridBinarizer
-import io.ffem.lite.zxing.datamatrix.decoder.DataMatrixReader
+import io.ffem.lite.zxing.datamatrix.DataMatrixReader
 import io.ffem.lite.zxing.qrcode.QRCodeReader
 import io.ffem.lite.zxing.qrcode.detector.FinderPatternInfo
 import java.util.*
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
-import kotlin.math.roundToInt
 
 class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
     private lateinit var bitmap: Bitmap
@@ -342,12 +341,18 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
     //https://stackoverflow.com/questions/13161628/cropping-a-perspective-transformation-of-image-on-android
     private fun perspectiveTransform(bitmap: Bitmap, pattern: FinderPatternInfo): Bitmap {
         val matrix = Matrix()
+        val width = max(
+            pattern.topRight.x - pattern.topLeft.x,
+            pattern.bottomRight.x - pattern.bottomLeft.x
+        )
+        val height = (width * 58) / 40
+
         val dst = floatArrayOf(
             0f, 0f,
-            bitmap.width.toFloat(), 0f,
-            bitmap.width.toFloat(),
-            bitmap.height.toFloat(), 0f,
-            bitmap.height.toFloat()
+            width, 0f,
+            width,
+            height, 0f,
+            height
         )
         val src = floatArrayOf(
             pattern.topLeft.x,
@@ -362,37 +367,50 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         matrix.setPolyToPoly(src, 0, dst, 0, src.size shr 1)
         val mappedTL = floatArrayOf(0f, 0f)
         matrix.mapPoints(mappedTL)
-        val mapTLx = mappedTL[0].roundToInt()
-        val mapTLy = mappedTL[1].roundToInt()
 
         val mappedTR = floatArrayOf(bitmap.width.toFloat(), 0f)
         matrix.mapPoints(mappedTR)
-//        val mapTRx = Math.round(mappedTR[0])
-        val mapTRy = mappedTR[1].roundToInt()
 
         val mappedLL = floatArrayOf(0f, bitmap.height.toFloat())
         matrix.mapPoints(mappedLL)
-        val mapLLx = mappedLL[0].roundToInt()
-//        val mapLLy = mappedLL[1].roundToInt()
 
-        val shiftX = max(-mapTLx, -mapLLx)
-        val shiftY = max(-mapTRy, -mapTLy)
-
-        val resultBitmap: Bitmap =
+        val correctedBitmap =
             Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+        val p = getPatternFromBitmap(correctedBitmap)
 
-        val top = shiftY + (bitmap.height * QR_TO_COLOR_AREA_DISTANCE_PERCENTAGE).toInt()
-        val height = bitmap.height * CALIBRATION_COLOR_AREA_WIDTH_PERCENTAGE
+        return if (p != null) {
+            val finalBitmap = Bitmap.createBitmap(
+                correctedBitmap,
+                p.topLeft.x.toInt(),
+                p.topLeft.y.toInt(),
+                (p.topRight.x - p.topLeft.x).toInt(),
+                (p.bottomRight.y - p.topRight.y).toInt(),
+                null,
+                true
+            )
+            correctedBitmap.recycle()
 
-        return Bitmap.createBitmap(
-            resultBitmap,
-            shiftX,
-            top,
-            bitmap.width,
-            height.toInt(),
-            null,
-            true
-        )
+            val shiftX =
+                (finalBitmap.width * CALIBRATION_COLOR_AREA_WIDTH_PERCENTAGE).toInt()
+            val shiftY =
+                (finalBitmap.height * QR_TO_COLOR_AREA_DISTANCE_PERCENTAGE).toInt()
+
+            val centerX = finalBitmap.width / 2
+            val centerY = finalBitmap.height / 2
+
+
+            Bitmap.createBitmap(
+                finalBitmap,
+                centerX - shiftX,
+                centerY - shiftY,
+                shiftX * 2,
+                shiftY * 2,
+                null,
+                true
+            )
+        } else {
+            correctedBitmap
+        }
     }
 
     // https://stackoverflow.com/questions/14861553/zxing-convert-bitmap-to-binarybitmap
@@ -406,26 +424,26 @@ class ColorCardAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
     }
 
     private fun getPatternFromBinaryBitmap(bitmap: BinaryBitmap): FinderPatternInfo? {
-        var result: FinderPatternInfo? = null
+        var pattern: FinderPatternInfo? = null
         try {
-            result = QRCodeReader().getPatterns(bitmap, null)
-            if (result != null) {
-                result.width = bitmap.width
-                result.height = bitmap.height
-                val dataResult: Result = dataMatrixReader.decode(
+            pattern = QRCodeReader().getPatterns(bitmap, null)
+            if (pattern != null) {
+                pattern.width = bitmap.width
+                pattern.height = bitmap.height
+                val data: Result = dataMatrixReader.decode(
                     bitmap.crop(
-                        result.topLeft.x.toInt() + (bitmap.width / 5),
+                        pattern.topLeft.x.toInt() + (bitmap.width / 5),
                         0,
                         (bitmap.width / 2.4).toInt(),
                         (bitmap.height / 3.7).toInt()
                     ), null
                 )
-                result.testId = dataResult.text
+                pattern.testId = data.text
             }
         } catch (e: Exception) {
-            return result
+            return pattern
         }
-        return result
+        return pattern
     }
 
     private fun endProcessing(imageProxy: ImageProxy) {

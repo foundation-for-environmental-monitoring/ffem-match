@@ -137,7 +137,7 @@ class DiagnosticsTest {
 
         val appCompatButton = onView(
             allOf(
-                withId(android.R.id.button1), withText(R.string.ok),
+                withId(android.R.id.button1), withText(android.R.string.ok),
                 childAtPosition(
                     childAtPosition(
                         withId(R.id.buttonPanel),
@@ -167,20 +167,12 @@ class DiagnosticsTest {
 
         onView(withText(R.string.continue_on)).perform(click())
 
-        val textView = onView(
+        onView(
             allOf(
                 withId(R.id.name_txt), withText(residualChlorine.name),
-                childAtPosition(
-                    childAtPosition(
-                        withId(R.id.result_lyt),
-                        0
-                    ),
-                    0
-                ),
                 isDisplayed()
             )
-        )
-        textView.check(matches(withText(residualChlorine.name)))
+        ).check(matches(withText(residualChlorine.name)))
 
         val textView2 = onView(
             allOf(
