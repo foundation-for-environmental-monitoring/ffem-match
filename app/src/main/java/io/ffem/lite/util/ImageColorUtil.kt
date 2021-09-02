@@ -8,7 +8,7 @@ import androidx.core.graphics.blue
 import androidx.core.graphics.green
 import androidx.core.graphics.red
 import io.ffem.lite.R
-import io.ffem.lite.app.App.Companion.getCardColors
+import io.ffem.lite.app.App.Companion.getParameterValues
 import io.ffem.lite.camera.Utilities
 import io.ffem.lite.common.Constants.INTERPOLATION_COUNT
 import io.ffem.lite.common.Constants.MAX_COLOR_DISTANCE_RGB
@@ -52,6 +52,7 @@ object ImageColorUtil {
                     "_swatch"
                 )
 
+
                 testInfo.resultInfo =
                     analyzeColor(extractedColors, testInfo.formula, testInfo.maxValue)
                 if (testInfo.resultInfo.result > -2) {
@@ -84,11 +85,13 @@ object ImageColorUtil {
                                 )
                             )
 
-                            testInfo.calibratedResultInfo = analyzeColor(
+                            testInfo.calibratedResultInfo =
+                                analyzeColor(
                                 extractedColors,
                                 testInfo.formula,
                                 testInfo.maxValue
-                            )
+                                )
+
                         }
                     }
 
@@ -195,9 +198,9 @@ object ImageColorUtil {
         blackPaint.color = Color.BLACK
         blackPaint.strokeWidth = 1f
 
-        val cardColors: List<CalibrationValue> = getCardColors(barcodeValue)
+        val parameterValues: List<CalibrationValue> = getParameterValues(barcodeValue)
 
-        val intervals = cardColors.size / 2
+        val intervals = parameterValues.size / 2
         val squareLeft = bitmap.width / intervals
         val padding = squareLeft / 7
         var calibrationIndex = 0
@@ -216,7 +219,7 @@ object ImageColorUtil {
 
             val pixels = getBitmapPixels(bitmap, rectangle)
 
-            val cal = cardColors[calibrationIndex]
+            val cal = parameterValues[calibrationIndex]
             calibrationIndex++
             cal.color = getAverageColor(pixels, false)
 
@@ -237,7 +240,7 @@ object ImageColorUtil {
 
             val pixels = getBitmapPixels(bitmap, rectangle)
 
-            val cal = cardColors[calibrationIndex]
+            val cal = parameterValues[calibrationIndex]
             calibrationIndex++
             cal.color = getAverageColor(pixels, false)
 
@@ -266,11 +269,11 @@ object ImageColorUtil {
         canvas.drawRect(rectangle, greenPaint)
         canvas.drawRect(rectangle, blackPaint)
 
-        for (cal in cardColors) {
-            if (swatches.size >= cardColors.size / 2) {
+        for (cal in parameterValues) {
+            if (swatches.size >= parameterValues.size / 2) {
                 break
             }
-            swatches.add(getCalibrationColor(cal.value, cardColors))
+            swatches.add(getCalibrationColor(cal.value, parameterValues))
         }
         return colorInfo
     }
@@ -494,6 +497,10 @@ object ImageColorUtil {
                     colorInfo.swatches.removeAt(x)
                 }
             }
+        }
+        resultInfo.result = MathUtil.applyFormula(resultInfo.result, formula)
+        if (resultInfo.result > maxValue - (maxValue * 0.1)) {
+            resultInfo.result = maxValue
         }
 
         resultInfo.result = MathUtil.applyFormula(resultInfo.result, formula)

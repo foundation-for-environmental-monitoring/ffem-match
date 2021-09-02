@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="soil">నేల</string>
+    <string name="water">నీటి</string>
     <string name="app_slogan">నీటి నాణ్యత వ్యవస్థ</string>
     <string name="soil">నేల</string>
     <string name="water">నీటి</string>
@@ -112,6 +114,7 @@
     <string name="manual_photo_capture">మాన్యువల్ ఫోటో క్యాప్చర్</string>
     <string name="manual_photo_summary">ఈ ఫోన్‌లో ఆటో ఫోటో క్యాప్చర్ సరిగ్గా పనిచేయకపోతే, దీన్ని ఆన్ చేయండి</string>
     <string name="airplane_mode_off">దయచేసి విమానం మోడ్‌ను ఆపివేయండి</string>
+    <string name="version">సంస్కరణ</string>
     <string name="calibration_succeeded">కేలిబ్రేట్ పూర్తయింది</string>
 
     <string name="ammonia">అమ్మోనియా</string>

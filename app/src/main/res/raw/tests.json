@@ -3,7 +3,7 @@
     {
       "name": "Fluoride",
       "sampleType": "water",
-      "uuid": "b61159",
+      "uuid": "WR-FFEM-F",
       "unit": "mg/l",
       "minMarginError": 0.25,
       "risks": [
@@ -22,39 +22,41 @@
       ],
       "values": [
         {
-          "value": -1
+          "value": 0,
+          "color": "#E91B75"
         },
         {
-          "value": 0
+          "value": 0.5,
+          "color": "#E64260"
         },
         {
-          "value": 0.5
+          "value": 1.0,
+          "color": "#EA6851"
         },
         {
-          "value": 1.0
-        },
-        {
-          "value": 1.5
+          "value": 1.5,
+          "color": "#F37E43"
         }
       ]
     },
     {
-      "name": "Fluoride - High Range",
+      "name": "Residual Chlorine",
       "sampleType": "water",
-      "uuid": "42737a",
+      "uuid": "WR-FFEM-Cl",
       "unit": "mg/l",
-      "minMarginError": 0.3,
+      "riskType": "quantity",
+      "minMarginError": 0.25,
       "risks": [
         {
           "value": 0,
-          "risk": 0
-        },
-        {
-          "value": 1,
           "risk": 1
         },
         {
-          "value": 1.5,
+          "value": 0.2,
+          "risk": 0
+        },
+        {
+          "value": 0.81,
           "risk": 2
         }
       ],
@@ -63,26 +65,26 @@
           "value": 0
         },
         {
+          "value": 0.5
+        },
+        {
           "value": 1
+        },
+        {
+          "value": 1.5
         },
         {
           "value": 2
         },
         {
-          "value": 3
-        },
-        {
-          "value": 4
-        },
-        {
-          "value": 5
+          "value": 2.5
         }
       ]
     },
     {
       "name": "pH",
       "sampleType": "water",
-      "uuid": "084354",
+      "uuid": "WR-FFEM-pH",
       "riskType": "alkalinity",
       "minMarginError": 0.5,
       "risks": [
@@ -140,35 +142,35 @@
           "risk": 0
         },
         {
-          "value": 0.81,
-          "risk": 2
-        }
-      ],
-      "values": [
-        {
-          "value": 0
+          "value": 5,
+          "color": "#F17F3F"
         },
         {
-          "value": 0.5
+          "value": 6,
+          "color": "#DBB43C"
         },
         {
-          "value": 1
+          "value": 7,
+          "color": "#69B16B"
         },
         {
-          "value": 1.5
+          "value": 8,
+          "color": "#48A687"
         },
         {
-          "value": 2
+          "value": 9,
+          "color": "#07819D"
         },
         {
-          "value": 2.5
+          "value": 10,
+          "color": "#3F4D9E"
         }
       ]
     },
     {
       "name": "Nitrate",
       "sampleType": "water",
-      "uuid": "c0fa93",
+      "uuid": "WR-FFEM-NO3",
       "unit": "mg/l",
       "minMarginError": 0.80,
       "risks": [
@@ -187,23 +189,27 @@
       ],
       "values": [
         {
-          "value": 0
+          "value": 0,
+          "color": "#F2F1E9"
         },
         {
-          "value": 10
+          "value": 10,
+          "color": "#E8CDDB"
         },
         {
-          "value": 25
+          "value": 25,
+          "color": "#EA9DCD"
         },
         {
-          "value": 50
+          "value": 50,
+          "color": "#D271A0"
         }
       ]
     },
     {
       "name": "Iron",
       "sampleType": "water",
-      "uuid": "b1893d",
+      "uuid": "WR-FFEM-Fe",
       "unit": "mg/l",
       "minMarginError": 0.15,
       "riskType": "safety",
@@ -223,23 +229,27 @@
       ],
       "values": [
         {
-          "value": 0
+          "value": 0,
+          "color": "#FFFFFF"
         },
         {
-          "value": 0.5
+          "value": 0.5,
+          "color": "#EEC7A1"
         },
         {
-          "value": 1.0
+          "value": 1.0,
+          "color": "#FBB67C"
         },
         {
-          "value": 1.5
+          "value": 1.5,
+          "color": "#F89E62"
         }
       ]
     },
     {
       "name": "Phosphate",
       "sampleType": "water",
-      "uuid": "120002",
+      "uuid": "WR-FFEM-PO4",
       "unit": "mg/l",
       "minMarginError": 0.47,
       "riskType": "safety",
@@ -255,23 +265,27 @@
       ],
       "values": [
         {
-          "value": 0
+          "value": 0,
+          "color": "#FFFFFF"
         },
         {
-          "value": 0.3
+          "value": 0.3,
+          "color": "#BFCDD4"
         },
         {
-          "value": 0.9
+          "value": 0.9,
+          "color": "#A4C5D2"
         },
         {
-          "value": 1.8
+          "value": 1.8,
+          "color": "#6199AE"
         }
       ]
     },
     {
       "name": "Potassium",
       "sampleType": "water",
-      "uuid": "c354d3",
+      "uuid": "WR-FFEM-K",
       "unit": "mg/l",
       "minMarginError": 0.16,
       "riskType": "quantity",
@@ -291,23 +305,27 @@
       ],
       "values": [
         {
-          "value": 0
+          "value": 0,
+          "color": "#2A271F"
         },
         {
-          "value": 10
+          "value": 10,
+          "color": "#56544D"
         },
         {
-          "value": 20
+          "value": 20,
+          "color": "#65645D"
         },
         {
-          "value": 30
+          "value": 30,
+          "color": "#82817B"
         }
       ]
     },
     {
       "name": "Ammonia",
       "sampleType": "water",
-      "uuid": "36f9e7",
+      "uuid": "WR-FFEM-NH3",
       "unit": "mg/l",
       "minMarginError": 0.38,
       "riskType": "safety",
@@ -327,71 +345,35 @@
       ],
       "values": [
         {
-          "value": 0
-        },
-        {
-          "value": 0.25
-        },
-        {
-          "value": 0.5
-        },
-        {
-          "value": 1.0
-        },
-        {
-          "value": 2.0
-        },
-        {
-          "value": 4.0
-        }
-      ]
-    },
-    {
-      "name": "Ammonia Biosol",
-      "sampleType": "water",
-      "uuid": "524ba5",
-      "unit": "mg/l",
-      "minMarginError": 0.6,
-      "riskType": "safety",
-      "risks": [
-        {
           "value": 0,
-          "risk": 0
+          "color": "#E9E3C0"
+        },
+        {
+          "value": 0.25,
+          "color": "#ECE1AD"
+        },
+        {
+          "value": 0.5,
+          "color": "#F1D282"
         },
         {
           "value": 1.0,
-          "risk": 1
+          "color": "#FFC165"
         },
         {
-          "value": 1.1,
-          "risk": 2
-        }
-      ],
-      "values": [
-        {
-          "value": 0
+          "value": 2.0,
+          "color": "#FFC842"
         },
         {
-          "value": 0.25
-        },
-        {
-          "value": 0.5
-        },
-        {
-          "value": 1.0
-        },
-        {
-          "value": 2.0
-        },
-        {
-          "value": 4.0
+          "value": 4.0,
+          "color": "#FF9F35"
         }
       ]
     },
     {
       "name": "Nitrite",
       "sampleType": "water",
-      "uuid": "4422ff",
+      "uuid": "WR-FFEM-NO2",
       "unit": "mg/l",
       "minMarginError": 0.17,
       "riskType": "safety",
@@ -411,94 +393,354 @@
       ],
       "values": [
         {
-          "value": 0
+          "value": 0,
+          "color": "#FFFFFF"
         },
         {
-          "value": 0.05
+          "value": 0.05,
+          "color": "#F2D1DF"
         },
         {
-          "value": 0.1
+          "value": 0.1,
+          "color": "#FBBFE6"
         },
         {
-          "value": 0.25
+          "value": 0.25,
+          "color": "#ED87CF"
         },
         {
-          "value": 0.5
+          "value": 0.5,
+          "color": "#DA57AD"
         }
       ]
     },
     {
-      "name": "Nitrite Biosol",
-      "sampleType": "water",
-      "uuid": "e43eba",
+      "name": "Potassium",
+      "sampleType": "soil",
+      "uuid": "SR-FFEM-K",
       "unit": "mg/l",
-      "minMarginError": 0.18,
-      "riskType": "safety",
+      "minMarginError": 0.16,
+      "formula": "(%1$f * 5)",
       "risks": [
         {
           "value": 0,
           "risk": 0
         },
         {
-          "value": 0.25,
+          "value": 80,
           "risk": 1
         },
         {
-          "value": 0.26,
+          "value": 134,
           "risk": 2
         }
       ],
       "values": [
         {
-          "value": 0
+          "value": 0,
+          "color": "#2A271F"
         },
         {
-          "value": 0.05
+          "value": 10,
+          "color": "#56544D"
         },
         {
-          "value": 0.1
+          "value": 20,
+          "color": "#65645D"
         },
         {
-          "value": 0.25
-        },
-        {
-          "value": 0.5
+          "value": 30,
+          "color": "#82817B"
         }
       ]
     },
     {
-      "name": "Dissolved Oxygen",
-      "sampleType": "water",
-      "uuid": "2cb7d2",
+      "name": "Phosphorous",
+      "sampleType": "soil",
+      "uuid": "SR-FFEM-P",
       "unit": "mg/l",
-      "minMarginError": 0.16,
-      "riskType": "safety",
+      "minMarginError": 0.322,
+      "formula": "(%1$f * 5)",
       "risks": [
         {
-          "value": 4,
+          "value": 0,
           "risk": 0
         },
         {
-          "value": 12,
+          "value": 13,
           "risk": 1
         },
         {
-          "value": 12.1,
+          "value": 22,
           "risk": 2
         }
       ],
       "values": [
         {
-          "value": 0
+          "value": 0,
+          "color": "#F4F3E4"
         },
         {
-          "value": 4
+          "value": 2.5,
+          "color": "#FFFABE"
         },
         {
-          "value": 8
+          "value": 5.0,
+          "color": "#F4F2B5"
         },
         {
-          "value": 12
+          "value": 7.5,
+          "color": "#FFF8A1"
+        },
+        {
+          "value": 10,
+          "color": "#F1E19E"
+        }
+      ]
+    },
+    {
+      "name": "Nitrogen",
+      "sampleType": "soil",
+      "uuid": "SR-FFEM-N",
+      "unit": "mg/l",
+      "minMarginError": 0.21,
+      "formula": "(%1$f * 5)",
+      "risks": [
+        {
+          "value": 0,
+          "risk": 0
+        },
+        {
+          "value": 125,
+          "risk": 1
+        },
+        {
+          "value": 188,
+          "risk": 2
+        }
+      ],
+      "values": [
+        {
+          "value": 0,
+          "color": "#E4E5DA"
+        },
+        {
+          "value": 10,
+          "color": "#E8CDDB"
+        },
+        {
+          "value": 20,
+          "color": "#FFB2DF"
+        },
+        {
+          "value": 40,
+          "color": "#F88DD0"
+        },
+        {
+          "value": 60,
+          "color": "#EE71BD"
+        }
+      ]
+    },
+    {
+      "name": "Total Organic Carbon",
+      "sampleType": "soil",
+      "uuid": "SR-FFEM-TOC",
+      "unit": "mg/l",
+      "minMarginError": 0.33,
+      "risks": [
+        {
+          "value": 0,
+          "risk": 0
+        },
+        {
+          "value": 0.401,
+          "risk": 1
+        },
+        {
+          "value": 0.801,
+          "risk": 2
+        }
+      ],
+      "values": [
+        {
+          "value": 0,
+          "color": "#FFFFFF"
+        },
+        {
+          "value": 0.5,
+          "color": "#974E22"
+        },
+        {
+          "value": 1,
+          "color": "#4E1212"
+        },
+        {
+          "value": 2,
+          "color": "#290F10"
+        }
+      ]
+    },
+    {
+      "name": "pH",
+      "sampleType": "soil",
+      "uuid": "SR-FFEM-pH",
+      "riskType": "alkalinity",
+      "minMarginError": 0.5,
+      "risks": [
+        {
+          "value": 0,
+          "risk": 0
+        },
+        {
+          "value": 6.8,
+          "risk": 1
+        },
+        {
+          "value": 7.2,
+          "risk": 2
+        }
+      ],
+      "values": [
+        {
+          "value": 4,
+          "color": "#F27060"
+        },
+        {
+          "value": 5,
+          "color": "#F17F3F"
+        },
+        {
+          "value": 6,
+          "color": "#DBB43C"
+        },
+        {
+          "value": 7,
+          "color": "#69B16B"
+        },
+        {
+          "value": 8,
+          "color": "#48A687"
+        },
+        {
+          "value": 9,
+          "color": "#07819D"
+        },
+        {
+          "value": 10,
+          "color": "#3F4D9E"
+        }
+      ]
+    },
+    {
+      "name": "Potassium",
+      "sampleType": "compost",
+      "uuid": "CR-FFEM-K",
+      "unit": "mg/l",
+      "minMarginError": 0.16,
+      "formula": "(%1$f * 250)",
+      "values": [
+        {
+          "value": 0,
+          "color": "#2A271F"
+        },
+        {
+          "value": 10,
+          "color": "#56544D"
+        },
+        {
+          "value": 20,
+          "color": "#65645D"
+        },
+        {
+          "value": 30,
+          "color": "#82817B"
+        }
+      ]
+    },
+    {
+      "name": "Phosphorous",
+      "sampleType": "compost",
+      "uuid": "CR-FFEM-P",
+      "unit": "mg/l",
+      "minMarginError": 0.322,
+      "formula": "(%1$f * 250)",
+      "values": [
+        {
+          "value": 0,
+          "color": "#F4F3E4"
+        },
+        {
+          "value": 2.5,
+          "color": "#FFFABE"
+        },
+        {
+          "value": 5.0,
+          "color": "#F4F2B5"
+        },
+        {
+          "value": 7.5,
+          "color": "#FFF8A1"
+        },
+        {
+          "value": 10,
+          "color": "#F1E19E"
+        }
+      ]
+    },
+    {
+      "name": "Nitrogen",
+      "sampleType": "compost",
+      "uuid": "CR-FFEM-N",
+      "unit": "mg/l",
+      "minMarginError": 0.21,
+      "formula": "(%1$f * 250)",
+      "values": [
+        {
+          "value": 0,
+          "color": "#E4E5DA"
+        },
+        {
+          "value": 10,
+          "color": "#E8CDDB"
+        },
+        {
+          "value": 20,
+          "color": "#FFB2DF"
+        },
+        {
+          "value": 40,
+          "color": "#F88DD0"
+        },
+        {
+          "value": 60,
+          "color": "#EE71BD"
+        }
+      ]
+    },
+    {
+      "name": "Total Organic Carbon",
+      "sampleType": "compost",
+      "uuid": "CR-FFEM-TOC",
+      "formula": "(%1$f * 10)",
+      "unit": "mg/l",
+      "minMarginError": 0.33,
+      "values": [
+        {
+          "value": 0,
+          "color": "#FFFFFF"
+        },
+        {
+          "value": 0.5,
+          "color": "#974E22"
+        },
+        {
+          "value": 1,
+          "color": "#4E1212"
+        },
+        {
+          "value": 2,
+          "color": "#290F10"
         }
       ]
     },

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="soil">मिट्टी</string>
+    <string name="water">पानी</string>
     <string name="app_slogan">पानी की गुणवत्ता प्रणाली</string>
     <string name="soil">मिट्टी</string>
     <string name="water">पानी</string>
@@ -112,8 +114,8 @@
     <string name="manual_photo_capture">मैनुअल फोटो कैप्चर</string>
     <string name="manual_photo_summary">यदि इस फोन पर ऑटो फोटो कैप्चर ठीक से काम नहीं कर रहा है, तो इसे चालू करें</string>
     <string name="airplane_mode_off">कृपया हवाई जहाज मोड बंद करें</string>
+    <string name="version">संस्करण</string>
     <string name="calibration_succeeded">अंशांकन पूर्ण</string>
-
     <string name="ammonia">आम्मोनिय</string>
     <string name="dissolved_oxygen">विघटित ऑक्सीजन</string>
     <string name="fluoride">फ्लोराइड</string>

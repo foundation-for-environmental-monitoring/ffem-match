@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="soil">ಮಣ್ಣು</string>
+    <string name="water">ನೀರು</string>
     <string name="app_slogan">ನೀರಿನ ಗುಣಮಟ್ಟದ ವ್ಯವಸ್ಥೆ</string>
     <string name="soil">ಮಣ್ಣು</string>
     <string name="water">ನೀರು</string>
@@ -112,6 +114,7 @@
     <string name="manual_photo_capture">ಹಸ್ತಚಾಲಿತ ಫೋಟೋ</string>
     <string name="manual_photo_summary">ಈ ಫೋನ್‌ನಲ್ಲಿ ಆಟೋ ಫೋಟೋ ಕ್ಯಾಪ್ಚರ್ ಸರಿಯಾಗಿ ಕಾರ್ಯನಿರ್ವಹಿಸದಿದ್ದರೆ ಇದನ್ನು ಆನ್ ಮಾಡಿ</string>
     <string name="airplane_mode_off">ದಯವಿಟ್ಟು ವಿಮಾನ ಮೋಡ್ ಆಫ್ ಮಾಡಿ</string>
+    <string name="version">ಆವೃತ್ತಿ</string>
     <string name="calibration_succeeded">ಮಾಪನಾಂಕ ಪೂರ್ಣಗೊಂಡಿದೆ</string>
 
     <string name="ammonia">ಅಮೋನಿಯಾ</string>

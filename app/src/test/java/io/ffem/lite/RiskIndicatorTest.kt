@@ -17,18 +17,17 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.android.controller.ActivityController
 import org.robolectric.annotation.Config
 
-const val FLUORIDE_ID = "b61159"
-const val FLUORIDE_HIGH_RANGE_ID = "42737a"
-const val PH_ID = "084354"
-const val RESIDUAL_CHLORINE_ID = "bcc96b"
-const val NITRATE_ID = "c0fa93"
-const val IRON_ID = "b1893d"
-const val PHOSPHATE_ID = "120002"
-const val POTASSIUM_SOIL_ID = "cd6be9"
-const val NITROGEN_SOIL_ID = "5040ba"
-const val PHOSPHOROUS_SOIL_ID = "4813a6"
-const val ORGANIC_CARBON_ID = "6f45bc"
-
+const val FLUORIDE_ID = "WR-FFEM-F"
+const val FLUORIDE_HIGH_RANGE_ID = "WR-FFEM-FH"
+const val PH_ID = "WR-FFEM-pH"
+const val RESIDUAL_CHLORINE_ID = "WR-FFEM-Cl"
+const val NITRATE_ID = "WR-FFEM-NO3"
+const val IRON_ID = "WR-FFEM-Fe"
+const val PHOSPHATE_ID = "WR-FFEM-PO4"
+const val POTASSIUM_SOIL_ID = "SR-FFEM-K"
+const val NITROGEN_SOIL_ID = "SR-FFEM-N"
+const val PHOSPHOROUS_SOIL_ID = "SR-FFEM-P"
+const val ORGANIC_CARBON_ID = "SR-FFEM-TOC"
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.O_MR1])
 class RiskIndicatorTest {

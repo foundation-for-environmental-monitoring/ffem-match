@@ -37,9 +37,9 @@
     <string name="data_delete_key">data_delete</string>
     <string name="colorDistanceToleranceKey">colorDistanceTolerance</string>
     <string name="maxCardColorDistanceAllowedKey">maxCardCalibrationDistance</string>
-    <string name="minimum_brightness">minimumBrightness</string>
-    <string name="maximum_brightness">maximumBrightness</string>
-    <string name="shadow_tolerance">shadowTolerance</string>
+    <string name="minimum_brightness">minBrightness</string>
+    <string name="maximum_brightness">maxBrightness</string>
+    <string name="shadow_tolerance">maxshadowTolerance</string>
     <string name="useFlashModeKey">userFlashMode</string>
     <string name="testImageNumberKey">testImageNumber</string>
     <string name="diagnosticEnableTimeKey">diagnosticEnableTime</string>

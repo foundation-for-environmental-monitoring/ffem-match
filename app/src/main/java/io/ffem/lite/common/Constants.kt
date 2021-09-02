@@ -10,8 +10,8 @@ object Constants {
     const val MAX_COLOR_DISTANCE_RGB = 55
     const val MAX_COLOR_DISTANCE_CALIBRATION = 80
     const val DEFAULT_MINIMUM_BRIGHTNESS = 120
-    const val DEFAULT_MAXIMUM_BRIGHTNESS = 240
-    const val DEFAULT_SHADOW_TOLERANCE = 25
+    const val DEFAULT_MAXIMUM_BRIGHTNESS = 100
+    const val DEFAULT_SHADOW_TOLERANCE = 20
     const val INTERPOLATION_COUNT = 100.0
     const val MAX_DISTANCE = 999
 

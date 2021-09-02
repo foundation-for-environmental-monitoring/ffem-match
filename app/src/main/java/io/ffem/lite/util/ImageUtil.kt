@@ -117,8 +117,9 @@ object ImageUtil {
             }
             if (!skip && swatch.value <= maxValue) {
                 canvas.drawText(
-                    valueText,
-                    index * swatchWidth + swatchWidth / 2.toFloat(),
+                    decimalFormat.format(MathUtil.applyFormula(swatch.value, formula)),
+                    index *
+                            index * swatchWidth + swatchWidth / 2.toFloat(),
                     textTop,
                     textPaint
                 )

@@ -31,7 +31,7 @@ data class TestInfo(
 
     val maxValue: Double
         get() {
-            return MathUtil.applyFormula(values[values.size / 2].value, formula)
+            return MathUtil.applyFormula(values[(values.size / 2) - 1].value, formula)
         }
 
     fun getResultString(context: Context): String {
