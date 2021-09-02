@@ -127,6 +127,7 @@
     <string name="next">Next</string>
     <string name="calibrate">Calibrate</string>
     <string name="calibrate_summary">Calibrate using a standard</string>
+    <string name="calibrated_successfully">%s calibrated successfully</string>
     <string name="tilt_backwards">Tilt phone backwards</string>
     <string name="tilt_forwards">Tilt phone forwards</string>
     <string name="tilt_left_forwards">Tilt phone left side forwards</string>

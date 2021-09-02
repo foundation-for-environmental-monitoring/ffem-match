@@ -9,10 +9,6 @@ object Constants {
     val DECIMAL_FORMAT = DecimalFormat("#.##", DecimalFormatSymbols(Locale.US))
 
     const val MAX_TILT_PERCENTAGE_ALLOWED = 0.03
-
-    const val QR_TO_COLOR_AREA_DISTANCE_PERCENTAGE = 0.23
-    const val CALIBRATION_COLOR_AREA_WIDTH_PERCENTAGE = 0.48
-
     const val MAX_COLOR_DISTANCE_RGB = 55
     const val MAX_COLOR_DISTANCE_CALIBRATION = 80
     const val DEFAULT_MINIMUM_BRIGHTNESS = 100
@@ -21,8 +17,11 @@ object Constants {
     const val INTERPOLATION_COUNT = 100.0
     const val MAX_DISTANCE = 999
 
+    // Color card common settings
     const val CARD_DEFAULT_WIDTH = 575
     const val CARD_DEFAULT_HEIGHT = 500
 
-    const val BROADCAST_HIDE_KEYBOARD = "hide_keyboard"
+    // Rectangle swatch card settings
+    const val SWATCH_AREA_HEIGHT_PERCENTAGE = 0.23
+    const val SWATCH_AREA_WIDTH_PERCENTAGE = 0.48
 }

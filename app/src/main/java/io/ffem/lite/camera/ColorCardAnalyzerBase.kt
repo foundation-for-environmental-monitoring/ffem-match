@@ -3,6 +3,7 @@ package io.ffem.lite.camera
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.graphics.Rect
 import android.graphics.drawable.BitmapDrawable
 import androidx.camera.core.ImageAnalysis
@@ -31,7 +32,6 @@ import io.ffem.lite.util.ImageUtil.toBitmap
 import io.ffem.lite.util.PreferencesUtil
 import io.ffem.lite.util.getAverageBrightness
 import io.ffem.lite.util.getBitmapPixels
-import timber.log.Timber
 import java.util.*
 import kotlin.math.abs
 import kotlin.math.max
@@ -44,6 +44,10 @@ abstract class ColorCardAnalyzerBase(private val context: Context) : ImageAnalys
     private lateinit var localBroadcastManager: LocalBroadcastManager
     private var testInfo: TestInfo? = null
 
+    protected var swatchWidthPercentage: Double = -1.0
+    protected var swatchHeightPercentage: Double = -1.0
+    protected var isCircleSwatch = false
+
     companion object {
         var ignoreWarnings: Boolean = false
         var processing = false
@@ -53,8 +57,6 @@ abstract class ColorCardAnalyzerBase(private val context: Context) : ImageAnalys
         var pattern: FinderPatternInfo? = null
         val dataMatrixReader = DataMatrixReader()
     }
-
-    abstract fun perspectiveTransform(bitmap: Bitmap, pattern: FinderPatternInfo): Bitmap
 
     override fun analyze(imageProxy: ImageProxy) {
         if (done || processing) {
@@ -87,7 +89,6 @@ abstract class ColorCardAnalyzerBase(private val context: Context) : ImageAnalys
                                 (drawable as BitmapDrawable).bitmap
                             )
                         } catch (ex: Exception) {
-                            Timber.e(ex)
                             sendMessage(context.getString(R.string.sample_image_not_found))
                             endProcessing(imageProxy)
                             throw Exception()
@@ -120,7 +121,7 @@ abstract class ColorCardAnalyzerBase(private val context: Context) : ImageAnalys
     }
 
     // https://stackoverflow.com/questions/14861553/zxing-convert-bitmap-to-binarybitmap
-    protected fun getPatternFromBitmap(
+    private fun getPatternFromBitmap(
         bitmap: Bitmap,
         getCode: Boolean = false
     ): FinderPatternInfo? {
@@ -337,6 +338,10 @@ abstract class ColorCardAnalyzerBase(private val context: Context) : ImageAnalys
                             sendMessage(context.getString(R.string.wrong_card))
                             return
                         }
+                        if (testInfo!!.uuid!!.substring(1, 2).uppercase() != "R") {
+                            sendMessage(context.getString(R.string.wrong_card))
+                            return
+                        }
 
                         if (isDiagnosticMode() && testInfo != null) {
                             Utilities.savePicture(
@@ -350,7 +355,9 @@ abstract class ColorCardAnalyzerBase(private val context: Context) : ImageAnalys
                         savePhoto(bitmap, testInfo!!)
                     }
 
-                    croppedBitmap = perspectiveTransform(bitmap, pattern!!)
+                    croppedBitmap = perspectiveTransform(
+                        bitmap, pattern!!, swatchWidthPercentage, swatchHeightPercentage
+                    )
                     bitmap.recycle()
 
                     if (testInfo != null && testInfo!!.subTest().resultInfo.result > -2) {
@@ -428,6 +435,86 @@ abstract class ColorCardAnalyzerBase(private val context: Context) : ImageAnalys
         localBroadcastManager.sendBroadcast(
             intent
         )
+    }
+
+    //https://stackoverflow.com/questions/13161628/cropping-a-perspective-transformation-of-image-on-android
+    private fun perspectiveTransform(
+        bitmap: Bitmap, pattern: FinderPatternInfo,
+        widthPercentage: Double, heightPercentage: Double
+    ): Bitmap {
+        val matrix = Matrix()
+        val width = max(
+            pattern.topRight.x - pattern.topLeft.x,
+            pattern.bottomRight.x - pattern.bottomLeft.x
+        )
+//        val height = (width * 58) / 40
+        val height = max(
+            pattern.bottomLeft.y - pattern.topLeft.y,
+            pattern.bottomRight.y - pattern.topRight.y
+        )
+        val dst = floatArrayOf(
+            0f, 0f,
+            width, 0f,
+            width,
+            height, 0f,
+            height
+        )
+        val src = floatArrayOf(
+            pattern.topLeft.x,
+            pattern.topLeft.y,
+            pattern.topRight.x,
+            pattern.topRight.y,
+            pattern.bottomRight.x,
+            pattern.bottomRight.y,
+            pattern.bottomLeft.x,
+            pattern.bottomLeft.y
+        )
+        matrix.setPolyToPoly(src, 0, dst, 0, src.size shr 1)
+        val mappedTL = floatArrayOf(0f, 0f)
+        matrix.mapPoints(mappedTL)
+
+        val mappedTR = floatArrayOf(bitmap.width.toFloat(), 0f)
+        matrix.mapPoints(mappedTR)
+
+        val mappedLL = floatArrayOf(0f, bitmap.height.toFloat())
+        matrix.mapPoints(mappedLL)
+
+        val correctedBitmap =
+            Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+        val p = getPatternFromBitmap(correctedBitmap)
+
+        return if (p != null) {
+            val finalBitmap = Bitmap.createBitmap(
+                correctedBitmap,
+                p.topLeft.x.toInt(),
+                p.topLeft.y.toInt(),
+                (p.topRight.x - p.topLeft.x).toInt(),
+                (p.bottomRight.y - p.topRight.y).toInt(),
+                null,
+                true
+            )
+            correctedBitmap.recycle()
+
+            val shiftX = (finalBitmap.width * widthPercentage).toInt()
+            val shiftY = if (heightPercentage > -1) {
+                (finalBitmap.height * heightPercentage).toInt()
+            } else {
+                shiftX
+            }
+            val centerX = finalBitmap.width / 2
+            val centerY = finalBitmap.height / 2
+            Bitmap.createBitmap(
+                finalBitmap,
+                centerX - shiftX,
+                centerY - shiftY,
+                shiftX * 2,
+                shiftY * 2,
+                null,
+                true
+            )
+        } else {
+            correctedBitmap
+        }
     }
 
     fun reset() {

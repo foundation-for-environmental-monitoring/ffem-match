@@ -36,7 +36,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import io.ffem.lite.R
-import io.ffem.lite.common.Constants
+import io.ffem.lite.common.BROADCAST_HIDE_KEYBOARD
 import io.ffem.lite.data.TestResult
 import io.ffem.lite.databinding.FragmentFormSubmitBinding
 import io.ffem.lite.preference.isDiagnosticMode
@@ -211,7 +211,7 @@ class FormSubmitFragment : Fragment() {
     override fun onPause() {
         saveData()
         LocalBroadcastManager.getInstance(requireContext())
-            .sendBroadcast(Intent(Constants.BROADCAST_HIDE_KEYBOARD))
+            .sendBroadcast(Intent(BROADCAST_HIDE_KEYBOARD))
         super.onPause()
     }
 

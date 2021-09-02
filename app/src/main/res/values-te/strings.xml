@@ -84,6 +84,7 @@
     <string name="next">తరువాత</string>
     <string name="calibrate">క్రమాంకనం</string>
     <string name="calibrate_summary">ప్రమాణాన్ని ఉపయోగించి క్రమాంకనం చేయండి</string>
+    <string name="calibrated_successfully">%s క్రమాంకనం విజయవంతమైంది</string>
     <string name="no_data">పరీక్ష ఫలితాలు లేవు</string>
     <string name="tap_to_start">క్రొత్త పరీక్షను ప్రారంభించడానికి దిగువ + బటన్‌ను నొక్కండి.</string>
     <string name="low_alkalinity">ఆమ్ల</string>

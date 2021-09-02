@@ -10,6 +10,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -92,7 +93,12 @@ class CalibrationResultFragment : Fragment() {
                             Color.blue(result.calibratedValue.color) - Color.blue(result.sampleColor)
                         )
                     )
-                    requireContext().toast(testInfo.name + " calibrated successfully")
+                    requireContext().toast(
+                        getString(
+                            R.string.calibrated_successfully,
+                            testInfo.name!!.toLocalString()
+                        ), Toast.LENGTH_LONG
+                    )
                 } finally {
                     db.close()
                 }

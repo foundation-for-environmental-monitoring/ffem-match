@@ -84,6 +84,7 @@
     <string name="next">ಮುಂದೆ</string>
     <string name="calibrate">ಮಾಪನಾಂಕ ನಿರ್ಣಯ</string>
     <string name="calibrate_summary">ಸ್ಟ್ಯಾಂಡರ್ಡ್ ಬಳಸಿ ಮಾಪನಾಂಕ ನಿರ್ಣಯಿಸಿ</string>
+    <string name="calibrated_successfully">%s ಮಾಪನಾಂಕ ನಿರ್ಣಯ ಯಶಸ್ವಿಯಾಗಿದೆ</string>
     <string name="no_data">ಪರೀಕ್ಷಾ ಫಲಿತಾಂಶಗಳಿಲ್ಲ</string>
     <string name="tap_to_start">ಹೊಸ ಪರೀಕ್ಷೆಯನ್ನು ಪ್ರಾರಂಭಿಸಲು ಕೆಳಗಿನ <b>+</b> ಬಟನ್ ಟ್ಯಾಪ್ ಮಾಡಿ.</string>
     <string name="low_alkalinity">ಆಮ್ಲೀಯ</string>
