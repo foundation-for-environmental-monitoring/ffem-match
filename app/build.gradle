@@ -118,10 +118,10 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.7'
 
     // Firebase
-    implementation 'com.google.firebase:firebase-database:20.0.1'
-
-    implementation 'com.google.firebase:firebase-analytics-ktx:19.0.1'
-    releaseImplementation 'com.google.firebase:firebase-crashlytics:18.2.1'
+    implementation platform('com.google.firebase:firebase-bom:27.0.0')
+    implementation 'com.google.firebase:firebase-database-ktx'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    releaseImplementation 'com.google.firebase:firebase-crashlytics-ktx'
 
     // Math
     implementation 'org.apache.commons:commons-math3:3.6.1'
