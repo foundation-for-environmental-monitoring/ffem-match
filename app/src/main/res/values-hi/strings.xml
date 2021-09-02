@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="soil">मिट्टी</string>
-    <string name="water">पानी</string>
     <string name="app_slogan">पानी की गुणवत्ता प्रणाली</string>
     <string name="soil">मिट्टी</string>
     <string name="water">पानी</string>
@@ -27,7 +25,7 @@
     <string name="analyzed_image">तस्वीर का विश्लेषण करें</string>
     <string name="disable_diagnostics">डायग्नोस्टिक्स को समाप्त करें</string>
     <string name="settings_not_clickable">सेटिंग्स क्लिक करने योग्य नहीं है</string>
-    <string name="color_card_not_found">बारकोड नहीं मिला। प्रकाश की जाँच करें</string>
+    <string name="scanning">स्कैन किया जा रहा है…</string>
     <string name="capture_photo">फोटो खींचना</string>
     <string name="invalid_image">अमान्य तस्वीर</string>
     <string name="result">परिणाम</string>

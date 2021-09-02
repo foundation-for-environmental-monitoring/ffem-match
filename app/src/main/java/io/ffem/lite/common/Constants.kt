@@ -1,19 +1,28 @@
 package io.ffem.lite.common
 
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.*
+
 object Constants {
-    const val EXPECTED_QR_CORNER_COUNT = 4
-    const val MAX_TILT_PERCENTAGE_ALLOWED = 0.018
+
+    val DECIMAL_FORMAT = DecimalFormat("#.##", DecimalFormatSymbols(Locale.US))
+
+    const val MAX_TILT_PERCENTAGE_ALLOWED = 0.03
 
     const val QR_TO_COLOR_AREA_DISTANCE_PERCENTAGE = 0.23
     const val CALIBRATION_COLOR_AREA_WIDTH_PERCENTAGE = 0.48
 
     const val MAX_COLOR_DISTANCE_RGB = 55
     const val MAX_COLOR_DISTANCE_CALIBRATION = 80
-    const val DEFAULT_MINIMUM_BRIGHTNESS = 120
-    const val DEFAULT_MAXIMUM_BRIGHTNESS = 100
-    const val DEFAULT_SHADOW_TOLERANCE = 20
+    const val DEFAULT_MINIMUM_BRIGHTNESS = 100
+    const val DEFAULT_MAXIMUM_BRIGHTNESS = 240
+    const val DEFAULT_SHADOW_TOLERANCE = 40
     const val INTERPOLATION_COUNT = 100.0
     const val MAX_DISTANCE = 999
+
+    const val CARD_DEFAULT_WIDTH = 575
+    const val CARD_DEFAULT_HEIGHT = 500
 
     const val BROADCAST_HIDE_KEYBOARD = "hide_keyboard"
 }

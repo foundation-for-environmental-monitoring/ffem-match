@@ -149,5 +149,6 @@ fun getMean(pixels: ArrayList<Int>): Int {
         b += element.blue
     }
 
-    return Color.rgb(r / pixels.size, g / pixels.size, b / pixels.size)
+    val pixelsCount = max(pixels.size, 1)
+    return Color.rgb(r / pixelsCount, g / pixelsCount, b / pixelsCount)
 }

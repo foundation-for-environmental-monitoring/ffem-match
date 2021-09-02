@@ -14,6 +14,7 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
+import io.ffem.lite.preference.SettingsActivity
 import io.ffem.lite.preference.isDiagnosticMode
 
 abstract class BaseActivity : AppCompatActivity() {
@@ -35,8 +36,10 @@ abstract class BaseActivity : AppCompatActivity() {
 
     private fun updateTheme() {
 
-        if (this !is TestActivity) {
-            setTheme(R.style.AppTheme_Main)
+        if (this is SettingsActivity) {
+            setTheme(R.style.Theme_Main_Settings)
+        } else if (this !is TestActivity) {
+            setTheme(R.style.Theme_Main)
         }
 
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)

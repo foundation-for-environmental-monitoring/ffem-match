@@ -7,7 +7,7 @@
         android:id="@+id/instruction_lyt"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#444"
+        android:background="#111"
         android:orientation="vertical">
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -18,7 +18,7 @@
             android:background="@color/black"
             android:padding="4dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/card_2_overlay" />
+            android:src="@drawable/color_card_example" />
 
         <TextView
             android:id="@+id/instruction_txt"

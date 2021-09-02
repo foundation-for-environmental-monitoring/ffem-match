@@ -46,7 +46,6 @@
             tools:text="mg/l" />
 
         <TextView
-            android:id="@+id/textRgb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="false"
@@ -57,7 +56,6 @@
             tools:text="rgb: 243 23 156" />
 
         <TextView
-            android:id="@+id/textHsv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="false"
@@ -68,7 +66,6 @@
             tools:text="hsv: 243 23 156" />
 
         <TextView
-            android:id="@+id/textBrightness"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textIsSelectable="false"

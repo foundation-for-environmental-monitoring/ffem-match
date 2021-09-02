@@ -51,7 +51,6 @@
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:text="@string/apache_license_2"
-                android:textColor="#222"
                 android:textStyle="bold" />
 
             <TextView
@@ -63,7 +62,6 @@
                 android:paddingBottom="13dp"
                 android:text="@string/apache_software"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="#555"
                 android:textIsSelectable="true" />
 
             <TextView
@@ -75,7 +73,6 @@
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:text="@string/cca_license"
-                android:textColor="#222"
                 android:textStyle="bold" />
 
             <TextView
@@ -87,7 +84,6 @@
                 android:paddingBottom="15dp"
                 android:text="@string/cca_software"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="#555"
                 android:textIsSelectable="true" />
 
             <TextView
@@ -99,7 +95,6 @@
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:text="@string/eclipse_public_license"
-                android:textColor="#222"
                 android:textStyle="bold" />
 
             <TextView
@@ -111,7 +106,6 @@
                 android:paddingBottom="15dp"
                 android:text="@string/eclipse_software"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="#555"
                 android:textIsSelectable="true" />
 
             <TextView
@@ -123,7 +117,6 @@
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:text="@string/mit_license"
-                android:textColor="#222"
                 android:textStyle="bold" />
 
             <TextView
@@ -135,7 +128,6 @@
                 android:paddingBottom="15dp"
                 android:text="@string/mit_software"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="#555"
                 android:textIsSelectable="true" />
 
         </LinearLayout>

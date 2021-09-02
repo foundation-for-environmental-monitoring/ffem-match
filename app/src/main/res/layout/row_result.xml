@@ -93,7 +93,6 @@
                 android:clickable="false"
                 android:focusable="false"
                 android:text="@{DateUtils.getRelativeTimeSpanString(result.date)}"
-                android:textColor="#737373"
                 android:textSize="14sp"
                 tools:text="date time" />
 
@@ -105,7 +104,6 @@
                 android:clickable="false"
                 android:focusable="false"
                 android:text="@{String.valueOf(result.id)}"
-                android:textColor="#737373"
                 android:textSize="13sp"
                 android:visibility="@{AppPreferencesKt.isDiagnosticMode() ? View.VISIBLE : View.GONE}"
                 tools:text="Test id" />

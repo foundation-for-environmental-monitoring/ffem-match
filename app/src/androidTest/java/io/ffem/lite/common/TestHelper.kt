@@ -12,12 +12,15 @@ import androidx.preference.PreferenceManager
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.*
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.data.AppDatabase
+import io.ffem.lite.preference.isDiagnosticMode
+import org.hamcrest.Matchers
 import timber.log.Timber
 import java.io.File
 import java.util.*
@@ -50,13 +53,13 @@ object TestHelper {
                 || Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic")
                 || "google_sdk" == Build.PRODUCT)
 
-    fun enterDiagnosticMode() {
+    private fun enterDiagnosticMode() {
         for (i in 0..9) {
             onView(withId(R.id.version_text)).perform(click())
         }
     }
 
-    fun leaveDiagnosticMode() {
+    private fun leaveDiagnosticMode() {
         onView(withId(R.id.disable_diagnostics_fab)).perform(click())
     }
 
@@ -64,50 +67,6 @@ object TestHelper {
         val prefs =
             PreferenceManager.getDefaultSharedPreferences(ApplicationProvider.getApplicationContext())
         prefs.edit().clear().apply()
-    }
-
-    fun startSurveyApp() {
-        val context: Context? = InstrumentationRegistry.getInstrumentation().context
-        val intent =
-            context!!.packageManager.getLaunchIntentForPackage(EXTERNAL_SURVEY_PACKAGE_NAME)
-        intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-        context.startActivity(intent)
-        mDevice.waitForIdle()
-        Thread.sleep(1000)
-    }
-
-    fun gotoSurveySelection() {
-        val addButton: UiObject? = mDevice.findObject(
-            UiSelector()
-                .resourceId("$EXTERNAL_SURVEY_PACKAGE_NAME:id/enter_data")
-        )
-        try {
-            if (addButton!!.exists() && addButton.isEnabled) {
-                addButton.click()
-            }
-        } catch (e: UiObjectNotFoundException) {
-            Timber.e(e)
-        }
-        mDevice.waitForIdle()
-        Thread.sleep(1000)
-    }
-
-    fun gotoSurveyForm() {
-        clickListViewItem(TEST_SURVEY_NAME)
-        mDevice.waitForIdle()
-        Thread.sleep(1000)
-        val goToStartButton: UiObject? = mDevice.findObject(
-            UiSelector()
-                .resourceId("$EXTERNAL_SURVEY_PACKAGE_NAME:id/jumpBeginningButton")
-        )
-        try {
-            if (goToStartButton!!.exists() && goToStartButton.isEnabled) {
-                goToStartButton.click()
-            }
-        } catch (e: UiObjectNotFoundException) {
-            Timber.e(e)
-        }
-        mDevice.waitForIdle()
     }
 
 //    fun gotoFormSubmit() {
@@ -278,7 +237,7 @@ object TestHelper {
     }
 
     fun isDeviceInitialized(): Boolean {
-        return ::mDevice.isInitialized
+        return TestHelper::mDevice.isInitialized
     }
 
     fun takeScreenshot(name: String) {
@@ -308,6 +267,59 @@ object TestHelper {
         }
     }
 
+    fun startDiagnosticMode() {
+        if (isDiagnosticMode()) {
+            sleep(400)
+
+            val actionMenuItemView = onView(
+                Matchers.allOf(
+                    withId(R.id.action_settings),
+                    ViewMatchers.withContentDescription(R.string.settings),
+                    TestUtil.childAtPosition(
+                        TestUtil.childAtPosition(
+                            withId(R.id.toolbar),
+                            1
+                        ),
+                        0
+                    ),
+                    ViewMatchers.isDisplayed()
+                )
+            )
+            actionMenuItemView.perform(click())
+
+            sleep(400)
+
+            onView(ViewMatchers.withText(R.string.about)).perform(click())
+
+            sleep(400)
+
+            leaveDiagnosticMode()
+        } else {
+            val actionMenuItemView = onView(
+                Matchers.allOf(
+                    withId(R.id.action_settings),
+                    ViewMatchers.withContentDescription(R.string.settings),
+                    TestUtil.childAtPosition(
+                        TestUtil.childAtPosition(
+                            withId(R.id.toolbar),
+                            1
+                        ),
+                        0
+                    ),
+                    ViewMatchers.isDisplayed()
+                )
+            )
+            actionMenuItemView.perform(click())
+        }
+
+        sleep(500)
+
+        onView(ViewMatchers.withText(R.string.about)).perform(click())
+        sleep(500)
+
+        enterDiagnosticMode()
+    }
+
 //    fun selectMenuItem() {
 //        val menuButton = mDevice.findObject(
 //            By.desc(
@@ -325,5 +337,49 @@ object TestHelper {
 
     fun sleep(duration: Long) {
         SystemClock.sleep(duration)
+    }
+
+    fun startSurveyApp() {
+        val context: Context? = InstrumentationRegistry.getInstrumentation().context
+        val intent =
+            context!!.packageManager.getLaunchIntentForPackage(EXTERNAL_SURVEY_PACKAGE_NAME)
+        intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        context.startActivity(intent)
+        mDevice.waitForIdle()
+        Thread.sleep(1000)
+    }
+
+    fun gotoSurveySelection() {
+        val addButton: UiObject? = mDevice.findObject(
+            UiSelector()
+                .resourceId("$EXTERNAL_SURVEY_PACKAGE_NAME:id/enter_data")
+        )
+        try {
+            if (addButton!!.exists() && addButton.isEnabled) {
+                addButton.click()
+            }
+        } catch (e: UiObjectNotFoundException) {
+            Timber.e(e)
+        }
+        mDevice.waitForIdle()
+        Thread.sleep(1000)
+    }
+
+    fun gotoSurveyForm() {
+        clickListViewItem(TEST_SURVEY_NAME)
+        mDevice.waitForIdle()
+        Thread.sleep(1000)
+        val goToStartButton: UiObject? = mDevice.findObject(
+            UiSelector()
+                .resourceId("$EXTERNAL_SURVEY_PACKAGE_NAME:id/jumpBeginningButton")
+        )
+        try {
+            if (goToStartButton!!.exists() && goToStartButton.isEnabled) {
+                goToStartButton.click()
+            }
+        } catch (e: UiObjectNotFoundException) {
+            Timber.e(e)
+        }
+        mDevice.waitForIdle()
     }
 }

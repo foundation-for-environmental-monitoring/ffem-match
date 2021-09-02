@@ -2,6 +2,7 @@ package io.ffem.lite.camera
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Bitmap.CompressFormat
 import android.graphics.Matrix
 import android.os.Environment.DIRECTORY_PICTURES
 import timber.log.Timber
@@ -12,6 +13,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 
 object Utilities {
+
 
     fun savePng(
         context: Context,
@@ -37,7 +39,7 @@ object Utilities {
                 Timber.d(if (filePath.mkdirs()) "Success" else "Failed")
 
             val byteStream = ByteArrayOutputStream()
-            bmp.compress(Bitmap.CompressFormat.PNG, 100, byteStream)
+            bmp.compress(CompressFormat.PNG, 100, byteStream)
             val bytes = byteStream.toByteArray()
 
             val stream = FileOutputStream(filePath.path + separator + "$fileName.png")
@@ -122,7 +124,7 @@ object Utilities {
      */
     fun bitmapToBytes(bitmap: Bitmap): ByteArray {
         val bos = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, bos)
+        bitmap.compress(CompressFormat.JPEG, 80, bos)
         return bos.toByteArray()
     }
 }

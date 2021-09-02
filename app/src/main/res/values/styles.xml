@@ -7,7 +7,7 @@
         <item name="android:layout_marginRight">16dp</item>
     </style>
 
-    <style name="AppTheme.Main.FullScreen" parent="AppTheme.Main">
+    <style name="AppTheme.Main.FullScreen" parent="Theme.Main">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>
         <item name="android:windowFullscreen">true</item>

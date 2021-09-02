@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#006587</color>
+    <color name="colorPrimaryDark">#00526E</color>
+    <color name="colorAccent">#494949</color>
+    <color name="white">#ddd</color>
+    <color name="card_bg">#444</color>
+    <color name="text_links">#01A3E3</color>
+    <color name="link_green">#5AB301</color>
+    <color name="text_secondary">#ddd</color>
+
+    <color name="low_risk">#018F2E</color>
+    <color name="medium_risk">#B52A00</color>
+    <color name="high_risk">#BA0000</color>
+
+    <!-- Diagnostic -->
+    <color name="diagnostic">#550017</color>
+    <color name="diagnostic_status">#400011</color>
+    <color name="diagnostic_option_background">#18191B</color>
+
+</resources>

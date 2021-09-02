@@ -58,13 +58,6 @@ fun useDummyImage(): Boolean {
     )
 }
 
-fun manualCaptureOnly(): Boolean {
-    return PreferencesUtil.getBoolean(
-        App.app,
-        R.string.manualCaptureOnlyKey, false
-    )
-}
-
 fun getColorDistanceTolerance(): Int {
     return if (isDiagnosticMode()) {
         Integer.parseInt(

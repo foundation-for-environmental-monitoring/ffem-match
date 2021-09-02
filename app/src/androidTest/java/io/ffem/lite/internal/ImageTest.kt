@@ -20,7 +20,6 @@ import io.ffem.lite.R
 import io.ffem.lite.common.TestHelper.clearPreferences
 import io.ffem.lite.common.TestHelper.sleep
 import io.ffem.lite.common.TestUtil
-import io.ffem.lite.common.TestUtil.checkMarginOfError
 import io.ffem.lite.common.TestUtil.checkResult
 import io.ffem.lite.common.TestUtil.childAtPosition
 import io.ffem.lite.common.clearData
@@ -103,6 +102,41 @@ class ImageTest {
         startInternalTest(8)
     }
 
+    @Test
+    fun image_009_Chlorine_2_Point_0() {
+        startInternalTest(9)
+    }
+
+    @Test
+    fun image_010_Chlorine_2_Point_0() {
+        startInternalTest(10)
+    }
+
+    @Test
+    fun image_011_Chlorine_2_Point_0() {
+        startInternalTest(11)
+    }
+
+    @Test
+    fun image_012_Chlorine_Dim_Light() {
+        startInternalTest(12)
+    }
+
+    @Test
+    fun image_013_Chlorine_Too_Close() {
+        startInternalTest(13)
+    }
+
+    @Test
+    fun image_014_Chlorine_Too_Far() {
+        startInternalTest(14)
+    }
+
+    @Test
+    fun image_015_Chlorine_Too_Close() {
+        startInternalTest(15)
+    }
+
     private fun startInternalTest(imageNumber: Int) {
         val testData = testDataList[imageNumber]!!
 
@@ -152,8 +186,8 @@ class ImageTest {
                         .check(matches(isDisplayed()))
                 }
 
-                val marginOfErrorView = onView(withId(R.id.error_margin_txt))
-                marginOfErrorView.check(matches(checkMarginOfError(testData)))
+                onView(withId(R.id.error_margin_txt))
+                    .check(matches(withEffectiveVisibility(Visibility.GONE)))
 
                 onView(
                     withText(
@@ -195,68 +229,76 @@ class ImageTest {
 
                 TestUtil.sleep(1000)
                 onView(withText(R.string.save)).perform(click())
-            }
 
-            sleep(1000)
+                sleep(1000)
 
-            onView(
-                withText(
-                    "${context.getString(testData.testDetails.name)} [${imageNumber}]"
-                )
-            ).check(matches(isDisplayed()))
+                onView(
+                    withText(
+                        "${context.getString(testData.testDetails.name)} [${imageNumber}]"
+                    )
+                ).check(matches(isDisplayed()))
 
-            val textView = onView(
-                allOf(
-                    withId(R.id.textResultValue),
-                    childAtPosition(
+                val textView = onView(
+                    allOf(
+                        withId(R.id.textResultValue),
                         childAtPosition(
-                            allOf(
-                                withId(R.id.test_results_lst),
-                                withContentDescription(R.string.result_list)
+                            childAtPosition(
+                                allOf(
+                                    withId(R.id.test_results_lst),
+                                    withContentDescription(R.string.result_list)
+                                ),
+                                0
                             ),
-                            0
+                            1
                         ),
-                        1
-                    ),
-                    isDisplayed()
+                        isDisplayed()
+                    )
                 )
-            )
 
-            sleep(3000)
+                sleep(3000)
 
-            if (testData.expectedResultError == NO_ERROR) {
-                textView.check(matches(checkResult(testData)))
-            } else {
-                val context = InstrumentationRegistry.getInstrumentation().targetContext
-                textView.check(matches(withText(testData.expectedResultError.toLocalString(context))))
+                if (testData.expectedResultError == NO_ERROR) {
+                    textView.check(matches(checkResult(testData)))
+                } else {
+                    val context = InstrumentationRegistry.getInstrumentation().targetContext
+                    textView.check(
+                        matches(
+                            withText(
+                                testData.expectedResultError.toLocalString(
+                                    context
+                                )
+                            )
+                        )
+                    )
+                }
+
+                textView.perform(click())
+
+                sleep(2000)
+
+                onView(withId(R.id.resultScrollView))
+                    .perform(ViewActions.swipeUp())
+
+                val imageView = onView(
+                    allOf(
+                        withId(R.id.extract_img), withContentDescription(R.string.analyzed_image),
+                        isDisplayed()
+                    )
+                )
+                imageView.check(matches(isDisplayed()))
+
+                onView(withId(R.id.resultScrollView))
+                    .perform(ViewActions.swipeUp())
+
+                val imageView2 = onView(
+                    allOf(
+                        withId(R.id.full_photo_img),
+                        withContentDescription(R.string.analyzed_image),
+                        isDisplayed()
+                    )
+                )
+                imageView2.check(matches(isDisplayed()))
             }
-
-            textView.perform(click())
-
-            sleep(2000)
-
-            onView(withId(R.id.resultScrollView))
-                .perform(ViewActions.swipeUp())
-
-            val imageView = onView(
-                allOf(
-                    withId(R.id.extract_img), withContentDescription(R.string.analyzed_image),
-                    isDisplayed()
-                )
-            )
-            imageView.check(matches(isDisplayed()))
-
-            onView(withId(R.id.resultScrollView))
-                .perform(ViewActions.swipeUp())
-
-            val imageView2 = onView(
-                allOf(
-                    withId(R.id.full_photo_img), withContentDescription(R.string.analyzed_image),
-                    isDisplayed()
-                )
-            )
-            imageView2.check(matches(isDisplayed()))
-
         } else {
 
             sleep(SCAN_TIME_DELAY)

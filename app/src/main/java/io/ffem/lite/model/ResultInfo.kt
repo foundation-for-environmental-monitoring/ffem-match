@@ -27,7 +27,7 @@ data class ResultInfo(
     var calibration: Calibration = Calibration(),
 
     // swatches extracted from the color columns on the card
-    var swatches: ArrayList<Swatch>? = ArrayList(),
+    var swatches: ArrayList<ColorInfo>? = ArrayList(),
 
     // for calculation of margin of error
     var swatchDistance: Double = 0.0

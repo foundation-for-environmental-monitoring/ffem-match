@@ -10,7 +10,9 @@ import kotlinx.parcelize.Parcelize
 data class Calibration(
     @PrimaryKey val id: String = "",
     val value: Double = 0.0,
+    var color: Int = 0,
     val rDiff: Int = 0,
     val gDiff: Int = 0,
-    val bDiff: Int = 0
+    val bDiff: Int = 0,
+    var date: Long = 0
 ) : Parcelable

@@ -25,7 +25,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
-import io.ffem.lite.app.App.Companion.getVersionName
 import io.ffem.lite.common.IS_CALIBRATION
 import io.ffem.lite.common.RESULT_EVENT_BROADCAST
 import io.ffem.lite.common.RESULT_ID
@@ -55,11 +54,11 @@ fun TextView.bindTextSize(result: Double) {
     if (result < 0) {
         textSize = 14f
         setPadding(0, 10, 0, 0)
-        setTextColor(Color.rgb(200, 50, 50))
+//        setTextColor(Color.rgb(200, 50, 50))
     } else {
         textSize = 30f
         setPadding(0, 0, 0, 0)
-        setTextColor(Color.rgb(20, 20, 20))
+//        setTextColor(Color.rgb(20, 20, 20))
     }
 }
 
@@ -95,15 +94,15 @@ class ResultListActivity : AppUpdateActivity() {
             val testInfo = intent.getParcelableExtra<TestInfo>(TEST_INFO_KEY)
 
             if (testInfo != null) {
+                val subTest = testInfo.subTest()
                 db.resultDao().updateResult(
                     testInfo.fileName,
                     testInfo.uuid!!,
                     testInfo.name!!,
                     testInfo.sampleType,
-                    testInfo.getResult(),
-                    testInfo.resultInfoGrayscale.result,
-                    testInfo.getMarginOfError(),
-                    testInfo.error.ordinal
+                    subTest.getResult(),
+                    subTest.getMarginOfError(),
+                    subTest.error.ordinal
                 )
             }
             refreshList()
@@ -166,7 +165,7 @@ class ResultListActivity : AppUpdateActivity() {
         val view = binding.root
         setContentView(view)
 
-        title = getString(R.string.app_name) + " - " + getVersionName()
+        title = getString(R.string.app_name)
 
         broadcastManager = LocalBroadcastManager.getInstance(this)
 
@@ -279,7 +278,7 @@ class ResultListActivity : AppUpdateActivity() {
     private fun refreshList() {
         adapter.setTestList(db.resultDao().getResults())
         binding.testResultsLst.adapter = adapter
-        adapter.notifyDataSetChanged()
+        adapter.notifyItemInserted(0)
         showHideList()
     }
 

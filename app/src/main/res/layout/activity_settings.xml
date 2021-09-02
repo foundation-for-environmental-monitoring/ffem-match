@@ -28,21 +28,21 @@
 
             <FrameLayout
                 android:id="@+id/layoutDiagnostics"
-                android:background="@color/diagnostic_option_background"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:background="@color/diagnostic_option_background" />
 
             <FrameLayout
                 android:id="@+id/layoutTesting"
-                android:background="@color/diagnostic_option_background"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:background="@color/diagnostic_option_background" />
 
             <FrameLayout
                 android:id="@+id/layoutData"
-                android:background="@color/diagnostic_option_background"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:background="@color/diagnostic_option_background" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

@@ -3,8 +3,9 @@
     android:id="@+id/instruction_lyt"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#444"
-    android:orientation="vertical">
+    android:background="#111"
+    android:orientation="vertical"
+    tools:ignore="Overdraw">
 
     <include layout="@layout/app_bar_layout" />
 
@@ -12,10 +13,9 @@
         android:id="@+id/color_extract_img"
         android:layout_width="match_parent"
         android:layout_height="250dp"
-        android:background="#222"
+        android:background="#000"
         android:paddingTop="4dp"
-        android:paddingBottom="3dp"
-        tools:src="@drawable/card_overlay" />
+        android:paddingBottom="3dp" />
 
     <TextView
         android:layout_width="match_parent"

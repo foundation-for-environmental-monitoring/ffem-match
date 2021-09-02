@@ -17,17 +17,17 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.android.controller.ActivityController
 import org.robolectric.annotation.Config
 
-const val FLUORIDE_ID = "WR-FFEM-F"
-const val FLUORIDE_HIGH_RANGE_ID = "WR-FFEM-FH"
-const val PH_ID = "WR-FFEM-pH"
-const val RESIDUAL_CHLORINE_ID = "WR-FFEM-Cl"
-const val NITRATE_ID = "WR-FFEM-NO3"
-const val IRON_ID = "WR-FFEM-Fe"
-const val PHOSPHATE_ID = "WR-FFEM-PO4"
-const val POTASSIUM_SOIL_ID = "SR-FFEM-K"
-const val NITROGEN_SOIL_ID = "SR-FFEM-N"
-const val PHOSPHOROUS_SOIL_ID = "SR-FFEM-P"
-const val ORGANIC_CARBON_ID = "SR-FFEM-TOC"
+const val FLUORIDE_ID = "WR-FM-F"
+const val PH_ID = "WR-FM-pH"
+const val RESIDUAL_CHLORINE_ID = "WR-FM-Cl"
+const val NITRATE_ID = "WR-FM-NO3"
+const val IRON_ID = "WR-FM-Fe"
+const val PHOSPHATE_ID = "WR-FM-PO4"
+const val POTASSIUM_SOIL_ID = "SR-FM-K"
+const val NITROGEN_SOIL_ID = "SR-FM-N"
+const val PHOSPHOROUS_SOIL_ID = "SR-FM-P"
+const val ORGANIC_CARBON_ID = "SR-FM-TOC"
+
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.O_MR1])
 class RiskIndicatorTest {
@@ -36,49 +36,11 @@ class RiskIndicatorTest {
     fun fluorideRiskIndicator() {
 
         val testInfo = getTestInfo(FLUORIDE_ID)!!
+        val subTest = testInfo.subTest()
 
-        Assert.assertEquals(10, testInfo.values.size)
+        Assert.assertEquals(8, subTest.values.size)
 
-        Assert.assertEquals(3, testInfo.risks.size)
-
-        assertRisk(testInfo, 0.0, LOW)
-
-        assertRisk(testInfo, 3.0, HIGH)
-
-        assertRisk(testInfo, 2.0, HIGH)
-
-        assertRisk(testInfo, 2.01, HIGH)
-
-        assertRisk(testInfo, 1.3, MEDIUM)
-
-        assertRisk(testInfo, 0.9, LOW)
-
-        assertRisk(testInfo, 2.99, HIGH)
-
-        assertRisk(testInfo, 0.99, LOW)
-
-        assertRisk(testInfo, 1.00, MEDIUM)
-
-        assertRisk(testInfo, 0.5, LOW)
-
-        assertRisk(testInfo, 1.1, MEDIUM)
-
-        assertRisk(testInfo, 4.1, HIGH)
-
-        assertRisk(testInfo, 1.5, HIGH)
-
-        assertRisk(testInfo, 1.99, HIGH)
-    }
-
-
-    @Test
-    fun fluorideHighRangeRiskIndicator() {
-
-        val testInfo = getTestInfo(FLUORIDE_HIGH_RANGE_ID)!!
-
-        Assert.assertEquals(12, testInfo.values.size)
-
-        Assert.assertEquals(3, testInfo.risks.size)
+        Assert.assertEquals(3, subTest.risks.size)
 
         assertRisk(testInfo, 0.0, LOW)
 
@@ -113,10 +75,11 @@ class RiskIndicatorTest {
     fun residualChlorineRiskIndicator() {
 
         val testInfo = getTestInfo(RESIDUAL_CHLORINE_ID)!!
+        val subTest = testInfo.subTest()
 
-        Assert.assertEquals(12, testInfo.values.size)
+        Assert.assertEquals(10, subTest.values.size)
 
-        Assert.assertEquals(3, testInfo.risks.size)
+        Assert.assertEquals(3, subTest.risks.size)
 
         assertRisk(testInfo, 0.0, MEDIUM)
 
@@ -153,10 +116,11 @@ class RiskIndicatorTest {
     fun pHRiskIndicator() {
 
         val testInfo = getTestInfo(PH_ID)!!
+        val subTest = testInfo.subTest()
 
-        Assert.assertEquals(14, testInfo.values.size)
+        Assert.assertEquals(14, subTest.values.size)
 
-        Assert.assertEquals(3, testInfo.risks.size)
+        Assert.assertEquals(3, subTest.risks.size)
 
         assertRisk(testInfo, 0.0, LOW)
 
@@ -189,10 +153,11 @@ class RiskIndicatorTest {
     fun nitrateRiskIndicator() {
 
         val testInfo = getTestInfo(NITRATE_ID)!!
+        val subTest = testInfo.subTest()
 
-        Assert.assertEquals(8, testInfo.values.size)
+        Assert.assertEquals(8, subTest.values.size)
 
-        Assert.assertEquals(3, testInfo.risks.size)
+        Assert.assertEquals(3, subTest.risks.size)
 
         assertRisk(testInfo, 50.0, HIGH)
 
@@ -223,10 +188,11 @@ class RiskIndicatorTest {
     fun ironRiskIndicator() {
 
         val testInfo = getTestInfo(IRON_ID)!!
+        val subTest = testInfo.subTest()
 
-        Assert.assertEquals(8, testInfo.values.size)
+        Assert.assertEquals(8, subTest.values.size)
 
-        Assert.assertEquals(3, testInfo.risks.size)
+        Assert.assertEquals(3, subTest.risks.size)
 
         assertRisk(testInfo, 0.30, HIGH)
 
@@ -253,10 +219,11 @@ class RiskIndicatorTest {
     fun phosphateRiskIndicator() {
 
         val testInfo = getTestInfo(PHOSPHATE_ID)!!
+        val subTest = testInfo.subTest()
 
-        Assert.assertEquals(8, testInfo.values.size)
+        Assert.assertEquals(8, subTest.values.size)
 
-        Assert.assertEquals(2, testInfo.risks.size)
+        Assert.assertEquals(2, subTest.risks.size)
 
         assertRisk(testInfo, 0.31, HIGH)
 
@@ -283,10 +250,11 @@ class RiskIndicatorTest {
     fun potassiumSoilRiskIndicator() {
 
         val testInfo = getTestInfo(POTASSIUM_SOIL_ID)!!
+        val subTest = testInfo.subTest()
 
-        Assert.assertEquals(8, testInfo.values.size)
+        Assert.assertEquals(8, subTest.values.size)
 
-        Assert.assertEquals(3, testInfo.risks.size)
+        Assert.assertEquals(3, subTest.risks.size)
 
         assertRisk(testInfo, 135.0, HIGH)
 
@@ -317,10 +285,11 @@ class RiskIndicatorTest {
     fun nitrogenSoilRiskIndicator() {
 
         val testInfo = getTestInfo(NITROGEN_SOIL_ID)!!
+        val subTest = testInfo.subTest()
 
-        Assert.assertEquals(10, testInfo.values.size)
+        Assert.assertEquals(10, subTest.values.size)
 
-        Assert.assertEquals(3, testInfo.risks.size)
+        Assert.assertEquals(3, subTest.risks.size)
 
         assertRisk(testInfo, 190.0, HIGH)
 
@@ -351,10 +320,11 @@ class RiskIndicatorTest {
     fun phosphorousSoilRiskIndicator() {
 
         val testInfo = getTestInfo(PHOSPHOROUS_SOIL_ID)!!
+        val subTest = testInfo.subTest()
 
-        Assert.assertEquals(10, testInfo.values.size)
+        Assert.assertEquals(10, subTest.values.size)
 
-        Assert.assertEquals(3, testInfo.risks.size)
+        Assert.assertEquals(3, subTest.risks.size)
 
         assertRisk(testInfo, 30.0, HIGH)
 
@@ -385,10 +355,11 @@ class RiskIndicatorTest {
     fun organicCarbonRiskIndicator() {
 
         val testInfo = getTestInfo(ORGANIC_CARBON_ID)!!
+        val subTest = testInfo.subTest()
 
-        Assert.assertEquals(8, testInfo.values.size)
+        Assert.assertEquals(8, subTest.values.size)
 
-        Assert.assertEquals(3, testInfo.risks.size)
+        Assert.assertEquals(3, subTest.risks.size)
 
         assertRisk(testInfo, 0.0, LOW)
 
@@ -416,95 +387,96 @@ class RiskIndicatorTest {
     }
 
     private fun assertRisk(testInfo: TestInfo, result: Double, risk: RiskLevel) {
-        testInfo.resultInfo.result = result
+        val subTest = testInfo.subTest()
+        subTest.resultInfo.result = result
         when (risk) {
             LOW -> {
-                when (testInfo.riskType) {
+                when (subTest.riskType) {
                     RiskType.QUANTITY -> {
                         Assert.assertEquals(
                             context.getString(R.string.low_quantity),
-                            testInfo.getRisk(context)
+                            subTest.getRisk(context)
                         )
                     }
                     RiskType.SAFETY -> {
                         Assert.assertEquals(
                             context.getString(R.string.low_safety),
-                            testInfo.getRisk(context)
+                            subTest.getRisk(context)
                         )
                     }
 
                     RiskType.ALKALINITY -> {
                         Assert.assertEquals(
                             context.getString(R.string.low_alkalinity),
-                            testInfo.getRisk(context)
+                            subTest.getRisk(context)
                         )
                     }
 
                     else -> {
                         Assert.assertEquals(
                             context.getString(R.string.low),
-                            testInfo.getRisk(context)
+                            subTest.getRisk(context)
                         )
                     }
                 }
             }
 
             MEDIUM -> {
-                when (testInfo.riskType) {
+                when (subTest.riskType) {
                     RiskType.QUANTITY -> {
                         Assert.assertEquals(
                             context.getString(R.string.medium_quantity),
-                            testInfo.getRisk(context)
+                            subTest.getRisk(context)
                         )
                     }
                     RiskType.SAFETY -> {
                         Assert.assertEquals(
                             context.getString(R.string.medium_safety),
-                            testInfo.getRisk(context)
+                            subTest.getRisk(context)
                         )
                     }
 
                     RiskType.ALKALINITY -> {
                         Assert.assertEquals(
                             context.getString(R.string.medium_alkalinity),
-                            testInfo.getRisk(context)
+                            subTest.getRisk(context)
                         )
                     }
 
                     else -> {
                         Assert.assertEquals(
                             context.getString(R.string.medium),
-                            testInfo.getRisk(context)
+                            subTest.getRisk(context)
                         )
                     }
                 }
             }
             HIGH -> {
-                when (testInfo.riskType) {
+                when (subTest.riskType) {
                     RiskType.QUANTITY -> {
                         Assert.assertEquals(
                             context.getString(R.string.high_quantity),
-                            testInfo.getRisk(context)
+                            subTest.getRisk(context)
                         )
                     }
                     RiskType.SAFETY -> {
                         Assert.assertEquals(
                             context.getString(R.string.high_safety),
-                            testInfo.getRisk(context)
+                            subTest.getRisk(context)
                         )
                     }
 
                     RiskType.ALKALINITY -> {
                         Assert.assertEquals(
                             context.getString(R.string.high_alkalinity),
-                            testInfo.getRisk(context)
+                            subTest.getRisk(context)
                         )
                     }
 
                     else -> {
                         Assert.assertEquals(
                             context.getString(R.string.high),
-                            testInfo.getRisk(context)
+                            subTest.getRisk(context)
                         )
                     }
                 }

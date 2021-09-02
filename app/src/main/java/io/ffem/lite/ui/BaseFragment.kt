@@ -22,7 +22,7 @@ abstract class BaseFragment : Fragment() {
     }
 
     private fun updateTheme() {
-        requireActivity().setTheme(R.style.AppTheme_Main)
+        requireActivity().setTheme(R.style.Theme_Main)
     }
 
     /**

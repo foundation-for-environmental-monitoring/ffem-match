@@ -65,12 +65,13 @@ class ResultFragment(externalRequest: Boolean) : Fragment() {
                 }
             }
 
-            if (model.test.get()!!.error != ErrorType.NO_ERROR || isExternalRequest) {
+            val subTest = model.test.get()!!.subTest()
+            if (subTest.error != ErrorType.NO_ERROR || isExternalRequest) {
                 b.nextButton.setText(R.string.close)
             }
 
             b.nextButton.setOnClickListener {
-                if (model.test.get()!!.error != ErrorType.NO_ERROR || isExternalRequest) {
+                if (subTest.error != ErrorType.NO_ERROR || isExternalRequest) {
                     (requireActivity() as TestActivity).submitResult()
                 } else {
                     (requireActivity() as TestActivity).pageNext()
@@ -123,55 +124,35 @@ class ResultFragment(externalRequest: Boolean) : Fragment() {
             b.extractImg.refreshDrawableState()
         }
 
-        if (isDiagnosticMode()) {
-            val gsExtractImagePath =
-                File(path + testInfo.fileName + File.separator + fileName + "_swatch_gs.jpg")
-            if (gsExtractImagePath.exists()) {
-                b.extractGsImg.setImageURI(Uri.fromFile(gsExtractImagePath))
-                b.extractGsImg.refreshDrawableState()
-            } else {
-                b.lytColorExtractsGs.visibility = GONE
-            }
-        } else {
-            b.lytColorExtractsGs.visibility = GONE
-        }
-
         val requestedTestId = PreferencesUtil.getString(context, TEST_ID_KEY, "")
-        if (testInfo.error == ErrorType.NO_ERROR && testInfo.resultInfo.result >= 0) {
+        val subTest = model.test.get()!!.subTest()
+        if (subTest.error == ErrorType.NO_ERROR && subTest.resultInfo.result >= 0) {
             b.sampleTypeText.text = testInfo.sampleType.toLocalString()
             b.nameTxt.text = testInfo.name!!.toLocalString()
             b.name2Txt.text = ""
-            b.resultTxt.text = testInfo.getResultString(requireContext())
+            b.resultTxt.text = subTest.getResultString(requireContext())
 
             if (isDiagnosticMode()) {
-                val grayscaleResult = testInfo.getResultGrayscaleString()
-                b.grayscaleResultTxt.text = grayscaleResult
-                if (grayscaleResult.isNotEmpty()) {
-                    b.unit2Txt.text = testInfo.unit
-                    b.grayscaleLyt.visibility = VISIBLE
-                } else {
-                    b.grayscaleLyt.visibility = GONE
-                }
+                b.errorMarginTxt.text = String.format("%.2f", subTest.getMarginOfError())
             } else {
-                b.grayscaleLyt.visibility = GONE
+                b.marginLayout.visibility = GONE
             }
 
-            b.unitTxt.text = testInfo.unit
-            b.valueTxt.text = testInfo.getRisk(requireContext())
+            b.unitTxt.text = subTest.unit
+            b.valueTxt.text = subTest.getRisk(requireContext())
             when {
-                testInfo.getRiskType() == RiskLevel.HIGH -> {
+                subTest.getRiskType() == RiskLevel.HIGH -> {
                     b.valueTxt.setTextColor(resources.getColor(R.color.high_risk, null))
                 }
-                testInfo.getRiskType() == RiskLevel.MEDIUM -> {
+                subTest.getRiskType() == RiskLevel.MEDIUM -> {
                     b.valueTxt.setTextColor(resources.getColor(R.color.medium_risk, null))
                 }
-                testInfo.getRiskType() == RiskLevel.LOW -> {
+                subTest.getRiskType() == RiskLevel.LOW -> {
                     b.valueTxt.setTextColor(resources.getColor(R.color.low_risk, null))
                 }
             }
-            b.errorMarginTxt.text = String.format("%.2f", testInfo.getMarginOfError())
-            if (testInfo.resultInfo.luminosity > -1) {
-                b.luminosityTxt.text = testInfo.resultInfo.luminosity.toString()
+            if (subTest.resultInfo.luminosity > -1) {
+                b.luminosityTxt.text = subTest.resultInfo.luminosity.toString()
             } else {
                 b.luminosityLyt.visibility = GONE
             }
@@ -199,8 +180,7 @@ class ResultFragment(externalRequest: Boolean) : Fragment() {
                 b.name2Txt.text = testInfo.name!!.toLocalString()
             }
 
-            b.errorTxt.text = testInfo.error.toLocalString(requireContext())
-            b.errorMessageLyt.visibility = VISIBLE
+            b.errorTxt.text = subTest.error.toLocalString(requireContext())
             b.resultLyt.visibility = GONE
             b.resultDetailsLyt.visibility = GONE
             if (!extractImagePath.exists()) {

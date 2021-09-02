@@ -1,5 +1,6 @@
 package io.ffem.lite.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
@@ -7,10 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.TextView
-import androidx.core.content.ContextCompat
+import androidx.annotation.AttrRes
+import androidx.annotation.ColorInt
 import androidx.fragment.app.DialogFragment
-import io.ffem.lite.R
 import io.ffem.lite.databinding.FragmentNoticesDialogBinding
+
 
 class NoticesDialogFragment : DialogFragment() {
     private var _binding: FragmentNoticesDialogBinding? = null
@@ -45,15 +47,22 @@ class NoticesDialogFragment : DialogFragment() {
                 val tv = vg.getChildAt(i) as TextView
                 if (tv.isClickable) {
                     tv.setLinkTextColor(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            R.color.colorAccent
-                        )
+                        requireContext().getColorFromAttr(android.R.attr.textColorSecondary)
                     )
                     tv.movementMethod = LinkMovementMethod.getInstance()
                 }
             }
         }
+    }
+
+    @ColorInt
+    fun Context.getColorFromAttr(
+        @AttrRes attrColor: Int
+    ): Int {
+        val typedArray = theme.obtainStyledAttributes(intArrayOf(attrColor))
+        val textColor = typedArray.getColor(0, 0)
+        typedArray.recycle()
+        return textColor
     }
 
     override fun onResume() {

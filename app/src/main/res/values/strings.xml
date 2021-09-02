@@ -1,6 +1,4 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="soil">Soil</string>
-    <string name="water">Water</string>
     <string name="app_slogan">Water Quality System</string>
     <string name="soil">Soil</string>
     <string name="water">Water</string>
@@ -34,7 +32,7 @@
     <string name="analyzed_image">Analyzed image</string>
     <string name="disable_diagnostics">Disable diagnostics</string>
     <string name="settings_not_clickable">Settings not clickable</string>
-    <string name="color_card_not_found">Scanning…</string>
+    <string name="scanning">Scanning…</string>
     <string name="capture_photo">Capture photo</string>
     <string name="invalid_image">Invalid image</string>
     <string name="result">Result</string>

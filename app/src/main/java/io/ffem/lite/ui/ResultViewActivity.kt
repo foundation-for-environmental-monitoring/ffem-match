@@ -22,15 +22,16 @@ class ResultViewActivity : BaseActivity() {
 
         val testId = intent.getStringExtra(RESULT_ID)!!
         val db = AppDatabase.getDatabase(baseContext)
-        val result = db.resultDao().getResult(testId)!!
-        val testInfo = App.getTestInfo(result.uuid)
-        testInfo!!.error = result.error
-        testInfo.fileName = result.id
-        testInfo.resultInfo = ResultInfo(result.value, result.luminosity)
-        testInfo.resultInfoGrayscale = ResultInfo(result.valueGrayscale)
-        testInfo.setMarginOfError(result.marginOfError)
+        val testResult = db.resultDao().getResult(testId)!!
+        val testInfo = App.getTestInfo(testResult.uuid)
+        val result = testInfo!!.subTest()
+        result.error = testResult.error
+        testInfo.fileName = testResult.id
+        result.resultInfo = ResultInfo(testResult.value)
+        result.resultInfo.luminosity = testResult.luminosity
+        result.setMarginOfError(testResult.marginOfError)
         model.setTest(testInfo)
-        model.form = result
+        model.form = testResult
 
         supportFragmentManager
             .beginTransaction()

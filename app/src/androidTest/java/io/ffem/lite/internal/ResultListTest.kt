@@ -29,7 +29,6 @@ import org.hamcrest.Matcher
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.TypeSafeMatcher
-import org.hamcrest.core.IsInstanceOf
 import org.junit.*
 import org.junit.runner.RunWith
 import java.io.File
@@ -199,14 +198,8 @@ class ResultListTest {
         )
         imageView.check(matches(isDisplayed()))
 
-        val textView4 = onView(
-            allOf(
-                withId(R.id.error_margin_txt), withText("0.25"),
-                withParent(withParent(IsInstanceOf.instanceOf(android.widget.LinearLayout::class.java))),
-                isDisplayed()
-            )
-        )
-        textView4.check(matches(withText("0.25")))
+        onView(withId(R.id.error_margin_txt))
+            .check(matches(withEffectiveVisibility(Visibility.GONE)))
 
         onView(
             allOf(

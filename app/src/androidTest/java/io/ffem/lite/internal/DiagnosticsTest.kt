@@ -15,15 +15,12 @@ import androidx.test.rule.GrantPermissionRule
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.common.*
-import io.ffem.lite.common.TestHelper.enterDiagnosticMode
-import io.ffem.lite.common.TestHelper.leaveDiagnosticMode
 import io.ffem.lite.common.TestHelper.sleep
+import io.ffem.lite.common.TestHelper.startDiagnosticMode
 import io.ffem.lite.common.TestUtil.childAtPosition
-import io.ffem.lite.preference.isDiagnosticMode
 import io.ffem.lite.ui.ResultListActivity
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.allOf
-import org.hamcrest.core.IsInstanceOf
 import org.junit.*
 import org.junit.runner.RunWith
 import java.io.File
@@ -174,21 +171,9 @@ class DiagnosticsTest {
             )
         ).check(matches(withText(residualChlorine.name)))
 
-        val textView2 = onView(
-            allOf(
-                withId(R.id.result_txt), withText("1.99"),
-                isDisplayed()
-            )
-        )
-        textView2.check(matches(withText("1.99")))
+        onView(allOf(withId(R.id.result_txt))).check(matches(withText("1.99")))
 
-        val textView3 = onView(
-            allOf(
-                withId(R.id.unit_txt), withText("mg/l"),
-                isDisplayed()
-            )
-        )
-        textView3.check(matches(withText("mg/l")))
+        onView(allOf(withId(R.id.unit_txt))).check(matches(withText("mg/l")))
 
         val textView4 = onView(
             allOf(
@@ -198,35 +183,14 @@ class DiagnosticsTest {
         )
         textView4.check(matches(withText(R.string.high_quantity)))
 
-        val textView5 = onView(
-            allOf(
-                withText(R.string.margin_of_error),
-                childAtPosition(
-                    childAtPosition(
-                        IsInstanceOf.instanceOf(android.widget.LinearLayout::class.java),
-                        3
-                    ),
-                    0
-                ),
-                isDisplayed()
-            )
-        )
-        textView5.check(matches(withText(R.string.margin_of_error)))
+        onView(allOf(withText(R.string.margin_of_error), isDisplayed()))
 
-        val textView6 = onView(
+        onView(
             allOf(
                 withId(R.id.error_margin_txt),
-                childAtPosition(
-                    childAtPosition(
-                        IsInstanceOf.instanceOf(android.widget.LinearLayout::class.java),
-                        3
-                    ),
-                    1
-                ),
                 isDisplayed()
             )
-        )
-        textView6.check(matches(TestUtil.checkResult(testDataList[0]!!, 0.25)))
+        ).check(matches(TestUtil.checkResult(testDataList[0]!!, 0.25)))
 
         onView(withText(R.string.next)).perform(click())
     }
@@ -257,53 +221,3 @@ class DiagnosticsTest {
     }
 }
 
-private fun startDiagnosticMode() {
-    if (isDiagnosticMode()) {
-        sleep(400)
-
-        val actionMenuItemView = onView(
-            allOf(
-                withId(R.id.action_settings), withContentDescription(R.string.settings),
-                childAtPosition(
-                    childAtPosition(
-                        withId(R.id.toolbar),
-                        1
-                    ),
-                    0
-                ),
-                isDisplayed()
-            )
-        )
-        actionMenuItemView.perform(click())
-
-        sleep(400)
-
-        onView(withText(R.string.about)).perform(click())
-
-        sleep(400)
-
-        leaveDiagnosticMode()
-    } else {
-        val actionMenuItemView = onView(
-            allOf(
-                withId(R.id.action_settings), withContentDescription(R.string.settings),
-                childAtPosition(
-                    childAtPosition(
-                        withId(R.id.toolbar),
-                        1
-                    ),
-                    0
-                ),
-                isDisplayed()
-            )
-        )
-        actionMenuItemView.perform(click())
-    }
-
-    sleep(500)
-
-    onView(withText(R.string.about)).perform(click())
-    sleep(500)
-
-    enterDiagnosticMode()
-}

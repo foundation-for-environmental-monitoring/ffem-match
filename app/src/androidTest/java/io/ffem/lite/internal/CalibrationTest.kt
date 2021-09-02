@@ -100,12 +100,8 @@ class CalibrationTest {
         onView(allOf(withId(R.id.unit_txt), withText("mg/l")))
             .check(matches(isDisplayed()))
 
-        val marginOfErrorView = onView(withId(R.id.error_margin_txt))
-        marginOfErrorView.check(
-            matches(
-                TestUtil.checkMarginOfError(testData)
-            )
-        )
+        onView(withId(R.id.error_margin_txt))
+            .check(matches(withEffectiveVisibility(Visibility.GONE)))
 
         onView(
             withText(
@@ -226,12 +222,8 @@ class CalibrationTest {
         onView(allOf(withId(R.id.unit_txt), withText("mg/l")))
             .check(matches(isDisplayed()))
 
-        val marginOfErrorView2 = onView(withId(R.id.error_margin_txt))
-        marginOfErrorView2.check(
-            matches(
-                TestUtil.checkMarginOfError(testData)
-            )
-        )
+        onView(withId(R.id.error_margin_txt))
+            .check(matches(withEffectiveVisibility(Visibility.GONE)))
 
         onView(
             withText(

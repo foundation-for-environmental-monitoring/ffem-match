@@ -28,8 +28,9 @@ class CalibrationViewAdapter internal constructor(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.calibrationValue = testInfo.values[position]
-        val colors: List<CalibrationValue> = testInfo.values
+        val subTest = testInfo.subTest()
+        holder.calibrationValue = subTest.values[position]
+        val colors: List<CalibrationValue> = subTest.values
 
         if (colors[position].value >= 0) {
             val format = "%." + "2" + "f"
@@ -46,17 +47,17 @@ class CalibrationViewAdapter internal constructor(
             val color = colors[position].color
             holder.mIdView.background = ColorDrawable(color)
             if (colors[position].value >= 0) {
-                holder.textUnit.text = testInfo.unit ?: ""
+                holder.textUnit.text = subTest.unit ?: ""
             }
         }
         holder.mView.setOnClickListener {
-            testInfo.resultInfo.calibratedValue = holder.calibrationValue!!
+            testInfo.subTest().resultInfo.calibratedValue = holder.calibrationValue!!
             mListener?.onCalibrationSelected(holder.calibrationValue!!)
         }
     }
 
     override fun getItemCount(): Int {
-        return testInfo.values.size / 2
+        return testInfo.subTest().values.size / 2
     }
 
     class ViewHolder internal constructor(val mView: View) : RecyclerView.ViewHolder(mView) {

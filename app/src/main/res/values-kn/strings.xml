@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="soil">ಮಣ್ಣು</string>
-    <string name="water">ನೀರು</string>
     <string name="app_slogan">ನೀರಿನ ಗುಣಮಟ್ಟದ ವ್ಯವಸ್ಥೆ</string>
     <string name="soil">ಮಣ್ಣು</string>
     <string name="water">ನೀರು</string>
@@ -27,7 +25,7 @@
     <string name="analyzed_image">ವಿಶ್ಲೇಷಿಸಿದ ಚಿತ್ರ</string>
     <string name="disable_diagnostics">ರೋಗನಿರ್ಣಯವನ್ನು ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಿ</string>
     <string name="settings_not_clickable">ಸೆಟ್ಟಿಂಗ್‌ಗಳು ಕ್ಲಿಕ್ ಮಾಡಲಾಗುವುದಿಲ್ಲ</string>
-    <string name="color_card_not_found">ಬಾರ್‌ಕೋಡ್ ಕಂಡುಬಂದಿಲ್ಲ. ಬೆಳಕನ್ನು ಪರಿಶೀಲಿಸಿ</string>
+    <string name="scanning">ಸ್ಕ್ಯಾನ್ ಮಾಡಲಾಗುತ್ತಿದೆ…</string>
     <string name="capture_photo">ಫೋಟೋ ಸೆರೆಹಿಡಿಯಿರಿ</string>
     <string name="invalid_image">ಅಮಾನ್ಯ ಚಿತ್ರ</string>
     <string name="result">ಫಲಿತಾಂಶ</string>

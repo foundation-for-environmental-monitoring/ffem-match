@@ -69,9 +69,10 @@ class CalibrationResultFragment : Fragment() {
         toolbar.setTitle(R.string.confirm_calibration)
 
         binding.submitBtn.setOnClickListener {
-            if (model.test.get()!!.error == ErrorType.NO_ERROR) {
-                val result = testInfo.resultInfo
-                val calibratedValue = testInfo.calibratedResultInfo.calibratedValue
+            val subTest = testInfo.subTest()
+            if (subTest.error == ErrorType.NO_ERROR) {
+                val result = subTest.resultInfo
+                val calibratedValue = subTest.calibratedResult.calibratedValue
                 for (s in result.swatches!!) {
                     if (s.value == calibratedValue.value) {
                         result.calibratedValue.color = s.color
@@ -84,13 +85,14 @@ class CalibrationResultFragment : Fragment() {
                     db.resultDao().insertCalibration(
                         Calibration(
                             testInfo.uuid!!,
-                            testInfo.calibratedResultInfo.calibratedValue.value,
+                            subTest.calibratedResult.calibratedValue.value,
+                            result.calibratedValue.color,
                             Color.red(result.calibratedValue.color) - Color.red(result.sampleColor),
                             Color.green(result.calibratedValue.color) - Color.green(result.sampleColor),
                             Color.blue(result.calibratedValue.color) - Color.blue(result.sampleColor)
                         )
                     )
-                    requireContext().toast(getString(R.string.calibration_succeeded))
+                    requireContext().toast(testInfo.name + " calibrated successfully")
                 } finally {
                     db.close()
                 }
@@ -130,22 +132,23 @@ class CalibrationResultFragment : Fragment() {
             binding.extractImg.refreshDrawableState()
         }
 
-        if (testInfo.error < ErrorType.CALIBRATION_ERROR) {
-            val calibrationValue = testInfo.calibratedResultInfo.calibratedValue.value
+        val subTest = testInfo.subTest()
+        if (subTest.error < ErrorType.CALIBRATION_ERROR) {
+            val calibrationValue = subTest.calibratedResult.calibratedValue.value
             binding.nameTxt.text = testInfo.name!!.toLocalString()
             binding.name2Txt.text = ""
             binding.valueTxt.text = calibrationValue.toString()
             binding.errorMessageLyt.visibility = GONE
             binding.resultLyt.visibility = VISIBLE
 
-            for (swatch in testInfo.resultInfo.swatches!!) {
+            for (swatch in subTest.resultInfo.swatches!!) {
                 if (swatch.value == calibrationValue) {
                     binding.btnCardColor.setBackgroundColor(swatch.color)
                     break
                 }
             }
 
-            binding.btnCalibratedColor.setBackgroundColor(testInfo.resultInfo.sampleColor)
+            binding.btnCalibratedColor.setBackgroundColor(subTest.resultInfo.sampleColor)
             binding.submitBtn.setText(R.string.confirm)
 
         } else {
@@ -162,7 +165,7 @@ class CalibrationResultFragment : Fragment() {
                 binding.name2Txt.text = testInfo.name!!.toLocalString()
             }
 
-            binding.errorTxt.text = testInfo.error.toLocalString(requireContext())
+            binding.errorTxt.text = subTest.error.toLocalString(requireContext())
             binding.errorMessageLyt.visibility = VISIBLE
             binding.resultLyt.visibility = GONE
             if (!extractImagePath.exists()) {

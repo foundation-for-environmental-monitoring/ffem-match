@@ -27,7 +27,7 @@ import io.ffem.lite.app.App.Companion.getTestInfo
 import io.ffem.lite.camera.CameraFragment
 import io.ffem.lite.common.*
 import io.ffem.lite.data.AppDatabase
-import io.ffem.lite.data.Result
+import io.ffem.lite.data.RemoteResult
 import io.ffem.lite.data.TestResult
 import io.ffem.lite.databinding.ActivityTestBinding
 import io.ffem.lite.model.CalibrationValue
@@ -79,8 +79,9 @@ class TestActivity : BaseActivity(),
                     }
                 }
                 model.db = db
-                if (testInfo!!.error == ErrorType.BAD_LIGHTING ||
-                    testInfo!!.error == ErrorType.IMAGE_TILTED
+                val subTest = testInfo!!.subTest()
+                if (subTest.error == ErrorType.BAD_LIGHTING ||
+                    subTest.error == ErrorType.IMAGE_TILTED
                 ) {
                     b.viewPager.currentItem = pageIndex.result
                 } else {
@@ -157,14 +158,20 @@ class TestActivity : BaseActivity(),
     fun submitResult() {
         if (testInfo != null) {
             val resultIntent = Intent()
-            if (testInfo!!.getResult() >= 0) {
+            val subTest = testInfo!!.subTest()
+            if (subTest.getResult() >= 0) {
                 val db = AppDatabase.getDatabase(baseContext)
-                val form = db.resultDao().getResult(testInfo!!.fileName)!!
-                sendResultToCloudDatabase(testInfo!!, form)
-                resultIntent.putExtra(TEST_VALUE_KEY, testInfo!!.getResultString(this))
-                resultIntent.putExtra(testInfo!!.name + "_Result", testInfo!!.getResultString(this))
-                resultIntent.putExtra(testInfo!!.name + "_Risk", testInfo!!.getRiskEnglish(this))
-                resultIntent.putExtra("meta_device", Build.BRAND + ", " + Build.MODEL)
+                val form = db.resultDao().getResult(testInfo!!.fileName)
+                if (form != null) {
+                    sendResultToCloudDatabase(testInfo!!, form)
+                    resultIntent.putExtra(TEST_VALUE_KEY, subTest.getResultString(this))
+                    resultIntent.putExtra(
+                        testInfo!!.name + "_Result",
+                        subTest.getResultString(this)
+                    )
+                    resultIntent.putExtra(testInfo!!.name + "_Risk", subTest.getRiskEnglish(this))
+                    resultIntent.putExtra("meta_device", Build.BRAND + ", " + Build.MODEL)
+                }
             } else {
                 resultIntent.putExtra(TEST_VALUE_KEY, "")
             }
@@ -181,14 +188,15 @@ class TestActivity : BaseActivity(),
                 "result"
             }
             val ref = FirebaseDatabase.getInstance().getReference(path).push()
+            val subTest = testInfo.subTest()
             ref.setValue(
-                Result(
+                RemoteResult(
                     testInfo.uuid!!,
                     testInfo.name,
                     testInfo.sampleType,
-                    testInfo.getRiskEnglish(this),
-                    testInfo.getResultString(this),
-                    testInfo.unit,
+                    subTest.getRiskEnglish(this),
+                    subTest.getResultString(this),
+                    subTest.unit,
                     System.currentTimeMillis(),
                     form.source,
                     form.sourceType,
@@ -227,7 +235,8 @@ class TestActivity : BaseActivity(),
     }
 
     override fun onCalibrationSelected(calibrationValue: CalibrationValue) {
-        model.test.get()!!.calibratedResultInfo.calibratedValue = calibrationValue
+        val subTest = testInfo!!.subTest()
+        subTest.calibratedResult.calibratedValue = calibrationValue
         pageNext()
     }
 
@@ -240,7 +249,8 @@ class TestActivity : BaseActivity(),
             if (testInfo != null) {
                 val resultIntent = Intent()
                 val random = Random()
-                val maxValue = testInfo.values[testInfo.values.size / 2].value
+                val subTest = testInfo.subTest()
+                val maxValue = subTest.values[subTest.values.size / 2].value
 
                 val result = (round(random.nextDouble() * maxValue * 100) / 100.0).toString()
                 resultIntent.putExtra(TEST_VALUE_KEY, result)
@@ -302,7 +312,7 @@ class TestActivity : BaseActivity(),
                 if (testActivity.testInfo == null) {
                     4
                 } else {
-                    if (testActivity.testInfo?.error == ErrorType.NO_ERROR) {
+                    if (testActivity.testInfo!!.subTest().error == ErrorType.NO_ERROR) {
                         if (testActivity.isExternalRequest) {
                             4
                         } else {

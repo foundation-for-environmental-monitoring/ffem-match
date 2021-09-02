@@ -38,4 +38,7 @@
     <color name="diagnostic_option_background">#FFF0DC</color>
     <color name="bright_green">#1DEF60</color>
 
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+
 </resources>

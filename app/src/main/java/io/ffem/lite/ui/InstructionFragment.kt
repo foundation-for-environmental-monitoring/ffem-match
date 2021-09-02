@@ -57,7 +57,7 @@ class InstructionFragment : Fragment() {
         binding.exampleImg.setImageDrawable(
             ContextCompat.getDrawable(
                 requireContext(),
-                R.drawable.card_2_overlay
+                R.drawable.color_card_example
             )
         )
     }

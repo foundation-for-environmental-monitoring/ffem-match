@@ -38,26 +38,20 @@ object ImageColorUtil {
         bitmap: Bitmap? = null
     ) {
         if (testInfo != null && bitmap != null) {
-
+            val subTest = testInfo.subTest()
             try {
-                val extractedColors = extractColors(
-                    bitmap,
-                    testInfo.uuid!!,
-                    context
-                )
+                val (extractedColors, color) =
+                    extractColors(
+                        bitmap,
+                        testInfo,
+                        context
+                    )
 
-                Utilities.savePicture(
-                    context.applicationContext, testInfo.fileName,
-                    testInfo.name!!, Utilities.bitmapToBytes(bitmap),
-                    "_swatch"
-                )
+                subTest.resultInfo =
+                    analyzeColor(color, extractedColors, subTest.formula, subTest.maxValue)
 
-
-                testInfo.resultInfo =
-                    analyzeColor(extractedColors, testInfo.formula, testInfo.maxValue)
-                if (testInfo.resultInfo.result > -2) {
-
-                    if (testInfo.resultInfo.result > -1) {
+                if (subTest.resultInfo.result > -2) {
+                    if (subTest.resultInfo.result > -1) {
                         var calibration: Calibration? = null
                         if (!AppPreferences.isCalibration()) {
                             val db = AppDatabase.getDatabase(context)
@@ -68,38 +62,38 @@ object ImageColorUtil {
                             }
                         }
 
+                        var sampleColor = color
                         // if calibrated then calculate also the result by adding the color differences
                         if (calibration != null) {
-                            extractedColors.sampleColor = Color.rgb(
+                            sampleColor = Color.rgb(
                                 min(
-                                    max(0, extractedColors.sampleColor.red + calibration.rDiff),
+                                    max(0, sampleColor.red + calibration.rDiff),
                                     255
                                 ),
                                 min(
-                                    max(0, extractedColors.sampleColor.green + calibration.gDiff),
+                                    max(0, sampleColor.green + calibration.gDiff),
                                     255
                                 ),
                                 min(
-                                    max(0, extractedColors.sampleColor.blue + calibration.bDiff),
+                                    max(0, sampleColor.blue + calibration.bDiff),
                                     255
                                 )
                             )
 
-                            testInfo.calibratedResultInfo =
-                                analyzeColor(
+                            subTest.calibratedResult = analyzeColor(
+                                sampleColor,
                                 extractedColors,
-                                testInfo.formula,
-                                testInfo.maxValue
-                                )
-
+                                subTest.formula,
+                                subTest.maxValue
+                            )
                         }
                     }
 
                     val resultImage = ImageUtil.createResultImage(
-                        testInfo.resultInfo,
-                        testInfo.calibratedResultInfo,
-                        testInfo.maxValue,
-                        testInfo.formula,
+                        subTest.resultInfo,
+                        subTest.calibratedResult,
+                        subTest.maxValue,
+                        subTest.formula,
                         500
                     )
 
@@ -110,26 +104,25 @@ object ImageColorUtil {
                     )
                 }
             } catch (e: Exception) {
-                Utilities.savePicture(
-                    context.applicationContext, testInfo.fileName,
-                    testInfo.name!!, Utilities.bitmapToBytes(bitmap),
-                    "_swatch"
-                )
-                testInfo.error = CALIBRATION_ERROR
+//                Utilities.savePicture(
+//                    context.applicationContext, testInfo.fileName,
+//                    testInfo.name!!, Utilities.bitmapToBytes(bitmap),
+//                    "_swatch"
+//                )
+                subTest.error = CALIBRATION_ERROR
                 return
             }
 
-            if (testInfo.resultInfo.result == -1.0) {
-                testInfo.error = NO_MATCH
+            if (subTest.resultInfo.result == -1.0) {
+                subTest.error = NO_MATCH
                 return
             } else {
-                testInfo.error = error
+                subTest.error = error
             }
 
             val db = AppDatabase.getDatabase(context)
             try {
                 if (db.resultDao().getResult(testInfo.fileName) == null) {
-
                     if (!AppPreferences.isCalibration()) {
                         db.resultDao().insert(
                             TestResult(
@@ -140,8 +133,7 @@ object ImageColorUtil {
                                 testInfo.sampleType,
                                 Date().time,
                                 -1.0,
-                                testInfo.maxValue,
-                                -1.0,
+                                subTest.maxValue,
                                 0.0,
                                 error = NO_ERROR
                             )
@@ -155,14 +147,15 @@ object ImageColorUtil {
                 }
 
                 if (AppPreferences.isCalibration()) {
-                    testInfo.resultInfo.calibration = Calibration(
+                    subTest.resultInfo.calibration = Calibration(
                         testInfo.uuid!!,
                         -1.0,
-                        Color.red(testInfo.resultInfo.calibratedValue.color) - Color.red(testInfo.resultInfo.sampleColor),
-                        Color.green(testInfo.resultInfo.calibratedValue.color) - Color.green(
-                            testInfo.resultInfo.sampleColor
+                        subTest.resultInfo.calibratedValue.color,
+                        Color.red(subTest.resultInfo.calibratedValue.color) - Color.red(subTest.resultInfo.sampleColor),
+                        Color.green(subTest.resultInfo.calibratedValue.color) - Color.green(
+                            subTest.resultInfo.sampleColor
                         ),
-                        Color.blue(testInfo.resultInfo.calibratedValue.color) - Color.blue(testInfo.resultInfo.sampleColor)
+                        Color.blue(subTest.resultInfo.calibratedValue.color) - Color.blue(subTest.resultInfo.sampleColor)
                     )
                 } else {
                     db.resultDao().updateResult(
@@ -170,10 +163,9 @@ object ImageColorUtil {
                         testInfo.uuid!!,
                         testInfo.name!!,
                         testInfo.sampleType,
-                        testInfo.getResult(),
-                        testInfo.resultInfoGrayscale.result,
-                        testInfo.getMarginOfError(),
-                        testInfo.error.ordinal
+                        subTest.getResult(),
+                        subTest.getMarginOfError(),
+                        subTest.error.ordinal
                     )
                 }
             } finally {
@@ -184,9 +176,9 @@ object ImageColorUtil {
 
     private fun extractColors(
         bitmap: Bitmap,
-        barcodeValue: String,
+        testInfo: TestInfo,
         context: Context
-    ): ColorInfo {
+    ): Pair<ArrayList<ColorInfo>, Int> {
 
         val greenPaint = Paint()
         greenPaint.style = Style.STROKE
@@ -198,7 +190,7 @@ object ImageColorUtil {
         blackPaint.color = Color.BLACK
         blackPaint.strokeWidth = 1f
 
-        val parameterValues: List<CalibrationValue> = getParameterValues(barcodeValue)
+        val parameterValues: List<CalibrationValue> = getParameterValues(testInfo.uuid!!)
 
         val intervals = parameterValues.size / 2
         val squareLeft = bitmap.width / intervals
@@ -263,11 +255,16 @@ object ImageColorUtil {
 
         val cuvetteColor = getAverageColor(pixels, true)
 
-        val swatches: ArrayList<Swatch> = ArrayList()
-        val colorInfo = ColorInfo(cuvetteColor, swatches)
+        val swatches: ArrayList<ColorInfo> = ArrayList()
         val canvas = Canvas(bitmap)
         canvas.drawRect(rectangle, greenPaint)
         canvas.drawRect(rectangle, blackPaint)
+
+        Utilities.savePicture(
+            context.applicationContext, testInfo.fileName,
+            testInfo.name!!, Utilities.bitmapToBytes(bitmap),
+            "_swatch"
+        )
 
         for (cal in parameterValues) {
             if (swatches.size >= parameterValues.size / 2) {
@@ -275,7 +272,8 @@ object ImageColorUtil {
             }
             swatches.add(getCalibrationColor(cal.value, parameterValues))
         }
-        return colorInfo
+
+        return Pair(swatches, cuvetteColor)
     }
 
     private fun getMarkers(
@@ -290,7 +288,7 @@ object ImageColorUtil {
     private fun getCalibrationColor(
         pointValue: Double,
         calibration: List<CalibrationValue>
-    ): Swatch {
+    ): ColorInfo {
         var red = 0
         var green = 0
         var blue = 0
@@ -330,7 +328,7 @@ object ImageColorUtil {
             throw Exception()
         }
 
-        return Swatch(pointValue, color, distance / filteredCalibrations.size)
+        return ColorInfo(pointValue, color, distance / filteredCalibrations.size)
     }
 
     /**
@@ -369,7 +367,7 @@ object ImageColorUtil {
      * @param swatches The test object
      * @return The list of generated color swatches
      */
-    private fun generateGradient(swatches: ArrayList<Swatch>): ArrayList<Swatch> {
+    private fun generateGradient(swatches: ArrayList<ColorInfo>): ArrayList<Swatch> {
 
         val list = ArrayList<Swatch>()
 
@@ -416,7 +414,7 @@ object ImageColorUtil {
         return list
     }
 
-    private fun predictNextColor(swatch1: Swatch, swatch2: Swatch): Swatch {
+    private fun predictNextColor(swatch1: ColorInfo, swatch2: ColorInfo): ColorInfo {
 
         val valueDiff = swatch2.value - swatch1.value
 
@@ -426,7 +424,7 @@ object ImageColorUtil {
         val g = getNextLinePoint(Color.green(color1), Color.green(color2))
         val b = getNextLinePoint(Color.blue(color1), Color.blue(color2))
 
-        return Swatch(swatch2.value + valueDiff, Color.rgb(r, g, b))
+        return ColorInfo(swatch2.value + valueDiff, Color.rgb(r, g, b))
     }
 
     private fun getNextLinePoint(y: Int, y2: Int): Int {
@@ -436,30 +434,27 @@ object ImageColorUtil {
 
     /**
      * Analyzes the color and returns a result info.
-     *
-     * @param colorInfo The color to compare
      */
     @Suppress("SameParameterValue")
-    private fun analyzeColor(
-        colorInfo: ColorInfo,
-        formula: String,
+    fun analyzeColor(
+        sampleColor: Int, swatches: ArrayList<ColorInfo>, formula: String?,
         maxValue: Double
     ): ResultInfo {
 
-        val maxRange = colorInfo.swatches[colorInfo.swatches.size - 1].value
-        val defaultSwatchSize = colorInfo.swatches.size
-        val gradientList = generateGradient(colorInfo.swatches)
+        val maxRange = swatches[swatches.size - 1].value
+        val defaultSwatchSize = swatches.size
+        val gradientList = generateGradient(swatches)
 
         //Find the color within the generated gradient that matches the sampleColor
         val colorCompareInfo: ColorCompareInfo =
-            getNearestColorFromSwatches(colorInfo.sampleColor, gradientList)
+            getNearestColorFromSwatches(sampleColor, gradientList)
 
         //set the result
         val resultInfo = ResultInfo(
-            sampleColor = colorInfo.sampleColor,
+            sampleColor = sampleColor,
             matchedSwatch = colorCompareInfo.matchedColor,
             distance = colorCompareInfo.distance,
-            swatches = colorInfo.swatches
+            swatches = swatches
         )
 
         if (colorCompareInfo.result > -1) {
@@ -474,8 +469,8 @@ object ImageColorUtil {
 
         if (resultInfo.result > maxRange - (maxRange * 0.1)) {
             var lastSwatchPosition = 2
-            for (x in 2..colorInfo.swatches.size) {
-                if (colorInfo.swatches[x].value > resultInfo.result) {
+            for (x in 2..swatches.size) {
+                if (swatches[x].value > resultInfo.result) {
                     lastSwatchPosition = x
                     break
                 }
@@ -483,24 +478,20 @@ object ImageColorUtil {
 
             lastSwatchPosition = max(lastSwatchPosition, defaultSwatchSize)
 
-            for (x in colorInfo.swatches.size - 1 downTo lastSwatchPosition + 1) {
-                colorInfo.swatches.removeAt(x)
+            for (x in swatches.size - 1 downTo lastSwatchPosition + 1) {
+                swatches.removeAt(x)
             }
 
             resultInfo.result = maxRange
         } else {
-            for (x in colorInfo.swatches.size - 1 downTo 2) {
-                if (colorInfo.swatches.size <= defaultSwatchSize) {
+            for (x in swatches.size - 1 downTo 2) {
+                if (swatches.size <= defaultSwatchSize) {
                     break
                 }
-                if (colorInfo.swatches[x].value > maxRange) {
-                    colorInfo.swatches.removeAt(x)
+                if (swatches[x].value > maxRange) {
+                    swatches.removeAt(x)
                 }
             }
-        }
-        resultInfo.result = MathUtil.applyFormula(resultInfo.result, formula)
-        if (resultInfo.result > maxValue - (maxValue * 0.1)) {
-            resultInfo.result = maxValue
         }
 
         resultInfo.result = MathUtil.applyFormula(resultInfo.result, formula)
@@ -510,7 +501,7 @@ object ImageColorUtil {
 
         resultInfo.matchedPosition =
             (colorCompareInfo.matchedIndex.toFloat() * 100 /
-                    ((colorInfo.swatches.size - 1) * INTERPOLATION_COUNT)).toFloat()
+                    ((swatches.size - 1) * INTERPOLATION_COUNT)).toFloat()
 
         resultInfo.result = (round(resultInfo.result * 100) / 100.0)
 

@@ -2,6 +2,7 @@ package io.ffem.lite.app
 
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
@@ -29,7 +30,7 @@ class App : BaseApplication() {
             Timber.plant(Timber.DebugTree())
         }
 
-        app = this
+//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
     }
 
     companion object {
@@ -44,20 +45,20 @@ class App : BaseApplication() {
         lateinit var app: App
             private set // Singleton
 
-        /**
-         * Gets the app version.
-         *
-         * @return The version name and number
-         */
-        fun getVersionName(): String {
-            try {
-                val packageInfo = app.packageManager.getPackageInfo(app.packageName, 0)
-                return packageInfo.versionName
-            } catch (ignored: PackageManager.NameNotFoundException) {
-                // do nothing
-            }
-            return ""
-        }
+//        /**
+//         * Gets the app version.
+//         *
+//         * @return The version name and number
+//         */
+//        fun getVersionName(): String {
+//            try {
+//                val packageInfo = app.packageManager.getPackageInfo(app.packageName, 0)
+//                return packageInfo.versionName
+//            } catch (ignored: PackageManager.NameNotFoundException) {
+//                // do nothing
+//            }
+//            return ""
+//        }
 
         /**
          * Gets the app version.
@@ -89,7 +90,10 @@ class App : BaseApplication() {
                         String.format("%s (Build %s)", packageInfo.versionName, versionCode)
                     }
                     else -> {
-                        packageInfo.versionName
+                        String.format(
+                            "%s %s", context.getString(R.string.version),
+                            packageInfo.versionName
+                        )
                     }
                 }
             } catch (ignored: PackageManager.NameNotFoundException) {
@@ -117,52 +121,66 @@ class App : BaseApplication() {
 
         // Append a reversed list of calibration point values to the calibration values list
         // to represent the colors on the right side of color card
-        internal class CalibrationValuesDeserializer : JsonDeserializer<List<CalibrationValue>> {
+        internal class CalibrationValuesDeserializer :
+            JsonDeserializer<MutableList<CalibrationValue>> {
             override fun deserialize(
                 json: JsonElement?, typeOfT: Type?, context: JsonDeserializationContext?
-            ): List<CalibrationValue> {
+            ): MutableList<CalibrationValue> {
                 val values = ArrayList<CalibrationValue>()
                 json!!.asJsonArray.mapTo(values) {
-                    CalibrationValue(value = it.asJsonObject.get("value").asDouble)
+                    CalibrationValue(
+                        value = it.asJsonObject.get("value").asDouble,
+                        color = Color.TRANSPARENT
+                    )
                 }
-                values.addAll(values.reversed().map { CalibrationValue(value = it.value) })
+
+                values.addAll(values.reversed().map {
+                    CalibrationValue(
+                        value = it.value,
+                        color = Color.TRANSPARENT
+                    )
+                })
                 return values
             }
         }
 
-        fun getTestInfo(id: String): TestInfo? {
-//            if (!::testConfig.isInitialized) {
-            val input = app.resources.openRawResource(R.raw.tests)
-            val content = FileUtil.readTextFile(input)
-            testConfig = gson.fromJson(content, TestConfig::class.java)
-//            }
+        /**
+         * Adds the hyphen separators to the parameter id if not already included
+         */
+        private fun checkHyphens(str: String): String {
+            return if (!str.contains("-")) {
+                val stringBuilder = StringBuilder(str)
+                stringBuilder.insert(2, '-')
+                stringBuilder.insert(5, '-')
+                stringBuilder.toString()
+            } else {
+                str
+            }
+        }
 
-            for (test in testConfig.tests) {
-                if (test.uuid == id) {
-                    val newTest = test.copy()
-                    newTest.fileName = AppPreferences.getImageFilename()
-                    return newTest
+        fun getTestInfo(parameterId: String): TestInfo? {
+            if (parameterId.isNotEmpty()) {
+                val id = checkHyphens(parameterId.uppercase())
+
+                // The second character in the parameter id specifies the color card type
+                val input = app.resources.openRawResource(R.raw.tests)
+                val content = FileUtil.readTextFile(input)
+                testConfig = gson.fromJson(content, TestConfig::class.java)
+
+                for (test in testConfig.tests) {
+                    if (test.uuid?.uppercase() == id) {
+                        val newTest = test.copy()
+                        newTest.fileName = AppPreferences.getImageFilename()
+                        return newTest
+                    }
                 }
             }
             return null
         }
 
-        fun getCardColors(id: String): List<CalibrationValue> {
-//            if (!::testConfig.isInitialized) {
-            val input = app.resources.openRawResource(R.raw.tests)
-            val content = FileUtil.readTextFile(input)
-            testConfig = gson.fromJson(content, TestConfig::class.java)
-//            }
-
-            var calibration: List<CalibrationValue> = testConfig.tests[3].values
-            for (test in testConfig.tests) {
-                if (test.uuid == id) {
-                    calibration = test.values
-                    break
-                }
-            }
-
-            return calibration
+        fun getParameterValues(id: String): List<CalibrationValue> {
+            val test = getTestInfo(id)
+            return test?.subTest()?.values ?: emptyList()
         }
     }
 }
