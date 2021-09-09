@@ -338,7 +338,7 @@ class TestActivity : BaseActivity(),
                 }
                 pageIndex.result -> {
                     if (isCalibration()) {
-                        CalibrationItemFragment()
+                        CalibrationResultFragment()
                     } else {
                         ResultFragment(testActivity.isExternalRequest)
                     }
@@ -370,6 +370,15 @@ class TestActivity : BaseActivity(),
 
     override fun onConfirmImage(action: Int) {
         if (action == RESULT_OK) {
+            if (isCalibration()) {
+                val subTest = testInfo!!.subTest()
+                for (v in subTest.values) {
+                    if (v.calibrate) {
+                        subTest.calibratedResult.calibratedValue = CalibrationValue(value = v.value)
+                        break
+                    }
+                }
+            }
             b.viewPager.currentItem = pageIndex.result
         } else {
             val testPagerAdapter = TestPagerAdapter(this)

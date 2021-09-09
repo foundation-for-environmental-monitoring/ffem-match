@@ -5,7 +5,6 @@
       "sampleType": "water",
       "subtype": "card",
       "uuid": "WR-FM-F",
-      "calibration": 0,
       "results": [
         {
           "id": 1,
@@ -28,6 +27,7 @@
           "values": [
             {
               "value": 0,
+              "calibrate": true,
               "color": "#E91B75"
             },
             {
@@ -51,7 +51,6 @@
       "sampleType": "water",
       "subtype": "card",
       "uuid": "WR-FM-Cl",
-      "calibration": 0.2,
       "results": [
         {
           "id": 1,
@@ -74,7 +73,8 @@
           ],
           "values": [
             {
-              "value": 0.2
+              "value": 0.2,
+              "calibrate": true
             },
             {
               "value": 0.5
@@ -97,7 +97,6 @@
       "sampleType": "water",
       "subtype": "card",
       "uuid": "WR-FM-pH",
-      "calibration": 4,
       "results": [
         {
           "id": 1,
@@ -120,6 +119,7 @@
           "values": [
             {
               "value": 4,
+              "calibrate": true,
               "color": "#F27060"
             },
             {
@@ -155,7 +155,6 @@
       "sampleType": "water",
       "subtype": "card",
       "uuid": "WR-FM-NO3",
-      "calibration": 0,
       "results": [
         {
           "id": 1,
@@ -178,6 +177,7 @@
           "values": [
             {
               "value": 0,
+              "calibrate": true,
               "color": "#F2F1E9"
             },
             {
@@ -201,7 +201,6 @@
       "sampleType": "water",
       "subtype": "card",
       "uuid": "WR-FM-Fe",
-      "calibration": 0.5,
       "results": [
         {
           "id": 1,
@@ -229,6 +228,7 @@
             },
             {
               "value": 0.5,
+              "calibrate": true,
               "color": "#EEC7A1"
             },
             {
@@ -248,7 +248,6 @@
       "sampleType": "water",
       "subtype": "card",
       "uuid": "WR-FM-PO4",
-      "calibration": 0,
       "results": [
         {
           "id": 1,
@@ -268,6 +267,7 @@
           "values": [
             {
               "value": 0,
+              "calibrate": true,
               "color": "#FFFFFF"
             },
             {
@@ -291,7 +291,6 @@
       "sampleType": "water",
       "subtype": "card",
       "uuid": "WR-FM-K",
-      "calibration": 10,
       "results": [
         {
           "id": 1,
@@ -319,6 +318,7 @@
             },
             {
               "value": 10,
+              "calibrate": true,
               "color": "#56544D"
             },
             {
@@ -338,7 +338,6 @@
       "sampleType": "water",
       "subtype": "card",
       "uuid": "WR-FM-NH3",
-      "calibration": 0,
       "results": [
         {
           "id": 1,
@@ -362,6 +361,7 @@
           "values": [
             {
               "value": 0,
+              "calibrate": true,
               "color": "#E9E3C0"
             },
             {
@@ -393,7 +393,6 @@
       "sampleType": "water",
       "subtype": "card",
       "uuid": "WR-FM-NO2",
-      "calibration": 0.05,
       "results": [
         {
           "id": 1,
@@ -421,6 +420,7 @@
             },
             {
               "value": 0.05,
+              "calibrate": true,
               "color": "#F2D1DF"
             },
             {
@@ -444,7 +444,6 @@
       "sampleType": "soil",
       "subtype": "card",
       "uuid": "SR-FM-K",
-      "calibration": 10,
       "results": [
         {
           "id": 1,
@@ -472,6 +471,7 @@
             },
             {
               "value": 10,
+              "calibrate": true,
               "color": "#56544D"
             },
             {
@@ -491,7 +491,6 @@
       "sampleType": "soil",
       "subtype": "card",
       "uuid": "SR-FM-P",
-      "calibration": 2.5,
       "results": [
         {
           "id": 1,
@@ -519,6 +518,7 @@
             },
             {
               "value": 2.5,
+              "calibrate": true,
               "color": "#FFFABE"
             },
             {
@@ -542,7 +542,6 @@
       "sampleType": "soil",
       "subtype": "card",
       "uuid": "SR-FM-N",
-      "calibration": 0,
       "results": [
         {
           "id": 1,
@@ -566,6 +565,7 @@
           "values": [
             {
               "value": 0,
+              "calibrate": true,
               "color": "#E4E5DA"
             },
             {
@@ -593,7 +593,6 @@
       "sampleType": "soil",
       "subtype": "card",
       "uuid": "SR-FM-TOC",
-      "calibration": 0,
       "results": [
         {
           "id": 1,
@@ -616,6 +615,7 @@
           "values": [
             {
               "value": 0,
+              "calibrate": true,
               "color": "#FFFFFF"
             },
             {
@@ -639,7 +639,6 @@
       "sampleType": "soil",
       "subtype": "card",
       "uuid": "SR-FM-pH",
-      "calibration": 4,
       "results": [
         {
           "id": 1,
@@ -662,6 +661,7 @@
           "values": [
             {
               "value": 4,
+              "calibrate": true,
               "color": "#F27060"
             },
             {
@@ -697,7 +697,6 @@
       "sampleType": "compost",
       "subtype": "card",
       "uuid": "CR-FM-K",
-      "calibration": 10,
       "results": [
         {
           "id": 1,
@@ -711,6 +710,7 @@
             },
             {
               "value": 10,
+              "calibrate": true,
               "color": "#56544D"
             },
             {
@@ -730,7 +730,6 @@
       "sampleType": "compost",
       "subtype": "card",
       "uuid": "CR-FM-P",
-      "calibration": 2.5,
       "results": [
         {
           "id": 1,
@@ -744,6 +743,7 @@
             },
             {
               "value": 2.5,
+              "calibrate": true,
               "color": "#FFFABE"
             },
             {
@@ -767,7 +767,6 @@
       "sampleType": "compost",
       "subtype": "card",
       "uuid": "CR-FM-N",
-      "calibration": 0,
       "results": [
         {
           "id": 1,
@@ -777,6 +776,7 @@
           "values": [
             {
               "value": 0,
+              "calibrate": true,
               "color": "#E4E5DA"
             },
             {
@@ -804,7 +804,6 @@
       "sampleType": "compost",
       "subtype": "card",
       "uuid": "CR-FM-TOC",
-      "calibration": 0,
       "results": [
         {
           "id": 1,
@@ -814,6 +813,7 @@
           "values": [
             {
               "value": 0,
+              "calibrate": true,
               "color": "#FFFFFF"
             },
             {
