@@ -5,6 +5,7 @@
       "sampleType": "water",
       "subtype": "card",
       "uuid": "WR-FM-F",
+      "calibration": 0,
       "results": [
         {
           "id": 1,
@@ -50,6 +51,7 @@
       "sampleType": "water",
       "subtype": "card",
       "uuid": "WR-FM-Cl",
+      "calibration": 0.2,
       "results": [
         {
           "id": 1,
@@ -95,6 +97,7 @@
       "sampleType": "water",
       "subtype": "card",
       "uuid": "WR-FM-pH",
+      "calibration": 4,
       "results": [
         {
           "id": 1,
@@ -152,6 +155,7 @@
       "sampleType": "water",
       "subtype": "card",
       "uuid": "WR-FM-NO3",
+      "calibration": 0,
       "results": [
         {
           "id": 1,
@@ -197,6 +201,7 @@
       "sampleType": "water",
       "subtype": "card",
       "uuid": "WR-FM-Fe",
+      "calibration": 0.5,
       "results": [
         {
           "id": 1,
@@ -243,6 +248,7 @@
       "sampleType": "water",
       "subtype": "card",
       "uuid": "WR-FM-PO4",
+      "calibration": 0,
       "results": [
         {
           "id": 1,
@@ -285,6 +291,7 @@
       "sampleType": "water",
       "subtype": "card",
       "uuid": "WR-FM-K",
+      "calibration": 10,
       "results": [
         {
           "id": 1,
@@ -331,6 +338,7 @@
       "sampleType": "water",
       "subtype": "card",
       "uuid": "WR-FM-NH3",
+      "calibration": 0,
       "results": [
         {
           "id": 1,
@@ -385,6 +393,7 @@
       "sampleType": "water",
       "subtype": "card",
       "uuid": "WR-FM-NO2",
+      "calibration": 0.05,
       "results": [
         {
           "id": 1,
@@ -435,6 +444,7 @@
       "sampleType": "soil",
       "subtype": "card",
       "uuid": "SR-FM-K",
+      "calibration": 10,
       "results": [
         {
           "id": 1,
@@ -481,6 +491,7 @@
       "sampleType": "soil",
       "subtype": "card",
       "uuid": "SR-FM-P",
+      "calibration": 2.5,
       "results": [
         {
           "id": 1,
@@ -531,6 +542,7 @@
       "sampleType": "soil",
       "subtype": "card",
       "uuid": "SR-FM-N",
+      "calibration": 0,
       "results": [
         {
           "id": 1,
@@ -581,6 +593,7 @@
       "sampleType": "soil",
       "subtype": "card",
       "uuid": "SR-FM-TOC",
+      "calibration": 0,
       "results": [
         {
           "id": 1,
@@ -626,6 +639,7 @@
       "sampleType": "soil",
       "subtype": "card",
       "uuid": "SR-FM-pH",
+      "calibration": 4,
       "results": [
         {
           "id": 1,
@@ -683,6 +697,7 @@
       "sampleType": "compost",
       "subtype": "card",
       "uuid": "CR-FM-K",
+      "calibration": 10,
       "results": [
         {
           "id": 1,
@@ -715,6 +730,7 @@
       "sampleType": "compost",
       "subtype": "card",
       "uuid": "CR-FM-P",
+      "calibration": 2.5,
       "results": [
         {
           "id": 1,
@@ -751,6 +767,7 @@
       "sampleType": "compost",
       "subtype": "card",
       "uuid": "CR-FM-N",
+      "calibration": 0,
       "results": [
         {
           "id": 1,
@@ -787,6 +804,7 @@
       "sampleType": "compost",
       "subtype": "card",
       "uuid": "CR-FM-TOC",
+      "calibration": 0,
       "results": [
         {
           "id": 1,
