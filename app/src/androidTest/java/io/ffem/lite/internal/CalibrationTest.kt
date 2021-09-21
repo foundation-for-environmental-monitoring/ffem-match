@@ -185,10 +185,7 @@ class CalibrationTest {
 
         takeScreenshot(screenshotName)
 
-        onView(withText(R.string.select_calibration_point)).check(matches(isDisplayed()))
-        onView(withText("1.00")).perform(click())
-
-        onView(allOf(withId(R.id.value_txt), withText("1.0")))
+        onView(allOf(withId(R.id.value_txt), withText("0.2")))
             .check(matches(isDisplayed()))
 
         onView(withText(R.string.confirm)).perform(click())
@@ -227,7 +224,7 @@ class CalibrationTest {
 
         onView(
             withText(
-                testData.risk.toResourceId(
+                testData.calibratedRisk.toResourceId(
                     ApplicationProvider.getApplicationContext(), testData.testDetails.riskType
                 )
             )
@@ -314,10 +311,6 @@ class CalibrationTest {
             .check(matches(isDisplayed()))
 
         takeScreenshot(screenshotName)
-
-        onView(withText("6.00")).perform(click())
-
-        sleep(1000)
 
         onView(withText(R.string.confirm)).perform(click())
 

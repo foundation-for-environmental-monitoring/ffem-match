@@ -130,14 +130,16 @@ class App : BaseApplication() {
                 json!!.asJsonArray.mapTo(values) {
                     CalibrationValue(
                         value = it.asJsonObject.get("value").asDouble,
-                        color = Color.TRANSPARENT
+                        color = Color.TRANSPARENT,
+                        calibrate = it.asJsonObject.get("calibrate")?.asBoolean ?: false
                     )
                 }
 
                 values.addAll(values.reversed().map {
                     CalibrationValue(
                         value = it.value,
-                        color = Color.TRANSPARENT
+                        color = Color.TRANSPARENT,
+                        calibrate = it.calibrate
                     )
                 })
                 return values

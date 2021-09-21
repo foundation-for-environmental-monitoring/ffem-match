@@ -40,7 +40,10 @@ val invalidTest =
     TestDetails(R.string.invalid_card_test, R.string.water, "WR-FM-Err", R.string.water_tests_2)
 
 val testDataList = mutableMapOf(
-    0 to TestData(residualChlorine, 2.0, 0.25, risk = RiskLevel.HIGH, calibratedResult = 1.0),
+    0 to TestData(
+        residualChlorine, 2.0, 0.25, risk = RiskLevel.HIGH,
+        calibratedResult = 0.2, calibratedRisk = RiskLevel.LOW
+    ),
     1 to TestData(pH, expectedResultError = ErrorType.NO_MATCH),
     2 to TestData(iron, 0.5, 0.25, risk = RiskLevel.HIGH),
     3 to TestData(phosphate, 1.8, 0.47, risk = RiskLevel.HIGH),
@@ -66,7 +69,8 @@ data class TestData(
     var expectedScanError: Int = -1,
     var risk: RiskLevel = RiskLevel.LOW,
     var maxResult: Double = -1.0,
-    var calibratedResult: Double = -1.0
+    var calibratedResult: Double = -1.0,
+    var calibratedRisk: RiskLevel = RiskLevel.LOW
 )
 
 data class TestDetails(
