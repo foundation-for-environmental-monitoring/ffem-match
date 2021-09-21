@@ -244,11 +244,11 @@ object ImageColorUtil {
         // Cuvette area
         val y1 = ((row2Top - row1Top) / 2) + row1Top
         val x1 = ((bitmap.width) / 2) + (bitmap.width * 0.1).toInt()
-        val areaHeight = (bitmap.width * 0.04).toInt()
+        val areaHeight = (bitmap.width * 0.035).toInt()
         val rectangle = Rect(
             x1 - (bitmap.width * 0.04).toInt(),
             y1 - areaHeight,
-            x1 + (bitmap.width * 0.1).toInt(),
+            x1 + (bitmap.width * 0.12).toInt(),
             y1 + areaHeight
         )
         val pixels = getBitmapPixels(bitmap, rectangle)
