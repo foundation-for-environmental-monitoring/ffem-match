@@ -13,13 +13,13 @@ if (secretsFile.exists()) {
 }
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
     defaultConfig {
         applicationId "io.ffem.lite"
         minSdkVersion 23
-        targetSdkVersion 30
-        versionCode 120
-        versionName "0.71"
+        targetSdkVersion 31
+        versionCode 121
+        versionName "0.72"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -118,8 +118,9 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.7'
 
     // Firebase
-    implementation platform('com.google.firebase:firebase-bom:27.0.0')
+    implementation platform('com.google.firebase:firebase-bom:28.4.1')
     implementation 'com.google.firebase:firebase-database-ktx'
+    implementation 'com.google.firebase:firebase-storage-ktx'
     implementation 'com.google.firebase:firebase-analytics-ktx'
     releaseImplementation 'com.google.firebase:firebase-crashlytics-ktx'
 

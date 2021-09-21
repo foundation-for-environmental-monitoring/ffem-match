@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment.DIRECTORY_PICTURES
@@ -20,6 +21,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.app.App
@@ -37,6 +39,7 @@ import io.ffem.lite.model.TestInfo
 import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.preference.AppPreferences.isCalibration
 import io.ffem.lite.util.PreferencesUtil
+import timber.log.Timber
 import java.io.File
 import java.io.File.separator
 import java.util.*
@@ -208,6 +211,32 @@ class TestActivity : BaseActivity(),
                     Build.MODEL
                 )
             )
+
+            val filePath = getExternalFilesDir(DIRECTORY_PICTURES).toString() +
+                    separator + "captures" + separator
+            val fileName = testInfo.name!!.replace(" ", "")
+
+            val storageRef = FirebaseStorage.getInstance().reference
+            storageRef.child(path + "/${testInfo.fileName}/swatch.jpg")
+                .putFile(Uri.fromFile(File(filePath + testInfo.fileName + separator + fileName + "_swatch.jpg")))
+                .addOnFailureListener {
+                    Timber.e(it)
+                }.addOnSuccessListener {
+                }
+
+            storageRef.child(path + "/${testInfo.fileName}/image.jpg")
+                .putFile(Uri.fromFile(File(filePath + testInfo.fileName + separator + fileName + ".jpg")))
+                .addOnFailureListener {
+                    Timber.e(it)
+                }.addOnSuccessListener {
+                }
+
+            storageRef.child(path + "/${testInfo.fileName}/result.png")
+                .putFile(Uri.fromFile(File(filePath + testInfo.fileName + separator + fileName + "_result.png")))
+                .addOnFailureListener {
+                    Timber.e(it)
+                }.addOnSuccessListener {
+                }
         }
     }
 
