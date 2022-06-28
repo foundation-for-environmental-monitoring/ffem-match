@@ -158,7 +158,7 @@ class CalibrationResultFragment : Fragment() {
             binding.submitBtn.setText(R.string.confirm)
 
         } else {
-            val requestedTestId = PreferencesUtil.getString(context, TEST_ID_KEY, "")
+            val requestedTestId = PreferencesUtil.getString(requireContext(), TEST_ID_KEY, "")
             binding.nameTxt.text = ""
             if (testInfo.uuid != requestedTestId) {
                 val requestedTest = getTestInfo(requestedTestId!!)

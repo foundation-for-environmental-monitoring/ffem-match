@@ -69,7 +69,7 @@ object PreferencesUtil {
     }
 
     @JvmStatic
-    fun getString(context: Context?, key: String?, defaultValue: String?): String? {
+    fun getString(context: Context, key: String?, defaultValue: String?): String? {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         return sharedPreferences.getString(key, defaultValue)
     }
@@ -87,7 +87,7 @@ object PreferencesUtil {
         editor.apply()
     }
 
-    fun setString(context: Context?, keyId: String?, value: String?) {
+    fun setString(context: Context, keyId: String?, value: String?) {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         val editor = sharedPreferences.edit()
         editor.putString(keyId, value)

@@ -124,7 +124,7 @@ class ResultFragment(externalRequest: Boolean) : Fragment() {
             b.extractImg.refreshDrawableState()
         }
 
-        val requestedTestId = PreferencesUtil.getString(context, TEST_ID_KEY, "")
+        val requestedTestId = PreferencesUtil.getString(requireContext(), TEST_ID_KEY, "")
         val subTest = model.test.get()!!.subTest()
         if (subTest.error == ErrorType.NO_ERROR && subTest.resultInfo.result >= 0) {
             b.sampleTypeText.text = testInfo.sampleType.toLocalString()

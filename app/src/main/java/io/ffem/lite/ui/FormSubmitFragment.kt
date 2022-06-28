@@ -231,7 +231,7 @@ class FormSubmitFragment : Fragment() {
             override fun onLocationResult(locationResult: LocationResult) {
                 super.onLocationResult(locationResult)
                 val location = locationResult.lastLocation
-                if (!location.longitude.isNaN()) {
+                if (location != null && !location.longitude.isNaN()) {
                     form.latitude = location.latitude
                     form.longitude = location.longitude
                     form.geoAccuracy = location.accuracy

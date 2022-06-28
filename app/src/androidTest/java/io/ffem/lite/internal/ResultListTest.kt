@@ -33,7 +33,7 @@ import org.junit.*
 import org.junit.runner.RunWith
 import java.io.File
 
-const val SCAN_TIME_DELAY = 5000L
+const val SCAN_TIME_DELAY = 10000L
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
