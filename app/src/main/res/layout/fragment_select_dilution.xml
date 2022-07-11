@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutDilutions"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <include layout="@layout/app_bar_layout" />
+
+    <TextView
+        android:id="@+id/textSubtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="25dp"
+        android:text="@string/select_dilution"
+        android:textSize="16sp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/noDilution_btn"
+        style="@style/Widget.Collect.Button.Custom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:minWidth="260dp"
+        android:minHeight="70dp"
+        android:text="@string/no_dilution"
+        android:textSize="17sp"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/dilution1_btn"
+        style="@style/Widget.Collect.Button.Custom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:minWidth="260dp"
+        android:minHeight="70dp"
+        android:text="@string/times_dilution"
+        android:textSize="17sp"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/dilution2_btn"
+        style="@style/Widget.Collect.Button.Custom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:minWidth="260dp"
+        android:minHeight="70dp"
+        android:text="@string/times_dilution"
+        android:textSize="17sp"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/customDilution_btn"
+        style="@style/Widget.Collect.Button.Custom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="260dp"
+        android:minHeight="70dp"
+        android:text="@string/custom_dilution"
+        android:textSize="17sp"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+</LinearLayout>

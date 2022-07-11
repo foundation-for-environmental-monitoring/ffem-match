@@ -19,8 +19,8 @@ import io.ffem.lite.R
 import io.ffem.lite.app.App.Companion.getTestInfo
 import io.ffem.lite.common.TEST_ID_KEY
 import io.ffem.lite.data.AppDatabase
-import io.ffem.lite.data.Calibration
 import io.ffem.lite.databinding.FragmentCalibrationResultBinding
+import io.ffem.lite.model.CardCalibration
 import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.TestInfo
 import io.ffem.lite.model.toLocalString
@@ -84,8 +84,8 @@ class CalibrationResultFragment : Fragment() {
                 val db = AppDatabase.getDatabase(requireContext())
                 try {
                     db.resultDao().insertCalibration(
-                        Calibration(
-                            testInfo.uuid!!,
+                        CardCalibration(
+                            testInfo.uuid,
                             subTest.calibratedResult.calibratedValue.value,
                             result.calibratedValue.color,
                             Color.red(result.calibratedValue.color) - Color.red(result.sampleColor),
@@ -171,7 +171,7 @@ class CalibrationResultFragment : Fragment() {
                 binding.name2Txt.text = testInfo.name!!.toLocalString()
             }
 
-            binding.errorTxt.text = subTest.error.toLocalString(requireContext())
+            binding.errorTxt.text = subTest.error.toLocalString()
             binding.errorMessageLyt.visibility = VISIBLE
             binding.resultLyt.visibility = GONE
             if (!extractImagePath.exists()) {

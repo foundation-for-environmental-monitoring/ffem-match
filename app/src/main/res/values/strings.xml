@@ -77,14 +77,6 @@
     <string name="medium">Medium</string>
     <string name="high">High</string>
 
-    <string name="low_quantity">Sufficient</string>
-    <string name="medium_quantity">Insufficient</string>
-    <string name="high_quantity">Too high</string>
-
-    <string name="low_safety">Safe</string>
-    <string name="medium_safety">Safe</string>
-    <string name="high_safety">Unsafe</string>
-
     <string name="low_alkalinity">Acidic</string>
     <string name="medium_alkalinity">Neutral</string>
     <string name="high_alkalinity">Basic</string>
@@ -117,12 +109,11 @@
     <string name="residual_chlorine" tools:keep="@string/residual_chlorine">Residual Chlorine</string>
     <string name="invalid_card_test" tools:keep="@string/invalid_card_test">Invalid Card Test</string>
     <string name="unknown" tools:keep="@string/unknown">Unknown</string>
-
-    <!-- Unit Tests-->
-    <string name="water_tests_1">Water Tests 1</string>
-    <string name="water_tests_2">Water Tests 2</string>
-    <string name="soil_tests_1">Soil Tests  1</string>
-
+    <string name="error_test_not_available">Requested test is not available</string>
+    <string name="please_contact_support">Please contact technical support</string>
+    <string name="cannot_start_test">Cannot start test</string>
+    <string name="error">Error</string>
+    <string name="required">Required</string>
     <string name="back">Back</string>
     <string name="next">Next</string>
     <string name="calibrate">Calibrate</string>
@@ -153,6 +144,43 @@
     <string name="airplane_mode_off">Please turn off airplane mode</string>
     <string name="version">Version</string>
     <string name="calibration_succeeded">Calibration succeeded</string>
+    <string name="times_dilution" tools:ignore="PluralsCandidate">%1$d Times Dilution</string>
+
+    <string name="high_levels">High Levels</string>
+    <string name="high_risk_unsafe">High Risk / Unsafe</string>
+    <string name="low_risk">Low Risk</string>
+    <string name="low_risk_safe">Safe / Low Risk</string>
+    <string name="recalibrate">Recalibrate</string>
+    <string name="ph_acceptable_msg">pH value is within the acceptable limit.</string>
+    <string name="ph_unsafe_msg">pH value is out of the acceptable limit.</string>
+    <string name="safety_acceptable_msg">%1$s is within acceptable limit for drinking water.</string>
+    <string name="safety_permissible_msg">%1$s is within the permissible limit but above acceptable limit for drinking water.</string>
+    <string name="safety_unsafe_msg">%1$s is above the permissible limit.</string>
+    <string name="high_level_message"><b>Note:</b> Testing with dilution is advised</string>
+    <string name="reagent_expiry">Reagent expiry</string>
+    <string name="no_relaxation">No relaxation</string>
+    <string name="deficient">Deficient</string>
+    <string name="sufficient">Sufficient</string>
+
+    <plurals name="dilutions">
+        <item quantity="one">@string/no_dilution</item>
+        <item quantity="many">@string/times_dilution</item>
+        <item quantity="other">@string/times_dilution</item>
+    </plurals>
+    <string name="dilution">Dilution</string>
+    <string name="no_dilution">No Dilution</string>
+    <string name="select_dilution">Select amount of dilution</string>
+    <string name="custom_dilution">Custom Dilution</string>
+    <string name="enter_dilution_factor">Enter Dilution Factor</string>
+    <string name="test_with_dilution">Test with Dilution</string>
+    <string name="up_to_with_dilution">Up to %s with dilution</string>
+
+    <string name="seconds">seconds</string>
+    <string name="minutes">minutes</string>
+    <plurals name="minutes">
+        <item quantity="one">%1$d minute</item>
+        <item quantity="other">%1$d minutes</item>
+    </plurals>
 
     <string-array name="WaterSource">
         <item>Borewell water</item>
@@ -164,4 +192,97 @@
         <item>River water</item>
         <item>Sewage</item>
     </string-array>
+
+    <string name="start_timer">Start Timer</string>
+    <string name="skip_time_delay">Skip delay</string>
+
+    <!-- RiskType-->
+    <string name="low_safety">Safe</string>
+    <string name="medium_safety">Safe</string>
+    <string name="high_safety">Unsafe</string>
+
+    <string name="risk_0_safety">Safe</string>
+    <string name="risk_1_safety">Safe</string>
+    <string name="risk_2_safety">Safe</string>
+    <string name="risk_3_safety">Unsafe</string>
+
+    <string name="risk_0">Very Low</string>
+    <string name="risk_1">Low</string>
+    <string name="risk_2">Medium</string>
+    <string name="risk_3">High</string>
+    <string name="risk_4">Very High</string>
+    <string name="risk_5">Very High</string>
+    <string name="risk_6">Very High</string>
+    <string name="risk_7">Very High</string>
+
+    <string name="risk_0_l3">Low</string>
+    <string name="risk_1_l3">Low</string>
+    <string name="risk_2_l3">Medium</string>
+    <string name="risk_3_l3">High</string>
+    <string name="risk_4_l3">High</string>
+    <string name="risk_5_l3">High</string>
+    <string name="risk_6_l3">High</string>
+    <string name="risk_7_l3">High</string>
+
+    <string name="low_quantity">Sufficient</string>
+    <string name="medium_quantity">Insufficient</string>
+    <string name="high_quantity">Too high</string>
+
+    <string name="risk_1_quantity">Sufficient</string>
+    <string name="risk_2_quantity">Insufficient</string>
+    <string name="risk_3_quantity">Too high</string>
+
+    <string name="risk_0_alkalinity">Extremely Acidic</string>
+    <string name="risk_1_alkalinity">Strongly Acidic</string>
+    <string name="risk_2_alkalinity">Moderately Acidic</string>
+    <string name="risk_3_alkalinity">Slightly Acidic</string>
+    <string name="risk_4_alkalinity">Neutral</string>
+    <string name="risk_5_alkalinity">Moderately Alkaline</string>
+    <string name="risk_6_alkalinity">Strongly Alkaline</string>
+
+    <string name="enter_titration_result">Enter titration result</string>
+    <string name="enter_titration_results">Enter titration results</string>
+    <string name="value_is_required">Value is required</string>
+    <string name="titration_entry_error">%1$s has to be less than or equal to %2$s</string>
+    <string name="titration">Titration</string>
+
+    <string name="error_calibration_expired">Calibration is past its reagent expiry date</string>
+    <string name="order_fresh_batch">Please order a fresh batch of reagent and recalibrate</string>
+    <string name="load">Load</string>
+    <string name="description">Description</string>
+    <string name="save_calibration">Save calibration</string>
+    <string name="calibration_already_saved">Calibration already saved as: %s</string>
+    <string name="start_camera">Start camera</string>
+    <string name="analyze">Analyze</string>
+    <string name="analyze_sample">Analyze Sample</string>
+
+    <string name="total_hardness">Total Hardness</string>
+    <string name="total_alkalinity">Total Alkalinity</string>
+    <string name="p_alkalinity">P-Alkalinity</string>
+    <string name="t_alkalinity">T-Alkalinity</string>
+    <string name="error_calibration_incomplete">Calibration for %1$s is incomplete</string>
+    <string name="do_you_want_to_calibrate">Complete the calibration and try again</string>
+    <string name="clear_calibration">Clear calibration</string>
+    <string name="invalid_calibration">Invalid Calibration</string>
+    <string name="calibration_not_available">External sensor mode</string>
+    <string name="color_card_mode">Color card mode</string>
+    <string name="no_result">No result</string>
+    <string name="print">Print</string>
+    <string name="name">Name</string>
+    <string name="could_not_calibrate">Could not calibrate</string>
+    <string name="error_test_failed">Colour does not match any calibrated colours.</string>
+    <string name="check_chamber_placement">Check that the chamber has been placed correctly.</string>
+    <string name="expires">Expires</string>
+    <string name="expired">Expired</string>
+    <string name="calibrate_with_new_reagent">Recalibrate with fresh reagent</string>
+    <string name="not_found">Not found</string>
+    <string name="recent">Recent</string>
+    <string name="all">All</string>
+    <string name="select_date">Select date</string>
+    <string name="all_values_in_kg_ha">(All values in kg/ha)</string>
+    <string name="redo_test">Redo</string>
+    <string name="done">Done</string>
+    <string name="c_empty">Empty contents of the cuvette and rinse it</string>
+    <string name="external_app_not_installed">Akvo Flow is not installed.</string>
+    <string name="install_external_app">Please install the Akvo Flow app from your instance.</string>
 </resources>

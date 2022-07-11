@@ -8,7 +8,7 @@
     <color name="text_links">#01A3E3</color>
     <color name="link_green">#5AB301</color>
     <color name="text_secondary">#ddd</color>
-
+    <color name="colorSecondaryVariant">#000000</color>
     <color name="low_risk">#018F2E</color>
     <color name="medium_risk">#B52A00</color>
     <color name="high_risk">#BA0000</color>

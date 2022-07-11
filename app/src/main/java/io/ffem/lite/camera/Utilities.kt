@@ -14,7 +14,6 @@ import java.io.IOException
 
 object Utilities {
 
-
     fun savePng(
         context: Context,
         id: String,

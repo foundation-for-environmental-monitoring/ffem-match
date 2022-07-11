@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/row_lyt"
+    android:id="@+id/layout_row"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
-    android:orientation="horizontal"
-    tools:ignore="Overdraw">
+    android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/buttonColor"
-        android:layout_width="50dp"
+    <View
+        android:id="@+id/swatch_view"
+        android:layout_width="100dp"
         android:layout_height="50dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="10dp"
@@ -22,14 +21,26 @@
         android:focusable="false"
         tools:background="#000" />
 
-    <TextView
-        android:id="@+id/textValue"
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/value_txt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_gravity="bottom"
         android:layout_marginEnd="5dp"
+        android:layout_marginBottom="8dp"
+        android:textColor="?colorOnSecondary"
         android:textSize="25sp"
         tools:text="0.5" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/unit_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="8dp"
+        android:textColor="?colorOnSecondary"
+        android:textSize="20sp"
+        tools:text="mg/l" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -38,14 +49,8 @@
         android:gravity="center_vertical"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textUnit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="20sp"
-            tools:text="mg/l" />
-
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/textRgb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="false"
@@ -53,9 +58,11 @@
             android:textIsSelectable="false"
             android:textSize="14sp"
             android:visibility="gone"
-            tools:text="rgb: 243 23 156" />
+            tools:text="rgb: 243 23 156"
+            tools:visibility="visible" />
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/textHsv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="false"
@@ -63,15 +70,18 @@
             android:textIsSelectable="false"
             android:textSize="14sp"
             android:visibility="gone"
-            tools:text="hsv: 243 23 156" />
+            tools:text="hsv: 243 23 156"
+            tools:visibility="visible" />
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/textBrightness"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textIsSelectable="false"
             android:textSize="14sp"
             android:visibility="gone"
-            tools:text="d: 233  b: 233" />
+            tools:text="d: 233  b: 233"
+            tools:visibility="visible" />
 
     </LinearLayout>
 </LinearLayout>

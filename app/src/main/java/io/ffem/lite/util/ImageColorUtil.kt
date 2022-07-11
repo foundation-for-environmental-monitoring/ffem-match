@@ -8,26 +8,27 @@ import androidx.core.graphics.blue
 import androidx.core.graphics.green
 import androidx.core.graphics.red
 import io.ffem.lite.R
-import io.ffem.lite.app.App.Companion.getParameterValues
 import io.ffem.lite.camera.Utilities
+import io.ffem.lite.common.Constants.CIRCLE_CUVETTE_AREA_PERCENTAGE
+import io.ffem.lite.common.Constants.CIRCLE_CUVETTE_Y_OFFSET
 import io.ffem.lite.common.Constants.INTERPOLATION_COUNT
 import io.ffem.lite.common.Constants.MAX_COLOR_DISTANCE_RGB
 import io.ffem.lite.common.Constants.MAX_DISTANCE
+import io.ffem.lite.common.Constants.SWATCH_RADIUS
 import io.ffem.lite.data.AppDatabase
-import io.ffem.lite.data.Calibration
+import io.ffem.lite.data.DataHelper.getParameterValues
 import io.ffem.lite.data.TestResult
 import io.ffem.lite.model.*
 import io.ffem.lite.model.ErrorType.*
 import io.ffem.lite.preference.AppPreferences
-import io.ffem.lite.preference.getCalibrationColorDistanceTolerance
-import io.ffem.lite.preference.getColorDistanceTolerance
+import io.ffem.lite.preference.AppPreferences.getCalibrationColorDistanceTolerance
+import io.ffem.lite.preference.AppPreferences.getColorDistanceTolerance
 import io.ffem.lite.preference.getSampleTestImageNumber
+import io.ffem.lite.util.ColorUtil.getAverageColor
+import io.ffem.lite.util.ColorUtil.getColorDistance
 import timber.log.Timber
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.math.max
-import kotlin.math.min
-import kotlin.math.round
+import kotlin.math.*
 
 object ImageColorUtil {
 
@@ -35,60 +36,73 @@ object ImageColorUtil {
         context: Context,
         testInfo: TestInfo? = null,
         error: ErrorType = NO_ERROR,
-        bitmap: Bitmap? = null
+        bitmap: Bitmap? = null,
+        colorCardType: Int
     ) {
         if (testInfo != null && bitmap != null) {
             val subTest = testInfo.subTest()
             try {
-                val (extractedColors, color) =
+                val (extractedColors, color) = if (colorCardType == 0) {
                     extractColors(
                         bitmap,
                         testInfo,
                         context
                     )
+                } else {
+                    extractCircleColors(
+                        bitmap,
+                        testInfo,
+                        context
+                    )
+                }
 
                 subTest.resultInfo =
-                    analyzeColor(color, extractedColors, subTest.formula, subTest.maxValue)
+                    analyzeColor(color, extractedColors, subTest.formula, subTest.maxValue, context)
+                subTest.setFinalResult(subTest.resultInfo.result * subTest.dilution)
 
                 if (subTest.resultInfo.result > -2) {
-                    if (subTest.resultInfo.result > -1) {
-                        var calibration: Calibration? = null
-                        if (!AppPreferences.isCalibration()) {
-                            val db = AppDatabase.getDatabase(context)
-                            try {
-                                calibration = db.resultDao().getCalibration(testInfo.uuid)
-                            } finally {
-                                db.close()
-                            }
-                        }
+                    var calibration: CardCalibration? = null
 
-                        var sampleColor = color
-                        // if calibrated then calculate also the result by adding the color differences
-                        if (calibration != null) {
-                            sampleColor = Color.rgb(
-                                min(
-                                    max(0, sampleColor.red + calibration.rDiff),
-                                    255
-                                ),
-                                min(
-                                    max(0, sampleColor.green + calibration.gDiff),
-                                    255
-                                ),
-                                min(
-                                    max(0, sampleColor.blue + calibration.bDiff),
-                                    255
-                                )
-                            )
-
-                            subTest.calibratedResult = analyzeColor(
-                                sampleColor,
-                                extractedColors,
-                                subTest.formula,
-                                subTest.maxValue
-                            )
+                    if (!AppPreferences.isCalibration()) {
+                        val db = AppDatabase.getDatabase(context)
+                        try {
+                            calibration = db.resultDao().getCalibration(testInfo.uuid)
+                        } finally {
+                            db.close()
                         }
                     }
 
+                    var sampleColor = color
+                    // if calibrated then calculate also the result by adding the color differences
+                    if (calibration != null) {
+                        sampleColor = Color.rgb(
+                            min(
+                                max(0, sampleColor.red + calibration.rDiff),
+                                255
+                            ),
+                            min(
+                                max(0, sampleColor.green + calibration.gDiff),
+                                255
+                            ),
+                            min(
+                                max(0, sampleColor.blue + calibration.bDiff),
+                                255
+                            )
+                        )
+
+                        subTest.calibratedResult = analyzeColor(
+                            sampleColor,
+                            extractedColors,
+                            subTest.formula,
+                            subTest.maxValue,
+                            context
+                        )
+                        subTest.calibratedResult.result =
+                            subTest.calibratedResult.result * subTest.dilution
+                    }
+                }
+
+                if (!AppPreferences.isCalibration()) {
                     val resultImage = ImageUtil.createResultImage(
                         subTest.resultInfo,
                         subTest.calibratedResult,
@@ -113,7 +127,9 @@ object ImageColorUtil {
                 return
             }
 
-            if (subTest.resultInfo.result == -1.0) {
+            if (!AppPreferences.isCalibration() &&
+                (subTest.resultInfo.result == -1.0 && subTest.calibratedResult.result < 0)
+            ) {
                 subTest.error = NO_MATCH
                 return
             } else {
@@ -127,10 +143,10 @@ object ImageColorUtil {
                         db.resultDao().insert(
                             TestResult(
                                 testInfo.fileName,
-                                testInfo.uuid!!,
+                                testInfo.uuid,
                                 0,
                                 testInfo.name!!,
-                                testInfo.sampleType,
+                                testInfo.sampleType.toString(),
                                 Date().time,
                                 -1.0,
                                 subTest.maxValue,
@@ -147,8 +163,8 @@ object ImageColorUtil {
                 }
 
                 if (AppPreferences.isCalibration()) {
-                    subTest.resultInfo.calibration = Calibration(
-                        testInfo.uuid!!,
+                    subTest.resultInfo.calibration = CardCalibration(
+                        testInfo.uuid,
                         -1.0,
                         subTest.resultInfo.calibratedValue.color,
                         Color.red(subTest.resultInfo.calibratedValue.color) - Color.red(subTest.resultInfo.sampleColor),
@@ -160,9 +176,9 @@ object ImageColorUtil {
                 } else {
                     db.resultDao().updateResult(
                         testInfo.fileName,
-                        testInfo.uuid!!,
+                        testInfo.uuid,
                         testInfo.name!!,
-                        testInfo.sampleType,
+                        testInfo.sampleType.toString(),
                         subTest.getResult(),
                         subTest.getMarginOfError(),
                         subTest.error.ordinal
@@ -190,7 +206,7 @@ object ImageColorUtil {
         blackPaint.color = Color.BLACK
         blackPaint.strokeWidth = 1f
 
-        val parameterValues: List<CalibrationValue> = getParameterValues(testInfo.uuid!!)
+        val parameterValues: List<CalibrationValue> = getParameterValues(testInfo.uuid, context)
 
         val intervals = parameterValues.size / 2
         val squareLeft = bitmap.width / intervals
@@ -243,7 +259,7 @@ object ImageColorUtil {
 
         // Cuvette area
         val y1 = ((row2Top - row1Top) / 2) + row1Top
-        val x1 = ((bitmap.width) / 2) + (bitmap.width * 0.1).toInt()
+        val x1 = ((bitmap.width) / 2) + (bitmap.width * 0.12).toInt()
         val areaHeight = (bitmap.width * 0.035).toInt()
         val rectangle = Rect(
             x1 - (bitmap.width * 0.04).toInt(),
@@ -270,7 +286,7 @@ object ImageColorUtil {
             if (swatches.size >= parameterValues.size / 2) {
                 break
             }
-            swatches.add(getCalibrationColor(cal.value, parameterValues))
+            swatches.add(getCalibrationColor(cal.value, parameterValues, testInfo.subtype, context))
         }
 
         return Pair(swatches, cuvetteColor)
@@ -285,9 +301,91 @@ object ImageColorUtil {
         return Point(leftSquareCenter, rightSquareCenter)
     }
 
+    private fun extractCircleColors(
+        bmp: Bitmap,
+        testInfo: TestInfo,
+        context: Context
+    ): Pair<ArrayList<ColorInfo>, Int> {
+
+        val bitmap = Utilities.rotateImage(bmp, 90)
+
+        val greenPaint = Paint()
+        greenPaint.style = Style.STROKE
+        greenPaint.color = getColor(context, R.color.bright_green)
+        greenPaint.strokeWidth = 3f
+
+        val blackPaint = Paint()
+        blackPaint.style = Style.STROKE
+        blackPaint.color = Color.BLACK
+        blackPaint.strokeWidth = 1f
+
+        val cardColors: List<CalibrationValue> = getParameterValues(testInfo.uuid, context)
+
+        val center = Point(bitmap.width / 2, bitmap.height / 2)
+        val padding = (bitmap.width * 0.031).toInt()
+        val canvas = Canvas(bitmap)
+
+        val radius = (bitmap.width * SWATCH_RADIUS)
+
+        val slice = 2 * Math.PI / cardColors.size
+        for ((index, i) in (cardColors.size downTo 1).withIndex()) {
+            val angle = if ((cardColors.size / 2) % 2 == 0) {
+                (slice * (i - (cardColors.size / 4))) - (slice / 2)
+            } else {
+                (slice * (i - (cardColors.size / 4))) - slice
+            }
+            val newX = (center.x + radius * cos(angle)).toInt()
+            val newY = (center.y + radius * sin(angle)).toInt()
+            val p = Point(newX, newY)
+
+            val rectangle = Rect(
+                p.x - padding, p.y - padding, p.x + padding, p.y + padding
+            )
+            val pixels = getBitmapPixels(bitmap, rectangle)
+            cardColors[index].color = getAverageColor(pixels, false)
+
+            canvas.drawRect(rectangle, blackPaint)
+        }
+
+        // Cuvette area
+        val areaHeight = (bitmap.width * CIRCLE_CUVETTE_AREA_PERCENTAGE).toInt()
+
+        val cuvetteArea = Rect(
+            center.x - areaHeight,
+            center.y - areaHeight + CIRCLE_CUVETTE_Y_OFFSET,
+            center.x + areaHeight,
+            center.y + areaHeight + CIRCLE_CUVETTE_Y_OFFSET
+        )
+        val pixels = getBitmapPixels(bitmap, cuvetteArea)
+
+        val cuvetteColor = getAverageColor(pixels, true)
+
+        val swatches: ArrayList<ColorInfo> = ArrayList()
+        canvas.drawRect(cuvetteArea, blackPaint)
+
+        Utilities.savePicture(
+            context.applicationContext, testInfo.fileName,
+            testInfo.name!!, Utilities.bitmapToBytes(bitmap),
+            "_swatch"
+        )
+
+        bitmap.recycle()
+        bmp.recycle()
+
+        for (cal in cardColors) {
+            if (swatches.size >= cardColors.size / 2) {
+                break
+            }
+            swatches.add(getCalibrationColor(cal.value, cardColors, testInfo.subtype, context))
+        }
+        return Pair(swatches, cuvetteColor)
+    }
+
     private fun getCalibrationColor(
         pointValue: Double,
-        calibration: List<CalibrationValue>
+        calibration: List<CalibrationValue>,
+        testType: TestType,
+        context: Context
     ): ColorInfo {
         var red = 0
         var green = 0
@@ -304,7 +402,7 @@ object ImageColorUtil {
         }
 
         var distance = 0.0
-        val maxAllowedDistance = getCalibrationColorDistanceTolerance()
+        val maxAllowedDistance = getCalibrationColorDistanceTolerance(context, testType)
         for (i in filteredCalibrations) {
             for (j in filteredCalibrations) {
                 if (getColorDistance(i.color, j.color) > maxAllowedDistance) {
@@ -438,7 +536,7 @@ object ImageColorUtil {
     @Suppress("SameParameterValue")
     fun analyzeColor(
         sampleColor: Int, swatches: ArrayList<ColorInfo>, formula: String?,
-        maxValue: Double
+        maxValue: Double, context: Context
     ): ResultInfo {
 
         val maxRange = swatches[swatches.size - 1].value
@@ -447,7 +545,7 @@ object ImageColorUtil {
 
         //Find the color within the generated gradient that matches the sampleColor
         val colorCompareInfo: ColorCompareInfo =
-            getNearestColorFromSwatches(sampleColor, gradientList)
+            getNearestColorFromSwatches(sampleColor, gradientList, context)
 
         //set the result
         val resultInfo = ResultInfo(
@@ -481,8 +579,6 @@ object ImageColorUtil {
             for (x in swatches.size - 1 downTo lastSwatchPosition + 1) {
                 swatches.removeAt(x)
             }
-
-            resultInfo.result = maxRange
         } else {
             for (x in swatches.size - 1 downTo 2) {
                 if (swatches.size <= defaultSwatchSize) {
@@ -495,7 +591,7 @@ object ImageColorUtil {
         }
 
         resultInfo.result = MathUtil.applyFormula(resultInfo.result, formula)
-        if (resultInfo.result > maxValue - (maxValue * 0.1)) {
+        if (resultInfo.result < maxValue && resultInfo.result > maxValue - (maxValue * 0.1)) {
             resultInfo.result = maxValue
         }
 
@@ -516,10 +612,10 @@ object ImageColorUtil {
      * @return details of the matching color with its corresponding value
      */
     private fun getNearestColorFromSwatches(
-        colorToFind: Int, swatches: List<Swatch>
+        colorToFind: Int, swatches: List<Swatch>, context: Context
     ): ColorCompareInfo {
 
-        var lowestDistance = getMaxDistance(getColorDistanceTolerance().toDouble())
+        var lowestDistance = getMaxDistance(getColorDistanceTolerance(context).toDouble())
 
         var resultValue = -1.0
         var matchedColor = -1

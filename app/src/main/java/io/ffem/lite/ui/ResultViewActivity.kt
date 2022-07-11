@@ -29,7 +29,8 @@ class ResultViewActivity : BaseActivity() {
         testInfo.fileName = testResult.id
         result.resultInfo = ResultInfo(testResult.value)
         result.resultInfo.luminosity = testResult.luminosity
-        result.setMarginOfError(testResult.marginOfError)
+        // todo: fix this
+//        result.setMarginOfError(testResult.marginOfError)
         model.setTest(testInfo)
         model.form = testResult
 

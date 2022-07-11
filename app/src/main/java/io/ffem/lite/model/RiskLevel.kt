@@ -6,13 +6,25 @@ import java.util.*
 
 enum class RiskLevel {
     @SerializedName("0")
-    LOW,
+    RISK_0,
 
     @SerializedName("1")
-    MEDIUM,
+    RISK_1,
 
     @SerializedName("2")
-    HIGH;
+    RISK_2,
+
+    @SerializedName("3")
+    RISK_3,
+
+    @SerializedName("4")
+    RISK_4,
+
+    @SerializedName("5")
+    RISK_5,
+
+    @SerializedName("6")
+    RISK_6
 }
 
 fun RiskLevel.toResourceId(context: Context, riskType: RiskType): Int {

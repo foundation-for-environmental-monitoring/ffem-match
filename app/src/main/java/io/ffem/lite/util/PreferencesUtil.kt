@@ -16,8 +16,19 @@ object PreferencesUtil {
      * @param keyId   the key id
      * @return the string key
      */
+
     private fun getKey(context: Context, @StringRes keyId: Int): String {
-        return context.getString(keyId)
+        return try {
+            context.getString(keyId)
+        } catch (e: Exception) {
+            ""
+        }
+    }
+
+    fun contains(context: Context, keyId: String): Boolean {
+        val sharedPreferences = PreferenceManager
+            .getDefaultSharedPreferences(context)
+        return sharedPreferences.contains(keyId)
     }
 
     /**
@@ -68,7 +79,6 @@ object PreferencesUtil {
         return sharedPreferences.getString(getKey(context, keyId), defaultValue)!!
     }
 
-    @JvmStatic
     fun getString(context: Context, key: String?, defaultValue: String?): String? {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         return sharedPreferences.getString(key, defaultValue)
@@ -114,9 +124,17 @@ object PreferencesUtil {
         editor.apply()
     }
 
-//    fun getInt(context: Context, @StringRes keyId: Int): Int {
-//        return getInt(context, getKey(context, keyId))
-//    }
+    @JvmStatic
+    fun getInt(context: Context, key: String?, defaultValue: Int): Int {
+        val sharedPreferences = PreferenceManager
+            .getDefaultSharedPreferences(context)
+        return sharedPreferences.getInt(key, defaultValue)
+    }
+
+    @JvmStatic
+    fun getInt(context: Context, @StringRes keyId: Int, defaultValue: Int): Int {
+        return getInt(context, getKey(context, keyId), defaultValue)
+    }
 
 //    private fun getInt(context: Context, key: String): Int {
 //        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)

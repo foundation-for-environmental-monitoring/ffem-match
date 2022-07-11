@@ -200,7 +200,8 @@ class FormSubmitFragment : Fragment() {
     private fun submitForm() {
         saveData()
         submitted = true
-        (requireActivity() as TestActivity).submitResult()
+        // todo: fix submit result
+//        (requireActivity() as TestActivity).submitResult()
     }
 
     override fun onResume() {

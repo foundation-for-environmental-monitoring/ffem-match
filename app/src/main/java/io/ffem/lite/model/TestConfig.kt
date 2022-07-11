@@ -1,5 +1,5 @@
 package io.ffem.lite.model
 
 class TestConfig {
-    var tests: List<TestInfo> = ArrayList()
+    var tests: ArrayList<TestInfo> = ArrayList()
 }

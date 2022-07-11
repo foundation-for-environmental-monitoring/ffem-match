@@ -1,16 +1,16 @@
 package io.ffem.lite.ui
 
 import android.app.AlertDialog
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment.DIRECTORY_PICTURES
+import android.os.Handler
+import android.os.Process
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -25,6 +25,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
+import io.ffem.lite.common.Constants.SURVEY_APP
 import io.ffem.lite.common.IS_CALIBRATION
 import io.ffem.lite.common.RESULT_EVENT_BROADCAST
 import io.ffem.lite.common.RESULT_ID
@@ -38,6 +39,7 @@ import io.ffem.lite.model.toLocalString
 import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.preference.SettingsActivity
 import io.ffem.lite.preference.useDummyImage
+import io.ffem.lite.util.AlertUtil
 import io.ffem.lite.util.FileUtil.getPathFromURI
 import io.ffem.lite.util.PreferencesUtil
 import io.ffem.lite.util.snackBar
@@ -65,7 +67,7 @@ fun TextView.bindTextSize(result: Double) {
 @BindingAdapter("android:result")
 fun getResultString(view: TextView, result: TestResult) {
     if (result.value < 0) {
-        view.text = result.error.toLocalString(view.context)
+        view.text = result.error.toLocalString()
     } else {
         if (result.value >= result.maxValue) {
             val value = "> " + result.value.toString()
@@ -76,7 +78,7 @@ fun getResultString(view: TextView, result: TestResult) {
     }
 }
 
-class ResultListActivity : AppUpdateActivity() {
+class ResultListActivity : BaseActivity() {
     private lateinit var binding: ActivityResultListBinding
     private lateinit var db: AppDatabase
     private var appIsClosing: Boolean = false
@@ -97,9 +99,9 @@ class ResultListActivity : AppUpdateActivity() {
                 val subTest = testInfo.subTest()
                 db.resultDao().updateResult(
                     testInfo.fileName,
-                    testInfo.uuid!!,
+                    testInfo.uuid,
                     testInfo.name!!,
-                    testInfo.sampleType,
+                    testInfo.sampleType.toString(),
                     subTest.getResult(),
                     subTest.getMarginOfError(),
                     subTest.error.ordinal
@@ -270,9 +272,39 @@ class ResultListActivity : AppUpdateActivity() {
     }
 
     fun onStartClick(@Suppress("UNUSED_PARAMETER") view: View) {
-        PreferencesUtil.setBoolean(this, IS_CALIBRATION, false)
-        val intent = Intent(baseContext, TestActivity::class.java)
-        startTest.launch(intent)
+        val externalIntent: Intent? = packageManager
+            .getLaunchIntentForPackage(SURVEY_APP)
+        if (externalIntent != null) {
+            externalIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            startActivity(externalIntent)
+            closeApp(1000)
+        } else {
+            alertExternalAppNotFound()
+        }
+    }
+
+    private fun closeApp(delay: Int) {
+        Handler().postDelayed({
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                finishAndRemoveTask()
+            } else {
+                val pid = Process.myPid()
+                Process.killProcess(pid)
+            }
+        }, delay.toLong())
+    }
+
+    private fun alertExternalAppNotFound() {
+        val message = String.format(
+            "%s\r\n\r\n%s",
+            getString(R.string.external_app_not_installed),
+            getString(R.string.install_external_app)
+        )
+        AlertUtil.showAlert(
+            this, R.string.notFound, message, R.string.close,
+            { _: DialogInterface?, _: Int -> closeApp(0) },
+            null, null
+        )
     }
 
     private fun refreshList() {

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/activity_horizontal_margin"
+    android:paddingTop="4dp"
+    android:paddingEnd="@dimen/activity_horizontal_margin">
+
+    <EditText
+        android:id="@+id/editExpiryDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        android:backgroundTint="@android:color/holo_blue_dark"
+        android:focusable="false"
+        android:hint="@string/select_date"
+        android:importantForAutofill="no"
+        android:inputType="date"
+        android:textSize="20sp"
+        tools:targetApi="o" />
+
+</LinearLayout>

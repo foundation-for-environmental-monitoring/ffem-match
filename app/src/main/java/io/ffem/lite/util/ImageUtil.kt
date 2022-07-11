@@ -1,17 +1,20 @@
 package io.ffem.lite.util
 
+import android.app.Activity
 import android.graphics.*
+import android.view.Surface
 import androidx.camera.core.ImageProxy
+import io.ffem.lite.common.Constants.DECIMAL_FORMAT
+import io.ffem.lite.common.Constants.DEGREES_180
+import io.ffem.lite.common.Constants.DEGREES_270
+import io.ffem.lite.common.Constants.DEGREES_90
 import io.ffem.lite.model.ResultInfo
 import io.ffem.lite.preference.isDiagnosticMode
+import io.ffem.lite.util.ColorUtil.getColorDistance
 import java.io.ByteArrayOutputStream
-import java.text.DecimalFormat
-import java.text.DecimalFormatSymbols
-import java.util.*
 
 
 object ImageUtil {
-    private val decimalFormat = DecimalFormat("#.###", DecimalFormatSymbols(Locale.US))
 
     fun createResultImage(
         resultInfo: ResultInfo,
@@ -110,7 +113,29 @@ object ImageUtil {
                 swatchTop + swatchHeight,
                 swatchPaint
             )
-            val valueText = decimalFormat.format(MathUtil.applyFormula(swatch.value, formula))
+            if (isDiagnosticMode()) {
+                val diagnosticColor = Paint()
+                diagnosticColor.color = Color.RED
+                diagnosticColor.textSize = textSize.toFloat()
+                diagnosticColor.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+                diagnosticColor.textAlign = Paint.Align.CENTER
+
+                val valueText = getColorDistance(swatch.color, paintColor.color).toInt().toString()
+                val width = textPaint.measureText(valueText) * 1.1
+                if (width > swatchWidth) {
+                    skip = !skip
+                }
+                if (!skip && swatch.value <= maxValue) {
+                    canvas.drawText(
+                        valueText,
+                        index * swatchWidth + swatchWidth / 2.toFloat(),
+                        textTop + 25,
+                        diagnosticColor
+                    )
+                }
+            }
+
+            val valueText = DECIMAL_FORMAT.format(MathUtil.applyFormula(swatch.value, formula))
             val width = textPaint.measureText(valueText) * 1.1
             if (width > swatchWidth) {
                 skip = !skip
@@ -126,6 +151,110 @@ object ImageUtil {
         }
 
         return result
+    }
+
+    fun getBitmap(bytes: ByteArray): Bitmap {
+        val options = BitmapFactory.Options()
+        options.inMutable = true
+        return BitmapFactory.decodeByteArray(bytes, 0, bytes.size, options)
+    }
+
+    /**
+     * Converts bitmap to byte array
+     */
+    fun bitmapToBytes(bitmap: Bitmap): ByteArray {
+        val bos = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, bos)
+        return bos.toByteArray()
+    }
+
+    /**
+     * Crop a bitmap to a square shape with  given length.
+     *
+     * @param bitmap the bitmap to crop
+     * @param length the length of the sides
+     * @return the cropped bitmap
+     */
+    fun getCroppedBitmap(bitmap: Bitmap, length: Int): Bitmap {
+        val pixels = IntArray(length * length)
+        val centerX = bitmap.width / 2
+        val centerY = bitmap.height / 2
+        val point = Point(centerX, centerY)
+        bitmap.getPixels(
+            pixels, 0, length,
+            point.x - length / 2,
+            point.y - length / 2,
+            length,
+            length
+        )
+        var croppedBitmap = Bitmap.createBitmap(
+            pixels, 0, length,
+            length,
+            length,
+            Bitmap.Config.ARGB_8888
+        )
+        croppedBitmap = getRoundedShape(croppedBitmap, length)
+        croppedBitmap.setHasAlpha(true)
+//        val mutableBitmap: Bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+//        val canvas = Canvas(mutableBitmap)
+//        val paint = Paint()
+//        paint.isAntiAlias = true
+//        paint.color = Color.GREEN
+//        paint.strokeWidth = 1f
+//        paint.style = Paint.Style.STROKE
+//        canvas.drawBitmap(bitmap, Matrix(), null)
+//        canvas.drawCircle(point.x.toFloat(), point.y.toFloat(), length / 2f, paint)
+//        paint.color = Color.YELLOW
+//        paint.strokeWidth = 1f
+//        canvas.drawLine(0f, bitmap.height / 2f,
+//                bitmap.width / 3f, bitmap.height / 2f, paint)
+//        canvas.drawLine(bitmap.width - bitmap.width / 3f, bitmap.height / 2f,
+//                bitmap.width.toFloat(), bitmap.height / 2f, paint)
+        return croppedBitmap
+    }
+
+    fun rotateImage(activity: Activity, `in`: Bitmap): Bitmap {
+        val display = activity.windowManager.defaultDisplay
+        val rotation: Int = when (display.rotation) {
+            Surface.ROTATION_0 -> DEGREES_90
+            Surface.ROTATION_180 -> DEGREES_270
+            Surface.ROTATION_270 -> DEGREES_180
+            Surface.ROTATION_90 -> 0
+            else -> 0
+        }
+        val mat = Matrix()
+        mat.postRotate(rotation.toFloat())
+        return Bitmap.createBitmap(`in`, 0, 0, `in`.width, `in`.height, mat, true)
+    }
+
+    /**
+     * Crop bitmap image into a round shape.
+     *
+     * @param bitmap   the bitmap
+     * @param diameter the diameter of the resulting image
+     * @return the rounded bitmap
+     */
+    private fun getRoundedShape(bitmap: Bitmap, diameter: Int): Bitmap {
+        val resultBitmap = Bitmap.createBitmap(
+            diameter,
+            diameter, Bitmap.Config.ARGB_8888
+        )
+        val canvas = Canvas(resultBitmap)
+        val path = Path()
+        path.addCircle(
+            (diameter.toFloat() - 1) / 2,
+            (diameter.toFloat() - 1) / 2,
+            diameter.toFloat() / 2,
+            Path.Direction.CCW
+        )
+        canvas.clipPath(path)
+        resultBitmap.setHasAlpha(true)
+        canvas.drawBitmap(
+            bitmap,
+            Rect(0, 0, bitmap.width, bitmap.height),
+            Rect(0, 0, diameter, diameter), null
+        )
+        return resultBitmap
     }
 
     fun ImageProxy.toBitmap(): Bitmap {
@@ -265,4 +394,5 @@ object ImageUtil {
             }
         }
     }
+
 }

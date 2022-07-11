@@ -1,0 +1,751 @@
+{
+  "comment": "IMPORTANT: *DO NOT* change the uuid values",
+  "tests": [
+    {
+      "name": "Ammonia",
+      "sampleType": "water",
+      "subtype": "cuvette",
+      "uuid": "WB-HD-NH3",
+      "calibrate": true,
+      "monthsValid": 6,
+      "results": [
+        {
+          "id": 1,
+          "name": "Ammonia",
+          "unit": "mg/l",
+          "ranges": "0, 0.1, 0.25, 0.5, 0.75, 1, 2",
+          "timeDelay": 300
+        }
+      ]
+    },
+    {
+      "name": "Aluminum",
+      "sampleType": "water",
+      "subtype": "cuvette",
+      "uuid": "WB-HD-Al",
+      "calibrate": true,
+      "monthsValid": 12,
+      "results": [
+        {
+          "id": 1,
+          "name": "Aluminum",
+          "unit": "mg/l",
+          "ranges": "0, 0.1, 0.2, 0.3"
+        }
+      ]
+    },
+    {
+      "name": "Manganese",
+      "sampleType": "water",
+      "subtype": "card",
+      "uuid": "WB-HD-Mn",
+      "calibrate": true,
+      "monthsValid": 12,
+      "results": [
+        {
+          "id": 1,
+          "name": "Manganese",
+          "unit": "mg/l",
+          "ranges": "0, 0.25, 0.5, 1.0, 1.5, 2.0"
+        }
+      ]
+    },
+    {
+      "name": "Zinc",
+      "sampleType": "water",
+      "subtype": "card",
+      "uuid": "WB-HD-Zn",
+      "calibrate": true,
+      "monthsValid": 12,
+      "results": [
+        {
+          "id": 1,
+          "name": "Zinc",
+          "unit": "mg/l",
+          "ranges": "0, 2, 4, 6, 8"
+        }
+      ]
+    },
+    {
+      "name": "Arsenic",
+      "sampleType": "water",
+      "subtype": "cuvette",
+      "uuid": "WB-HD-As",
+      "calibrate": true,
+      "monthsValid": 2,
+      "dilutions": [
+        1,
+        2,
+        5
+      ],
+      "results": [
+        {
+          "id": 1,
+          "name": "Arsenic",
+          "unit": "mg/l",
+          "ranges": "0, 0.05, 0.1, 0.3, 0.5",
+          "timeDelay": 600
+        }
+      ]
+    },
+    {
+      "name": "Hazen Units",
+      "sampleType": "water",
+      "subtype": "cuvette",
+      "uuid": "WB-HD-HU",
+      "calibrate": true,
+      "dilutions": [
+        1,
+        2,
+        5
+      ],
+      "results": [
+        {
+          "id": 1,
+          "name": "Hazen Units",
+          "unit": "HU",
+          "ranges": "0, 25, 50, 100"
+        }
+      ]
+    },
+    {
+      "name": "Chromium",
+      "sampleType": "water",
+      "subtype": "cuvette",
+      "uuid": "WB-HD-Cr",
+      "calibrate": true,
+      "monthsValid": 3,
+      "dilutions": [
+        1,
+        2,
+        5
+      ],
+      "results": [
+        {
+          "id": 1,
+          "name": "Chromium",
+          "unit": "mg/l",
+          "ranges": "0, 0.1, 0.5, 1, 2, 3",
+          "timeDelay": 300
+        }
+      ]
+    },
+    {
+      "name": "Copper",
+      "sampleType": "water",
+      "subtype": "cuvette",
+      "uuid": "WB-HD-Cu",
+      "calibrate": true,
+      "monthsValid": 12,
+      "dilutions": [
+        1,
+        2,
+        5
+      ],
+      "results": [
+        {
+          "id": 1,
+          "name": "Copper",
+          "unit": "mg/l",
+          "ranges": "0, 0.05, 0.1, 0.5, 1, 1.5, 2"
+        }
+      ]
+    },
+    {
+      "name": "Dissolved Oxygen",
+      "sampleType": "water",
+      "subtype": "cuvette",
+      "uuid": "WB-HD-DO2",
+      "calibrate": true,
+      "monthsValid": 12,
+      "dilutions": [
+        1,
+        2,
+        5
+      ],
+      "results": [
+        {
+          "id": 1,
+          "name": "Dissolved Oxygen",
+          "timeDelay": 300,
+          "unit": "mg/l",
+          "ranges": "0, 8"
+        }
+      ]
+    },
+    {
+      "name": "Fluoride",
+      "sampleType": "water",
+      "subtype": "cuvette",
+      "uuid": "WB-HD-F",
+      "calibrate": true,
+      "monthsValid": 12,
+      "dilutions": [
+        1,
+        5
+      ],
+      "results": [
+        {
+          "id": 1,
+          "name": "Fluoride",
+          "unit": "mg/l",
+          "ranges": "0, 0.5, 1, 1.5, 2",
+          "acceptable": "< 1",
+          "permissible": "1 - 1.5",
+          "riskType": "L3",
+          "risks": [
+            {
+              "value": 1,
+              "risk": 1,
+              "sign": "<",
+              "safety": 0
+            },
+            {
+              "value": 1.5,
+              "risk": 2,
+              "safety": 1
+            },
+            {
+              "value": 1.5,
+              "risk": 3,
+              "sign": ">"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Fluoride - High Range",
+      "sampleType": "water",
+      "subtype": "cuvette",
+      "uuid": "WB-HD-F-1",
+      "calibrate": true,
+      "monthsValid": 12,
+      "dilutions": [
+        1,
+        2,
+        5
+      ],
+      "results": [
+        {
+          "id": 1,
+          "name": "Fluoride",
+          "unit": "mg/l",
+          "ranges": "0, 1, 2, 4, 6"
+        }
+      ]
+    },
+    {
+      "name": "Free Chlorine",
+      "sampleType": "water",
+      "subtype": "cuvette",
+      "uuid": "WB-HD-Cl",
+      "calibrate": true,
+      "monthsValid": 24,
+      "dilutions": [
+        1,
+        5
+      ],
+      "results": [
+        {
+          "id": 1,
+          "name": "Free Chlorine",
+          "unit": "mg/l",
+          "ranges": "0, 0.2, 0.5, 1.5, 3",
+          "risks": [
+            {
+              "value": 0.2,
+              "risk": 1,
+              "safety": 0
+            },
+            {
+              "value": 1,
+              "risk": 2,
+              "safety": 1
+            },
+            {
+              "value": 1,
+              "sign": ">",
+              "risk": 3,
+              "safety": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Hydrogen Peroxide",
+      "sampleType": "water",
+      "subtype": "cuvette",
+      "uuid": "WB-HD-H2O2",
+      "calibrate": true,
+      "monthsValid": 2,
+      "results": [
+        {
+          "id": 1,
+          "name": "Hydrogen Peroxide",
+          "unit": "M",
+          "ranges": "0, 0.05, 0.1, 0.5, 1"
+        }
+      ]
+    },
+    {
+      "name": "Nitrate",
+      "sampleType": "water",
+      "subtype": "cuvette",
+      "uuid": "WB-HD-NO3",
+      "calibrate": true,
+      "monthsValid": 24,
+      "dilutions": [
+        1,
+        5
+      ],
+      "results": [
+        {
+          "id": 1,
+          "name": "Nitrate",
+          "unit": "mg/l",
+          "ranges": "0, 10, 25, 50, 75",
+          "timeDelay": 360,
+          "risks": [
+            {
+              "value": 45,
+              "safety": 0
+            },
+            {
+              "value": 45,
+              "sign": ">",
+              "safety": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Nitrite",
+      "sampleType": "water",
+      "subtype": "cuvette",
+      "uuid": "WB-HD-NO2",
+      "calibrate": true,
+      "monthsValid": 6,
+      "dilutions": [
+        1,
+        2,
+        5,
+        -1
+      ],
+      "results": [
+        {
+          "id": 1,
+          "name": "Nitrite",
+          "unit": "mg/l",
+          "ranges": "0, 0.05, 0.1, 0.2, 0.3, 0.4",
+          "timeDelay": 600,
+          "grayScale": false
+        }
+      ]
+    },
+    {
+      "name": "pH",
+      "sampleType": "water",
+      "subtype": "cuvette",
+      "uuid": "WB-HD-pH",
+      "calibrate": true,
+      "monthsValid": 12,
+      "results": [
+        {
+          "id": 1,
+          "name": "pH",
+          "ranges": "4, 5, 6, 7, 8, 9, 10",
+          "acceptable": "6.5 - 8.5",
+          "permissible": "",
+          "timeDelay": 45,
+          "riskType": "alkalinity",
+          "risks": [
+            {
+              "value": 6.5,
+              "risk": 4,
+              "sign": "<",
+              "safety": 2
+            },
+            {
+              "value": 6.5,
+              "risk": 2,
+              "safety": 0
+            },
+            {
+              "value": 8.5,
+              "risk": 2,
+              "safety": 0
+            },
+            {
+              "value": 8.5,
+              "risk": 4,
+              "sign": ">",
+              "safety": 2
+            }
+          ],
+          "risksIrrigation": [
+            {
+              "value": 6.5,
+              "sign": "<",
+              "risk": 1
+            },
+            {
+              "value": 7.5,
+              "sign": ">",
+              "risk": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Potassium",
+      "sampleType": "water",
+      "subtype": "cuvette",
+      "uuid": "WB-HD-K",
+      "calibrate": true,
+      "monthsValid": 6,
+      "dilutions": [
+        1,
+        2,
+        5
+      ],
+      "results": [
+        {
+          "id": 1,
+          "name": "Potassium",
+          "unit": "mg/l",
+          "ranges": "0, 10, 20, 30",
+          "timeDelay": 300,
+          "grayScale": false
+        }
+      ]
+    },
+    {
+      "name": "Phosphate",
+      "sampleType": "water",
+      "subtype": "cuvette",
+      "uuid": "WB-HD-PO4",
+      "calibrate": true,
+      "monthsValid": 24,
+      "dilutions": [
+        1,
+        2,
+        5
+      ],
+      "results": [
+        {
+          "id": 1,
+          "name": "Phosphate",
+          "unit": "mg/l",
+          "ranges": "0, 0.3, 0.6, 0.9, 1.2, 1.5, 2",
+          "timeDelay": 600
+        }
+      ]
+    },
+    {
+      "name": "Silica",
+      "sampleType": "water",
+      "subtype": "cuvette",
+      "uuid": "WB-HD-SiO2",
+      "calibrate": true,
+      "monthsValid": 12,
+      "results": [
+        {
+          "id": 1,
+          "name": "Silica",
+          "unit": "mg/l",
+          "ranges": "0, 0.5, 1, 1.5, 2",
+          "timeDelay": 480
+        }
+      ]
+    },
+    {
+      "name": "Sulphate",
+      "sampleType": "water",
+      "subtype": "cuvette",
+      "uuid": "WB-HD-SO42",
+      "calibrate": true,
+      "monthsValid": 12,
+      "dilutions": [
+        1,
+        2,
+        5
+      ],
+      "results": [
+        {
+          "id": 1,
+          "name": "Sulphate",
+          "ranges": "0, 10, 20, 40",
+          "unit": "mg/l"
+        }
+      ]
+    },
+    {
+      "name": "Total Iron",
+      "sampleType": "water",
+      "subtype": "cuvette",
+      "uuid": "WB-HD-Fe",
+      "calibrate": true,
+      "monthsValid": 6,
+      "dilutions": [
+        1,
+        5
+      ],
+      "results": [
+        {
+          "id": 1,
+          "name": "Total Iron",
+          "unit": "mg/l",
+          "ranges": "0, 0.5, 1, 1.5, 2",
+          "timeDelay": 300,
+          "risks": [
+            {
+              "value": 0.3,
+              "safety": 0
+            },
+            {
+              "value": 0.3,
+              "sign": ">",
+              "safety": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Chlorophyll A",
+      "sampleType": "water",
+      "subtype": "cuvette",
+      "uuid": "WB-HD-ChlA",
+      "calibrate": true,
+      "monthsValid": 6,
+      "results": [
+        {
+          "id": 1,
+          "name": "Chlorophyll A",
+          "unit": "mg/l",
+          "ranges": "0, 0.20, 0.50, 1, 5, 10, 25",
+          "timeDelay": 30
+        }
+      ]
+    },
+    {
+      "name": "Turbidity",
+      "sampleType": "water",
+      "subtype": "cuvette",
+      "uuid": "WB-HD-Trb",
+      "calibrate": true,
+      "results": [
+        {
+          "id": 1,
+          "name": "Turbidity",
+          "unit": "NTU",
+          "ranges": "0, 10, 20, 40",
+          "risks": [
+            {
+              "value": 1,
+              "sign": "<",
+              "risk": 1,
+              "safety": 0
+            },
+            {
+              "value": 5,
+              "risk": 2,
+              "safety": 1
+            },
+            {
+              "value": 5,
+              "sign": ">",
+              "risk": 3,
+              "safety": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Zinc",
+      "sampleType": "water",
+      "subtype": "cuvette",
+      "uuid": "WB-HD-Zn",
+      "calibrate": true,
+      "monthsValid": 12,
+      "results": [
+        {
+          "id": 1,
+          "name": "Zinc",
+          "unit": "mg/l",
+          "ranges": "0.1, 0.25, 0.5, 1, 2.5, 5",
+          "timeDelay": 600
+        }
+      ]
+    },
+    {
+      "name": "Total Hardness",
+      "sampleType": "water",
+      "subtype": "titration",
+      "uuid": "WT-HD-THrd",
+      "results": [
+        {
+          "id": 1,
+          "name": "Total Hardness",
+          "unit": "mg/l",
+          "formula": "%1$f * 20",
+          "acceptable": "200",
+          "permissible": "600"
+        }
+      ]
+    },
+    {
+      "name": "Total Alkalinity",
+      "sampleType": "water",
+      "subtype": "titration",
+      "uuid": "WT-HD-TAlk",
+      "results": [
+        {
+          "id": 1,
+          "name": "Titration drops 1",
+          "unit": "mg/l",
+          "input": true
+        },
+        {
+          "id": 2,
+          "name": "Titration drops 2",
+          "unit": "mg/l",
+          "input": true
+        },
+        {
+          "id": 3,
+          "name": "P-Alkalinity",
+          "unit": "mg/l",
+          "formula": "%1$f * 10",
+          "acceptable": "200",
+          "permissible": "600",
+          "display": 2
+        },
+        {
+          "id": 4,
+          "name": "T-Alkalinity",
+          "unit": "mg/l",
+          "formula": "(%1$f + %2$f) * 10",
+          "acceptable": "200",
+          "permissible": "600",
+          "display": 3
+        }
+      ]
+    },
+    {
+      "name": "Calcium and Magnesium",
+      "sampleType": "water",
+      "subtype": "titration",
+      "uuid": "WT-HD-CaMg",
+      "results": [
+        {
+          "id": 1,
+          "name": "Calcium",
+          "unit": "mg/l",
+          "formula": "(%1$f/3) * 25",
+          "acceptable": "75",
+          "permissible": "200",
+          "display": 2
+        },
+        {
+          "id": 2,
+          "name": "Magnesium",
+          "unit": "mg/l",
+          "formula": "(%2$f-%1$f) * 5",
+          "acceptable": "30",
+          "permissible": "100",
+          "display": 3
+        }
+      ]
+    },
+    {
+      "name": "Carbonate",
+      "sampleType": "water",
+      "subtype": "titration",
+      "uuid": "WT-HD-CO32",
+      "results": [
+        {
+          "id": 1,
+          "name": "Carbonate",
+          "unit": "mg/l",
+          "formula": "(%1$f * 500) / 20"
+        }
+      ]
+    },
+    {
+      "name": "Bicarbonate",
+      "sampleType": "water",
+      "subtype": "titration",
+      "uuid": "WT-HD-HCO3",
+      "results": [
+        {
+          "id": 1,
+          "name": "Bicarbonate",
+          "unit": "mg/l",
+          "formula": "(%1$f * 500) / 20"
+        }
+      ]
+    },
+    {
+      "name": "Chloride",
+      "sampleType": "water",
+      "subtype": "titration",
+      "uuid": "WT-HD-Cld",
+      "results": [
+        {
+          "id": 1,
+          "name": "Chloride",
+          "unit": "mg/l",
+          "formula": "%1$f * 14.18",
+          "acceptable": "250",
+          "permissible": "1000",
+          "risksIrrigation": [
+            {
+              "value": 2,
+              "sign": "<",
+              "risk": 1
+            },
+            {
+              "value": 12,
+              "sign": ">",
+              "risk": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Dissolved Oxygen",
+      "sampleType": "water",
+      "subtype": "titration",
+      "uuid": "WT-HD-DO2",
+      "results": [
+        {
+          "id": 1,
+          "name": "Dissolved Oxygen",
+          "unit": "mg/l",
+          "formula": "%1$f * 0.05"
+        }
+      ]
+    },
+    {
+      "name": "Sulfite",
+      "sampleType": "water",
+      "subtype": "titration",
+      "uuid": "WT-HD-SO3",
+      "results": [
+        {
+          "id": 1,
+          "name": "Sulfite",
+          "unit": "mg/l",
+          "formula": "%1$f * 13.63636363636364"
+        }
+      ]
+    }
+  ]
+}

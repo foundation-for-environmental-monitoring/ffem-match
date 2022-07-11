@@ -43,10 +43,42 @@
     <string name="useFlashModeKey">userFlashMode</string>
     <string name="testImageNumberKey">testImageNumber</string>
     <string name="diagnosticEnableTimeKey">diagnosticEnableTime</string>
+    <string name="colorAverageDistanceToleranceKey">maxAvgColorDistanceTolerance</string>
+    <string name="runColorCardTestKey">runColorCardTest</string>
+    <string name="runColorCardPrefKey">runColorCardPref</string>
+    <string name="soundOnKey">soundOn</string>
+    <string name="torchModeKey">torchModeKey</string>
+    <string name="useFaceDownModeKey">faceDownMode</string>
+    <string name="useExternalCameraKey">useExternalCamera</string>
+    <string name="cameraZoomPercentKey">cameraZoomPercentKey</string>
+    <string name="cameraCenterOffsetKey">cameraCenterOffsetKey</string>
+    <string name="cameraResolutionKey">cameraResolutionKey</string>
+    <string name="cameraFocusKey">cameraFocusKey</string>
+    <string name="samplingsTimeKey">numberOfSamples</string>
+    <string name="dummyResultKey">dummyResults</string>
+    <string name="showDebugMessagesKey">showDebugMessages</string>
 
     <string name="_1">1.</string>
     <string name="_2">2.</string>
     <string name="_3">3.</string>
     <string name="_4">4.</string>
+
+    <!--Diagnostic Mode: Save / Load Calibration-->
+    <string name="saveInvalidFileName">Invalid file name</string>
+    <string name="fileAlreadyExists">File already exists</string>
+    <string name="doYouWantToOverwrite">Do you want to overwrite the file?</string>
+    <string name="overwrite">Overwrite</string>
+    <string name="load_calibration">Load Calibration</string>
+    <string name="load_calibration_warning">Are you sure you want to load and replace the current calibration?</string>
+    <string name="notFound">Not Found</string>
+    <string name="no_calibrations_saved">There are no previously saved calibrations</string>
+    <string name="deleteConfirm">Selected items will be deleted</string>
+    <string name="errorLoadingFile">Could not load file. Check file for errors.</string>
+    <string name="fileSaved">File saved</string>
+    <string name="delete_calibration">Delete calibration</string>
+    <string name="calibration_deleted">Calibration deleted</string>
+    <string name="calibration_loaded">Calibration loaded</string>
+    <string name="calibration_saved">Calibration saved</string>
+    <string name="delete_calibration_warning">Are you sure you want to delete this saved calibration?</string>
 
 </resources>

@@ -2,107 +2,173 @@
 
 package io.ffem.lite.ui
 
+import android.Manifest
 import android.app.Activity
-import android.app.ProgressDialog
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
+import android.graphics.Bitmap
+import android.graphics.Color
 import android.media.MediaPlayer
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.os.Environment.DIRECTORY_PICTURES
-import android.os.Handler
+import android.provider.Settings
+import android.util.SparseArray
+import android.view.MenuItem
 import android.view.View
-import androidx.fragment.app.Fragment
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.preference.PreferenceFragmentCompat
 import androidx.viewpager2.widget.ViewPager2
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.storage.FirebaseStorage
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
-import io.ffem.lite.app.App
-import io.ffem.lite.app.App.Companion.getTestInfo
-import io.ffem.lite.camera.CameraFragment
 import io.ffem.lite.common.*
-import io.ffem.lite.data.AppDatabase
-import io.ffem.lite.data.RemoteResult
-import io.ffem.lite.data.TestResult
+import io.ffem.lite.common.Constants.MESSAGE_TWO_LINE_FORMAT
+import io.ffem.lite.data.CalibrationDatabase
+import io.ffem.lite.data.DataHelper
+import io.ffem.lite.data.DataHelper.getJsonResult
 import io.ffem.lite.databinding.ActivityTestBinding
-import io.ffem.lite.model.CalibrationValue
-import io.ffem.lite.model.ErrorType
-import io.ffem.lite.model.PageIndex
-import io.ffem.lite.model.TestInfo
+import io.ffem.lite.helper.InstructionHelper.setupInstructions
+import io.ffem.lite.helper.SwatchHelper.isSwatchListValid
+import io.ffem.lite.model.*
 import io.ffem.lite.preference.AppPreferences
-import io.ffem.lite.preference.AppPreferences.isCalibration
-import io.ffem.lite.util.PreferencesUtil
-import timber.log.Timber
-import java.io.File
-import java.io.File.separator
+import io.ffem.lite.preference.AppPreferences.returnDummyResults
+import io.ffem.lite.preference.AppPreferences.setCalibration
+import io.ffem.lite.preference.isDiagnosticMode
+import io.ffem.lite.util.*
+import kotlinx.coroutines.*
 import java.util.*
-import kotlin.math.round
+import kotlin.math.max
 
-/**
- * Activity to display info about the app.
- */
-class TestActivity : BaseActivity(),
-    CalibrationItemFragment.OnCalibrationSelectedListener,
-    InstructionFragment.OnStartTestListener,
-    ImageConfirmFragment.OnConfirmImageListener {
+fun openAppPermissionSettings(context: Context) {
+    val i = Intent()
+    i.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+    i.addCategory(Intent.CATEGORY_DEFAULT)
+    i.data = Uri.parse("package:" + context.packageName)
+    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+    i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
+    startActivity(context, i, null)
+}
 
+class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
+    BaseRunTest.OnResultListener,
+    BaseRunTestFragment.OnResultListener,
+    SensorFragmentBase.OnSubmitResultListener,
+    RecommendationFragment.OnSubmitResultListener,
+    SelectDilutionFragment.OnDilutionSelectedListener,
+    CalibrateOptionFragment.OnCalibrationOptionListener,
+    EditCustomDilution.OnCustomDilutionListener,
+    CardInstructionFragment.OnStartTestListener,
+    CalibrationFragment.OnCalibrationSelected,
+    ImageConfirmFragment.OnConfirmImageListener,
+    CalibrationDetailsDialog.OnCalibrationDetailsSavedListener,
+    CalibrationExpiryDialog.OnCalibrationExpirySavedListener {
     private lateinit var b: ActivityTestBinding
-    private lateinit var broadcastManager: LocalBroadcastManager
-    private var testInfo: TestInfo? = null
-    lateinit var model: TestInfoViewModel
-    lateinit var mediaPlayer: MediaPlayer
+    private val mainScope = MainScope()
+    private lateinit var timerScope: CoroutineScope
+    private lateinit var testViewModel: TestInfoViewModel
+    private lateinit var testInfo: TestInfo
     private val pageIndex = PageIndex()
-    private var isExternalRequest: Boolean = false
+    private var currentDilution = 1
+    private val instructionList = ArrayList<Instruction>()
+    var isCalibration: Boolean = false
+    private var redoTest: Boolean = false
+    private var alertDialogToBeDestroyed: AlertDialog? = null
+    lateinit var mediaPlayer: MediaPlayer
+    private lateinit var broadcastManager: LocalBroadcastManager
+    private val testCompletedBroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            if (isCalibration && testViewModel.calibrationColor == Color.TRANSPARENT) {
+                pageBack()
+                showError(
+                    String.format(
+                        MESSAGE_TWO_LINE_FORMAT, getString(R.string.could_not_calibrate),
+                        getString(R.string.check_chamber_placement)
+                    ),
+                    null
+                )
+            } else if (!isCalibration && testViewModel.test.get()!!
+                    .subTest().resultInfo.result < 0
+            ) {
+                pageBack()
+                showError(
+                    String.format(
+                        MESSAGE_TWO_LINE_FORMAT, getString(R.string.error_test_failed),
+                        getString(R.string.check_chamber_placement)
+                    ),
+                    null
+                )
+            } else {
+                SoundUtil.playShortResource(context, R.raw.success)
+                pageNext()
+            }
+        }
+    }
 
     private val colorCardCapturedBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             mediaPlayer.start()
-            deleteExcessData()
+//            deleteExcessData()
         }
     }
 
     private val resultBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            testInfo = intent.getParcelableExtra(TEST_INFO_KEY)
+//            testInfo = intent.getParcelableExtra(TEST_INFO_KEY)
 
             if (testInfo != null) {
-                model.setTest(testInfo)
-                val db = AppDatabase.getDatabase(context)
-                if (!isCalibration()) {
-                    val testResult = db.resultDao().getResult(testInfo!!.fileName)
-                    if (testResult != null) {
-                        model.form = testResult
-                    }
-                }
-                model.db = db
-                val subTest = testInfo!!.subTest()
+                testViewModel.setTest(testInfo)
+//                val db = AppDatabase.getDatabase(context)
+//                if (!isCalibration()) {
+//                    val testResult = db.resultDao().getResult(testInfo!!.fileName)
+//                    if (testResult != null) {
+//                        testViewModel.form = testResult
+//                    }
+//                }
+//                testViewModel.db = db
+                val subTest = testInfo.subTest()
                 if (subTest.error == ErrorType.BAD_LIGHTING ||
                     subTest.error == ErrorType.IMAGE_TILTED
                 ) {
-                    b.viewPager.currentItem = pageIndex.result
+                    b.viewPager.currentItem = pageIndex.resultPage
                 } else {
-                    b.viewPager.currentItem = pageIndex.confirmation
+                    pageNext()
                 }
             } else {
-                b.viewPager.currentItem = pageIndex.result
+                b.viewPager.currentItem = pageIndex.resultPage
             }
         }
     }
 
+    private fun registerBroadcastReceiver() {
+        broadcastManager.registerReceiver(
+            testCompletedBroadcastReceiver,
+            IntentFilter(BROADCAST_TEST_COMPLETED)
+        )
+    }
+
+//    fun isCalibration(): Boolean {
+//        return PreferencesUtil.getBoolean(this, IS_CALIBRATION, false)
+//    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
+
+        hideSystemUI()
 
         b = ActivityTestBinding.inflate(layoutInflater)
         val view = b.root
         setContentView(view)
+
+        mediaPlayer = MediaPlayer.create(this, R.raw.short_beep)
+
+        isCalibration = intent.getBooleanExtra(IS_CALIBRATION, false)
 
         broadcastManager = LocalBroadcastManager.getInstance(this)
 
@@ -116,291 +182,826 @@ class TestActivity : BaseActivity(),
             IntentFilter(RESULT_EVENT_BROADCAST)
         )
 
-        AppPreferences.generateImageFileName()
-
-        if (BuildConfig.APPLICATION_ID == intent.action) {
-            val uuid = intent.getStringExtra(TEST_ID)
-            if (intent.getBooleanExtra(DEBUG_MODE, false)) {
-                sendDummyResultForDebugging(uuid)
-            }
-            isExternalRequest = true
-            PreferencesUtil.setString(this, TEST_ID_KEY, uuid)
-            PreferencesUtil.setBoolean(this, IS_CALIBRATION, false)
-        } else {
-            PreferencesUtil.removeKey(this, TEST_ID_KEY)
-        }
-
-        model = ViewModelProvider(this).get(
-            TestInfoViewModel::class.java
-        )
-
-        b.viewPager.isUserInputEnabled = false
-        val testPagerAdapter = TestPagerAdapter(this)
-        testPagerAdapter.pageIndex = pageIndex
-        b.viewPager.adapter = testPagerAdapter
-
         b.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageScrollStateChanged(state: Int) {
-            }
-
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                if (position == pageIndex.camera || position == pageIndex.instruction) {
-                    window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
-                    view.invalidate()
+
+                if (position > 0 && b.indicatorPgr.activePage == position) {
+                    return
+                }
+
+                b.indicatorPgr.activePage = max(0, position)
+                b.indicatorPgr.invalidate()
+
+                if (position < 1) {
+                    b.footerLyt.visibility = View.GONE
                 } else {
-                    window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
-                    view.invalidate()
+                    b.footerLyt.visibility = View.VISIBLE
+                }
+
+                if (position < 1) {
+                    b.backTxt.visibility = View.INVISIBLE
+                } else {
+                    b.backTxt.visibility = View.VISIBLE
+                }
+
+                invalidateOptionsMenu()
+
+                showHideFooter(position)
+
+                if (position == pageIndex.testPage &&
+                    (testInfo.subtype == TestType.CUVETTE || testInfo.subtype == TestType.CARD)
+                ) {
+                    if (!AppPreferences.useExternalSensor(applicationContext)) {
+                        requestCameraPermission.launch(Manifest.permission.CAMERA)
+                    }
+                    hideSystemUI()
+                } else {
+//                    showSystemUI()
+                    if (::timerScope.isInitialized) {
+                        timerScope.cancel()
+                    }
+                }
+
+                lifecycleScope.launch {
+                    delay(200)
+                    if (isCalibration && b.viewPager.currentItem == 0) {
+                        title = getString(R.string.calibrate)
+                    } else if (::testInfo.isInitialized) {
+                        title = testInfo.name?.toLocalString()
+                    } else if (b.viewPager.currentItem == pageIndex.confirmationPage) {
+                        title = getString(R.string.confirm)
+                    }
                 }
             }
         })
 
-        mediaPlayer = MediaPlayer.create(this, R.raw.short_beep)
-    }
+        testViewModel = ViewModelProvider(this)[TestInfoViewModel::class.java]
 
-    fun submitResult() {
+        if ("io.ffem.lite" == intent.action) {
+            getTestSelectedByExternalApp(intent)
+        }
+
+        val testInfo = testViewModel.test.get()
         if (testInfo != null) {
-            val resultIntent = Intent()
-            val subTest = testInfo!!.subTest()
-            if (subTest.getResult() >= 0) {
-                val db = AppDatabase.getDatabase(baseContext)
-                val form = db.resultDao().getResult(testInfo!!.fileName)
-                if (form != null) {
-                    sendResultToCloudDatabase(testInfo!!, form)
-                    resultIntent.putExtra(TEST_VALUE_KEY, subTest.getResultString(this))
-                    resultIntent.putExtra(
-                        testInfo!!.name + "_Result",
-                        subTest.getResultString(this)
-                    )
-                    resultIntent.putExtra(testInfo!!.name + "_Risk", subTest.getRiskEnglish(this))
-                    resultIntent.putExtra("meta_device", Build.BRAND + ", " + Build.MODEL)
-                }
-            } else {
-                resultIntent.putExtra(TEST_VALUE_KEY, "")
-            }
-            setResult(Activity.RESULT_OK, resultIntent)
-        }
-        finish()
-    }
-
-    private fun sendResultToCloudDatabase(testInfo: TestInfo, form: TestResult) {
-        if (!BuildConfig.INSTRUMENTED_TEST_RUNNING.get() && !isExternalRequest) {
-            val path = if (BuildConfig.DEBUG) {
-                "result-debug"
-            } else {
-                "result"
-            }
-            val ref = FirebaseDatabase.getInstance().getReference(path).push()
-            val subTest = testInfo.subTest()
-            ref.setValue(
-                RemoteResult(
-                    testInfo.uuid!!,
-                    testInfo.name,
-                    testInfo.sampleType,
-                    subTest.getRiskEnglish(this),
-                    subTest.getResultString(this),
-                    subTest.unit,
-                    System.currentTimeMillis(),
-                    form.source,
-                    form.sourceType,
-                    form.latitude,
-                    form.longitude,
-                    form.geoAccuracy,
-                    form.comment,
-                    App.getAppVersion(true),
-                    Build.MODEL
+            testViewModel.loadCalibrations()
+            if (!isDiagnosticMode() && testInfo.subtype == TestType.CUVETTE &&
+                !AppPreferences.useExternalSensor(this) && !isSwatchListValid(testInfo, false)
+            ) {
+                alertCalibrationIncomplete(
+                    this, testInfo
                 )
-            )
+                return
+            }
 
-            val filePath = getExternalFilesDir(DIRECTORY_PICTURES).toString() +
-                    separator + "captures" + separator
-            val fileName = testInfo.name!!.replace(" ", "")
-
-            val storageRef = FirebaseStorage.getInstance().reference
-            storageRef.child(path + "/${testInfo.fileName}/swatch.jpg")
-                .putFile(Uri.fromFile(File(filePath + testInfo.fileName + separator + fileName + "_swatch.jpg")))
-                .addOnFailureListener {
-                    Timber.e(it)
-                }.addOnSuccessListener {
+            val db = CalibrationDatabase.getDatabase(this)
+            try {
+                val calibrationDetail = db.calibrationDao().getCalibrationDetail(testInfo.uuid)
+                if (calibrationDetail != null) {
+                    val milliseconds = calibrationDetail.expiry
+                    if (milliseconds > 0 && milliseconds <= Date().time) {
+                        if (!isDiagnosticMode()) {
+                            alertCalibrationExpired(this)
+                            return
+                        }
+                    }
                 }
+            } finally {
+                db.close()
+            }
 
-            storageRef.child(path + "/${testInfo.fileName}/image.jpg")
-                .putFile(Uri.fromFile(File(filePath + testInfo.fileName + separator + fileName + ".jpg")))
-                .addOnFailureListener {
-                    Timber.e(it)
-                }.addOnSuccessListener {
-                }
-
-            storageRef.child(path + "/${testInfo.fileName}/result.png")
-                .putFile(Uri.fromFile(File(filePath + testInfo.fileName + separator + fileName + "_result.png")))
-                .addOnFailureListener {
-                    Timber.e(it)
-                }.addOnSuccessListener {
-                }
+            startTest()
+        } else if (isCalibration) {
+            val testPagerAdapter = TestPagerAdapter(this, testInfo)
+            testPagerAdapter.pageIndex = pageIndex
+            b.viewPager.adapter = testPagerAdapter
+            b.indicatorPgr.showDots = true
         }
     }
 
-    private fun deleteExcessData() {
-        val db = AppDatabase.getDatabase(baseContext)
-        // Keep only last 25 results to save drive space
-        try {
-            for (i in 0..1) {
-                if (db.resultDao().getCount() > 25) {
-                    val result = db.resultDao().getOldestResult()
+    private fun showSystemUI() {
+        window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE)
+//        findViewById<AppBarLayout>(R.id.appBarLayout).visibility = View.VISIBLE
+    }
 
-                    val path = getExternalFilesDir(DIRECTORY_PICTURES).toString() +
-                            separator + "captures"
-                    val directory = File("$path$separator${result.id}$separator")
-                    if (directory.exists() && directory.isDirectory) {
-                        directory.deleteRecursively()
-                    }
+    private fun hideSystemUI() {
+//        findViewById<AppBarLayout>(R.id.appBarLayout).visibility = View.GONE
+//        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
+        window.decorView.systemUiVisibility =
+            (View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    or View.SYSTEM_UI_FLAG_FULLSCREEN)
+    }
 
-                    db.resultDao().deleteResult(result.id)
+    private fun alertCalibrationExpired(activity: Activity) {
+        val message = String.format(
+            MESSAGE_TWO_LINE_FORMAT,
+            activity.getString(R.string.error_calibration_expired),
+            activity.getString(R.string.order_fresh_batch)
+        )
+        AlertUtil.showAlert(
+            activity, R.string.cannot_start_test,
+            message, R.string.ok,
+            { dialogInterface: DialogInterface, _: Int ->
+                dialogInterface.dismiss()
+                activity.finish()
+            }, null,
+            { dialogInterface: DialogInterface ->
+                dialogInterface.dismiss()
+                activity.finish()
+            }
+        )
+    }
+
+    private fun alertCalibrationIncomplete(
+        activity: Activity, testInfo: TestInfo
+    ) {
+        var message = activity.getString(
+            R.string.error_calibration_incomplete,
+            testInfo.name!!.toLocalString()
+        )
+        message = String.format(
+            MESSAGE_TWO_LINE_FORMAT, message,
+            activity.getString(R.string.do_you_want_to_calibrate)
+        )
+
+        MaterialAlertDialogBuilder(activity)
+            .setTitle(R.string.invalid_calibration)
+            .setMessage(message)
+            .setCancelable(false)
+            .setPositiveButton(R.string.ok) { _, _ ->
+                activity.setResult(Activity.RESULT_CANCELED)
+                activity.finish()
+                calibrate()
+            }
+            .create()
+            .show()
+    }
+
+    private var startCalibrate =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { }
+
+    private fun calibrate(): PreferenceFragmentCompat? {
+        val intent = Intent(this, TestActivity::class.java)
+        intent.putExtra(IS_CALIBRATION, true)
+        intent.putExtra(TEST_ID_KEY, testInfo.uuid)
+        setCalibration(this, true)
+        startCalibrate.launch(intent)
+        return null
+    }
+
+    private fun runCuvetteTest() {
+        timerScope = MainScope()
+        timerScope.launch {
+            if (AppPreferences.useFaceDownMode(baseContext) &&
+                BuildConfig.USE_SCREEN_PINNING.get() && !isAppInLockTaskMode(baseContext)
+            ) {
+                if (b.viewPager.currentItem == pageIndex.testPage &&
+                    !returnDummyResults(baseContext)
+                ) {
+                    startLockTask()
                 }
             }
-        } finally {
-            db.close()
         }
     }
 
-    override fun onCalibrationSelected(calibrationValue: CalibrationValue) {
-        val subTest = testInfo!!.subTest()
-        subTest.calibratedResult.calibratedValue = calibrationValue
+    private fun startTest() {
+        val testPagerAdapter = TestPagerAdapter(this, testInfo)
+        redoTest = true
+        setupInstructions(
+            testInfo,
+            instructionList,
+            pageIndex,
+            currentDilution,
+            isCalibration,
+            redoTest,
+            this
+        )
+
+        testPagerAdapter.testInfo = testInfo
+        testPagerAdapter.instructions = instructionList
+
+        b.indicatorPgr.pageCount = pageIndex.totalPageCount
+
+        b.viewPager.currentItem = 0
+
+        testViewModel.loadCalibrations()
+        AppPreferences.setCalibration(this, isCalibration)
+        testViewModel.isCalibration = isCalibration
+
+        showHideFooter(b.viewPager.currentItem)
+
+        testPagerAdapter.pageIndex = pageIndex
+        b.viewPager.adapter = testPagerAdapter
+        b.indicatorPgr.showDots = true
+    }
+
+    private fun getTestSelectedByExternalApp(intent: Intent) {
+        var uuid = intent.getStringExtra(TEST_ID_KEY)
+        if (uuid.isNullOrEmpty()) {
+            uuid = intent.getStringExtra(EXT_TEST_ID_KEY)
+        }
+        AppPreferences.setCurrentCardType(this, 0)
+        if (uuid != null) {
+            val test = DataHelper.getTestInfo(uuid, this)
+            if (test != null) {
+                testInfo = test
+                val formulaList = mutableListOf<String>()
+                if (intent.getStringExtra("f1") != null) {
+                    formulaList.add(intent.getStringExtra("f1").toString())
+                }
+                if (intent.getStringExtra("f2") != null) {
+                    formulaList.add(intent.getStringExtra("f2").toString())
+                }
+                var index = 0
+                for (r in testInfo.results) {
+                    if (!r.input) {
+                        if (formulaList.size > index) {
+                            r.formula = formulaList[index]
+                            index++
+                        }
+                    }
+                }
+
+                testViewModel.setTest(testInfo)
+            } else {
+                setTitle(R.string.not_found)
+                alertTestTypeNotSupported()
+            }
+        }
+    }
+
+    private fun alertTestTypeNotSupported() {
+        var message = getString(R.string.error_test_not_available)
+        message = String.format(
+            MESSAGE_TWO_LINE_FORMAT,
+            message,
+            getString(R.string.please_contact_support)
+        )
+        AlertUtil.showAlert(
+            this, R.string.cannot_start_test, message,
+            R.string.ok,
+            { dialogInterface: DialogInterface, _: Int ->
+                dialogInterface.dismiss()
+                finish()
+            }, null,
+            { dialogInterface: DialogInterface ->
+                dialogInterface.dismiss()
+                finish()
+            }
+        )
+    }
+
+    private fun showHideFooter(position: Int) {
+        b.indicatorPgr.visibility = View.GONE
+        b.indicatorPgr.invalidate()
+        b.indicatorPgr.visibility = View.VISIBLE
+        b.nextTxt.visibility = View.VISIBLE
+        b.backTxt.visibility = View.VISIBLE
+        when {
+            position == pageIndex.dilutionPage || position == pageIndex.calibrationPage -> {
+                b.viewPager.isUserInputEnabled = false
+                if (position > 1) {
+                    b.nextTxt.visibility = View.VISIBLE
+                } else {
+                    b.nextTxt.visibility = View.INVISIBLE
+                }
+            }
+            isCalibration && position == 0 -> {
+                b.nextTxt.visibility = View.INVISIBLE
+            }
+            position == pageIndex.donePage || position == pageIndex.startTimerPage
+                    || position == pageIndex.testPage -> {
+                b.viewPager.isUserInputEnabled = false
+                b.nextTxt.visibility = View.INVISIBLE
+            }
+            else -> {
+                b.viewPager.isUserInputEnabled = true
+                b.nextTxt.visibility = View.VISIBLE
+            }
+        }
+        if ((b.nextTxt.visibility == View.INVISIBLE && b.backTxt.visibility == View.INVISIBLE) ||
+            position == pageIndex.testPage || position == pageIndex.totalPageCount - 1 ||
+            pageIndex.listPage == position
+        ) {
+            b.footerLyt.visibility = View.GONE
+        } else {
+            b.footerLyt.visibility = View.VISIBLE
+        }
+        if (isCalibration && b.viewPager.currentItem == 1) {
+            b.footerLyt.visibility = View.GONE
+        }
+        if (this::testInfo.isInitialized && testInfo.subtype == TestType.CARD) {
+            if (position == pageIndex.resultPage && !isCalibration) {
+                b.footerLyt.visibility = View.VISIBLE
+            } else {
+                b.footerLyt.visibility = View.GONE
+            }
+        }
+        if (position == pageIndex.resultPage) {
+            b.viewPager.isUserInputEnabled = false
+        }
+    }
+
+    private fun setTestResult() {
+        val resultIntent = Intent()
+        val resultsValues = SparseArray<String>()
+        for (i in testInfo.results.indices) {
+            val result = testInfo.results[i]
+            resultIntent.putExtra(
+                result.name?.replace(" ", "_"), result.getResultString()
+            )
+            resultIntent.putExtra(
+                result.name?.replace(" ", "_") + "_" + UNIT,
+                testInfo.subTest().unit
+            )
+            resultsValues.append(result.id, result.getResultString())
+
+            if (result.display == 1 || testInfo.results.size == 1) {
+                if (result.error == ErrorType.NO_ERROR) {
+                    resultIntent.putExtra(VALUE, result.getResultString())
+                }
+            }
+        }
+        val resultJson = getJsonResult(testInfo, testInfo.results, -1, null, this)
+        resultIntent.putExtra(ConstantJsonKey.RESULT_JSON, resultJson.toString())
+        setResult(Activity.RESULT_OK, resultIntent)
+    }
+
+    override fun onSubmitResult(results: ArrayList<Result>) {
+        setTestResult()
         pageNext()
     }
 
-    /**
-     * Create dummy results to send when in debug mode
-     */
-    private fun sendDummyResultForDebugging(uuid: String?) {
-        if (uuid != null) {
-            val testInfo = getTestInfo(uuid)
-            if (testInfo != null) {
-                val resultIntent = Intent()
-                val random = Random()
-                val subTest = testInfo.subTest()
-                val maxValue = subTest.values[subTest.values.size / 2].value
+    // Todo: fix menu
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        when (item.itemId) {
+//            R.id.menuLoad -> {
+//                loadCalibration()
+//                return true
+//            }
+//            R.id.save_menu -> {
+//                val db = CalibrationDatabase.getDatabase(this)
+//                try {
+//                    val dao = db.calibrationDao()
+//                    val calibrationInfo = dao.getCalibrations(testInfo.uuid)
+//                    if (calibrationInfo != null) {
+//                        var colors = ""
+//                        for (calibration in calibrationInfo.calibrations) {
+//                            if (colors.isNotEmpty()) {
+//                                colors += ","
+//                            }
+//                            colors += calibration.value.toString() + ":" + calibration.color
+//                        }
+//                        val savedName = dao.getCalibrationColorString(colors)
+//                        if (savedName != null) {
+//                            SnackbarUtils.showLongSnackbar(
+//                                b.footerLyt,
+//                                String.format(
+//                                    getString(R.string.calibration_already_saved),
+//                                    savedName
+//                                )
+//                            )
+//                            return true
+//                        }
+//                    }
+//
+//                    if (calibrationInfo != null &&
+//                        calibrationInfo.calibrations.size >= testInfo.subTest().colors.size
+//                    ) {
+//                        showCalibrationDetailsDialog(false)
+//                    } else {
+//                        SnackbarUtils.showLongSnackbar(
+//                            b.footerLyt,
+//                            String.format(
+//                                getString(R.string.error_calibration_incomplete),
+//                                testInfo.name!!.toLocalString()
+//                            )
+//                        )
+//                    }
+//                } finally {
+//                    db.close()
+//                }
+//                return true
+//            }
+//            R.id.graph_menu -> {
+//                val graphIntent = Intent(this, CalibrationGraphActivity::class.java)
+//                testViewModel.loadCalibrations()
+//                graphIntent.putExtra(TEST_INFO, testViewModel.test.get())
+//                startActivity(graphIntent)
+//                return true
+//            }
+//            android.R.id.home -> {
+//                if (isAppInLockTaskMode(this)) {
+//                    showLockTaskEscapeMessage()
+//                } else {
+//                    when {
+//                        isCalibration && b.viewPager.currentItem > 1 -> {
+//                            b.viewPager.setCurrentItem(1, false)
+//                        }
+//                        isCalibration && b.viewPager.currentItem > 0 -> {
+//                            b.viewPager.setCurrentItem(0, false)
+//                        }
+//                        else -> {
+//                            finish()
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        return super.onOptionsItemSelected(item)
+//    }
 
-                val result = (round(random.nextDouble() * maxValue * 100) / 100.0).toString()
-                resultIntent.putExtra(TEST_VALUE_KEY, result)
-
-                val pd = ProgressDialog(this)
-                pd.setMessage("Sending dummy result...")
-                pd.setCancelable(false)
-                pd.show()
-
-                setResult(Activity.RESULT_OK, resultIntent)
-                Handler().postDelayed({
-                    pd.dismiss()
-                    finish()
-                }, 3000)
+    private val startLoadCalibration =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == RESULT_NO_DATA) {
+                findViewById<ConstraintLayout>(R.id.root_layout)
+                    .snackBar(getString(R.string.no_calibrations_saved))
             }
         }
-    }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        broadcastManager.unregisterReceiver(colorCardCapturedBroadcastReceiver)
-        broadcastManager.unregisterReceiver(resultBroadcastReceiver)
+    private fun loadCalibration() {
+        testViewModel.loadCalibrations()
+        val intent = Intent(this, CalibrationsActivity::class.java)
+        intent.putExtra(TEST_INFO, testViewModel.test.get())
+        startLoadCalibration.launch(intent)
     }
 
     private fun pageBack() {
-        if (b.viewPager.currentItem in pageIndex.camera..pageIndex.confirmation) {
-            val testPagerAdapter = TestPagerAdapter(this)
-            testPagerAdapter.pageIndex = pageIndex
-            b.viewPager.adapter = testPagerAdapter
+        if (b.viewPager.currentItem == 1 && isCalibration && intent.getStringExtra(TEST_ID_KEY) != null) {
+            finish()
+        } else if (b.viewPager.currentItem - 1 == pageIndex.testPage) {
+            b.viewPager.currentItem = b.viewPager.currentItem - 2
         } else {
             b.viewPager.currentItem = b.viewPager.currentItem - 1
         }
     }
 
-    fun pageNext() {
-        b.viewPager.currentItem = b.viewPager.currentItem + 1
-    }
-
-    override fun onBackPressed() {
-        if (b.viewPager.currentItem > pageIndex.instruction) {
+    fun onPageBackClick(@Suppress("UNUSED_PARAMETER") view: View) {
+        if (b.viewPager.currentItem > 0) {
             pageBack()
         } else {
             finish()
         }
     }
 
-    class TestPagerAdapter(
-        activity: TestActivity
-    ) : FragmentStateAdapter(activity) {
+    override fun onBackPressed() {
+        if (isAppInLockTaskMode(this)) {
+            showLockTaskEscapeMessage()
+            return
+        }
+        if (b.viewPager.currentItem > 0) {
+            pageBack()
+        } else {
+            super.onBackPressed()
+        }
+    }
 
-        var testInfo: TestInfo? = null
-        private val testActivity = activity
-        lateinit var pageIndex: PageIndex
+    fun onPageNextClick(@Suppress("UNUSED_PARAMETER") view: View) {
+        pageNext()
+    }
 
-        override fun getItemCount(): Int {
-            return if (isCalibration()) {
-                5
-            } else {
-                if (testActivity.testInfo == null) {
-                    4
-                } else {
-                    if (testActivity.testInfo!!.subTest().error == ErrorType.NO_ERROR) {
-                        if (testActivity.isExternalRequest) {
-                            4
-                        } else {
-                            5
-                        }
-                    } else {
-                        4
-                    }
-                }
-            }
+    fun pageNext() {
+        b.viewPager.currentItem = b.viewPager.currentItem + 1
+    }
+
+    override fun onDilutionSelected(dilution: Int) {
+        setDilution(dilution)
+    }
+
+    override fun onCustomDilution(dilution: Int) {
+        setDilution(dilution)
+    }
+
+    private fun setDilution(dilution: Int) {
+        currentDilution = dilution
+        testInfo.dilution = dilution
+        for (r in testInfo.results) {
+            r.dilution = dilution
         }
 
-        override fun createFragment(position: Int): Fragment {
-            return when (position) {
-                pageIndex.instruction -> {
-                    InstructionFragment()
-                }
-                pageIndex.camera -> {
-                    CameraFragment()
-                }
-                pageIndex.confirmation -> {
-                    ImageConfirmFragment()
-                }
-                pageIndex.result -> {
-                    if (isCalibration()) {
-                        CalibrationResultFragment()
-                    } else {
-                        ResultFragment(testActivity.isExternalRequest)
-                    }
-                }
-                pageIndex.calibration -> {
-                    if (isCalibration()) {
-                        CalibrationResultFragment()
-                    } else {
-                        FormSubmitFragment()
-                    }
-                }
-                pageIndex.submit -> {
-                    FormSubmitFragment()
-                }
-                else -> {
-                    if (isCalibration()) {
-                        CalibrationResultFragment()
-                    } else {
-                        ResultFragment(testActivity.isExternalRequest)
-                    }
-                }
+        val currentPage = b.viewPager.currentItem
+        setupInstructions(
+            testInfo,
+            instructionList,
+            pageIndex,
+            currentDilution,
+            isCalibration,
+            redoTest,
+            this
+        )
+
+        val adapter = b.viewPager.adapter as TestPagerAdapter
+        adapter.testInfo = testInfo
+        adapter.instructions = instructionList
+        adapter.pageIndex = pageIndex
+
+        b.viewPager.adapter!!.notifyDataSetChanged()
+        b.viewPager.currentItem = currentPage
+
+        mainScope.launch {
+            delay(300)
+            pageNext()
+        }
+
+        val model = ViewModelProvider(this).get(
+            TestInfoViewModel::class.java
+        )
+        model.setTest(testInfo)
+
+        b.indicatorPgr.pageCount = pageIndex.totalPageCount
+        showHideFooter(b.viewPager.currentItem)
+    }
+
+    fun onAcceptClick() {
+
+        setTestResult()
+
+        if (isCalibration && testInfo.subtype != TestType.CARD) {
+            val db = CalibrationDatabase.getDatabase(this)
+            try {
+                val dao = db.calibrationDao()
+                val calibrationDetail = dao.getCalibrationDetail(testInfo.uuid)
+                calibrationDetail!!.date = Calendar.getInstance().timeInMillis
+                calibrationDetail.name = ""
+                calibrationDetail.desc = ""
+                val calibration = Calibration(
+                    calibrationDetail.calibrationId,
+                    testViewModel.calibrationPoint, testViewModel.calibrationColor
+                )
+                dao.insert(calibration)
+                dao.update(calibrationDetail)
+                testViewModel.loadCalibrations()
+            } finally {
+                db.close()
+            }
+
+            b.viewPager.setCurrentItem(1, false)
+            b.footerLyt.visibility = View.GONE
+            stopScreenPinning()
+        } else {
+            stopScreenPinning()
+            finish()
+        }
+    }
+
+    fun onStartTimerClick(@Suppress("UNUSED_PARAMETER") view: View) {
+        pageNext()
+        mainScope.launch {
+            delay(200)
+            LocalBroadcastManager.getInstance(view.context)
+                .sendBroadcast(Intent(BROADCAST_RESET_TIMER))
+        }
+    }
+
+    fun onSkipTimeDelayClick(@Suppress("UNUSED_PARAMETER") view: View) {
+        pageNext()
+        mainScope.launch {
+            delay(200)
+            val intent = Intent(BROADCAST_RESET_TIMER)
+            intent.putExtra(BROADCAST_SKIP_TIMER, true)
+            LocalBroadcastManager.getInstance(view.context)
+                .sendBroadcast(intent)
+        }
+    }
+
+    fun onRetestClick(@Suppress("UNUSED_PARAMETER") view: View) {
+        b.viewPager.setCurrentItem(pageIndex.dilutionPage, false)
+    }
+
+    fun onTestSelected(testInfo: TestInfo, redo: Boolean) {
+        when {
+            AppPreferences.useExternalSensor(this) -> {
+                Toast.makeText(
+                    this, getString(
+                        R.string.calibration_not_available
+                    ), Toast.LENGTH_LONG
+                ).show()
+                finish()
+            }
+            AppPreferences.runColorCardTest() > 0 -> {
+                Toast.makeText(
+                    this, getString(
+                        R.string.color_card_mode
+                    ), Toast.LENGTH_LONG
+                ).show()
+                finish()
+            }
+            else -> {
+                this.testInfo = testInfo
+                testInfo.subTest().splitRanges()
+                redoTest = redo
+
+                title = testInfo.name?.toLocalString()
+
+                setupInstructions(
+                    testInfo,
+                    instructionList,
+                    pageIndex,
+                    currentDilution,
+                    isCalibration,
+                    redoTest,
+                    this
+                )
+                showHideFooter(b.viewPager.currentItem)
+
+                b.indicatorPgr.pageCount = pageIndex.totalPageCount
+
+                val adapter = TestPagerAdapter(this, testInfo)
+                adapter.testInfo = testInfo
+                adapter.instructions = instructionList
+                adapter.pageIndex = pageIndex
+                b.viewPager.adapter = adapter
+                adapter.notifyDataSetChanged()
+
+                b.viewPager.currentItem = 0
+
+                testViewModel.setTest(testInfo)
+                testViewModel.loadCalibrations()
+                testViewModel.isCalibration = isCalibration
+
+                pageNext()
             }
         }
     }
 
+    // todo: fix menu
+//    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+//        if (isDiagnosticMode() && testViewModel.isCalibration
+//            && b.viewPager.currentItem == 1
+//        ) {
+//            menuInflater.inflate(R.menu.menu_calibrate_dev, menu)
+//        }
+//        if (instructionList.size > 0 && b.viewPager.currentItem > 0 &&
+//            instructionList[b.viewPager.currentItem].section.size > 0
+//        ) {
+//            if (b.viewPager.currentItem != pageIndex.dilutionPage &&
+//                b.viewPager.currentItem != pageIndex.calibrationPage &&
+//                b.viewPager.currentItem < pageIndex.testPage - 1 &&
+//                (pageIndex.startTimerPage == -1 || b.viewPager.currentItem < pageIndex.startTimerPage)
+//            ) {
+//                menuInflater.inflate(R.menu.menu_instructions, menu)
+//            }
+//        }
+//        return true
+//    }
+
+    fun onSkipClick(@Suppress("UNUSED_PARAMETER") item: MenuItem) {
+        if (pageIndex.testPage > 0) {
+            MainScope().launch {
+                for (i in b.viewPager.currentItem until pageIndex.testPage - 1) {
+                    delay(50)
+                    pageNext()
+                }
+            }
+//            b.viewPager.currentItem = pageIndex.testPage - 1
+        }
+    }
+
+    private fun stopScreenPinning() {
+        try {
+            stopLockTask()
+        } catch (ignored: Exception) {
+        }
+    }
+
+    override fun onCalibrationSelected(position: Int) {
+        val db = CalibrationDatabase.getDatabase(this)
+        try {
+            val calibrationDetail = db.calibrationDao().getCalibrationDetail(testInfo.uuid)
+            if (calibrationDetail == null) {
+                showCalibrationExpiryDialog(true)
+            } else {
+                pageNext()
+            }
+        } finally {
+            db.close()
+        }
+    }
+
+    private fun showCalibrationDetailsDialog(isEdit: Boolean) {
+        val ft = supportFragmentManager.beginTransaction()
+        val calibrationDetailsDialog =
+            CalibrationDetailsDialog.newInstance(testInfo, isEdit)
+        calibrationDetailsDialog.show(ft, "calibrationDetails")
+    }
+
+    private fun showCalibrationExpiryDialog(isEdit: Boolean) {
+        val ft = supportFragmentManager.beginTransaction()
+        val calibrationExpiryDialog =
+            CalibrationExpiryDialog.newInstance(testInfo, isEdit)
+        calibrationExpiryDialog.show(ft, "calibrationExpiry")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        registerBroadcastReceiver()
+        mainScope.launch {
+            val uuid = intent.getStringExtra(TEST_ID_KEY)
+            if (isCalibration && uuid != null) {
+                onTestSelected(DataHelper.getTestInfo(uuid, baseContext)!!, false)
+            }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (::timerScope.isInitialized) {
+            timerScope.cancel()
+        }
+        broadcastManager.unregisterReceiver(testCompletedBroadcastReceiver)
+    }
+
+    private val requestCameraPermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted: Boolean ->
+            when {
+                granted -> {
+                    runCuvetteTest()
+                }
+                shouldShowRequestPermissionRationale(Manifest.permission.CAMERA) -> {
+                    pageBack()
+                    findViewById<ConstraintLayout>(R.id.root_layout)
+                        .snackBar(getString(R.string.camera_permission))
+                }
+                else -> {
+                    pageBack()
+                    findViewById<ConstraintLayout>(R.id.root_layout)
+                        .snackBarAction(
+                            getString(R.string.camera_permission),
+                            SnackbarActionListener()
+                        )
+                }
+            }
+        }
+
+    class SnackbarActionListener : View.OnClickListener {
+        override fun onClick(v: View) {
+            openAppPermissionSettings(v.context)
+        }
+    }
+
+    private fun showError(message: String, bitmap: Bitmap?) {
+        stopScreenPinning()
+        SoundUtil.playShortResource(this, R.raw.error)
+        alertDialogToBeDestroyed = AlertUtil.showError(
+            this, R.string.error, message, bitmap, R.string.ok,
+            { _: DialogInterface?, _: Int ->
+                stopScreenPinning()
+                finish()
+            },
+            { dialogInterface: DialogInterface, _: Int ->
+                stopScreenPinning()
+                dialogInterface.dismiss()
+                setResult(Activity.RESULT_CANCELED)
+                finish()
+            }, null
+        )
+    }
+
+    override fun onCalibrationDetailsSaved() {
+        SnackbarUtils.showLongSnackbar(b.footerLyt, getString(R.string.calibration_saved))
+    }
+
+    override fun onCalibrationExpirySavedListener() {
+        hideSystemUI()
+        pageNext()
+    }
+
+    override fun onDestroy() {
+        broadcastManager.unregisterReceiver(colorCardCapturedBroadcastReceiver)
+        broadcastManager.unregisterReceiver(resultBroadcastReceiver)
+        if (alertDialogToBeDestroyed != null) {
+            alertDialogToBeDestroyed!!.dismiss()
+        }
+        super.onDestroy()
+        showSystemUI()
+    }
+
+    override fun onResult(calibration: Calibration?) {
+        val intent = Intent(BROADCAST_TEST_COMPLETED)
+        LocalBroadcastManager.getInstance(this).sendBroadcast(
+            intent
+        )
+    }
+
+    override fun onResult() {
+        val intent = Intent(BROADCAST_TEST_COMPLETED)
+        LocalBroadcastManager.getInstance(this).sendBroadcast(
+            intent
+        )
+    }
+
     override fun onStartTest() {
-        b.viewPager.currentItem = pageIndex.camera
+        pageNext()
     }
 
     override fun onConfirmImage(action: Int) {
         if (action == RESULT_OK) {
-            if (isCalibration()) {
-                val subTest = testInfo!!.subTest()
+            if (isCalibration) {
+                val subTest = testInfo.subTest()
                 for (v in subTest.values) {
                     if (v.calibrate) {
                         subTest.calibratedResult.calibratedValue = CalibrationValue(value = v.value)
@@ -408,11 +1009,42 @@ class TestActivity : BaseActivity(),
                     }
                 }
             }
-            b.viewPager.currentItem = pageIndex.result
+            b.viewPager.currentItem = pageIndex.resultPage
         } else {
             val testPagerAdapter = TestPagerAdapter(this)
             testPagerAdapter.pageIndex = pageIndex
             b.viewPager.adapter = testPagerAdapter
         }
+    }
+
+    override fun onCalibrationOption(calibrate: Boolean) {
+        AppPreferences.setCalibration(this, calibrate)
+        isCalibration = calibrate
+        setupInstructions(
+            testInfo,
+            instructionList,
+            pageIndex,
+            currentDilution,
+            isCalibration,
+            redoTest,
+            this
+        )
+        val testPagerAdapter = TestPagerAdapter(this, testInfo)
+        testPagerAdapter.testInfo = testInfo
+        testPagerAdapter.instructions = instructionList
+
+        b.indicatorPgr.pageCount = pageIndex.totalPageCount
+
+        b.viewPager.currentItem = 0
+
+        testViewModel.loadCalibrations()
+        testViewModel.isCalibration = isCalibration
+
+        showHideFooter(b.viewPager.currentItem)
+
+        testPagerAdapter.pageIndex = pageIndex
+        b.viewPager.adapter = testPagerAdapter
+        b.indicatorPgr.showDots = true
+        pageNext()
     }
 }

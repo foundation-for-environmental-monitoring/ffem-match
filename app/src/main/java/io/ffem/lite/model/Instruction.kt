@@ -13,13 +13,13 @@ data class Instruction(
     var index: Int = 0
 ) : Parcelable {
 
-//    constructor(value: String, image: String?) : this() {
-//        section = java.util.ArrayList()
-//        val values = value.split(",".toRegex()).toTypedArray()
-//        section.add(values[0])
-//        if (values.size > 1) {
-//            section.add(values[1])
-//        }
-//        section.add(image!!)
-//    }
+    constructor(value: String, image: String?) : this() {
+        section = java.util.ArrayList()
+        val values = value.split(",".toRegex()).toTypedArray()
+        section.add(values[0])
+        if (values.size > 1) {
+            section.add(values[1])
+        }
+        section.add(image!!)
+    }
 }

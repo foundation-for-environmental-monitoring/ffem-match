@@ -7,4 +7,17 @@
     <dimen name="toolbar_margin">0dp</dimen>
 
     <dimen name="text_margin_bottom">10dp</dimen>
+
+    <dimen name="default_text_size">16sp</dimen>
+
+    <dimen name="progressTextSize">43sp</dimen>
+    <dimen name="progressSubTextSize">13sp</dimen>
+
+    <!-- margin -->
+    <dimen name="margin_extra_small">4dp</dimen>
+    <dimen name="margin_small">8dp</dimen>
+    <dimen name="margin_standard">16dp</dimen>
+    <dimen name="margin_large">24dp</dimen>
+    <dimen name="margin_extra_large">32dp</dimen>
+
 </resources>

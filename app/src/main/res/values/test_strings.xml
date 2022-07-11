@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="UnusedResources,MissingTranslation">
+    <string name="testName">Fluoride</string>
+    <string name="launch">Launch</string>
+    <string name="water_tests">Water Tests</string>
+    <string name="unit">Unit</string>
+    <string name="open_well">Open Well</string>
+    <string name="select_printer">Select a printer</string>
+    <string name="water_tests_1">Water Tests 1</string>
+    <string name="water_tests_2">Water Tests 2</string>
+    <string name="water_tests_3">Water Tests 3</string>
+    <string name="primary_nutrients">Primary Nutrients</string>
+    <string name="soil_tests_1">Soil Tests  1</string>
+    <string name="soil_tests_2">Soil Tests  2</string>
+</resources>

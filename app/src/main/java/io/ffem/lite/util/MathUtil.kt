@@ -14,6 +14,12 @@ object MathUtil {
         } else value
     }
 
+    fun Double.round(decimals: Int): Double {
+        var multiplier = 1.0
+        repeat(decimals) { multiplier *= 10 }
+        return (this * multiplier).roundToInt() / multiplier
+    }
+
     /**
      * Evaluates a math expression in a string.
      * http://stackoverflow.com/questions/3422673/evaluating-a-math-expression-given-in-string-form#answer-26227947
@@ -21,7 +27,7 @@ object MathUtil {
      * @param str the string to evaluate
      * @return evaluated result
      */
-    private fun eval(str: String): Double {
+    fun eval(str: String): Double {
         return object : Any() {
             private var pos = -1
             private var ch = 0

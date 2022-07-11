@@ -12,10 +12,10 @@ import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
-import io.ffem.lite.app.App
 import io.ffem.lite.common.*
 import io.ffem.lite.common.Constants.CARD_DEFAULT_HEIGHT
 import io.ffem.lite.common.Constants.CARD_DEFAULT_WIDTH
+import io.ffem.lite.data.DataHelper
 import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.TestInfo
 import io.ffem.lite.preference.*
@@ -29,24 +29,28 @@ import io.ffem.lite.scanner.zxing.qrcode.QRCodeReader
 import io.ffem.lite.scanner.zxing.qrcode.detector.FinderPatternInfo
 import io.ffem.lite.util.ImageColorUtil
 import io.ffem.lite.util.ImageUtil.toBitmap
-import io.ffem.lite.util.PreferencesUtil
 import io.ffem.lite.util.getAverageBrightness
 import io.ffem.lite.util.getBitmapPixels
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
-abstract class ColorCardAnalyzerBase(private val context: Context) : ImageAnalysis.Analyzer {
+abstract class ColorCardAnalyzerBase(var testInfo: TestInfo, private val context: Context) :
+    ImageAnalysis.Analyzer {
+    private var currentTimestamp: Long = 0
     private lateinit var bitmap: Bitmap
-    private lateinit var croppedBitmap: Bitmap
+    private var croppedBitmap: Bitmap? = null
     private var originalWidth: Int = 0
     private lateinit var localBroadcastManager: LocalBroadcastManager
-    private var testInfo: TestInfo? = null
 
     protected var swatchWidthPercentage: Double = -1.0
-    protected var swatchHeightPercentage: Double = -1.0
-    protected var isCircleSwatch = false
+    private var swatchHeightPercentage: Double = -1.0
+    protected var colorCardType = 0
 
     companion object {
         var ignoreWarnings: Boolean = false
@@ -60,18 +64,21 @@ abstract class ColorCardAnalyzerBase(private val context: Context) : ImageAnalys
 
     override fun analyze(imageProxy: ImageProxy) {
         if (done || processing) {
+            imageProxy.close()
             return
         }
         processing = true
-
-        localBroadcastManager = LocalBroadcastManager.getInstance(context)
+        currentTimestamp = System.currentTimeMillis()
+        if (!::localBroadcastManager.isInitialized) {
+            localBroadcastManager = LocalBroadcastManager.getInstance(context)
+        }
         val imageNumber = getSampleTestImageNumberInt()
         try {
             bitmap =
                 if (BuildConfig.DEBUG && (isDiagnosticMode() || BuildConfig.INSTRUMENTED_TEST_RUNNING.get())) {
                     if (imageNumber > -1) {
                         try {
-                            val fileName = "test_${
+                            val fileName = "hd_circle_${
                                 java.lang.String.format(
                                     Locale.ROOT,
                                     "%03d",
@@ -167,7 +174,7 @@ abstract class ColorCardAnalyzerBase(private val context: Context) : ImageAnalys
                             (pattern.height / 2.8).toInt()
                         ), null
                     )
-                    pattern.testId = data.text
+                    pattern.testId = DataHelper.checkHyphens(data.text.uppercase())
                 }
             }
         } catch (e: Exception) {
@@ -185,7 +192,6 @@ abstract class ColorCardAnalyzerBase(private val context: Context) : ImageAnalys
                     // Check if camera is too far
                     if (width < originalWidth * 0.27) {
                         sendMessage(context.getString(R.string.closer))
-                        endProcessing(imageProxy)
                         return
                     }
                 }
@@ -217,12 +223,10 @@ abstract class ColorCardAnalyzerBase(private val context: Context) : ImageAnalys
                     val averageBrightness1 = getAverageBrightness(pixels)
                     if (averageBrightness1 < getMinimumBrightness()) {
                         sendMessage(context.getString(R.string.not_bright))
-                        endProcessing(imageProxy)
                         return
                     }
                     if (averageBrightness1 > getMaximumBrightness()) {
                         sendMessage(context.getString(R.string.too_bright))
-                        endProcessing(imageProxy)
                         return
                     }
 
@@ -237,12 +241,10 @@ abstract class ColorCardAnalyzerBase(private val context: Context) : ImageAnalys
                     val averageBrightness2 = getAverageBrightness(pixels)
                     if (averageBrightness2 < getMinimumBrightness()) {
                         sendMessage(context.getString(R.string.not_bright))
-                        endProcessing(imageProxy)
                         return
                     }
                     if (averageBrightness2 > getMaximumBrightness()) {
                         sendMessage(context.getString(R.string.too_bright))
-                        endProcessing(imageProxy)
                         return
                     }
 
@@ -256,12 +258,10 @@ abstract class ColorCardAnalyzerBase(private val context: Context) : ImageAnalys
                     val averageBrightness3 = getAverageBrightness(pixels)
                     if (averageBrightness3 < getMinimumBrightness()) {
                         sendMessage(context.getString(R.string.not_bright))
-                        endProcessing(imageProxy)
                         return
                     }
                     if (averageBrightness3 > getMaximumBrightness()) {
                         sendMessage(context.getString(R.string.too_bright))
-                        endProcessing(imageProxy)
                         return
                     }
 
@@ -272,7 +272,6 @@ abstract class ColorCardAnalyzerBase(private val context: Context) : ImageAnalys
                         abs(averageBrightness1 - averageBrightness3) > shadowTolerance
                     ) {
                         sendMessage(context.getString(R.string.too_many_shadows))
-                        endProcessing(imageProxy)
                         return
                     }
 
@@ -306,7 +305,6 @@ abstract class ColorCardAnalyzerBase(private val context: Context) : ImageAnalys
                             }
                         }
 
-                        endProcessing(imageProxy)
                         return
                     }
 
@@ -318,56 +316,58 @@ abstract class ColorCardAnalyzerBase(private val context: Context) : ImageAnalys
                             topRight.y < bitmap.height * 0.050
                         ) {
                             sendMessage(context.getString(R.string.too_close))
-                            endProcessing(imageProxy)
                             return
                         }
                     }
 
-                    testInfo = App.getTestInfo(testId)
-                    if (testInfo == null) {
-                        if (testId.isNotEmpty()) {
-                            // if test id is not recognized
-                            sendMessage(context.getString(R.string.invalid_barcode))
-                            endProcessing(imageProxy)
-                            return
-                        }
-                    } else {
-                        // if requested test id does not match the card test id
-                        val requestedTestId = PreferencesUtil.getString(context, TEST_ID_KEY, "")
-                        if ((requestedTestId!!.isNotEmpty() && testInfo!!.uuid != requestedTestId)) {
-                            sendMessage(context.getString(R.string.wrong_card))
-                            return
-                        }
-                        if (testInfo!!.uuid!!.substring(1, 2).uppercase() != "R") {
-                            sendMessage(context.getString(R.string.wrong_card))
-                            return
-                        }
-
-                        if (isDiagnosticMode() && testInfo != null) {
-                            Utilities.savePicture(
-                                context.applicationContext,
-                                testInfo!!.fileName,
-                                testInfo!!.name!!,
-                                Utilities.bitmapToBytes(imageProxy.toBitmap()), "_photo"
-                            )
-                        }
-
-                        savePhoto(bitmap, testInfo!!)
+                    if (testInfo.uuid.isEmpty()) {
+                        testInfo = DataHelper.getTestInfo(testId, context) ?: TestInfo()
                     }
+                    // if requested test id does not match the card test id
+                    if ((testId.isEmpty() ||
+                                testInfo.uuid.uppercase(Locale.ROOT) != testId.uppercase(Locale.ROOT))
+                    ) {
+                        sendMessage(context.getString(R.string.wrong_card))
+                        return
+                    }
+                    if (colorCardType == 2 &&
+                        testInfo.uuid.substring(1, 2).uppercase() != "C"
+                    ) {
+                        sendMessage(context.getString(R.string.wrong_card))
+                        return
+                    }
+                    if (colorCardType < 2 &&
+                        testInfo.uuid.substring(1, 2).uppercase() != "R"
+                    ) {
+                        sendMessage(context.getString(R.string.wrong_card))
+                        return
+                    }
+
+                    if (isDiagnosticMode()) {
+                        Utilities.savePicture(
+                            context.applicationContext,
+                            testInfo.fileName,
+                            testInfo.name!!,
+                            Utilities.bitmapToBytes(imageProxy.toBitmap()), "_photo"
+                        )
+                    }
+
+                    savePhoto(bitmap, testInfo)
 
                     croppedBitmap = perspectiveTransform(
                         bitmap, pattern!!, swatchWidthPercentage, swatchHeightPercentage
                     )
                     bitmap.recycle()
 
-                    if (testInfo != null && testInfo!!.subTest().resultInfo.result > -2) {
+                    if (croppedBitmap != null && testInfo.subTest().resultInfo.result > -2) {
                         ImageColorUtil.getResult(
                             context,
                             testInfo,
                             ErrorType.NO_ERROR,
-                            croppedBitmap
+                            croppedBitmap,
+                            colorCardType
                         )
-                        croppedBitmap.recycle()
+                        croppedBitmap?.recycle()
 
                         sendMessage(context.getString(R.string.analyzing_photo))
                         done = true
@@ -384,30 +384,28 @@ abstract class ColorCardAnalyzerBase(private val context: Context) : ImageAnalys
                         )
                     } else {
                         sendMessage(context.getString(R.string.scanning))
-                        endProcessing(imageProxy)
                         return
                     }
                 } else {
                     sendMessage(context.getString(R.string.scanning))
-                    endProcessing(imageProxy)
                     return
                 }
             }
         } else {
             sendMessage(context.getString(R.string.scanning))
-            endProcessing(imageProxy)
             return
         }
     }
 
     private fun endProcessing(imageProxy: ImageProxy) {
         processing = false
-        imageProxy.close()
-        if (::croppedBitmap.isInitialized) {
-            croppedBitmap.recycle()
-        }
+        croppedBitmap?.recycle()
         if (::bitmap.isInitialized) {
             bitmap.recycle()
+        }
+        CoroutineScope(Dispatchers.IO).launch {
+            delay(1000 - (System.currentTimeMillis() - currentTimestamp))
+            imageProxy.close()
         }
     }
 
@@ -441,7 +439,7 @@ abstract class ColorCardAnalyzerBase(private val context: Context) : ImageAnalys
     private fun perspectiveTransform(
         bitmap: Bitmap, pattern: FinderPatternInfo,
         widthPercentage: Double, heightPercentage: Double
-    ): Bitmap {
+    ): Bitmap? {
         val matrix = Matrix()
         val width = max(
             pattern.topRight.x - pattern.topLeft.x,
@@ -513,7 +511,7 @@ abstract class ColorCardAnalyzerBase(private val context: Context) : ImageAnalys
                 true
             )
         } else {
-            correctedBitmap
+            null
         }
     }
 

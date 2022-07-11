@@ -1,5 +1,6 @@
 package io.ffem.lite.util
 
+import android.app.ActivityManager
 import android.content.Context
 import android.text.InputType
 import android.view.View
@@ -31,3 +32,11 @@ fun TextInputEditText.setMultiLineCapSentencesAndDoneAction() {
     imeOptions = EditorInfo.IME_ACTION_DONE
     setRawInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES or InputType.TYPE_TEXT_FLAG_MULTI_LINE)
 }
+
+fun isAppInLockTaskMode(context: Context): Boolean {
+    val activityManager: ActivityManager =
+        context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+
+    return activityManager.lockTaskModeState != ActivityManager.LOCK_TASK_MODE_NONE
+}
+

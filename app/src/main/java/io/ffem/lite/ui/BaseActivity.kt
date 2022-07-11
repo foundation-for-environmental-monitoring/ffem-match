@@ -63,17 +63,12 @@ abstract class BaseActivity : AppCompatActivity() {
         }
         if (supportActionBar != null) {
             supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-            supportActionBar!!.title = ""
         }
     }
 
     override fun onResume() {
         super.onResume()
         changeActionBarStyleBasedOnCurrentMode()
-        if (supportActionBar != null) {
-            supportActionBar!!.title = ""
-        }
-
         title = mTitle
     }
 

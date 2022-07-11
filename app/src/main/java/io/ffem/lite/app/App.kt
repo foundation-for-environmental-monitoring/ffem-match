@@ -165,12 +165,12 @@ class App : BaseApplication() {
                 val id = checkHyphens(parameterId.uppercase())
 
                 // The second character in the parameter id specifies the color card type
-                val input = app.resources.openRawResource(R.raw.tests)
+                val input = app.resources.openRawResource(R.raw.tests_circle)
                 val content = FileUtil.readTextFile(input)
                 testConfig = gson.fromJson(content, TestConfig::class.java)
 
                 for (test in testConfig.tests) {
-                    if (test.uuid?.uppercase() == id) {
+                    if (test.uuid.uppercase() == id) {
                         val newTest = test.copy()
                         newTest.fileName = AppPreferences.getImageFilename()
                         return newTest

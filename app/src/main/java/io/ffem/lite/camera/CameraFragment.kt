@@ -14,26 +14,32 @@ import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.material.button.MaterialButton
 import io.ffem.lite.R
+import io.ffem.lite.common.Constants
 import io.ffem.lite.common.ERROR_EVENT_BROADCAST
 import io.ffem.lite.common.ERROR_MESSAGE
 import io.ffem.lite.databinding.FragmentCameraBinding
-import io.ffem.lite.preference.getSampleTestImageNumberInt
-import io.ffem.lite.preference.useFlashMode
+import io.ffem.lite.model.TestInfo
+import io.ffem.lite.preference.AppPreferences
+import io.ffem.lite.preference.AppPreferences.getSampleTestImageNumberInt
+import io.ffem.lite.preference.AppPreferences.useCameraFlash
+import io.ffem.lite.ui.TestInfoViewModel
+import io.ffem.lite.util.SoundUtil
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
@@ -46,16 +52,18 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
-
 /**
  * Main fragment for this app. Implements all camera operations including:
  * - Viewfinder
  * - Photo taking
  * - Image analysis
  */
-class CameraFragment : Fragment() {
+open class CameraFragment : Fragment() {
+    private lateinit var camera: Camera
     private var _binding: FragmentCameraBinding? = null
-    private val binding get() = _binding!!
+    private val b get() = _binding!!
+    protected val model: TestInfoViewModel by activityViewModels()
+
     private lateinit var metrics: DisplayMetrics
     private var currentLuminosity: Int = -1
     private lateinit var cameraProvider: ProcessCameraProvider
@@ -79,6 +87,10 @@ class CameraFragment : Fragment() {
     private var takePhotoButton: MaterialButton? = null
     private var cameraContainer: ConstraintLayout? = null
     private var cardOverlay: AppCompatImageView? = null
+
+    private val countdown = intArrayOf(0)
+    private var timeDelay = 0
+    private var cancelled = false
 
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -118,6 +130,7 @@ class CameraFragment : Fragment() {
                         currentLuminosity = value
                         val lux = getString(R.string.brightness) + ": $value"
                         luminosityTextView?.text = lux
+                        luminosityTextView?.visibility = VISIBLE
                     }
                 }
 
@@ -131,7 +144,7 @@ class CameraFragment : Fragment() {
      * could have removed them while the app was in paused state.
      */
     override fun onResume() {
-        super.onResume()
+        cancelled = false
         if (lightSensor != null) {
             sensorManager.registerListener(
                 lightEventListener,
@@ -140,13 +153,41 @@ class CameraFragment : Fragment() {
             )
         }
         broadcastManager!!.registerReceiver(broadcastReceiver, IntentFilter(ERROR_EVENT_BROADCAST))
+//        if (AppPreferences.returnDummyResults(requireContext()) && activity is TestActivity) {
+//            if (model.isCalibration) {
+//                b.customResultButton.visibility = GONE
+//            } else {
+//                b.customResultButton.visibility = VISIBLE
+//            }
+//            b.dummyResultButton.visibility = VISIBLE
+//        }
 
-        lifecycleScope.launch {
-            if (isVisible) {
+        b.cameraLyt.visibility = INVISIBLE
+        b.analyzeButton.visibility = GONE
+        b.skipTimerButton.visibility = GONE
+        b.analyzeButton.visibility = GONE
+        b.startTimerBtn.visibility = GONE
+        b.timerLayout.visibility = GONE
+        b.buttonsLayout.visibility = VISIBLE
+//        b.previewButton.visibility = VISIBLE
+
+        if (model.test.get() != null && model.test.get()!!.subTest().timeDelay > 10) {
+            b.startTimerBtn.visibility = VISIBLE
+            b.skipTimerButton.visibility = VISIBLE
+            b.timerLayout.visibility = VISIBLE
+            timeDelay = max(Constants.SHORT_DELAY, model.test.get()!!.subTest().timeDelay)
+            b.countdownTmr.alpha = 0.2f
+            b.countdownTmr.setProgress(timeDelay, 60)
+            b.analyzeButton.visibility = GONE
+        } else {
+            lifecycleScope.launch {
+//                if (isVisible) {
                 delay(300)
                 startCamera()
+//                }
             }
         }
+        super.onResume()
     }
 
     override fun onCreateView(
@@ -155,7 +196,108 @@ class CameraFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentCameraBinding.inflate(inflater, container, false)
-        return binding.root
+
+        b.cameraPreview.layoutParams.height = requireActivity().window.decorView.height
+
+        if (AppPreferences.runColorCardTest() == 1) {
+            b.cameraLyt.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
+            val params = b.cameraLyt.layoutParams as ConstraintLayout.LayoutParams
+            params.topToTop = ConstraintLayout.LayoutParams.UNSET
+            b.cameraLyt.requestLayout()
+        }
+
+//        b.previewButton.setOnClickListener {
+//            b.cameraLyt.visibility = VISIBLE
+//            b.timerLayout.visibility = GONE
+//            b.previewButton.visibility = GONE
+//            b.analyzeButton.visibility = VISIBLE
+//            if (model.test.get()!!.subTest().timeDelay > 10) {
+//                b.startTimerBtn.visibility = VISIBLE
+//                b.skipTimerButton.visibility = VISIBLE
+//                b.analyzeButton.visibility = GONE
+//            }
+//
+//            testScope = MainScope()
+//            testScope.launch {
+//                delay(100)
+//                try {
+//                    startCamera()
+//                } catch (e: Exception) {
+//                }
+//                delay(1000)
+//            }
+//
+//        }
+
+        b.analyzeButton.setOnClickListener {
+            startTest()
+            b.analyzeButton.visibility = GONE
+        }
+
+        b.skipTimerButton.setOnClickListener {
+            b.timerLayout.visibility = GONE
+            b.buttonsLayout.visibility = GONE
+//            b.previewButton.visibility = GONE
+            b.startTimerBtn.visibility = GONE
+            b.analyzeButton.visibility = GONE
+            b.skipTimerButton.visibility = GONE
+            startTest()
+        }
+
+        b.startTimerBtn.setOnClickListener {
+            b.buttonsLayout.visibility = GONE
+            b.cameraLyt.visibility = VISIBLE
+            b.startTimerBtn.visibility = GONE
+            b.skipTimerButton.visibility = GONE
+            b.countdownTmr.alpha = 1f
+//            stopPreview()
+//            cameraStarted = false
+
+            countdown[0] = 0
+            if (model.test.get()!!.subTest().timeDelay > 10) {
+                timeDelay = max(Constants.SHORT_DELAY, model.test.get()!!.subTest().timeDelay)
+                setCountDown()
+            } else {
+                b.cameraLyt.visibility = INVISIBLE
+            }
+        }
+        return b.root
+    }
+
+    fun startTest() {
+        startCamera()
+    }
+
+    private val mCountdown = Runnable { setCountDown() }
+    private fun setCountDown() {
+        if (countdown[0] < timeDelay) {
+            b.analyzeButton.visibility = GONE
+//            b.previewButton.visibility = GONE
+            b.timerLayout.visibility = VISIBLE
+            b.countdownTmr.visibility = VISIBLE
+            b.cameraLyt.visibility = INVISIBLE
+            countdown[0]++
+            if (timeDelay > 10) {
+                if (timeDelay - countdown[0] < 31) {
+                    SoundUtil.playShortResource(requireContext(), R.raw.beep)
+                } else if ((timeDelay - countdown[0]) % 15 == 0) {
+                    SoundUtil.playShortResource(requireContext(), R.raw.beep)
+                }
+            }
+
+            b.countdownTmr.setProgress(timeDelay - countdown[0], 60)
+            lifecycleScope.launch {
+                delay(1000)
+                if (!cancelled) {
+                    mCountdown.run()
+                }
+            }
+        } else {
+            b.analyzeButton.visibility = GONE
+            b.timerLayout.visibility = GONE
+            b.cameraLyt.visibility = INVISIBLE
+            startTest()
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -164,8 +306,10 @@ class CameraFragment : Fragment() {
     }
 
     private fun startCamera() {
-        binding.cameraPreview.post {
-            displayId = binding.cameraPreview.display.displayId
+        b.cameraLyt.visibility = VISIBLE
+        b.cameraPreview.visibility = VISIBLE
+        b.cameraPreview.post {
+            displayId = b.cameraPreview.display.displayId
             updateCameraUi()
             bindCameraUseCases()
 
@@ -176,15 +320,37 @@ class CameraFragment : Fragment() {
     }
 
     override fun onPause() {
-        super.onPause()
-        mainScope.cancel(null)
+        cancelled = true
+
+        val useTorch = useCameraFlash(true)
+        if (useTorch) {
+            if (::camera.isInitialized) {
+                if (camera.cameraInfo.hasFlashUnit()) {
+                    cameraControl.enableTorch(false)
+                }
+            }
+        }
+
         if (::cameraProvider.isInitialized) {
             cameraProvider.unbindAll()
         }
+        // Remove previous UI if any
+        try {
+            cameraContainer.let {
+                container.removeView(it)
+            }
+        } catch (e: Exception) {
+        }
+        super.onPause()
+        mainScope.cancel(null)
         broadcastManager!!.unregisterReceiver(broadcastReceiver)
         if (lightSensor != null) {
             sensorManager.unregisterListener(lightEventListener)
         }
+        b.cameraLyt.visibility = INVISIBLE
+        b.timerLayout.visibility = GONE
+        b.analyzeButton.visibility = GONE
+        b.skipTimerButton.visibility = GONE
     }
 
     /**
@@ -204,12 +370,12 @@ class CameraFragment : Fragment() {
     private fun bindCameraUseCases() {
 
         // Get screen metrics used to setup camera for full screen resolution
-        metrics = DisplayMetrics().also { binding.cameraPreview.display?.getRealMetrics(it) }
+        metrics = DisplayMetrics().also { b.cameraPreview.display?.getRealMetrics(it) }
 //        Timber.d("Screen metrics: ${metrics.widthPixels} x ${metrics.heightPixels}")
         val screenAspectRatio = aspectRatio(metrics.widthPixels, metrics.heightPixels)
 //        Timber.d("Preview aspect ratio: $screenAspectRatio")
 
-        val rotation = binding.cameraPreview.display?.rotation
+        val rotation = b.cameraPreview.display?.rotation
 
         // Bind the cameraProvider to the LifeCycleOwner
         val cameraSelector =
@@ -226,7 +392,7 @@ class CameraFragment : Fragment() {
                 .setTargetRotation(rotation!!)
                 .build()
                 .also {
-                    it.setSurfaceProvider(binding.cameraPreview.surfaceProvider)
+                    it.setSurfaceProvider(b.cameraPreview.surfaceProvider)
                 }
 
             try {
@@ -241,7 +407,8 @@ class CameraFragment : Fragment() {
                         .build()
                 }
 
-                colorCardAnalyzer = ColorCardAnalyzer(requireContext())
+                colorCardAnalyzer =
+                    CircleColorCardAnalyzer(model.test.get() ?: TestInfo(), requireContext())
 
                 colorCardAnalyzer.reset()
                 analysis.setAnalyzer(executorService, colorCardAnalyzer)
@@ -249,20 +416,30 @@ class CameraFragment : Fragment() {
                 // Must unbind use cases before rebinding them.
                 cameraProvider.unbindAll()
 
-                val camera = cameraProvider.bindToLifecycle(
+                camera = cameraProvider.bindToLifecycle(
                     this, cameraSelector, preview, analysis
                 )
                 cameraControl = camera.cameraControl
                 cameraControl.setLinearZoom(0f)
-                cameraControl.enableTorch(useFlashMode())
+                val useTorch = useCameraFlash(true)
+                if (useTorch) {
+                    if (camera.cameraInfo.hasFlashUnit()) {
+                        cameraControl.enableTorch(true)
+                    } else {
+                        Toast.makeText(
+                            context,
+                            "Camera flash not available", Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
 
-                binding.cameraPreview.afterMeasured {
+                b.cameraPreview.afterMeasured {
                     val factory: MeteringPointFactory = SurfaceOrientedMeteringPointFactory(
-                        binding.cameraPreview.width.toFloat(),
-                        binding.cameraPreview.height.toFloat()
+                        b.cameraPreview.width.toFloat(),
+                        b.cameraPreview.height.toFloat()
                     )
-                    val centerWidth = binding.cameraPreview.width.toFloat() / 2
-                    val centerHeight = binding.cameraPreview.height.toFloat() / 5
+                    val centerWidth = b.cameraPreview.width.toFloat() / 2
+                    val centerHeight = b.cameraPreview.height.toFloat() / 5
                     //create a point on the center of the view
                     val autoFocusPoint = factory.createPoint(centerWidth, centerHeight)
                     cameraControl.startFocusAndMetering(
@@ -309,7 +486,7 @@ class CameraFragment : Fragment() {
             container.removeView(it)
         }
 
-        val view = View.inflate(requireContext(), R.layout.preview_overlay, container)
+        val view = inflate(requireContext(), R.layout.preview_overlay, container)
 
         messageText = view.findViewById(R.id.message_txt)
         luminosityTextView = view.findViewById(R.id.luminosity_txt)
@@ -317,12 +494,21 @@ class CameraFragment : Fragment() {
         cameraContainer = view.findViewById(R.id.camera_ui_container)
         cardOverlay = view.findViewById(R.id.card_overlay)
 
-        cardOverlay!!.setImageDrawable(
-            ContextCompat.getDrawable(
-                requireContext(),
-                R.drawable.preview_overlay
+        if (AppPreferences.runColorCardTest() == 2) {
+            cardOverlay!!.setImageDrawable(
+                ContextCompat.getDrawable(
+                    requireContext(),
+                    R.drawable.preview_circle_overlay
+                )
             )
-        )
+        } else {
+            cardOverlay!!.setImageDrawable(
+                ContextCompat.getDrawable(
+                    requireContext(),
+                    R.drawable.preview_circle_overlay
+                )
+            )
+        }
     }
 
     private inline fun View.afterMeasured(crossinline block: () -> Unit) {

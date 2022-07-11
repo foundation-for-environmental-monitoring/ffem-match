@@ -4,7 +4,7 @@
     <color name="colorPrimary">#585858</color>
     <color name="colorPrimaryDark">#4d4d4d</color>
     <color name="colorAccent">#494949</color>
-
+    <color name="colorSecondaryVariant">#00698C</color>
     <color name="window_background">#fff</color>
     <color name="primary_background">#ccc</color>
 
@@ -41,4 +41,7 @@
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
 
+    <color name="error_background">#2afac900</color>
+    <color name="draft_orange">#F44336</color>
+    <color name="red_500">#F44336</color>
 </resources>

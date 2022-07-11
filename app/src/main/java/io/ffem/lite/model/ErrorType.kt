@@ -1,7 +1,7 @@
 package io.ffem.lite.model
 
-import android.content.Context
 import androidx.room.TypeConverter
+import io.ffem.lite.app.App
 import java.util.*
 
 enum class ErrorType {
@@ -14,13 +14,13 @@ enum class ErrorType {
     WRONG_CARD
 }
 
-fun ErrorType.toLocalString(context: Context): String {
+fun ErrorType.toLocalString(): String {
     val resourceId =
-        context.resources.getIdentifier(
+        App.app.resources.getIdentifier(
             this.toString().lowercase(Locale.getDefault()),
-            "string", context.packageName
+            "string", App.app.packageName
         )
-    return context.getString(resourceId)
+    return App.app.getString(resourceId)
 }
 
 class ErrorTypeConverter {

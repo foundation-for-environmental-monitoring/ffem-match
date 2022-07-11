@@ -8,9 +8,7 @@ import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.activityViewModels
-import io.ffem.lite.R
 import io.ffem.lite.databinding.FragmentImageConfirmBinding
 import java.io.File
 
@@ -56,9 +54,6 @@ class ImageConfirmFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        val toolbar = view?.findViewById<Toolbar>(R.id.toolbar)
-        toolbar?.setTitle(R.string.confirm)
-
         if (model.test.get() != null) {
             val path =
                 requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES).toString() +
