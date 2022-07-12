@@ -285,4 +285,7 @@
     <string name="c_empty">Empty contents of the cuvette and rinse it</string>
     <string name="external_app_not_installed">Akvo Flow is not installed.</string>
     <string name="install_external_app">Please install the Akvo Flow app from your instance.</string>
+
+    <string name="calcium_and_magnesium">Calcium and Magnesium</string>
+    <string name="accept_result">Accept Result</string>
 </resources>

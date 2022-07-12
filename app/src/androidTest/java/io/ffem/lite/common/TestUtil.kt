@@ -1,5 +1,6 @@
 package io.ffem.lite.common
 
+import android.annotation.SuppressLint
 import android.os.SystemClock
 import android.view.View
 import android.view.ViewGroup
@@ -95,5 +96,29 @@ object TestUtil {
 
     fun sleep(millis: Long) {
         SystemClock.sleep(millis)
+    }
+
+    /**
+     * Matches the view at the given index. Useful when several views have the same properties.
+     * https://stackoverflow.com/questions/29378552
+     */
+    fun withIndex(matcher: Matcher<View?>, index: Int): Matcher<View?> {
+        return object : TypeSafeMatcher<View>() {
+            var currentIndex = 0
+            var viewObjHash = 0
+
+            @SuppressLint("DefaultLocale")
+            override fun describeTo(description: Description) {
+                description.appendText(String.format("with index: %d ", index))
+                matcher.describeTo(description)
+            }
+
+            override fun matchesSafely(view: View): Boolean {
+                if (matcher.matches(view) && currentIndex++ == index) {
+                    viewObjHash = view.hashCode()
+                }
+                return view.hashCode() == viewObjHash
+            }
+        }
     }
 }

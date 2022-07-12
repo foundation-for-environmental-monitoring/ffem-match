@@ -14,6 +14,7 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.*
 import io.ffem.lite.BuildConfig
@@ -36,6 +37,10 @@ fun clearData() {
     } finally {
         db.close()
     }
+}
+
+fun getString(@StringRes resourceId: Int): String {
+    return InstrumentationRegistry.getInstrumentation().targetContext.getString(resourceId)
 }
 
 object TestHelper {
@@ -381,5 +386,14 @@ object TestHelper {
             Timber.e(e)
         }
         mDevice.waitForIdle()
+    }
+
+    fun nextPage() {
+        onView(
+            Matchers.allOf(
+                withText(R.string.next)
+            )
+        ).perform(click())
+        sleep(1000)
     }
 }

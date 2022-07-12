@@ -198,7 +198,7 @@ class ResultListTest {
         )
         imageView.check(matches(isDisplayed()))
 
-        onView(withId(R.id.error_margin_txt))
+        onView(withId(R.id.error_margin_text))
             .check(matches(withEffectiveVisibility(Visibility.GONE)))
 
         onView(

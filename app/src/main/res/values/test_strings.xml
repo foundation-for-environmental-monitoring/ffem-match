@@ -12,4 +12,6 @@
     <string name="primary_nutrients">Primary Nutrients</string>
     <string name="soil_tests_1">Soil Tests  1</string>
     <string name="soil_tests_2">Soil Tests  2</string>
+    <string name="enter_data">Fill Blank Form</string>
+    <string name="get_forms">Get Blank Form</string>
 </resources>

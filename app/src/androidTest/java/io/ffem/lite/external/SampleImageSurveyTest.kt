@@ -24,6 +24,7 @@ import io.ffem.lite.common.TestHelper.gotoSurveySelection
 import io.ffem.lite.common.TestHelper.isDeviceInitialized
 import io.ffem.lite.common.TestHelper.mDevice
 import io.ffem.lite.common.TestHelper.nextSurveyPage
+import io.ffem.lite.common.TestHelper.startDiagnosticMode
 import io.ffem.lite.common.TestHelper.startSurveyApp
 import io.ffem.lite.common.TestUtil.sleep
 import io.ffem.lite.internal.SCAN_TIME_DELAY
@@ -60,6 +61,7 @@ class SampleImageSurveyTest : BaseTest() {
         if (!initialized) {
             clearPreferences()
             clearData()
+            startDiagnosticMode()
             initialized = true
         }
     }
@@ -71,7 +73,7 @@ class SampleImageSurveyTest : BaseTest() {
 
     @Test
     fun invalidCardTest() {
-        validityTest(fluoride, 0, WRONG_CARD)
+        validityTest(pH, 0, WRONG_CARD)
     }
 
     private fun validityTest(
@@ -79,7 +81,6 @@ class SampleImageSurveyTest : BaseTest() {
         imageNumber: Int,
         @Suppress("SameParameterValue") expectedResultError: ErrorType = NO_ERROR
     ) {
-
         PreferencesUtil.setString(
             context, R.string.testImageNumberKey, imageNumber.toString()
         )
@@ -99,10 +100,21 @@ class SampleImageSurveyTest : BaseTest() {
 
         onView(withText(R.string.start)).perform(click())
 
+        sleep(1000)
+
+        if (testDetails.timeDelay > 0) {
+            onView(withText(R.string.skip_time_delay)).perform(click())
+            sleep(500)
+        }
+
         sleep(SCAN_TIME_DELAY)
 
+//        onView(withText(R.string.continue_on)).perform(click())
+//
+//        sleep(2000)
+
         if (expectedResultError > NO_ERROR) {
-            onView(withText(expectedResultError.toLocalString(context))).check(
+            onView(withText(expectedResultError.toLocalString())).check(
                 matches(isDisplayed())
             )
         }
