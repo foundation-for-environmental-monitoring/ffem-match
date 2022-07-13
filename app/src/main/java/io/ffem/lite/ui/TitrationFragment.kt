@@ -73,10 +73,6 @@ class TitrationFragment : BaseFragment() {
         })
 
         val testInfo = model.test.get()!!
-        if (getToolbar() != null) {
-            getToolbar()!!.title = testInfo.name?.toLocalString()
-        }
-
         if (testInfo.results.size > 1) {
             b.textInput1.text = testInfo.subTest().name!!.toLocalString()
             b.textInput2.text = testInfo.results[1].name!!.toLocalString()

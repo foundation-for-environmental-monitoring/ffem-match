@@ -146,7 +146,7 @@ class TitrationTest {
 
         onView(withId(R.id.start_test_fab)).perform(click())
 
-        sleep(2000)
+        sleep(3000)
         mDevice.findObject(By.text(getString(R.string.enter_data))).click()
 
         sleep(1000)

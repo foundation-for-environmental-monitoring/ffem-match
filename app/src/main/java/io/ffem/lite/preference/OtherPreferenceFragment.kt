@@ -3,14 +3,16 @@ package io.ffem.lite.preference
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.common.IS_CALIBRATION
+import io.ffem.lite.preference.AppPreferences.runColorCardTest
+import io.ffem.lite.preference.AppPreferences.useExternalSensor
 import io.ffem.lite.ui.AboutActivity
 import io.ffem.lite.ui.TestActivity
-import io.ffem.lite.util.PreferencesUtil
 
 class OtherPreferenceFragment : PreferenceFragmentCompat() {
     private var calibrateClicked: Boolean = false
@@ -28,9 +30,11 @@ class OtherPreferenceFragment : PreferenceFragmentCompat() {
                 if (!calibrateClicked) {
                     calibrateClicked = true
 
-                    PreferencesUtil.setBoolean(requireContext(), IS_CALIBRATION, true)
-                    val intent = Intent(requireContext(), TestActivity::class.java)
-                    startActivity(intent)
+                    calibrate()
+
+//                    PreferencesUtil.setBoolean(requireContext(), IS_CALIBRATION, true)
+//                    val intent = Intent(requireContext(), TestActivity::class.java)
+//                    startActivity(intent)
                 }
                 true
             }
@@ -46,6 +50,21 @@ class OtherPreferenceFragment : PreferenceFragmentCompat() {
                 true
             }
         }
+    }
+
+    private var startCalibrate =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (useExternalSensor(requireContext()) || runColorCardTest()) {
+                requireActivity().finish()
+            }
+        }
+
+    private fun calibrate(): PreferenceFragmentCompat? {
+        val intent = Intent(requireActivity(), TestActivity::class.java)
+        intent.putExtra(IS_CALIBRATION, true)
+        AppPreferences.setCalibration(requireContext(), true)
+        startCalibrate.launch(intent)
+        return null
     }
 
     override fun onResume() {

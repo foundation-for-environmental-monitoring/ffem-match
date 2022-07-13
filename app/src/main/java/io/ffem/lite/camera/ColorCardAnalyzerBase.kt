@@ -330,14 +330,7 @@ abstract class ColorCardAnalyzerBase(var testInfo: TestInfo, private val context
                         sendMessage(context.getString(R.string.wrong_card))
                         return
                     }
-                    if (colorCardType == 2 &&
-                        testInfo.uuid.substring(1, 2).uppercase() != "C"
-                    ) {
-                        sendMessage(context.getString(R.string.wrong_card))
-                        return
-                    }
-                    if (colorCardType < 2 &&
-                        testInfo.uuid.substring(1, 2).uppercase() != "R"
+                    if (testInfo.uuid.substring(1, 2).uppercase() != "C"
                     ) {
                         sendMessage(context.getString(R.string.wrong_card))
                         return

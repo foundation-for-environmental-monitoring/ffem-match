@@ -2,10 +2,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory
         android:key="preferenceCategoryDiagnostics"
-        android:title="@string/diagnostics"
+        android:title="@string/color_card"
         app:allowDividerAbove="true"
         app:allowDividerBelow="true"
         app:iconSpaceReserved="false">
+
+        <CheckBoxPreference
+            android:disableDependentsState="true"
+            android:key="@string/runColorCardPrefKey"
+            android:title="Run color card test"
+            app:allowDividerAbove="true"
+            app:iconSpaceReserved="false" />
+
+        <EditTextPreference
+            android:dialogMessage="Enter the sample image number. Enter blank to revert to camera image"
+            android:inputType="number"
+            android:key="@string/testImageNumberKey"
+            android:selectAllOnFocus="true"
+            android:title="Test Image Number"
+            app:allowDividerAbove="true"
+            app:allowDividerBelow="true"
+            app:iconSpaceReserved="false" />
 
         <EditTextPreference
             android:defaultValue="100"
@@ -66,7 +83,6 @@
             app:allowDividerAbove="true"
             app:allowDividerBelow="true"
             app:iconSpaceReserved="false" />
-
     </PreferenceCategory>
 
     <PreferenceCategory

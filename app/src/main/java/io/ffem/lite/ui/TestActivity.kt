@@ -404,7 +404,6 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
         if (uuid.isNullOrEmpty()) {
             uuid = intent.getStringExtra(EXT_TEST_ID_KEY)
         }
-        AppPreferences.setCurrentCardType(this, 0)
         if (uuid != null) {
             val test = DataHelper.getTestInfo(uuid, this)
             if (test != null) {
@@ -782,7 +781,7 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
                 ).show()
                 finish()
             }
-            AppPreferences.runColorCardTest() > 0 -> {
+            AppPreferences.runColorCardTest() -> {
                 Toast.makeText(
                     this, getString(
                         R.string.color_card_mode

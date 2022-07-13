@@ -4,6 +4,7 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import io.ffem.lite.camera.CameraFragment
 import io.ffem.lite.model.*
+import io.ffem.lite.preference.AppPreferences.useExternalSensor
 import kotlin.math.max
 
 /**
@@ -53,17 +54,38 @@ class TestPagerAdapter(
                 )
             }
             pageIndex.testPage -> {
-                CameraFragment()
+                when (testInfo?.subtype) {
+                    TestType.API -> {
+                        RecommendationFragment(activity.intent)
+                    }
+                    TestType.CARD -> {
+                        CameraFragment()
+                    }
+                    TestType.TITRATION -> {
+                        TitrationFragment()
+                    }
+                    else -> {
+
+                        when {
+                            useExternalSensor(activity) -> {
+                                SensorFragment()
+                            }
+                            else -> {
+                                CuvetteBelowFragment()
+                            }
+                        }
+                    }
+                }
             }
             pageIndex.resultPage -> {
                 if (testInfo?.subtype == TestType.CARD) {
                     if (activity.isCalibration) {
                         CalibrationResultFragment()
                     } else {
-                        ResultFragment(false)
+                        ResultFragment(true)
                     }
                 } else {
-                    ResultFragment(false)
+                    ResultFragment(true)
                 }
             }
             pageIndex.donePage -> {

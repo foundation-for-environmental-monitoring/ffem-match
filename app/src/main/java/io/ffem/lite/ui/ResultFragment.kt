@@ -66,7 +66,9 @@ class ResultFragment(var externalRequest: Boolean) : BaseFragment() {
             }
 
             val subTest = model.test.get()!!.subTest()
-            if (subTest.error != ErrorType.NO_ERROR || externalRequest) {
+            if (subTest.error != ErrorType.NO_ERROR || !externalRequest
+                || model.test.get()!!.subtype == TestType.TITRATION
+            ) {
                 b.nextButton.setText(R.string.close)
             }
 

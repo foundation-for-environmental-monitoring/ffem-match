@@ -204,7 +204,7 @@ class RecommendationFragment(private val intent: Intent) : Fragment() {
                 var recommendation: Pair<String, String>
                 try {
                     recommendation = getRecommendation(
-                        "SB-HD-N", recommendationInfo.nitrogenResult!!.toDouble(),
+                        "SB-FM-N", recommendationInfo.nitrogenResult!!.toDouble(),
                         recommendationInfo.crop, recommendationInfo.soilType, dao, context
                     )
                     recommendationInfo.nitrogenRisk = recommendation.first
@@ -214,7 +214,7 @@ class RecommendationFragment(private val intent: Intent) : Fragment() {
 
                 try {
                     recommendation = getRecommendation(
-                        "SB-HD-P", recommendationInfo.phosphorusResult!!.toDouble(),
+                        "SB-FM-P", recommendationInfo.phosphorusResult!!.toDouble(),
                         recommendationInfo.crop, recommendationInfo.soilType, dao, context
                     )
                     recommendationInfo.phosphorousRisk = recommendation.first
@@ -223,7 +223,7 @@ class RecommendationFragment(private val intent: Intent) : Fragment() {
                 }
 
                 recommendation = getRecommendation(
-                    "SB-HD-K", recommendationInfo.potassiumResult!!.toDouble(),
+                    "SB-FM-K", recommendationInfo.potassiumResult!!.toDouble(),
                     recommendationInfo.crop, recommendationInfo.soilType, dao, context
                 )
                 recommendationInfo.potassiumRisk = recommendation.first

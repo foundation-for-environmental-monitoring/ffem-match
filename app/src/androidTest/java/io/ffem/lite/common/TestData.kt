@@ -7,13 +7,13 @@ import io.ffem.lite.model.RiskType
 
 
 val fluoride =
-    TestDetails(R.string.fluoride, R.string.water, "WC-HD-F", 0, R.string.water_tests_1)
+    TestDetails(R.string.fluoride, R.string.water, "WC-FM-F", 0, R.string.water_tests_1)
 
 val pH =
     TestDetails(
         R.string.ph,
         R.string.water,
-        "WC-HD-pH",
+        "WC-FM-pH",
         45,
         R.string.water_tests_2,
         riskType = RiskType.ALKALINITY
@@ -22,7 +22,7 @@ val pH =
 val iron = TestDetails(
     R.string.iron,
     R.string.water,
-    "WC-HD-Fe",
+    "WC-FM-Fe",
     300,
     R.string.water_tests_3,
     riskType = RiskType.SAFETY

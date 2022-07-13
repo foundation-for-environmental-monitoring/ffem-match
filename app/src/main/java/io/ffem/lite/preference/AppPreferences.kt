@@ -199,28 +199,12 @@ object AppPreferences {
         MAX_COLOR_DISTANCE_CALIBRATION
     }
 
-    fun runColorCardTest(): Int {
-        return getCurrentCardType()
+    fun runColorCardTest(): Boolean {
+        return PreferencesUtil.getBoolean(
+            App.app,
+            R.string.runColorCardPrefKey, false
+        ) && isDiagnosticMode()
     }
-
-    fun setCurrentCardType(context: Context, cardType: Int) {
-        PreferencesUtil.setString(context, R.string.runColorCardTestKey, cardType.toString())
-    }
-
-    private fun getCurrentCardType(): Int {
-        return if (isDiagnosticMode()) {
-            val value =
-                PreferencesUtil.getString(App.app, R.string.runColorCardPrefKey, "0").toInt()
-            if (value == 0) {
-                PreferencesUtil.getString(App.app, R.string.runColorCardTestKey, "0").toInt()
-            } else {
-                value
-            }
-        } else {
-            PreferencesUtil.getString(App.app, R.string.runColorCardTestKey, "0").toInt()
-        }
-    }
-
 
     fun getSampleTestImageNumberInt(): Int {
         return try {
@@ -246,8 +230,7 @@ object AppPreferences {
                     if (isFlipProject()) {
                         false
                     } else {
-                        // Torch mode required for Circle swatch card type only
-                        runColorCardTest() == 2
+                        isCardTest
                     }
                 } else {
                     getProjectUseFlash()

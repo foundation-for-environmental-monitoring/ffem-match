@@ -4,7 +4,7 @@
       "name": "Fluoride",
       "sampleType": "water",
       "subtype": "card",
-      "uuid": "WC-HD-F",
+      "uuid": "WC-FM-F",
       "dilutions": [
         1,
         2,
@@ -57,7 +57,7 @@
       "name": "pH",
       "sampleType": "water",
       "subtype": "card",
-      "uuid": "WC-HD-pH",
+      "uuid": "WC-FM-pH",
       "results": [
         {
           "id": 1,
@@ -116,7 +116,7 @@
       "name": "Nitrate",
       "sampleType": "water",
       "subtype": "card",
-      "uuid": "WC-HD-NO3",
+      "uuid": "WC-FM-NO3",
       "dilutions": [
         1,
         2,
@@ -172,7 +172,7 @@
       "name": "Iron",
       "sampleType": "water",
       "subtype": "card",
-      "uuid": "WC-HD-Fe",
+      "uuid": "WC-FM-Fe",
       "dilutions": [
         1,
         2,
@@ -229,7 +229,7 @@
       "name": "Free Chlorine",
       "sampleType": "water",
       "subtype": "card",
-      "uuid": "WC-HD-Cl",
+      "uuid": "WC-FM-Cl",
       "dilutions": [
         1,
         2,
@@ -285,7 +285,7 @@
       "name": "Copper",
       "sampleType": "water",
       "subtype": "card",
-      "uuid": "WC-HD-Cu",
+      "uuid": "WC-FM-Cu",
       "dilutions": [
         1,
         2,
@@ -338,7 +338,7 @@
       "name": "Manganese",
       "sampleType": "water",
       "subtype": "card",
-      "uuid": "WC-HD-Mn",
+      "uuid": "WC-FM-Mn",
       "dilutions": [
         1,
         2,
@@ -400,7 +400,7 @@
       "sampleType": "water",
       "timeDelay": 600,
       "subtype": "card",
-      "uuid": "WC-HD-Zn",
+      "uuid": "WC-FM-Zn",
       "dilutions": [
         1,
         2,
@@ -456,7 +456,7 @@
       "name": "Phosphate",
       "sampleType": "water",
       "subtype": "card",
-      "uuid": "WC-HD-PO4",
+      "uuid": "WC-FM-PO4",
       "dilutions": [
         1,
         2,
@@ -505,7 +505,7 @@
       "name": "Ammonia",
       "sampleType": "water",
       "subtype": "card",
-      "uuid": "WC-HD-NH3",
+      "uuid": "WC-FM-NH3",
       "dilutions": [
         1,
         2,
@@ -566,7 +566,7 @@
       "name": "Nitrite",
       "sampleType": "water",
       "subtype": "card",
-      "uuid": "WC-HD-NO2",
+      "uuid": "WC-FM-NO2",
       "dilutions": [
         1,
         2,
@@ -623,7 +623,7 @@
       "name": "Arsenic",
       "sampleType": "water",
       "subtype": "card",
-      "uuid": "WC-HD-As",
+      "uuid": "WC-FM-As",
       "results": [
         {
           "id": 1,
@@ -675,7 +675,7 @@
       "name": "Available Potassium",
       "sampleType": "soil",
       "subtype": "card",
-      "uuid": "SC-HD-K",
+      "uuid": "SC-FM-K",
       "dilutions": [
         1,
         2,
@@ -728,7 +728,7 @@
       "name": "Available Phosphorous",
       "sampleType": "soil",
       "subtype": "card",
-      "uuid": "SC-HD-P",
+      "uuid": "SC-FM-P",
       "dilutions": [
         1,
         2,
@@ -785,7 +785,7 @@
       "name": "Available Nitrogen",
       "sampleType": "soil",
       "subtype": "card",
-      "uuid": "SC-HD-N",
+      "uuid": "SC-FM-N",
       "dilutions": [
         1,
         2,
@@ -842,7 +842,7 @@
       "name": "Organic Carbon",
       "sampleType": "soil",
       "subtype": "card",
-      "uuid": "SC-HD-OC",
+      "uuid": "SC-FM-OC",
       "dilutions": [
         1,
         2,
@@ -893,7 +893,7 @@
       "name": "pH",
       "sampleType": "soil",
       "subtype": "card",
-      "uuid": "SC-HD-pH",
+      "uuid": "SC-FM-pH",
       "results": [
         {
           "id": 1,
@@ -952,7 +952,7 @@
       "name": "Hazen Units",
       "sampleType": "water",
       "subtype": "card",
-      "uuid": "WC-HD-HU",
+      "uuid": "WC-FM-HU",
       "dilutions": [
         1,
         2,
@@ -984,7 +984,7 @@
       "name": "Turbidity",
       "sampleType": "water",
       "subtype": "card",
-      "uuid": "WC-HD-Trb",
+      "uuid": "WC-FM-Trb",
       "dilutions": [
         1,
         2,
@@ -1019,7 +1019,7 @@
       "name": "Sulphate",
       "sampleType": "water",
       "subtype": "card",
-      "uuid": "WC-HD-SO42",
+      "uuid": "WC-FM-SO42",
       "dilutions": [
         1,
         2,

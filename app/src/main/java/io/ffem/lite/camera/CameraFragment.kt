@@ -35,7 +35,6 @@ import io.ffem.lite.common.ERROR_EVENT_BROADCAST
 import io.ffem.lite.common.ERROR_MESSAGE
 import io.ffem.lite.databinding.FragmentCameraBinding
 import io.ffem.lite.model.TestInfo
-import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.preference.AppPreferences.getSampleTestImageNumberInt
 import io.ffem.lite.preference.AppPreferences.useCameraFlash
 import io.ffem.lite.ui.TestInfoViewModel
@@ -196,15 +195,7 @@ open class CameraFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentCameraBinding.inflate(inflater, container, false)
-
         b.cameraPreview.layoutParams.height = requireActivity().window.decorView.height
-
-        if (AppPreferences.runColorCardTest() == 1) {
-            b.cameraLyt.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
-            val params = b.cameraLyt.layoutParams as ConstraintLayout.LayoutParams
-            params.topToTop = ConstraintLayout.LayoutParams.UNSET
-            b.cameraLyt.requestLayout()
-        }
 
 //        b.previewButton.setOnClickListener {
 //            b.cameraLyt.visibility = VISIBLE
@@ -494,21 +485,12 @@ open class CameraFragment : Fragment() {
         cameraContainer = view.findViewById(R.id.camera_ui_container)
         cardOverlay = view.findViewById(R.id.card_overlay)
 
-        if (AppPreferences.runColorCardTest() == 2) {
-            cardOverlay!!.setImageDrawable(
-                ContextCompat.getDrawable(
-                    requireContext(),
-                    R.drawable.preview_circle_overlay
-                )
+        cardOverlay!!.setImageDrawable(
+            ContextCompat.getDrawable(
+                requireContext(),
+                R.drawable.preview_circle_overlay
             )
-        } else {
-            cardOverlay!!.setImageDrawable(
-                ContextCompat.getDrawable(
-                    requireContext(),
-                    R.drawable.preview_circle_overlay
-                )
-            )
-        }
+        )
     }
 
     private inline fun View.afterMeasured(crossinline block: () -> Unit) {

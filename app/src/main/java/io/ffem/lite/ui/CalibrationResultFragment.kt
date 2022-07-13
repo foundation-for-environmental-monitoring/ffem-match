@@ -16,9 +16,9 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import io.ffem.lite.R
-import io.ffem.lite.app.App.Companion.getTestInfo
 import io.ffem.lite.common.TEST_ID_KEY
 import io.ffem.lite.data.AppDatabase
+import io.ffem.lite.data.DataHelper
 import io.ffem.lite.databinding.FragmentCalibrationResultBinding
 import io.ffem.lite.model.CardCalibration
 import io.ffem.lite.model.ErrorType
@@ -161,7 +161,7 @@ class CalibrationResultFragment : Fragment() {
             val requestedTestId = PreferencesUtil.getString(requireContext(), TEST_ID_KEY, "")
             binding.nameTxt.text = ""
             if (testInfo.uuid != requestedTestId) {
-                val requestedTest = getTestInfo(requestedTestId!!)
+                val requestedTest = DataHelper.getTestInfo(requestedTestId!!, requireContext())
                 if (requestedTest != null) {
                     binding.name2Txt.text = requestedTest.name!!.toLocalString()
                 } else {

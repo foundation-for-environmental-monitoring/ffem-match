@@ -5,7 +5,7 @@
       "name": "Available Nitrogen",
       "sampleType": "soil",
       "subtype": "cuvette",
-      "uuid": "SB-HD-N",
+      "uuid": "SB-FM-N",
       "calibrate": true,
       "monthsValid": 6,
       "dilutions": [
@@ -47,7 +47,7 @@
       "name": "Available Phosphorous",
       "sampleType": "soil",
       "subtype": "cuvette",
-      "uuid": "SB-HD-P",
+      "uuid": "SB-FM-P",
       "calibrate": true,
       "monthsValid": 6,
       "dilutions": [
@@ -89,7 +89,7 @@
       "name": "Available Potassium",
       "sampleType": "soil",
       "subtype": "cuvette",
-      "uuid": "SB-HD-K",
+      "uuid": "SB-FM-K",
       "calibrate": true,
       "monthsValid": 6,
       "dilutions": [
@@ -131,7 +131,7 @@
       "name": "pH",
       "sampleType": "soil",
       "subtype": "cuvette",
-      "uuid": "SB-HD-pH",
+      "uuid": "SB-FM-pH",
       "calibrate": true,
       "monthsValid": 6,
       "results": [
@@ -184,7 +184,7 @@
       "name": "Available Boron",
       "sampleType": "soil",
       "subtype": "cuvette",
-      "uuid": "SB-HD-B",
+      "uuid": "SB-FM-B",
       "calibrate": true,
       "monthsValid": 3,
       "dilutions": [
@@ -216,7 +216,7 @@
       "name": "Available Iron",
       "sampleType": "soil",
       "subtype": "cuvette",
-      "uuid": "SB-HD-Fe",
+      "uuid": "SB-FM-Fe",
       "calibrate": true,
       "monthsValid": 6,
       "dilutions": [
@@ -268,7 +268,7 @@
       "name": "Calcium and Magnesium",
       "sampleType": "soil",
       "subtype": "titration",
-      "uuid": "ST-HD-CaMg",
+      "uuid": "ST-FM-CaMg",
       "results": [
         {
           "id": 1,
@@ -320,7 +320,7 @@
       "name": "Available Copper",
       "sampleType": "soil",
       "subtype": "cuvette",
-      "uuid": "SB-HD-Cu",
+      "uuid": "SB-FM-Cu",
       "calibrate": true,
       "monthsValid": 12,
       "dilutions": [
@@ -371,7 +371,7 @@
       "name": "Available Zinc",
       "sampleType": "soil",
       "subtype": "cuvette",
-      "uuid": "SB-HD-Zn",
+      "uuid": "SB-FM-Zn",
       "calibrate": true,
       "monthsValid": 12,
       "dilutions": [
@@ -422,7 +422,7 @@
       "name": "Organic Carbon",
       "sampleType": "soil",
       "subtype": "cuvette",
-      "uuid": "SB-HD-OC",
+      "uuid": "SB-FM-OC",
       "calibrate": true,
       "monthsValid": 6,
       "results": [
@@ -456,7 +456,7 @@
       "name": "Available Manganese",
       "sampleType": "soil",
       "subtype": "cuvette",
-      "uuid": "SB-HD-Mn",
+      "uuid": "SB-FM-Mn",
       "calibrate": true,
       "monthsValid": 6,
       "results": [
@@ -501,7 +501,7 @@
       "name": "Available Sulfur",
       "sampleType": "soil",
       "subtype": "cuvette",
-      "uuid": "SB-HD-S",
+      "uuid": "SB-FM-S",
       "calibrate": true,
       "monthsValid": 12,
       "results": [
@@ -519,7 +519,7 @@
       "name": "Electrical Conductivity",
       "sampleType": "soil",
       "subtype": "api",
-      "uuid": "SB-HD-EC",
+      "uuid": "SB-FM-EC",
       "results": [
         {
           "id": 1,
@@ -532,7 +532,7 @@
       "name": "Fertilizer Recommendation",
       "type": "soil",
       "subtype": "api",
-      "uuid": "SB-HD-FER",
+      "uuid": "SB-FM-FER",
       "calibrate": false,
       "results": [
         {

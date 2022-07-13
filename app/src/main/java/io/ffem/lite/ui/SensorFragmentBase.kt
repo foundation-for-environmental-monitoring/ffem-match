@@ -16,7 +16,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.animation.doOnEnd
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.database.FirebaseDatabase
 import io.ffem.lite.R
@@ -76,9 +75,9 @@ open class SensorFragmentBase : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        if (activity is TestActivity) {
-            view.findViewById<AppBarLayout>(R.id.appBarLayout).visibility = GONE
-        }
+//        if (activity is TestActivity) {
+//            view.findViewById<AppBarLayout>(R.id.appBarLayout).visibility = GONE
+//        }
         super.onViewCreated(view, savedInstanceState)
 
         val testInfo = model.test.get()!!

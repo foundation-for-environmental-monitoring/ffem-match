@@ -260,7 +260,6 @@ class ImageTest {
                 if (testData.expectedResultError == NO_ERROR) {
                     textView.check(matches(checkResult(testData)))
                 } else {
-                    val context = InstrumentationRegistry.getInstrumentation().targetContext
                     textView.check(
                         matches(
                             withText(

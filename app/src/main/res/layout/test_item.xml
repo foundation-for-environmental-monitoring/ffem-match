@@ -38,7 +38,7 @@
         android:textSize="14sp"
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/title_text"
-        tools:text="WB-HD-SO3"
+        tools:text="WB-FM-SO3"
         tools:visibility="visible" />
 
     <TextView

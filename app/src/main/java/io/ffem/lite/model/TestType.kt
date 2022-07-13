@@ -17,4 +17,7 @@ enum class TestType {
 
     @SerializedName("titration")
     TITRATION,
+
+    @SerializedName("meter")
+    METER
 }

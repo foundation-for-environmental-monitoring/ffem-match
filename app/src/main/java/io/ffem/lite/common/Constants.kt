@@ -45,7 +45,7 @@ object Constants {
 
     const val MESSAGE_TWO_LINE_FORMAT = "%s%n%n%s"
 
-    const val FLUORIDE_ID = "WB-HD-F"
+    const val FLUORIDE_ID = "WB-FM-F"
 
     const val DEGREES_90 = 90
     const val DEGREES_270 = 270

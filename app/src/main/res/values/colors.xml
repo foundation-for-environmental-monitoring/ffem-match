@@ -31,6 +31,7 @@
     <color name="risk_red">#980000</color>
     <color name="safe_green">#387700</color>
     <color name="link_green">#2E6100</color>
+    <color name="gray">#E6E6E6</color>
 
     <!-- Diagnostic -->
     <color name="diagnostic">#910228</color>

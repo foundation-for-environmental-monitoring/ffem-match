@@ -9,7 +9,6 @@ import io.ffem.lite.R
 import io.ffem.lite.common.ConstantJsonKey
 import io.ffem.lite.common.Constants
 import io.ffem.lite.model.*
-import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.util.FileUtil
 import kotlinx.coroutines.tasks.await
 import org.json.JSONArray
@@ -61,8 +60,7 @@ object DataHelper {
     }
 
     internal fun checkHyphens(str: String): String {
-        val code = str.replace("FM", "HD")
-            .replace("TOC", "OC")
+        val code = str.replace("TOC", "OC")
         return if (!code.contains("-")) {
             val stringBuilder = StringBuilder(str)
             stringBuilder.insert(2, '-')
@@ -80,14 +78,6 @@ object DataHelper {
                 return null
             }
             var id = checkHyphens(parameterId.uppercase())
-            id = id.replace("CL2", "CL")
-            id = id.replace("WA", "WC")
-            id = id.replace("WB", "WC")
-            id = id.replace("WR", "WC")
-            id = id.replace("SA", "SC")
-            id = id.replace("SB", "SC")
-            id = id.replace("SR", "SC")
-
             val gson: Gson =
                 GsonBuilder().registerTypeAdapter(
                     object :
@@ -96,10 +86,6 @@ object DataHelper {
                 ).create()
 
             val input = when {
-                id.uppercase().startsWith("WA") -> {
-                    id = id.replace("WA", "WB")
-                    context.resources.openRawResource(R.raw.water_tests)
-                }
                 id.uppercase().startsWith("WB") -> {
                     context.resources.openRawResource(R.raw.water_tests)
                 }
@@ -116,7 +102,6 @@ object DataHelper {
                     context.resources.openRawResource(R.raw.soil_tests)
                 }
                 else -> {
-                    AppPreferences.setCurrentCardType(context, 2)
                     context.resources.openRawResource(R.raw.tests_circle)
                 }
             }

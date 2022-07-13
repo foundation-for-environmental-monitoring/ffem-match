@@ -5,7 +5,7 @@
       "name": "BOD",
       "sampleType": "water",
       "subtype": "meter",
-      "uuid": "WM-HD-BOD",
+      "uuid": "WM-FM-BOD",
       "results": [
         {
           "id": 1,
@@ -18,7 +18,7 @@
       "name": "COD",
       "sampleType": "water",
       "subtype": "meter",
-      "uuid": "WM-HD-COD",
+      "uuid": "WM-FM-COD",
       "results": [
         {
           "id": 1,
@@ -31,7 +31,7 @@
       "name": "TDS",
       "sampleType": "water",
       "subtype": "meter",
-      "uuid": "WM-HD-TDS",
+      "uuid": "WM-FM-TDS",
       "results": [
         {
           "id": 1,
@@ -46,7 +46,7 @@
       "name": "RSC",
       "sampleType": "water",
       "subtype": "meter",
-      "uuid": "WM-HD-RSC",
+      "uuid": "WM-FM-RSC",
       "results": [
         {
           "id": 1,
@@ -71,7 +71,7 @@
       "name": "SAR",
       "sampleType": "water",
       "subtype": "meter",
-      "uuid": "WM-HD-SAR",
+      "uuid": "WM-FM-SAR",
       "results": [
         {
           "id": 1,
@@ -96,7 +96,7 @@
       "name": "Sodium",
       "sampleType": "water",
       "subtype": "meter",
-      "uuid": "WM-HD-Na",
+      "uuid": "WM-FM-Na",
       "results": [
         {
           "id": 1,
