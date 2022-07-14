@@ -224,7 +224,7 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
                 }
 
                 lifecycleScope.launch {
-                    delay(200)
+                    delay(500)
                     if (isCalibration && b.viewPager.currentItem == 0) {
                         title = getString(R.string.calibrate)
                     } else if (::testInfo.isInitialized) {
