@@ -58,6 +58,7 @@
     <string name="select_calibration_point">Select calibration point</string>
     <string name="select_standard_measured">Select the value of the standard measured</string>
     <string name="color_shift">Color shift</string>
+    <string name="skip">Skip</string>
 
     <!-- ErrorType -->
     <string name="no_error" tools:keep="@string/no_error">Error</string>

@@ -189,7 +189,7 @@ open class SensorFragmentBase : Fragment() {
 
     private fun setDeviceId(deviceId: String) {
         if (deviceId.isEmpty()) {
-            this.deviceId = "HD-ARDTCS"
+            this.deviceId = "FM-ARDTCS"
         }
     }
 

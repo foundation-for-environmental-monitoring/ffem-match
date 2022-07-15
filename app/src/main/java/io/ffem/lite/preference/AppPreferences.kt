@@ -391,11 +391,10 @@ object AppPreferences {
         PreferencesUtil.setBoolean(context, IS_CALIBRATION, isCalibration)
     }
 
-
     fun returnDummyResults(context: Context): Boolean {
         return PreferencesUtil.getBoolean(
             context.applicationContext!!,
-            R.string.dummyResultKey, false
+            R.string.dummyResultKey, true
         ) && isDiagnosticMode()
     }
 

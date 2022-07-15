@@ -78,7 +78,7 @@ abstract class ColorCardAnalyzerBase(var testInfo: TestInfo, private val context
                 if (BuildConfig.DEBUG && (isDiagnosticMode() || BuildConfig.INSTRUMENTED_TEST_RUNNING.get())) {
                     if (imageNumber > -1) {
                         try {
-                            val fileName = "hd_circle_${
+                            val fileName = "fm_circle_${
                                 java.lang.String.format(
                                     Locale.ROOT,
                                     "%03d",

@@ -17,6 +17,7 @@
     <string name="grayscale_result">Grayscale result</string>
     <string name="grayscale_extracts">Grayscale Extracts</string>
     <string name="take_photo">Take photo</string>
+    <string name="graph">Graph</string>
 
     <!--Software Notices-->
     <string name="apache_software"><a href="https://source.android.com/setup/licenses">Android&#160;Open&#160;Source&#160;Project</a>&#160;&#160;&#8226;&#160;&#160;<a href="https://github.com/joel-costigliola/assertj-core">AssertJ</a>&#160;&#160;&#8226;&#160;&#160;<a href="https://github.com/google/gson">Gson</a>&#160;&#160;&#8226;&#160;&#160;<a href="https://github.com/JakeWharton/timber">Timber</a>&#160;&#160;&#8226;&#160;&#160;<a href="https://github.com/zxing/zxing">ZXing</a></string>

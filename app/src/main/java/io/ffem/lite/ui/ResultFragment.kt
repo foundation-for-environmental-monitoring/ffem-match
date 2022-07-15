@@ -155,7 +155,7 @@ class ResultFragment(var externalRequest: Boolean) : BaseFragment() {
             }
 
             if (subTest.calibratedResult.result > -1) {
-                b.actualResultText.text = subTest.getActualResult()
+                b.actualResultText.text = subTest.getActualResult(requireContext())
             } else {
                 b.actualResultLayout.visibility = GONE
             }
@@ -170,7 +170,7 @@ class ResultFragment(var externalRequest: Boolean) : BaseFragment() {
             } catch (ignored: Exception) {
             }
 
-            b.uncalibratedResultText.text = subTest.getUncalibratedResult()
+            b.uncalibratedResultText.text = subTest.getUncalibratedResult(requireContext())
             b.uncalibratedResultLayout.visibility = VISIBLE
             b.resultTxt.text = subTest.getResultString()
             b.nameTxt.text = testInfo.name!!.toLocalString()
@@ -205,7 +205,7 @@ class ResultFragment(var externalRequest: Boolean) : BaseFragment() {
 
         b.resultTxt.text = DECIMAL_FORMAT.format(subTest.resultInfo.result)
         b.resultTxt.visibility = VISIBLE
-        b.riskText.text = subTest.getRiskString()
+        b.riskText.text = subTest.getRiskString(requireContext())
 
         val path =
             requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES).toString() +

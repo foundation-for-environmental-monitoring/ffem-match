@@ -1,27 +1,22 @@
 package io.ffem.lite.ui
 
+import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.provider.Settings
 import android.util.TypedValue
-import android.view.WindowManager
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
-import io.ffem.lite.preference.SettingsActivity
 import io.ffem.lite.preference.isDiagnosticMode
 
 abstract class BaseActivity : AppCompatActivity() {
-
-    private var toolbar: Toolbar? = null
-    private var textToolbarTitle: TextView? = null
-    private var mTitle: String? = null
     private lateinit var firebaseAnalytics: FirebaseAnalytics
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,68 +25,44 @@ abstract class BaseActivity : AppCompatActivity() {
             firebaseAnalytics = Firebase.analytics
             FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(true)
         }
-        updateTheme()
+//        updateTheme()
         changeActionBarStyleBasedOnCurrentMode()
     }
 
-    private fun updateTheme() {
-
-        if (this is SettingsActivity) {
-            setTheme(R.style.Theme_Main_Settings)
-        } else if (this !is TestActivity) {
-            setTheme(R.style.Theme_Main)
-        }
-
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-
-        val typedValue = TypedValue()
-        theme.resolveAttribute(android.R.attr.windowBackground, typedValue, true)
-        val windowBackground = typedValue.data
-        window.setBackgroundDrawable(ColorDrawable(windowBackground))
-    }
+//    private fun updateTheme() {
+//
+//        if (this is SettingsActivity) {
+//            setTheme(R.style.Theme_Main_Settings)
+//        } else if (this !is TestActivity) {
+//            setTheme(R.style.Theme_Main)
+//        }
+//
+//        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+//
+//        val typedValue = TypedValue()
+//        theme.resolveAttribute(android.R.attr.windowBackground, typedValue, true)
+//        val windowBackground = typedValue.data
+//        window.setBackgroundDrawable(ColorDrawable(windowBackground))
+//    }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-        toolbar = findViewById(R.id.toolbar)
-        if (toolbar != null) {
-            try {
-                setSupportActionBar(toolbar)
-            } catch (ignored: Exception) {
-                // do nothing
-            }
-
-        }
-        if (supportActionBar != null) {
-            supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        }
+        initToolbar()
+        changeActionBarStyleBasedOnCurrentMode()
     }
 
     override fun onResume() {
         super.onResume()
-        changeActionBarStyleBasedOnCurrentMode()
-        title = mTitle
-    }
-
-    override fun setTitle(title: CharSequence?) {
-        textToolbarTitle = findViewById(R.id.toolbar_title_txt)
-        if (textToolbarTitle != null && title != null) {
-            mTitle = title.toString()
-            textToolbarTitle!!.text = title
-        }
-    }
-
-    override fun setTitle(titleId: Int) {
-        textToolbarTitle = findViewById(R.id.toolbar_title_txt)
-        if (textToolbarTitle != null && titleId != 0) {
-            mTitle = getString(titleId)
-            textToolbarTitle!!.setText(titleId)
+        try {
+            changeActionBarStyleBasedOnCurrentMode()
+        } catch (e: Exception) {
         }
     }
 
     /**
      * Switches action bar style between user mode or diagnostic mode
      */
-    protected fun changeActionBarStyleBasedOnCurrentMode() {
+    fun changeActionBarStyleBasedOnCurrentMode() {
         if (isDiagnosticMode()) {
             if (supportActionBar != null) {
                 supportActionBar!!.setBackgroundDrawable(
@@ -99,6 +70,8 @@ abstract class BaseActivity : AppCompatActivity() {
                         ContextCompat.getColor(this, R.color.diagnostic)
                     )
                 )
+                val toolbar: MaterialToolbar = findViewById(R.id.toolbar)
+                toolbar.setTitleTextColor(Color.WHITE)
             }
             window.statusBarColor = ContextCompat.getColor(this, R.color.diagnostic_status)
         } else {
@@ -109,12 +82,23 @@ abstract class BaseActivity : AppCompatActivity() {
 
             if (supportActionBar != null) {
                 supportActionBar!!.setBackgroundDrawable(ColorDrawable(color))
+
+                val toolbar: MaterialToolbar = findViewById(R.id.toolbar)
+                toolbar.setTitleTextColor(Color.WHITE)
             }
 
-            theme.resolveAttribute(R.attr.colorPrimaryDark, typedValue, true)
+            theme.resolveAttribute(R.attr.colorPrimaryVariant, typedValue, true)
             color = typedValue.data
 
             window.statusBarColor = color
+        }
+    }
+
+    private fun initToolbar() {
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        if (supportActionBar != null) {
+            supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         }
     }
 

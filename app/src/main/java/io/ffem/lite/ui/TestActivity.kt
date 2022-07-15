@@ -12,6 +12,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.util.SparseArray
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -158,6 +159,8 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
 //    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val themeUtils = ThemeUtils(this)
+        setTheme(themeUtils.appTheme)
         super.onCreate(savedInstanceState)
 
         hideSystemUI()
@@ -224,7 +227,7 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
                 }
 
                 lifecycleScope.launch {
-                    delay(500)
+                    delay(100)
                     if (isCalibration && b.viewPager.currentItem == 0) {
                         title = getString(R.string.calibrate)
                     } else if (::testInfo.isInitialized) {
@@ -535,84 +538,83 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
         pageNext()
     }
 
-    // Todo: fix menu
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        when (item.itemId) {
-//            R.id.menuLoad -> {
-//                loadCalibration()
-//                return true
-//            }
-//            R.id.save_menu -> {
-//                val db = CalibrationDatabase.getDatabase(this)
-//                try {
-//                    val dao = db.calibrationDao()
-//                    val calibrationInfo = dao.getCalibrations(testInfo.uuid)
-//                    if (calibrationInfo != null) {
-//                        var colors = ""
-//                        for (calibration in calibrationInfo.calibrations) {
-//                            if (colors.isNotEmpty()) {
-//                                colors += ","
-//                            }
-//                            colors += calibration.value.toString() + ":" + calibration.color
-//                        }
-//                        val savedName = dao.getCalibrationColorString(colors)
-//                        if (savedName != null) {
-//                            SnackbarUtils.showLongSnackbar(
-//                                b.footerLyt,
-//                                String.format(
-//                                    getString(R.string.calibration_already_saved),
-//                                    savedName
-//                                )
-//                            )
-//                            return true
-//                        }
-//                    }
-//
-//                    if (calibrationInfo != null &&
-//                        calibrationInfo.calibrations.size >= testInfo.subTest().colors.size
-//                    ) {
-//                        showCalibrationDetailsDialog(false)
-//                    } else {
-//                        SnackbarUtils.showLongSnackbar(
-//                            b.footerLyt,
-//                            String.format(
-//                                getString(R.string.error_calibration_incomplete),
-//                                testInfo.name!!.toLocalString()
-//                            )
-//                        )
-//                    }
-//                } finally {
-//                    db.close()
-//                }
-//                return true
-//            }
-//            R.id.graph_menu -> {
-//                val graphIntent = Intent(this, CalibrationGraphActivity::class.java)
-//                testViewModel.loadCalibrations()
-//                graphIntent.putExtra(TEST_INFO, testViewModel.test.get())
-//                startActivity(graphIntent)
-//                return true
-//            }
-//            android.R.id.home -> {
-//                if (isAppInLockTaskMode(this)) {
-//                    showLockTaskEscapeMessage()
-//                } else {
-//                    when {
-//                        isCalibration && b.viewPager.currentItem > 1 -> {
-//                            b.viewPager.setCurrentItem(1, false)
-//                        }
-//                        isCalibration && b.viewPager.currentItem > 0 -> {
-//                            b.viewPager.setCurrentItem(0, false)
-//                        }
-//                        else -> {
-//                            finish()
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        return super.onOptionsItemSelected(item)
-//    }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menuLoad -> {
+                loadCalibration()
+                return true
+            }
+            R.id.save_menu -> {
+                val db = CalibrationDatabase.getDatabase(this)
+                try {
+                    val dao = db.calibrationDao()
+                    val calibrationInfo = dao.getCalibrations(testInfo.uuid)
+                    if (calibrationInfo != null) {
+                        var colors = ""
+                        for (calibration in calibrationInfo.calibrations) {
+                            if (colors.isNotEmpty()) {
+                                colors += ","
+                            }
+                            colors += calibration.value.toString() + ":" + calibration.color
+                        }
+                        val savedName = dao.getCalibrationColorString(colors)
+                        if (savedName != null) {
+                            SnackbarUtils.showLongSnackbar(
+                                b.footerLyt,
+                                String.format(
+                                    getString(R.string.calibration_already_saved),
+                                    savedName
+                                )
+                            )
+                            return true
+                        }
+                    }
+
+                    if (calibrationInfo != null &&
+                        calibrationInfo.calibrations.size >= testInfo.subTest().colors.size
+                    ) {
+                        showCalibrationDetailsDialog(false)
+                    } else {
+                        SnackbarUtils.showLongSnackbar(
+                            b.footerLyt,
+                            String.format(
+                                getString(R.string.error_calibration_incomplete),
+                                testInfo.name!!.toLocalString()
+                            )
+                        )
+                    }
+                } finally {
+                    db.close()
+                }
+                return true
+            }
+            R.id.graph_menu -> {
+                val graphIntent = Intent(this, CalibrationGraphActivity::class.java)
+                testViewModel.loadCalibrations()
+                graphIntent.putExtra(TEST_INFO, testViewModel.test.get())
+                startActivity(graphIntent)
+                return true
+            }
+            android.R.id.home -> {
+                if (isAppInLockTaskMode(this)) {
+                    showLockTaskEscapeMessage()
+                } else {
+                    when {
+                        isCalibration && b.viewPager.currentItem > 1 -> {
+                            b.viewPager.setCurrentItem(1, false)
+                        }
+                        isCalibration && b.viewPager.currentItem > 0 -> {
+                            b.viewPager.setCurrentItem(0, false)
+                        }
+                        else -> {
+                            finish()
+                        }
+                    }
+                }
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
 
     private val startLoadCalibration =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -623,7 +625,7 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
         }
 
     private fun loadCalibration() {
-        testViewModel.loadCalibrations()
+//        testViewModel.loadCalibrations()
         val intent = Intent(this, CalibrationsActivity::class.java)
         intent.putExtra(TEST_INFO, testViewModel.test.get())
         startLoadCalibration.launch(intent)
@@ -827,26 +829,25 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
         }
     }
 
-    // todo: fix menu
-//    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-//        if (isDiagnosticMode() && testViewModel.isCalibration
-//            && b.viewPager.currentItem == 1
-//        ) {
-//            menuInflater.inflate(R.menu.menu_calibrate_dev, menu)
-//        }
-//        if (instructionList.size > 0 && b.viewPager.currentItem > 0 &&
-//            instructionList[b.viewPager.currentItem].section.size > 0
-//        ) {
-//            if (b.viewPager.currentItem != pageIndex.dilutionPage &&
-//                b.viewPager.currentItem != pageIndex.calibrationPage &&
-//                b.viewPager.currentItem < pageIndex.testPage - 1 &&
-//                (pageIndex.startTimerPage == -1 || b.viewPager.currentItem < pageIndex.startTimerPage)
-//            ) {
-//                menuInflater.inflate(R.menu.menu_instructions, menu)
-//            }
-//        }
-//        return true
-//    }
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        if (isDiagnosticMode() && testViewModel.isCalibration
+            && b.viewPager.currentItem == 1
+        ) {
+            menuInflater.inflate(R.menu.menu_calibrate_dev, menu)
+        }
+        if (instructionList.size > 0 && b.viewPager.currentItem > 0 &&
+            instructionList[b.viewPager.currentItem].section.size > 0
+        ) {
+            if (b.viewPager.currentItem != pageIndex.dilutionPage &&
+                b.viewPager.currentItem != pageIndex.calibrationPage &&
+                b.viewPager.currentItem < pageIndex.testPage - 1 &&
+                (pageIndex.startTimerPage == -1 || b.viewPager.currentItem < pageIndex.startTimerPage)
+            ) {
+                menuInflater.inflate(R.menu.menu_instructions, menu)
+            }
+        }
+        return true
+    }
 
     fun onSkipClick(@Suppress("UNUSED_PARAMETER") item: MenuItem) {
         if (pageIndex.testPage > 0) {

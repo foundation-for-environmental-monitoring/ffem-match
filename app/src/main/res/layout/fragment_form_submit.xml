@@ -39,8 +39,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/activity_vertical_margin"
                         android:hint="@string/short_description"
-                        app:hintTextAppearance="@style/TextLabel"
-                        app:hintTextColor="@color/text_secondary">
+                        app:hintTextAppearance="@style/TextLabel">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/source_desc_edit"
@@ -61,8 +60,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/activity_vertical_margin"
                         android:hint="@string/source_type"
-                        app:hintTextAppearance="@style/TextLabel"
-                        app:hintTextColor="@color/text_secondary">
+                        app:hintTextAppearance="@style/TextLabel">
 
                         <androidx.appcompat.widget.AppCompatAutoCompleteTextView
                             android:id="@+id/source_select"
@@ -215,8 +213,7 @@
                     android:layout_marginBottom="32dp"
                     android:hint="@string/comment"
                     android:padding="@dimen/activity_horizontal_margin"
-                    app:hintTextAppearance="@style/TextLabel"
-                    app:hintTextColor="@color/text_secondary">
+                    app:hintTextAppearance="@style/TextLabel">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/comment_edit"

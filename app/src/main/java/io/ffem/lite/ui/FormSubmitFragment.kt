@@ -251,13 +251,13 @@ class FormSubmitFragment : Fragment() {
                         ?.text = gpsAccuracy
                     locationProgressDialog?.findViewById<TextView>(R.id.accept_button)
                         ?.isEnabled = true
-                    locationProgressDialog?.findViewById<TextView>(R.id.accept_button)
-                        ?.setTextColor(
-                            ContextCompat.getColor(
-                                requireContext(),
-                                R.color.link_green
-                            )
-                        )
+//                    locationProgressDialog?.findViewById<TextView>(R.id.accept_button)
+//                        ?.setTextColor(
+//                            ContextCompat.getColor(
+//                                requireContext(),
+//                                R.color.link_green
+//                            )
+//                        )
                     val dao = model.db.resultDao()
                     dao.update(form)
                 }

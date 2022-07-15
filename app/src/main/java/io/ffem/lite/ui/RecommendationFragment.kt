@@ -272,7 +272,7 @@ class RecommendationFragment(private val intent: Intent) : Fragment() {
             }
         }
 
-        return Pair(testInfo!!.subTest().getRiskString(), recommendation)
+        return Pair(testInfo!!.subTest().getRiskString(requireContext()), recommendation)
     }
 
     private fun parseXml(xmlString: String?, intent: Intent) {

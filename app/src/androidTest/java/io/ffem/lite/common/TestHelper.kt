@@ -294,7 +294,7 @@ object TestHelper {
 
             sleep(400)
 
-            onView(ViewMatchers.withText(R.string.about)).perform(click())
+            onView(withText(R.string.about)).perform(click())
 
             sleep(400)
 
@@ -304,13 +304,6 @@ object TestHelper {
                 Matchers.allOf(
                     withId(R.id.action_settings),
                     ViewMatchers.withContentDescription(R.string.settings),
-                    TestUtil.childAtPosition(
-                        TestUtil.childAtPosition(
-                            withId(R.id.toolbar),
-                            1
-                        ),
-                        0
-                    ),
                     ViewMatchers.isDisplayed()
                 )
             )
@@ -319,7 +312,7 @@ object TestHelper {
 
         sleep(500)
 
-        onView(ViewMatchers.withText(R.string.about)).perform(click())
+        onView(withText(R.string.about)).perform(click())
         sleep(500)
 
         enterDiagnosticMode()

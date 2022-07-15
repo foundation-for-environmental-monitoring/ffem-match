@@ -34,7 +34,7 @@ public final class ThemeUtils {
 
     @StyleRes
     public int getAppTheme() {
-        return R.style.Theme_Main;
+        return R.style.Theme_Collect;
     }
 
 //    @DrawableRes

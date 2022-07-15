@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/title_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/diagnostic"
+            android:paddingStart="8dp"
+            android:paddingTop="3dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="2dp"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:text="@string/fluoride" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/graphRed"
+                android:layout_width="match_parent"
+                android:layout_height="190dp" />
+
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/graphGreen"
+                android:layout_width="match_parent"
+                android:layout_height="190dp" />
+
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/graphBlue"
+                android:layout_width="match_parent"
+                android:layout_height="190dp" />
+
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

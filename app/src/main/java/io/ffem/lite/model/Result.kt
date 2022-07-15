@@ -4,8 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Parcelable
 import io.ffem.lite.R
-import io.ffem.lite.app.App
-import io.ffem.lite.common.Constants.DECIMAL_FORMAT
+import io.ffem.lite.common.Constants
 import io.ffem.lite.data.RecommendationDatabase
 import io.ffem.lite.util.MathUtil.applyFormula
 import io.ffem.lite.util.StringUtil.getStringByLocale
@@ -109,7 +108,7 @@ data class Result(
 
                 // if no more dilution can be performed then set result to highest value
                 resultInfo.result = round(resultDouble, 3)
-                resultString = DECIMAL_FORMAT.format(resultInfo.result)
+                resultString = Constants.DECIMAL_FORMAT.format(resultInfo.result)
 
                 // Add 'greater than' symbol if result could be an unknown high value
                 if (resultInfo.highLevelsFound) {
@@ -117,7 +116,7 @@ data class Result(
                 }
             } else {
                 resultInfo.result = round(resultDouble, 3)
-                resultString = DECIMAL_FORMAT.format(resultInfo.result)
+                resultString = Constants.DECIMAL_FORMAT.format(resultInfo.result)
             }
             noDilutionResultValue = round(resultDouble, 2)
         }
@@ -137,7 +136,7 @@ data class Result(
                 if (dilution >= maxDilution && resultInfo.highLevelsFound) {
                     resultInfo.result = maxValue
                 }
-                resultString = DECIMAL_FORMAT.format(resultInfo.result)
+                resultString = Constants.DECIMAL_FORMAT.format(resultInfo.result)
 
                 // Add 'greater than' symbol if result could be an unknown high value
                 if (resultInfo.highLevelsFound) {
@@ -145,7 +144,7 @@ data class Result(
                 }
             } else {
                 resultInfo.result = round(applyFormula(resultDouble, formula), 3)
-                resultString = DECIMAL_FORMAT.format(resultInfo.result)
+                resultString = Constants.DECIMAL_FORMAT.format(resultInfo.result)
             }
             noDilutionResultValue = round(applyFormula(resultDouble, formula), 2)
         }
@@ -159,31 +158,31 @@ data class Result(
                 if (calibratedResult.result >= maxValue * 0.99) {
                     "> $maxValue"
                 } else {
-                    DECIMAL_FORMAT.format(calibratedResult.result)
+                    Constants.DECIMAL_FORMAT.format(calibratedResult.result)
                 }
             } else {
                 if (resultInfo.result >= maxValue * 0.99) {
                     "> $maxValue"
                 } else {
-                    DECIMAL_FORMAT.format(resultInfo.result)
+                    Constants.DECIMAL_FORMAT.format(resultInfo.result)
                 }
             }
         }
     }
 
-    fun getActualResult(): String {
+    fun getActualResult(context: Context): String {
         return if (resultInfo.result < 0 && calibratedResult.result < 0) {
             error.toLocalString()
         } else {
-            DECIMAL_FORMAT.format(calibratedResult.result)
+            Constants.DECIMAL_FORMAT.format(calibratedResult.result)
         }
     }
 
-    fun getUncalibratedResult(): String {
+    fun getUncalibratedResult(context: Context): String {
         return if (resultInfo.result < 0) {
             error.toLocalString()
         } else {
-            DECIMAL_FORMAT.format(resultInfo.result)
+            Constants.DECIMAL_FORMAT.format(resultInfo.result)
         }
     }
 
@@ -219,22 +218,22 @@ data class Result(
         return if (criticalLimit > 0) {
             if (criticalLimitSign.isNotEmpty()) {
                 criticalLimitSign + " " +
-                        DECIMAL_FORMAT.format(criticalLimit)
+                        Constants.DECIMAL_FORMAT.format(criticalLimit)
             } else {
-                DECIMAL_FORMAT.format(criticalLimit)
+                Constants.DECIMAL_FORMAT.format(criticalLimit)
             }
         } else if (criticalMax > 0 && criticalMin > 0) {
-            DECIMAL_FORMAT.format(criticalMin) + " - " +
-                    DECIMAL_FORMAT.format(criticalMax)
+            Constants.DECIMAL_FORMAT.format(criticalMin) + " - " +
+                    Constants.DECIMAL_FORMAT.format(criticalMax)
         } else {
             ""
         }
     }
 
-    fun getRiskString(): String {
-        val risk = getRisk()
+    fun getRiskString(context: Context): String {
+        val risk = getRisk(context)
         return if (risk > -1) {
-            App.app.getString(risk)
+            context.getString(risk)
         } else {
             ""
         }
@@ -242,13 +241,13 @@ data class Result(
 
     fun getRiskEnglish(context: Context): String {
         return try {
-            getStringByLocale(context, getRisk(), Locale.US)
+            getStringByLocale(context, getRisk(context), Locale.US)
         } catch (e: Exception) {
             ""
         }
     }
 
-    private fun getRisk(): Int {
+    private fun getRisk(context: Context): Int {
         return try {
             if (criticalLimit > 0) {
                 if (criticalLimitSign == "<") {
@@ -263,7 +262,7 @@ data class Result(
                     R.string.sufficient
                 }
             } else if (risks.isNotEmpty()) {
-                getRiskType().toResourceId(App.app, riskType)
+                getRiskType().toResourceId(context, riskType)
             } else {
                 -1
             }
