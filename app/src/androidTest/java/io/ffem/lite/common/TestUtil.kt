@@ -1,10 +1,16 @@
 package io.ffem.lite.common
 
 import android.annotation.SuppressLint
+import android.graphics.drawable.ColorDrawable
 import android.os.SystemClock
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.test.espresso.Espresso
+import androidx.test.espresso.UiController
+import androidx.test.espresso.ViewAction
+import androidx.test.espresso.intent.Checks
+import androidx.test.espresso.matcher.ViewMatchers
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.TypeSafeMatcher
@@ -118,6 +124,42 @@ object TestUtil {
                     viewObjHash = view.hashCode()
                 }
                 return view.hashCode() == viewObjHash
+            }
+        }
+    }
+
+    fun getBackgroundColor(matcher: Matcher<View?>?): Int {
+        var colorHolder = 0
+        Espresso.onView(matcher).perform(object : ViewAction {
+            override fun getConstraints(): Matcher<View?>? {
+                return ViewMatchers.isAssignableFrom(View::class.java)
+            }
+
+            override fun getDescription(): String {
+                return "getting color from a View"
+            }
+
+            override fun perform(uiController: UiController?, view: View) {
+                val viewColor = view.background as ColorDrawable
+                val colorId = viewColor.color
+                colorHolder = colorId
+            }
+        })
+        return colorHolder
+    }
+
+
+    fun hasBackgroundColor(color: Int): Matcher<View> {
+        Checks.checkNotNull(color)
+
+        return object : TypeSafeMatcher<View>() {
+            override fun describeTo(description: Description?) {
+                description?.appendText("background color: $color")
+            }
+
+            override fun matchesSafely(item: View?): Boolean {
+                val textViewColor = (item?.background as ColorDrawable).color
+                return textViewColor == color
             }
         }
     }

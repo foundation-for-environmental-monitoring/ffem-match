@@ -14,4 +14,7 @@
     <string name="soil_tests_2">Soil Tests  2</string>
     <string name="enter_data">Fill Blank Form</string>
     <string name="get_forms">Get Blank Form</string>
+    <string name="download">Get Selected</string>
+    <string name="jump_to_beginning">Go To Start</string>
+    <string name="fluoride_card" tools:keep="@string/fluoride_card">Fluoride Card</string>
 </resources>

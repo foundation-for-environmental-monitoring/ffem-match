@@ -95,4 +95,16 @@
             android:title="Torch mode"
             app:iconSpaceReserved="false" />
     </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="preferenceCategoryCamera"
+        android:title="@string/other"
+        app:allowDividerAbove="true"
+        app:iconSpaceReserved="false">
+        <CheckBoxPreference
+            android:key="@string/dummyResultKey"
+            android:title="Return dummy results"
+            app:allowDividerAbove="true"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
 </PreferenceScreen>

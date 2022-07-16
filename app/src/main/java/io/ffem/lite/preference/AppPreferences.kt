@@ -394,7 +394,7 @@ object AppPreferences {
     fun returnDummyResults(context: Context): Boolean {
         return PreferencesUtil.getBoolean(
             context.applicationContext!!,
-            R.string.dummyResultKey, true
+            R.string.dummyResultKey, false
         ) && isDiagnosticMode()
     }
 
