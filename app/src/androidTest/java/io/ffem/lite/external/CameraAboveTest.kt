@@ -1,4 +1,4 @@
-package io.ffem.lite.internal
+package io.ffem.lite.external
 
 
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
@@ -18,11 +18,13 @@ import androidx.test.uiautomator.UiDevice
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.common.TEST_SURVEY_NAME
-import io.ffem.lite.common.TestHelper
 import io.ffem.lite.common.TestHelper.clearPreferences
 import io.ffem.lite.common.TestHelper.isDeviceInitialized
 import io.ffem.lite.common.TestHelper.mDevice
-import io.ffem.lite.common.TestUtil.childAtPosition
+import io.ffem.lite.common.TestHelper.startDiagnosticMode
+import io.ffem.lite.common.TestHelper.waitForTestCompletion
+import io.ffem.lite.common.TestUtil
+import io.ffem.lite.common.TestUtil.checkResult
 import io.ffem.lite.common.TestUtil.getBackgroundColor
 import io.ffem.lite.common.TestUtil.hasBackgroundColor
 import io.ffem.lite.common.TestUtil.sleep
@@ -34,10 +36,9 @@ import org.hamcrest.Matchers.allOf
 import org.junit.*
 import org.junit.runner.RunWith
 
-
 @LargeTest
 @RunWith(AndroidJUnit4::class)
-class CalibrateTest {
+class CameraAboveTest {
 
     @get:Rule
     val mActivityTestRule = activityScenarioRule<ResultListActivity>()
@@ -48,19 +49,11 @@ class CalibrateTest {
     }
 
     @Test
-    fun calibrateTest() {
-        TestHelper.startDiagnosticMode()
+    fun cameraAboveTest() {
+        startDiagnosticMode()
         sleep(200)
 
         pressBack()
-
-        sleep(200)
-
-        onView(withId(R.id.scrollViewSettings)).perform(swipeUp())
-
-        sleep(200)
-
-        onView(withText("Return dummy results")).perform(click())
 
         sleep(200)
 
@@ -79,12 +72,11 @@ class CalibrateTest {
             onView((withText("Fluoride"))).perform(click())
         } catch (e: Exception) {
 
-            val recyclerView2 = onView(
+            onView(
                 allOf(
                     withId(R.id.tests_lst),
                 )
-            )
-            recyclerView2.perform(actionOnItemAtPosition<ViewHolder>(7, click()))
+            ).perform(actionOnItemAtPosition<ViewHolder>(7, click()))
         }
 
         sleep(1000)
@@ -129,24 +121,23 @@ class CalibrateTest {
 //
 //        onView((withText(R.string.skip))).perform(click())
 //
-//        sleep(500)
+//        sleep(1500)
 //
 //        onView(withText(R.string.next)).perform(click())
+//
+//        sleep(200)
 
-        onView((withText("Generate Dummy Result"))).perform(click())
+        onView((withText(R.string.start_camera))).perform(click())
 
-        sleep(200)
+        sleep(1000)
+
+        onView((withText(R.string.analyze))).perform(click())
+
+        waitForTestCompletion()
 
         onView(
             allOf(
-                withId(R.id.next_txt), withText(R.string.next),
-                childAtPosition(
-                    allOf(
-                        withId(R.id.footer_lyt),
-                    ),
-                    4
-                ),
-                isDisplayed()
+                withId(R.id.next_txt), withText(R.string.next)
             )
         ).perform(click())
 
@@ -162,8 +153,8 @@ class CalibrateTest {
         onView(withId(R.id.calibration_lst))
             .perform(actionOnItemAtPosition<ViewHolder>(1, click()))
 
-        sleep(1000)
-
+//        sleep(200)
+//
 //        for (i in 0..4) {
 //            onView(withText(R.string.next)).perform(click())
 //            sleep(200)
@@ -171,20 +162,24 @@ class CalibrateTest {
 //
 //        onView((withText(R.string.skip))).perform(click())
 //
-//        sleep(500)
+//        sleep(1500)
 //
 //        onView(withText(R.string.next)).perform(click())
 
-        onView((withText("Generate Dummy Result"))).perform(click())
+        sleep(1000)
+        onView(withText(R.string.start_camera)).perform(click())
 
-        sleep(200)
+        sleep(1000)
+        onView((withText(R.string.analyze))).perform(click())
+
+        waitForTestCompletion()
 
         onView(
             allOf(
                 withId(R.id.next_txt),
                 withText(R.string.next),
                 withContentDescription(R.string.next),
-                childAtPosition(
+                TestUtil.childAtPosition(
                     allOf(
                         withId(R.id.footer_lyt),
                     ),
@@ -196,12 +191,15 @@ class CalibrateTest {
 
         onView(withText(R.string.done)).perform(click())
 
-        sleep(1000)
+        sleep(200)
 
-        onView(withId(R.id.calibration_lst)).perform(actionOnItemAtPosition<ViewHolder>(2, click()))
+        val recyclerView3 = onView(
+            withId(R.id.calibration_lst)
+        )
+        recyclerView3.perform(actionOnItemAtPosition<ViewHolder>(2, click()))
 
-        sleep(1000)
-
+//        sleep(200)
+//
 //        for (i in 0..4) {
 //            onView(withText(R.string.next)).perform(click())
 //            sleep(200)
@@ -209,11 +207,17 @@ class CalibrateTest {
 //
 //        onView((withText(R.string.skip))).perform(click())
 //
-//        sleep(500)
+//        sleep(1500)
 //
 //        onView(withText(R.string.next)).perform(click())
 
-        onView((withText("Generate Dummy Result"))).perform(click())
+        sleep(1000)
+        onView(withText(R.string.start_camera)).perform(click())
+
+        sleep(1000)
+        onView((withText(R.string.analyze))).perform(click())
+
+        waitForTestCompletion()
 
         sleep(200)
 
@@ -258,7 +262,7 @@ class CalibrateTest {
                 withId(R.id.next_txt),
                 withText(R.string.next),
                 withContentDescription(R.string.next),
-                childAtPosition(
+                TestUtil.childAtPosition(
                     allOf(
                         withId(R.id.footer_lyt),
                     ),
@@ -274,8 +278,8 @@ class CalibrateTest {
         onView(withId(R.id.calibration_lst))
             .perform(actionOnItemAtPosition<ViewHolder>(3, click()))
 
-        sleep(1000)
-
+//        sleep(200)
+//
 //        for (i in 0..4) {
 //            onView(withText(R.string.next)).perform(click())
 //            sleep(200)
@@ -283,20 +287,24 @@ class CalibrateTest {
 //
 //        onView((withText(R.string.skip))).perform(click())
 //
-//        sleep(500)
+//        sleep(1500)
 //
 //        onView(withText(R.string.next)).perform(click())
 
-        onView((withText("Generate Dummy Result"))).perform(click())
+        sleep(1000)
+        onView(withText(R.string.start_camera)).perform(click())
 
-        sleep(200)
+        sleep(1000)
+        onView((withText(R.string.analyze))).perform(click())
+
+        waitForTestCompletion()
 
         onView(
             allOf(
                 withId(R.id.next_txt),
                 withText(R.string.next),
                 withContentDescription(R.string.next),
-                childAtPosition(
+                TestUtil.childAtPosition(
                     allOf(
                         withId(R.id.footer_lyt),
                     ),
@@ -312,8 +320,8 @@ class CalibrateTest {
         onView(withId(R.id.calibration_lst))
             .perform(actionOnItemAtPosition<ViewHolder>(4, click()))
 
-        sleep(1000)
-
+//        sleep(200)
+//
 //        for (i in 0..4) {
 //            onView(withText(R.string.next)).perform(click())
 //            sleep(200)
@@ -321,20 +329,24 @@ class CalibrateTest {
 //
 //        onView((withText(R.string.skip))).perform(click())
 //
-//        sleep(500)
-
+//        sleep(1500)
+//
 //        onView(withText(R.string.next)).perform(click())
 
-        onView((withText("Generate Dummy Result"))).perform(click())
+        sleep(1000)
+        onView(withText(R.string.start_camera)).perform(click())
 
-        sleep(200)
+        sleep(1000)
+        onView((withText(R.string.analyze))).perform(click())
+
+        waitForTestCompletion()
 
         onView(
             allOf(
                 withId(R.id.next_txt),
                 withText(R.string.next),
                 withContentDescription(R.string.next),
-                childAtPosition(
+                TestUtil.childAtPosition(
                     allOf(
                         withId(R.id.footer_lyt),
                     ),
@@ -343,7 +355,6 @@ class CalibrateTest {
                 isDisplayed()
             )
         ).perform(click())
-        sleep(1000)
         onView(withText(R.string.done)).perform(click())
 
         sleep(200)
@@ -371,13 +382,12 @@ class CalibrateTest {
             )
         ).check(matches(isDisplayed()))
 
-        pressBack()
 
         pressBack()
 
         pressBack()
 
-        sleep(500)
+        pressBack()
 
         onView(withId(R.id.start_test_fab)).perform(click())
 
@@ -405,17 +415,25 @@ class CalibrateTest {
         onView(withId(R.id.noDilution_btn)).perform(click())
 
         sleep(1000)
+        onView(withText(R.string.start_camera)).perform(click())
 
-        onView((withText("Generate Dummy Result"))).perform(click())
+        sleep(1000)
+        onView((withText(R.string.analyze))).perform(click())
 
-        sleep(500)
+        waitForTestCompletion()
+
+        try {
+            val resultTextView = onView(withId(R.id.subtitle_text))
+            resultTextView.check(matches(checkResult(0.0)))
+        } catch (e: Exception) {
+        }
 
         onView(
             allOf(
                 withId(R.id.next_txt),
                 withText(R.string.next),
                 withContentDescription(R.string.next),
-                childAtPosition(
+                TestUtil.childAtPosition(
                     allOf(
                         withId(R.id.footer_lyt),
                     ),
@@ -430,6 +448,36 @@ class CalibrateTest {
         onView(withText(R.string.done)).perform(click())
 
         onView(allOf(withText(R.string.fluoride), isDisplayed()))
+        sleep(1000)
+        onView(allOf(withContentDescription(R.string.abc_action_bar_up_description))).perform(click())
+
+        sleep(500)
+
+        try {
+            onView(withText(R.string.jump_to_beginning)).perform(click())
+        } catch (e: Exception) {
+        }
+
+        sleep(3000)
+
+        onView(withText(R.string.next)).perform(click())
+
+        sleep(500)
+
+        onView(allOf(withText(R.string.fluoride), isDisplayed()))
+
+        onView(withText(R.string.fluoride)).perform(click())
+
+        sleep(1000)
+
+        onView(allOf(withText(R.string.invalid_calibration), isDisplayed()))
+
+        onView(withText(R.string.ok)).perform(click())
+
+        sleep(2000)
+
+        onView(allOf(withText(R.string.fluoride), isDisplayed()))
+        sleep(1000)
     }
 
     companion object {

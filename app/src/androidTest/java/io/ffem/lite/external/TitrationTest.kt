@@ -1,4 +1,4 @@
-package io.ffem.lite.internal
+package io.ffem.lite.external
 
 
 import androidx.test.espresso.Espresso.onView

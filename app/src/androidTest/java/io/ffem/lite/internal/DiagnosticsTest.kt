@@ -16,9 +16,9 @@ import androidx.test.rule.GrantPermissionRule
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.common.TestHelper
-import io.ffem.lite.common.TestHelper.sleep
 import io.ffem.lite.common.TestHelper.startDiagnosticMode
 import io.ffem.lite.common.TestUtil.childAtPosition
+import io.ffem.lite.common.TestUtil.sleep
 import io.ffem.lite.common.clearData
 import io.ffem.lite.common.fluoride
 import io.ffem.lite.ui.ResultListActivity

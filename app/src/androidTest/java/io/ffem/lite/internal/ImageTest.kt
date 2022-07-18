@@ -18,10 +18,10 @@ import androidx.test.rule.GrantPermissionRule
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.common.TestHelper.clearPreferences
-import io.ffem.lite.common.TestHelper.sleep
 import io.ffem.lite.common.TestUtil
 import io.ffem.lite.common.TestUtil.checkResult
 import io.ffem.lite.common.TestUtil.childAtPosition
+import io.ffem.lite.common.TestUtil.sleep
 import io.ffem.lite.common.clearData
 import io.ffem.lite.common.pH
 import io.ffem.lite.common.testDataList

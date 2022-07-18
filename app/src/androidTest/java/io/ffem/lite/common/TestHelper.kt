@@ -19,6 +19,11 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.*
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
+import io.ffem.lite.common.Constants.DELAY_BETWEEN_SAMPLING
+import io.ffem.lite.common.Constants.DELAY_INITIAL
+import io.ffem.lite.common.Constants.SAMPLING_COUNT_DEFAULT
+import io.ffem.lite.common.Constants.SKIP_SAMPLING_COUNT
+import io.ffem.lite.common.TestUtil.sleep
 import io.ffem.lite.data.AppDatabase
 import io.ffem.lite.preference.isDiagnosticMode
 import org.hamcrest.Matchers
@@ -62,6 +67,14 @@ object TestHelper {
         for (i in 0..9) {
             onView(withId(R.id.version_text)).perform(click())
         }
+    }
+
+    fun waitForTestCompletion() {
+        sleep(
+            (DELAY_INITIAL +
+                    ((SAMPLING_COUNT_DEFAULT + SKIP_SAMPLING_COUNT + 8)
+                            * DELAY_BETWEEN_SAMPLING)) * 1000
+        )
     }
 
     private fun leaveDiagnosticMode() {
@@ -208,7 +221,7 @@ object TestHelper {
         }
     }
 
-    fun nextSurveyPage(times: Int, tabName: String) {
+    fun nextSurveyPage(times: Int, tabName: String = "No name") {
         var tab: UiObject2? = mDevice.findObject(By.text(tabName))
         if (tab == null) {
             for (i in 0..11) {
@@ -332,10 +345,6 @@ object TestHelper {
 //            Assert.fail()
 //        }
 //    }
-
-    fun sleep(duration: Long) {
-        SystemClock.sleep(duration)
-    }
 
     fun startSurveyApp() {
         val context: Context? = InstrumentationRegistry.getInstrumentation().context

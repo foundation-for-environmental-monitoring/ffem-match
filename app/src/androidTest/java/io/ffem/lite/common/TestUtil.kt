@@ -40,6 +40,30 @@ object TestUtil {
         }
     }
 
+    fun checkResult(value: Double): Matcher<View?> {
+        return object : TypeSafeMatcher<View?>() {
+            var convertedValue = 0.0
+            override fun matchesSafely(item: View?): Boolean {
+                if (item !is TextView) return false
+                var text = item.text.toString()
+                if (text.contains(" ")) {
+                    text = text.subSequence(text.lastIndexOf(" "), text.length - 1).toString()
+                }
+                convertedValue = try {
+                    text.toDouble()
+                } catch (e: Exception) {
+                    return false
+                }
+                val delta = abs(convertedValue - value)
+                return delta < 0.30f
+            }
+
+            override fun describeTo(description: Description) {
+                description.appendText("Result: $convertedValue does not match expected value: $value")
+            }
+        }
+    }
+
     fun checkResult(testData: TestData, checkResult: Double = -1.0): Matcher<View?> {
         return object : TypeSafeMatcher<View?>() {
             override fun matchesSafely(item: View?): Boolean {
@@ -100,8 +124,8 @@ object TestUtil {
         }
     }
 
-    fun sleep(millis: Long) {
-        SystemClock.sleep(millis)
+    fun sleep(millis: Int) {
+        SystemClock.sleep(millis.toLong())
     }
 
     /**

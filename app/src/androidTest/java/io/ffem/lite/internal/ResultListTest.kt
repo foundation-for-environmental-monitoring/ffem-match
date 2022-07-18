@@ -19,8 +19,8 @@ import androidx.test.rule.GrantPermissionRule
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.common.TestHelper
-import io.ffem.lite.common.TestHelper.sleep
 import io.ffem.lite.common.TestUtil
+import io.ffem.lite.common.TestUtil.sleep
 import io.ffem.lite.common.clearData
 import io.ffem.lite.ui.ResultListActivity
 import io.ffem.lite.util.PreferencesUtil
@@ -33,7 +33,7 @@ import org.junit.*
 import org.junit.runner.RunWith
 import java.io.File
 
-const val SCAN_TIME_DELAY = 10000L
+const val SCAN_TIME_DELAY = 10000
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)

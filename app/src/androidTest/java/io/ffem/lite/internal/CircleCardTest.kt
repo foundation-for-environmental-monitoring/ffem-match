@@ -20,9 +20,9 @@ import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.common.TestHelper
 import io.ffem.lite.common.TestHelper.clearPreferences
-import io.ffem.lite.common.TestHelper.sleep
 import io.ffem.lite.common.TestHelper.startDiagnosticMode
 import io.ffem.lite.common.TestUtil
+import io.ffem.lite.common.TestUtil.sleep
 import io.ffem.lite.common.clearData
 import io.ffem.lite.common.testDataList
 import io.ffem.lite.model.ErrorType
@@ -181,7 +181,7 @@ class CircleCardTest {
                     .perform(ViewActions.swipeUp())
 
                 onView(withText(R.string.next)).perform(click())
-                TestUtil.sleep(1000)
+                sleep(1000)
 
                 val textInputEditText = onView(
                     allOf(
@@ -207,7 +207,7 @@ class CircleCardTest {
 
                 appCompatAutoCompleteTextView.perform(ViewActions.pressImeActionButton())
 
-                TestUtil.sleep(1000)
+                sleep(1000)
                 onView(withText(R.string.save)).perform(click())
 
                 sleep(1000)
