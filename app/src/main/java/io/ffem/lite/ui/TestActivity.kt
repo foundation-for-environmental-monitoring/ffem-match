@@ -33,6 +33,7 @@ import io.ffem.lite.common.Constants.MESSAGE_TWO_LINE_FORMAT
 import io.ffem.lite.data.CalibrationDatabase
 import io.ffem.lite.data.DataHelper
 import io.ffem.lite.data.DataHelper.getJsonResult
+import io.ffem.lite.data.DataHelper.getParameterDataFromTheCloud
 import io.ffem.lite.databinding.ActivityTestBinding
 import io.ffem.lite.helper.InstructionHelper.setupInstructions
 import io.ffem.lite.helper.SwatchHelper.isSwatchListValid
@@ -242,7 +243,11 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
         testViewModel = ViewModelProvider(this)[TestInfoViewModel::class.java]
 
         if ("io.ffem.lite" == intent.action) {
-            getTestSelectedByExternalApp(intent)
+            runBlocking {
+                launch {
+                    getTestSelectedByExternalApp(intent)
+                }
+            }
         }
 
         val testInfo = testViewModel.test.get()
@@ -402,13 +407,16 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
         b.indicatorPgr.showDots = true
     }
 
-    private fun getTestSelectedByExternalApp(intent: Intent) {
+    private suspend fun getTestSelectedByExternalApp(intent: Intent) {
         var uuid = intent.getStringExtra(TEST_ID_KEY)
         if (uuid.isNullOrEmpty()) {
             uuid = intent.getStringExtra(EXT_TEST_ID_KEY)
         }
         if (uuid != null) {
-            val test = DataHelper.getTestInfo(uuid, this)
+            val test = getParameterDataFromTheCloud(
+                "customer1",
+                uuid
+            )
             if (test != null) {
                 testInfo = test
                 val formulaList = mutableListOf<String>()

@@ -9,6 +9,7 @@ import io.ffem.lite.R
 import io.ffem.lite.common.ConstantJsonKey
 import io.ffem.lite.common.Constants
 import io.ffem.lite.model.*
+import io.ffem.lite.remote.dto.ParameterInfoDto
 import io.ffem.lite.util.FileUtil
 import kotlinx.coroutines.tasks.await
 import org.json.JSONArray
@@ -29,6 +30,28 @@ object DataHelper {
             testInfo.subTest().unit
         } else {
             ""
+        }
+    }
+
+    suspend fun getParameterDataFromTheCloud(
+        deviceId: String,
+        testId: String
+    ): TestInfo? {
+        val ref = FirebaseDatabase.getInstance().getReference("$deviceId/tests")
+        return try {
+            var factoryConfig: ParameterInfoDto? = null
+            val calibrationConfig = ref.get().await().children.map { snapShot ->
+                snapShot.getValue(ParameterInfoDto::class.java)!!
+            }
+            for (calibration in calibrationConfig) {
+                if (calibration.uuid.equals(testId, ignoreCase = true)) {
+                    factoryConfig = calibration.copy()
+                }
+            }
+            return factoryConfig?.toTestInfo()
+        } catch (exception: Exception) {
+            print(exception.message)
+            null
         }
     }
 
@@ -77,7 +100,7 @@ object DataHelper {
             if (parameterId.isEmpty()) {
                 return null
             }
-            var id = checkHyphens(parameterId.uppercase())
+            val id = checkHyphens(parameterId.uppercase())
             val gson: Gson =
                 GsonBuilder().registerTypeAdapter(
                     object :
