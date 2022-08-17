@@ -3,19 +3,17 @@ package io.ffem.lite.data
 import android.content.Context
 import android.graphics.Color
 import com.google.firebase.database.FirebaseDatabase
-import com.google.gson.*
-import com.google.gson.reflect.TypeToken
-import io.ffem.lite.R
+import com.google.gson.JsonSyntaxException
 import io.ffem.lite.common.ConstantJsonKey
 import io.ffem.lite.common.Constants
 import io.ffem.lite.model.*
 import io.ffem.lite.remote.dto.ParameterInfoDto
-import io.ffem.lite.util.FileUtil
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import org.json.JSONArray
 import org.json.JSONObject
 import timber.log.Timber
-import java.lang.reflect.Type
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -33,7 +31,7 @@ object DataHelper {
         }
     }
 
-    suspend fun getParameterDataFromTheCloud(
+    private suspend fun getParameterDataFromTheCloud(
         deviceId: String,
         testId: String
     ): TestInfo? {
@@ -57,30 +55,30 @@ object DataHelper {
 
     // Append a reversed list of calibration point values to the calibration values list
     // to represent the colors on the right side of color card
-    internal class CalibrationValuesDeserializer(val context: Context) :
-        JsonDeserializer<MutableList<CalibrationValue>> {
-        override fun deserialize(
-            json: JsonElement?, typeOfT: Type?, jsonContext: JsonDeserializationContext?
-        ): MutableList<CalibrationValue> {
-            val values = ArrayList<CalibrationValue>()
-            json!!.asJsonArray.mapTo(values) {
-                CalibrationValue(
-                    value = it.asJsonObject.get("value").asDouble,
-                    color = Color.TRANSPARENT,
-                    calibrate = it.asJsonObject.get("calibrate")?.asBoolean ?: false
-                )
-            }
-            values.addAll(values.map {
-                CalibrationValue(
-                    value = it.value,
-                    color = Color.TRANSPARENT,
-                    calibrate = it.calibrate
-                )
-            })
-
-            return values
-        }
-    }
+//    internal class CalibrationValuesDeserializer(val context: Context) :
+//        JsonDeserializer<MutableList<CalibrationValue>> {
+//        override fun deserialize(
+//            json: JsonElement?, typeOfT: Type?, jsonContext: JsonDeserializationContext?
+//        ): MutableList<CalibrationValue> {
+//            val values = ArrayList<CalibrationValue>()
+//            json!!.asJsonArray.mapTo(values) {
+//                CalibrationValue(
+//                    value = it.asJsonObject.get("value").asDouble,
+//                    color = Color.TRANSPARENT,
+//                    calibrate = it.asJsonObject.get("calibrate")?.asBoolean ?: false
+//                )
+//            }
+//            values.addAll(values.map {
+//                CalibrationValue(
+//                    value = it.value,
+//                    color = Color.TRANSPARENT,
+//                    calibrate = it.calibrate
+//                )
+//            })
+//
+//            return values
+//        }
+//    }
 
     internal fun checkHyphens(str: String): String {
         val code = str.replace("TOC", "OC")
@@ -101,77 +99,69 @@ object DataHelper {
                 return null
             }
             val id = checkHyphens(parameterId.uppercase())
-            val gson: Gson =
-                GsonBuilder().registerTypeAdapter(
-                    object :
-                        TypeToken<MutableList<CalibrationValue>>() {}.type,
-                    CalibrationValuesDeserializer(context)
-                ).create()
-
-            val input = when {
-                id.uppercase().startsWith("WB") -> {
-                    context.resources.openRawResource(R.raw.water_tests)
-                }
-                id.uppercase().startsWith("WM") -> {
-                    context.resources.openRawResource(R.raw.meter_tests)
-                }
-                id.uppercase().startsWith("WT") -> {
-                    context.resources.openRawResource(R.raw.water_tests)
-                }
-                id.uppercase().startsWith("ST") -> {
-                    context.resources.openRawResource(R.raw.soil_tests)
-                }
-                id.uppercase().startsWith("SB") -> {
-                    context.resources.openRawResource(R.raw.soil_tests)
-                }
-                else -> {
-                    context.resources.openRawResource(R.raw.tests_circle)
+            var info: TestInfo? = null
+            runBlocking {
+                launch {
+                    info = getParameterDataFromTheCloud("customer1", id)
                 }
             }
-            val content = FileUtil.readTextFile(input)
-            val testConfig = gson.fromJson(content, TestConfig::class.java)
-            if (testConfig != null) {
-                val db: CalibrationDatabase = CalibrationDatabase.getDatabase(context)
-                val dao = db.calibrationDao()
-                try {
-                    for (testInfo in testConfig.tests) {
-                        if (testInfo.uuid.equals(id, ignoreCase = true)) {
-                            val subTest = testInfo.subTest()
-                            subTest.parameterId = testInfo.uuid
-                            if (testInfo.dilutions.isNotEmpty()) {
-                                subTest.maxDilution =
-                                    testInfo.dilutions[testInfo.dilutions.size - 1]
-                            }
-                            if (testInfo.subtype === TestType.CUVETTE) {
-                                subTest.splitRanges()
-                                val calibrationInfo = dao.getCalibrations(testInfo.uuid)
-                                if (calibrationInfo != null) {
-                                    subTest.setCalibrations(calibrationInfo.calibrations)
-                                }
-                            }
-                            for ((index, risk) in subTest.risks.withIndex()) {
-                                if (risk.safety == null) {
-                                    when (index) {
-                                        0 -> {
-                                            risk.safety = SafetyLevel.ACCEPTABLE
-                                        }
-                                        1 -> {
-                                            risk.safety = SafetyLevel.PERMISSIBLE
-                                        }
-                                        else -> {
-                                            risk.safety = SafetyLevel.UNSAFE
-                                        }
-                                    }
-                                }
-                            }
+            val db: CalibrationDatabase = CalibrationDatabase.getDatabase(context)
+            val dao = db.calibrationDao()
 
-
-                            return testInfo.copy()
+            val testInfo = info
+            try {
+                if (testInfo != null) {
+                    val subTest = testInfo.subTest()
+                    subTest.parameterId = testInfo.uuid
+                    if (testInfo.dilutions.isNotEmpty()) {
+                        subTest.maxDilution =
+                            testInfo.dilutions[testInfo.dilutions.size - 1]
+                    }
+                    if (testInfo.subtype === TestType.CUVETTE) {
+                        subTest.splitRanges()
+                        val calibrationInfo = dao.getCalibrations(testInfo.uuid)
+                        if (calibrationInfo != null) {
+                            subTest.setCalibrations(calibrationInfo.calibrations)
                         }
                     }
-                } finally {
-                    db.close()
+
+                    if (testInfo.subtype === TestType.CARD) {
+                        val values = ArrayList<CalibrationValue>()
+                        testInfo.results[0].values.mapTo(values) {
+                            CalibrationValue(
+                                value = it.value,
+                                color = Color.TRANSPARENT,
+                                calibrate = it.calibrate
+                            )
+                        }
+                        values.addAll(values.map {
+                            CalibrationValue(
+                                value = it.value,
+                                color = Color.TRANSPARENT,
+                                calibrate = it.calibrate
+                            )
+                        })
+                    }
+
+                    for ((index, risk) in subTest.risks.withIndex()) {
+                        if (risk.safety == null) {
+                            when (index) {
+                                0 -> {
+                                    risk.safety = SafetyLevel.ACCEPTABLE
+                                }
+                                1 -> {
+                                    risk.safety = SafetyLevel.PERMISSIBLE
+                                }
+                                else -> {
+                                    risk.safety = SafetyLevel.UNSAFE
+                                }
+                            }
+                        }
+                    }
+                    return testInfo.copy()
                 }
+            } finally {
+                db.close()
             }
         } catch (e: JsonSyntaxException) {
             // do nothing

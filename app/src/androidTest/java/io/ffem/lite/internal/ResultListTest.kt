@@ -19,7 +19,6 @@ import androidx.test.rule.GrantPermissionRule
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.common.TestHelper
-import io.ffem.lite.common.TestUtil
 import io.ffem.lite.common.TestUtil.sleep
 import io.ffem.lite.common.clearData
 import io.ffem.lite.ui.ResultListActivity
@@ -33,7 +32,7 @@ import org.junit.*
 import org.junit.runner.RunWith
 import java.io.File
 
-const val SCAN_TIME_DELAY = 10000
+const val SCAN_TIME_DELAY = 15000
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
@@ -122,7 +121,7 @@ class ResultListTest {
         materialButton3.perform(click())
 
         onView(withText(R.string.next)).perform(click())
-        TestUtil.sleep(1000)
+        sleep(1000)
 
         val textInputEditText = onView(
             allOf(
@@ -148,7 +147,7 @@ class ResultListTest {
 
         appCompatAutoCompleteTextView.perform(pressImeActionButton())
 
-        TestUtil.sleep(1000)
+        sleep(1000)
         onView(withText(R.string.save)).perform(click())
 
         val resultName = context.getString(R.string.residual_chlorine) + " [0]"

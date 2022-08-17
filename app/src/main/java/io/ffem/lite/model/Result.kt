@@ -54,7 +54,7 @@ data class Result(
 
     fun setCalibrations(values: List<Calibration>) {
         colors.clear()
-        val newCalibrations: MutableList<Calibration> = java.util.ArrayList()
+        val newCalibrations: MutableList<Calibration> = ArrayList()
         for (colorItem in values) {
             val newCalibration = Calibration(value = colorItem.value)
             for (i in values.indices.reversed()) {

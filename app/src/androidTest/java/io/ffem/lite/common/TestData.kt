@@ -33,7 +33,7 @@ val invalidTest =
 
 val testDataList = mutableMapOf(
     0 to TestData(fluoride, 1.5, 0.25, risk = RiskLevel.RISK_3, calibratedResult = 1.0),
-    1 to TestData(fluoride, 0.0, 0.25, risk = RiskLevel.RISK_1, calibratedResult = 1.0),
+    1 to TestData(fluoride, 0.26, 0.25, risk = RiskLevel.RISK_1, calibratedResult = 0.26),
     2 to TestData(fluoride, 1.5, 0.25, risk = RiskLevel.RISK_4, calibratedResult = 1.0),
     3 to TestData(pH, 4.03, 0.5, risk = RiskLevel.RISK_1, calibratedResult = 1.0),
     4 to TestData(iron, 1.48, 0.15, risk = RiskLevel.RISK_1, calibratedResult = 1.0),

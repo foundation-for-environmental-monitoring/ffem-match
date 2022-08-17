@@ -1,4 +1,4 @@
-package io.ffem.lite.internal
+package io.ffem.lite.external
 
 
 import android.content.Context
@@ -15,19 +15,17 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
+import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
-import io.ffem.lite.common.TestHelper
+import io.ffem.lite.common.*
 import io.ffem.lite.common.TestHelper.clearPreferences
 import io.ffem.lite.common.TestHelper.startDiagnosticMode
-import io.ffem.lite.common.TestUtil
 import io.ffem.lite.common.TestUtil.sleep
-import io.ffem.lite.common.clearData
-import io.ffem.lite.common.testDataList
+import io.ffem.lite.internal.SCAN_TIME_DELAY
 import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.toLocalString
-import io.ffem.lite.model.toResourceId
 import io.ffem.lite.ui.ResultListActivity
 import io.ffem.lite.util.PreferencesUtil
 import org.hamcrest.Matchers.allOf
@@ -122,11 +120,36 @@ class CircleCardTest {
             R.string.testImageNumberKey, imageNumber.toString()
         )
 
-        sleep(2000)
-
+        sleep(500)
         onView(withId(R.id.start_test_fab)).perform(click())
 
+        sleep(2000)
+        TestHelper.mDevice.findObject(By.text(getString(R.string.enter_data))).click()
+
+        sleep(1000)
+
+        try {
+            TestHelper.mDevice.findObject(By.text(TEST_SURVEY_NAME)).click()
+        } catch (e: Exception) {
+            ViewActions.swipeUp()
+            TestHelper.mDevice.findObject(By.text(TEST_SURVEY_NAME)).click()
+        }
+        sleep(2000)
+        TestHelper.mDevice.findObject(By.text(getString(R.string.next).uppercase())).click()
+
+        sleep(500)
+        TestHelper.mDevice.findObject(By.text(getString(R.string.fluoride_card))).click()
+
+        sleep(500)
+        onView(withText(R.string.start_test)).perform(click())
+
+        sleep(500)
+        onView(withId(R.id.noDilution_btn)).perform(click())
+
+        sleep(500)
         onView(withText(R.string.start)).perform(click())
+
+        sleep(500)
 
         if (testData.expectedScanError == -1) {
 
@@ -138,7 +161,7 @@ class CircleCardTest {
                 onView(withText(R.string.continue_on)).perform(click())
             }
 
-            onView(withText(testData.testDetails.name)).check(matches(isDisplayed()))
+//            onView(withText(testData.testDetails.name)).check(matches(isDisplayed()))
 
             if (testData.expectedResultError > ErrorType.NO_ERROR) {
                 onView(withText(testData.expectedResultError.toLocalString())).check(
@@ -147,11 +170,11 @@ class CircleCardTest {
                 onView(withText(R.string.close)).perform(click())
             } else {
 
-                onView(withText(testData.testDetails.name)).check(
-                    matches(
-                        isDisplayed()
-                    )
-                )
+//                onView(withText(testData.testDetails.name)).check(
+//                    matches(
+//                        isDisplayed()
+//                    )
+//                )
 
                 val resultTextView = onView(withId(R.id.result_txt))
                 resultTextView.check(matches(TestUtil.checkResult(testData)))
@@ -166,115 +189,31 @@ class CircleCardTest {
 //                onView(withId(R.id.error_margin_text))
 //                    .check(matches(withEffectiveVisibility(Visibility.GONE)))
 
-                onView(
-                    withText(
-                        testData.risk.toResourceId(
-                            ApplicationProvider.getApplicationContext(),
-                            testData.testDetails.riskType
-                        )
-                    )
-                ).check(
-                    matches(isDisplayed())
-                )
+//                onView(
+//                    withText(
+//                        testData.risk.toResourceId(
+//                            ApplicationProvider.getApplicationContext(),
+//                            testData.testDetails.riskType
+//                        )
+//                    )
+//                ).check(
+//                    matches(isDisplayed())
+//                )
 
                 onView(withId(R.id.resultScrollView))
                     .perform(ViewActions.swipeUp())
-
-                onView(withText(R.string.next)).perform(click())
-                sleep(1000)
-
-                val textInputEditText = onView(
-                    allOf(
-                        withId(R.id.source_desc_edit),
-                        isDisplayed()
-                    )
-                )
-                textInputEditText.perform(
-                    ViewActions.replaceText("Description"),
-                    ViewActions.closeSoftKeyboard()
-                )
-
-                val appCompatAutoCompleteTextView = onView(
-                    allOf(
-                        withId(R.id.source_select),
-                        isDisplayed()
-                    )
-                )
-                appCompatAutoCompleteTextView.perform(
-                    ViewActions.replaceText("Drinking water"),
-                    ViewActions.closeSoftKeyboard()
-                )
-
-                appCompatAutoCompleteTextView.perform(ViewActions.pressImeActionButton())
-
-                sleep(1000)
-                onView(withText(R.string.save)).perform(click())
-
-                sleep(1000)
 
                 onView(
-                    withText(
-                        "${context.getString(testData.testDetails.name)} [${imageNumber}]"
-                    )
-                ).check(matches(isDisplayed()))
-
-                val textView = onView(
                     allOf(
-                        withId(R.id.textResultValue),
-                        TestUtil.childAtPosition(
-                            TestUtil.childAtPosition(
-                                allOf(
-                                    withId(R.id.test_results_lst),
-                                    withContentDescription(R.string.result_list)
-                                ),
-                                0
-                            ),
-                            1
-                        ),
-                        isDisplayed()
+                        TestUtil.withIndex(withText(R.string.next), 1),
                     )
-                )
+                ).perform(click())
 
-                sleep(3000)
+//                onView(withText(R.string.next)).perform(click())
+                sleep(1000)
 
-                if (testData.expectedResultError == ErrorType.NO_ERROR) {
-                    textView.check(matches(TestUtil.checkResult(testData)))
-                } else {
-                    textView.check(
-                        matches(
-                            withText(
-                                testData.expectedResultError.toLocalString()
-                            )
-                        )
-                    )
-                }
-
-                textView.perform(click())
-
-                sleep(2000)
-
-                onView(withId(R.id.resultScrollView))
-                    .perform(ViewActions.swipeUp())
-
-                val imageView = onView(
-                    allOf(
-                        withId(R.id.extract_img), withContentDescription(R.string.analyzed_image),
-                        isDisplayed()
-                    )
-                )
-                imageView.check(matches(isDisplayed()))
-
-                onView(withId(R.id.resultScrollView))
-                    .perform(ViewActions.swipeUp())
-
-                val imageView2 = onView(
-                    allOf(
-                        withId(R.id.full_photo_img),
-                        withContentDescription(R.string.analyzed_image),
-                        isDisplayed()
-                    )
-                )
-                imageView2.check(matches(isDisplayed()))
+//                onView(withText(R.string.done)).perform(click())
+//                sleep(1000)
             }
         } else {
 
@@ -312,6 +251,7 @@ class CircleCardTest {
         @JvmStatic
         @BeforeClass
         fun initialize() {
+            BuildConfig.INSTRUMENTED_TEST_RUNNING.set(true)
             BuildConfig.USE_SCREEN_PINNING.set(false)
             context = InstrumentationRegistry.getInstrumentation().targetContext
             if (!TestHelper.isDeviceInitialized()) {

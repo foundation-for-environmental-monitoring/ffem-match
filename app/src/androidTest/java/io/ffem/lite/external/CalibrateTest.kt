@@ -393,7 +393,24 @@ class CalibrateTest {
             mDevice.findObject(By.text(TEST_SURVEY_NAME)).click()
         }
         sleep(2000)
+        mDevice.pressBack()
 
+        sleep(500)
+
+        mDevice.findObject(By.text("Ignore Changes")).click()
+
+        sleep(500)
+        mDevice.findObject(By.text(getString(R.string.enter_data))).click()
+
+        sleep(1000)
+
+        try {
+            mDevice.findObject(By.text(TEST_SURVEY_NAME)).click()
+        } catch (e: Exception) {
+            swipeUp()
+            mDevice.findObject(By.text(TEST_SURVEY_NAME)).click()
+        }
+        sleep(2000)
         mDevice.findObject(By.text(getString(R.string.next).uppercase())).click()
 
         sleep(500)

@@ -248,14 +248,13 @@ class CameraAboveTest {
         )
         textView.check(matches(withText("1.0")))
 
-        val textView2 = onView(
+        onView(
             allOf(
                 withId(R.id.name_txt), withText(R.string.fluoride),
                 withParent(withParent(withId(R.id.result_lyt))),
                 isDisplayed()
             )
-        )
-        textView2.check(matches(withText(R.string.fluoride)))
+        ).check(matches(withText(R.string.fluoride)))
 
         onView(
             allOf(
@@ -359,7 +358,7 @@ class CameraAboveTest {
 
         sleep(200)
 
-        val textView3 = onView(
+        onView(
             allOf(
                 withId(R.id.value_txt), withText("1.00"),
                 withParent(
@@ -370,8 +369,7 @@ class CameraAboveTest {
                 ),
                 isDisplayed()
             )
-        )
-        textView3.check(matches(withText("1.00")))
+        ).check(matches(withText("1.00")))
 
         sleep(200)
 
@@ -382,7 +380,6 @@ class CameraAboveTest {
             )
         ).check(matches(isDisplayed()))
 
-
         pressBack()
 
         pressBack()
@@ -392,6 +389,25 @@ class CameraAboveTest {
         onView(withId(R.id.start_test_fab)).perform(click())
 
         sleep(3000)
+        mDevice.findObject(By.text(getString(R.string.enter_data))).click()
+
+        sleep(1000)
+
+        try {
+            mDevice.findObject(By.text(TEST_SURVEY_NAME)).click()
+        } catch (e: Exception) {
+            swipeUp()
+            mDevice.findObject(By.text(TEST_SURVEY_NAME)).click()
+        }
+        sleep(2000)
+
+        mDevice.pressBack()
+
+        sleep(500)
+
+        mDevice.findObject(By.text("Ignore Changes")).click()
+
+        sleep(500)
         mDevice.findObject(By.text(getString(R.string.enter_data))).click()
 
         sleep(1000)

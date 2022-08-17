@@ -81,19 +81,6 @@ class TimerTest {
 
         mDevice.findObject(By.text(getString(R.string.ph))).click()
 
-//        try {
-//            onView(
-//                allOf(
-//                    withId(R.id.simple_button), withText(R.string.ph)
-//                )
-//            ).perform(click())
-//        } catch (e: Exception) {
-//            onView(withText(R.string.redo)).perform(click())
-//            sleep(500)
-//            onView(withText(R.string.redo)).perform(click())
-//            sleep(1000)
-//        }
-
         sleep(2000)
 
         onView(withText(R.string.start_test)).perform(click())

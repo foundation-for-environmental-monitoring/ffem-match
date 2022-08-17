@@ -33,7 +33,7 @@ import io.ffem.lite.common.Constants.MESSAGE_TWO_LINE_FORMAT
 import io.ffem.lite.data.CalibrationDatabase
 import io.ffem.lite.data.DataHelper
 import io.ffem.lite.data.DataHelper.getJsonResult
-import io.ffem.lite.data.DataHelper.getParameterDataFromTheCloud
+import io.ffem.lite.data.DataHelper.getTestInfo
 import io.ffem.lite.databinding.ActivityTestBinding
 import io.ffem.lite.helper.InstructionHelper.setupInstructions
 import io.ffem.lite.helper.SwatchHelper.isSwatchListValid
@@ -397,7 +397,7 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
         b.viewPager.currentItem = 0
 
         testViewModel.loadCalibrations()
-        AppPreferences.setCalibration(this, isCalibration)
+        setCalibration(this, isCalibration)
         testViewModel.isCalibration = isCalibration
 
         showHideFooter(b.viewPager.currentItem)
@@ -413,10 +413,7 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
             uuid = intent.getStringExtra(EXT_TEST_ID_KEY)
         }
         if (uuid != null) {
-            val test = getParameterDataFromTheCloud(
-                "customer1",
-                uuid
-            )
+            val test = getTestInfo(uuid, this)
             if (test != null) {
                 testInfo = test
                 val formulaList = mutableListOf<String>()
@@ -1026,7 +1023,7 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
     }
 
     override fun onCalibrationOption(calibrate: Boolean) {
-        AppPreferences.setCalibration(this, calibrate)
+        setCalibration(this, calibrate)
         isCalibration = calibrate
         setupInstructions(
             testInfo,
