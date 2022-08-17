@@ -8,11 +8,13 @@ data class ResultDto(
     val minMarginError: Double = 0.0,
     val risks: List<RiskDto> = emptyList(),
     val unit: String = "",
+    val ranges: String = "",
     val values: List<ValueDto> = emptyList()
 ) {
     fun toResult(): Result {
         return Result(
             id = id,
+            ranges = ranges,
             minMarginError = minMarginError,
             unit = unit,
             values = values.map { it.toCalibrationValue() } as MutableList<CalibrationValue>

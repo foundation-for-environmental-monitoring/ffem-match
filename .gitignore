@@ -72,3 +72,7 @@ docs/*.gz
 .DS_Store
 workspace.xml
 
+# generated files
+generated/
+/colorCard/generated/
+
