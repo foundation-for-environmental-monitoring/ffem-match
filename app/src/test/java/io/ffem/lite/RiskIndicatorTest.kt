@@ -3,7 +3,7 @@ package io.ffem.lite
 import android.app.Activity
 import android.content.Context
 import android.os.Build
-import io.ffem.lite.app.App.Companion.getTestInfo
+import io.ffem.lite.data.DataHelper.getTestInfo
 import io.ffem.lite.model.RiskLevel
 import io.ffem.lite.model.RiskLevel.*
 import io.ffem.lite.model.RiskType

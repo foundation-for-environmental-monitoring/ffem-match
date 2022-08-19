@@ -24,6 +24,7 @@ data class Result(
     var unitChoice: String? = "",
     var timeDelay: Int = 0,
     var ranges: String? = null,
+    var rangeMin: String? = null,
     var values: MutableList<CalibrationValue> = ArrayList(),
     var risks: List<RiskValue> = ArrayList(),
     var risksIrrigation: List<RiskValue> = ArrayList(),
@@ -77,9 +78,10 @@ data class Result(
     // if range values are defined as comma delimited text then convert to array
     fun splitRanges() {
         try {
-            if (ranges != null) {
-                if (ranges!!.isNotEmpty()) {
-                    val points = ranges!!.split(",").toTypedArray()
+            val range = ranges
+            if (range != null) {
+                if (range.isNotEmpty()) {
+                    val points = range.split(",").toTypedArray()
                     values.clear()
                     colors.clear()
                     for (v in points) {

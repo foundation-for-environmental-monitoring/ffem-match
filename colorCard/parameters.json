@@ -1,0 +1,2406 @@
+{
+  "customer1": {
+    "water_cuvette": {
+      "tests": [
+        {
+          "name": "Ammonia",
+          "sampleType": "water",
+          "subtype": "cuvette",
+          "uuid": "WB-FM-NH3",
+          "calibrate": true,
+          "monthsValid": 6,
+          "results": [
+            {
+              "id": 1,
+              "name": "Ammonia",
+              "unit": "mg/l",
+              "ranges": "0, 0.1, 0.25, 0.5, 0.75, 1, 2",
+              "timeDelay": 300
+            }
+          ]
+        },
+        {
+          "name": "Aluminum",
+          "sampleType": "water",
+          "subtype": "cuvette",
+          "uuid": "WB-FM-Al",
+          "calibrate": true,
+          "monthsValid": 12,
+          "results": [
+            {
+              "id": 1,
+              "name": "Aluminum",
+              "unit": "mg/l",
+              "ranges": "0, 0.1, 0.2, 0.3"
+            }
+          ]
+        },
+        {
+          "name": "Manganese",
+          "sampleType": "water",
+          "subtype": "card",
+          "uuid": "WB-FM-Mn",
+          "calibrate": true,
+          "monthsValid": 12,
+          "results": [
+            {
+              "id": 1,
+              "name": "Manganese",
+              "unit": "mg/l",
+              "ranges": "0, 0.25, 0.5, 1.0, 1.5, 2.0"
+            }
+          ]
+        },
+        {
+          "name": "Zinc",
+          "sampleType": "water",
+          "subtype": "card",
+          "uuid": "WB-FM-Zn",
+          "calibrate": true,
+          "monthsValid": 12,
+          "results": [
+            {
+              "id": 1,
+              "name": "Zinc",
+              "unit": "mg/l",
+              "ranges": "0, 2, 4, 6, 8"
+            }
+          ]
+        },
+        {
+          "name": "Arsenic",
+          "sampleType": "water",
+          "subtype": "cuvette",
+          "uuid": "WB-FM-As",
+          "calibrate": true,
+          "monthsValid": 2,
+          "dilutions": [
+            1,
+            2,
+            5
+          ],
+          "results": [
+            {
+              "id": 1,
+              "name": "Arsenic",
+              "unit": "mg/l",
+              "ranges": "0, 0.05, 0.1, 0.2, 0.5",
+              "timeDelay": 600
+            }
+          ]
+        },
+        {
+          "name": "Hazen Units",
+          "sampleType": "water",
+          "subtype": "cuvette",
+          "uuid": "WB-FM-HU",
+          "calibrate": true,
+          "dilutions": [
+            1,
+            2,
+            5
+          ],
+          "results": [
+            {
+              "id": 1,
+              "name": "Hazen Units",
+              "unit": "HU",
+              "ranges": "0, 25, 50, 100"
+            }
+          ]
+        },
+        {
+          "name": "Chromium",
+          "sampleType": "water",
+          "subtype": "cuvette",
+          "uuid": "WB-FM-Cr",
+          "calibrate": true,
+          "monthsValid": 3,
+          "dilutions": [
+            1,
+            2,
+            5
+          ],
+          "results": [
+            {
+              "id": 1,
+              "name": "Chromium",
+              "unit": "mg/l",
+              "ranges": "0, 0.1, 0.5, 1, 2, 3",
+              "timeDelay": 300
+            }
+          ]
+        },
+        {
+          "name": "Copper",
+          "sampleType": "water",
+          "subtype": "cuvette",
+          "uuid": "WB-FM-Cu",
+          "calibrate": true,
+          "monthsValid": 12,
+          "dilutions": [
+            1,
+            2,
+            5
+          ],
+          "results": [
+            {
+              "id": 1,
+              "name": "Copper",
+              "unit": "mg/l",
+              "ranges": "0, 0.05, 0.1, 0.5, 1, 1.5, 2"
+            }
+          ]
+        },
+        {
+          "name": "Dissolved Oxygen",
+          "sampleType": "water",
+          "subtype": "cuvette",
+          "uuid": "WB-FM-DO2",
+          "calibrate": true,
+          "monthsValid": 12,
+          "dilutions": [
+            1,
+            2,
+            5
+          ],
+          "results": [
+            {
+              "id": 1,
+              "name": "Dissolved Oxygen",
+              "timeDelay": 300,
+              "unit": "mg/l",
+              "ranges": "0, 8"
+            }
+          ]
+        },
+        {
+          "name": "Fluoride",
+          "sampleType": "water",
+          "subtype": "cuvette",
+          "uuid": "WB-FM-F",
+          "calibrate": true,
+          "monthsValid": 12,
+          "dilutions": [
+            1,
+            5
+          ],
+          "results": [
+            {
+              "id": 1,
+              "name": "Fluoride",
+              "unit": "mg/l",
+              "ranges": "0, 0.5, 1, 1.5, 2",
+              "rangeMin": "0, 1, 2",
+              "acceptable": "< 1",
+              "permissible": "1 - 1.5",
+              "riskType": "L3",
+              "risks": [
+                {
+                  "value": 1,
+                  "risk": 1,
+                  "sign": "<",
+                  "safety": 0
+                },
+                {
+                  "value": 1.5,
+                  "risk": 2,
+                  "safety": 1
+                },
+                {
+                  "value": 1.5,
+                  "risk": 3,
+                  "sign": ">"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Fluoride - High Range",
+          "sampleType": "water",
+          "subtype": "cuvette",
+          "uuid": "WB-FM-F-1",
+          "calibrate": true,
+          "monthsValid": 12,
+          "dilutions": [
+            1,
+            2,
+            5
+          ],
+          "results": [
+            {
+              "id": 1,
+              "name": "Fluoride",
+              "unit": "mg/l",
+              "ranges": "0, 1, 2, 4, 6"
+            }
+          ]
+        },
+        {
+          "name": "Free Chlorine",
+          "sampleType": "water",
+          "subtype": "cuvette",
+          "uuid": "WB-FM-Cl",
+          "calibrate": true,
+          "monthsValid": 24,
+          "dilutions": [
+            1,
+            5
+          ],
+          "results": [
+            {
+              "id": 1,
+              "name": "Free Chlorine",
+              "unit": "mg/l",
+              "ranges": "0, 0.2, 0.5, 1.5, 3",
+              "risks": [
+                {
+                  "value": 0.2,
+                  "risk": 1,
+                  "safety": 0
+                },
+                {
+                  "value": 1,
+                  "risk": 2,
+                  "safety": 1
+                },
+                {
+                  "value": 1,
+                  "sign": ">",
+                  "risk": 3,
+                  "safety": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Hydrogen Peroxide",
+          "sampleType": "water",
+          "subtype": "cuvette",
+          "uuid": "WB-FM-H2O2",
+          "calibrate": true,
+          "monthsValid": 2,
+          "results": [
+            {
+              "id": 1,
+              "name": "Hydrogen Peroxide",
+              "unit": "M",
+              "ranges": "0, 0.05, 0.1, 0.5, 1"
+            }
+          ]
+        },
+        {
+          "name": "Nitrate",
+          "sampleType": "water",
+          "subtype": "cuvette",
+          "uuid": "WB-FM-NO3",
+          "calibrate": true,
+          "monthsValid": 24,
+          "dilutions": [
+            1,
+            5
+          ],
+          "results": [
+            {
+              "id": 1,
+              "name": "Nitrate",
+              "unit": "mg/l",
+              "ranges": "0, 10, 25, 50, 75",
+              "timeDelay": 360,
+              "risks": [
+                {
+                  "value": 45,
+                  "safety": 0
+                },
+                {
+                  "value": 45,
+                  "sign": ">",
+                  "safety": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Nitrite",
+          "sampleType": "water",
+          "subtype": "cuvette",
+          "uuid": "WB-FM-NO2",
+          "calibrate": true,
+          "monthsValid": 6,
+          "dilutions": [
+            1,
+            2,
+            5,
+            -1
+          ],
+          "results": [
+            {
+              "id": 1,
+              "name": "Nitrite",
+              "unit": "mg/l",
+              "ranges": "0, 0.05, 0.1, 0.2, 0.3, 0.4",
+              "timeDelay": 600,
+              "grayScale": false
+            }
+          ]
+        },
+        {
+          "name": "pH",
+          "sampleType": "water",
+          "subtype": "cuvette",
+          "uuid": "WB-FM-pH",
+          "calibrate": true,
+          "monthsValid": 12,
+          "results": [
+            {
+              "id": 1,
+              "name": "pH",
+              "ranges": "4, 5, 6, 7, 8, 9, 10",
+              "acceptable": "6.5 - 8.5",
+              "permissible": "",
+              "timeDelay": 45,
+              "riskType": "alkalinity",
+              "risks": [
+                {
+                  "value": 6.5,
+                  "risk": 4,
+                  "sign": "<",
+                  "safety": 2
+                },
+                {
+                  "value": 6.5,
+                  "risk": 2,
+                  "safety": 0
+                },
+                {
+                  "value": 8.5,
+                  "risk": 2,
+                  "safety": 0
+                },
+                {
+                  "value": 8.5,
+                  "risk": 4,
+                  "sign": ">",
+                  "safety": 2
+                }
+              ],
+              "risksIrrigation": [
+                {
+                  "value": 6.5,
+                  "sign": "<",
+                  "risk": 1
+                },
+                {
+                  "value": 7.5,
+                  "sign": ">",
+                  "risk": 3
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Potassium",
+          "sampleType": "water",
+          "subtype": "cuvette",
+          "uuid": "WB-FM-K",
+          "calibrate": true,
+          "monthsValid": 6,
+          "dilutions": [
+            1,
+            2,
+            5
+          ],
+          "results": [
+            {
+              "id": 1,
+              "name": "Potassium",
+              "unit": "mg/l",
+              "ranges": "0, 10, 20, 30",
+              "timeDelay": 300,
+              "grayScale": false
+            }
+          ]
+        },
+        {
+          "name": "Phosphate",
+          "sampleType": "water",
+          "subtype": "cuvette",
+          "uuid": "WB-FM-PO4",
+          "calibrate": true,
+          "monthsValid": 24,
+          "dilutions": [
+            1,
+            2,
+            5
+          ],
+          "results": [
+            {
+              "id": 1,
+              "name": "Phosphate",
+              "unit": "mg/l",
+              "ranges": "0, 0.3, 0.6, 0.9, 1.2, 1.5, 2",
+              "timeDelay": 600
+            }
+          ]
+        },
+        {
+          "name": "Silica",
+          "sampleType": "water",
+          "subtype": "cuvette",
+          "uuid": "WB-FM-SiO2",
+          "calibrate": true,
+          "monthsValid": 12,
+          "results": [
+            {
+              "id": 1,
+              "name": "Silica",
+              "unit": "mg/l",
+              "ranges": "0, 0.5, 1, 1.5, 2",
+              "timeDelay": 480
+            }
+          ]
+        },
+        {
+          "name": "Sulphate",
+          "sampleType": "water",
+          "subtype": "cuvette",
+          "uuid": "WB-FM-SO42",
+          "calibrate": true,
+          "monthsValid": 12,
+          "dilutions": [
+            1,
+            2,
+            5
+          ],
+          "results": [
+            {
+              "id": 1,
+              "name": "Sulphate",
+              "ranges": "0, 10, 20, 40",
+              "unit": "mg/l"
+            }
+          ]
+        },
+        {
+          "name": "Total Iron",
+          "sampleType": "water",
+          "subtype": "cuvette",
+          "uuid": "WB-FM-Fe",
+          "calibrate": true,
+          "monthsValid": 6,
+          "dilutions": [
+            1,
+            5
+          ],
+          "results": [
+            {
+              "id": 1,
+              "name": "Total Iron",
+              "unit": "mg/l",
+              "ranges": "0, 0.5, 1, 1.5, 2",
+              "timeDelay": 300,
+              "risks": [
+                {
+                  "value": 0.3,
+                  "safety": 0
+                },
+                {
+                  "value": 0.3,
+                  "sign": ">",
+                  "safety": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Chlorophyll A",
+          "sampleType": "water",
+          "subtype": "cuvette",
+          "uuid": "WB-FM-ChlA",
+          "calibrate": true,
+          "monthsValid": 6,
+          "results": [
+            {
+              "id": 1,
+              "name": "Chlorophyll A",
+              "unit": "mg/l",
+              "ranges": "0, 0.20, 0.50, 1, 5, 10, 25",
+              "timeDelay": 30
+            }
+          ]
+        },
+        {
+          "name": "Turbidity",
+          "sampleType": "water",
+          "subtype": "cuvette",
+          "uuid": "WB-FM-Trb",
+          "calibrate": true,
+          "results": [
+            {
+              "id": 1,
+              "name": "Turbidity",
+              "unit": "NTU",
+              "ranges": "0, 10, 20, 40",
+              "risks": [
+                {
+                  "value": 1,
+                  "sign": "<",
+                  "risk": 1,
+                  "safety": 0
+                },
+                {
+                  "value": 5,
+                  "risk": 2,
+                  "safety": 1
+                },
+                {
+                  "value": 5,
+                  "sign": ">",
+                  "risk": 3,
+                  "safety": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Zinc",
+          "sampleType": "water",
+          "subtype": "cuvette",
+          "uuid": "WB-FM-Zn",
+          "calibrate": true,
+          "monthsValid": 12,
+          "results": [
+            {
+              "id": 1,
+              "name": "Zinc",
+              "unit": "mg/l",
+              "ranges": "0.1, 0.25, 0.5, 1, 2.5, 5",
+              "timeDelay": 600
+            }
+          ]
+        },
+        {
+          "name": "Total Hardness",
+          "sampleType": "water",
+          "subtype": "titration",
+          "uuid": "WT-FM-THrd",
+          "results": [
+            {
+              "id": 1,
+              "name": "Total Hardness",
+              "unit": "mg/l",
+              "formula": "%1$f * 20",
+              "acceptable": "200",
+              "permissible": "600"
+            }
+          ]
+        },
+        {
+          "name": "Total Alkalinity",
+          "sampleType": "water",
+          "subtype": "titration",
+          "uuid": "WT-FM-TAlk",
+          "results": [
+            {
+              "id": 1,
+              "name": "Titration drops 1",
+              "unit": "mg/l",
+              "input": true
+            },
+            {
+              "id": 2,
+              "name": "Titration drops 2",
+              "unit": "mg/l",
+              "input": true
+            },
+            {
+              "id": 3,
+              "name": "P-Alkalinity",
+              "unit": "mg/l",
+              "formula": "%1$f * 10",
+              "acceptable": "200",
+              "permissible": "600",
+              "display": 2
+            },
+            {
+              "id": 4,
+              "name": "T-Alkalinity",
+              "unit": "mg/l",
+              "formula": "(%1$f + %2$f) * 10",
+              "acceptable": "200",
+              "permissible": "600",
+              "display": 3
+            }
+          ]
+        },
+        {
+          "name": "Calcium and Magnesium",
+          "sampleType": "water",
+          "subtype": "titration",
+          "uuid": "WT-FM-CaMg",
+          "results": [
+            {
+              "id": 1,
+              "name": "Calcium",
+              "unit": "mg/l",
+              "formula": "(%1$f/3) * 25",
+              "acceptable": "75",
+              "permissible": "200",
+              "display": 2
+            },
+            {
+              "id": 2,
+              "name": "Magnesium",
+              "unit": "mg/l",
+              "formula": "(%2$f-%1$f) * 5",
+              "acceptable": "30",
+              "permissible": "100",
+              "display": 3
+            }
+          ]
+        },
+        {
+          "name": "Carbonate",
+          "sampleType": "water",
+          "subtype": "titration",
+          "uuid": "WT-FM-CO32",
+          "results": [
+            {
+              "id": 1,
+              "name": "Carbonate",
+              "unit": "mg/l",
+              "formula": "(%1$f * 500) / 20"
+            }
+          ]
+        },
+        {
+          "name": "Bicarbonate",
+          "sampleType": "water",
+          "subtype": "titration",
+          "uuid": "WT-FM-HCO3",
+          "results": [
+            {
+              "id": 1,
+              "name": "Bicarbonate",
+              "unit": "mg/l",
+              "formula": "(%1$f * 500) / 20"
+            }
+          ]
+        },
+        {
+          "name": "Chloride",
+          "sampleType": "water",
+          "subtype": "titration",
+          "uuid": "WT-FM-Cld",
+          "results": [
+            {
+              "id": 1,
+              "name": "Chloride",
+              "unit": "mg/l",
+              "formula": "%1$f * 14.18",
+              "acceptable": "250",
+              "permissible": "1000",
+              "risksIrrigation": [
+                {
+                  "value": 2,
+                  "sign": "<",
+                  "risk": 1
+                },
+                {
+                  "value": 12,
+                  "sign": ">",
+                  "risk": 3
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Dissolved Oxygen",
+          "sampleType": "water",
+          "subtype": "titration",
+          "uuid": "WT-FM-DO2",
+          "results": [
+            {
+              "id": 1,
+              "name": "Dissolved Oxygen",
+              "unit": "mg/l",
+              "formula": "%1$f * 0.05"
+            }
+          ]
+        },
+        {
+          "name": "Sulfite",
+          "sampleType": "water",
+          "subtype": "titration",
+          "uuid": "WT-FM-SO3",
+          "results": [
+            {
+              "id": 1,
+              "name": "Sulfite",
+              "unit": "mg/l",
+              "formula": "%1$f * 13.63636363636364"
+            }
+          ]
+        }
+      ]
+    },
+    "soil_cuvette": {
+      "tests": [
+        {
+          "name": "Available Nitrogen",
+          "sampleType": "soil",
+          "subtype": "cuvette",
+          "uuid": "SB-FM-N",
+          "calibrate": true,
+          "monthsValid": 6,
+          "dilutions": [
+            1,
+            2,
+            5,
+            -1
+          ],
+          "results": [
+            {
+              "id": 1,
+              "name": "Available Nitrogen",
+              "unit": "kg/ha",
+              "ranges": "0, 10, 20, 40, 60",
+              "criticalMin": 280,
+              "criticalMax": 560,
+              "timeDelay": 300,
+              "formula": "(%1$f * 11.2)",
+              "risks": [
+                {
+                  "value": 280,
+                  "risk": 1,
+                  "sign": "<"
+                },
+                {
+                  "value": 560,
+                  "risk": 2
+                },
+                {
+                  "value": 560,
+                  "risk": 3,
+                  "sign": ">"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Available Phosphorous",
+          "sampleType": "soil",
+          "subtype": "cuvette",
+          "uuid": "SB-FM-P",
+          "calibrate": true,
+          "monthsValid": 6,
+          "dilutions": [
+            1,
+            2,
+            5,
+            -1
+          ],
+          "results": [
+            {
+              "id": 1,
+              "name": "Available Phosphorous",
+              "unit": "kg/ha",
+              "ranges": "0, 2.5, 5, 7.5, 10",
+              "criticalMin": 11,
+              "criticalMax": 25,
+              "timeDelay": 300,
+              "formula": "(%1$f * 11.2)",
+              "risks": [
+                {
+                  "value": 10,
+                  "risk": 1,
+                  "sign": "<"
+                },
+                {
+                  "value": 24.6,
+                  "risk": 2
+                },
+                {
+                  "value": 24.6,
+                  "risk": 3,
+                  "sign": ">"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Available Potassium",
+          "sampleType": "soil",
+          "subtype": "cuvette",
+          "uuid": "SB-FM-K",
+          "calibrate": true,
+          "monthsValid": 6,
+          "dilutions": [
+            1,
+            2,
+            5,
+            -1
+          ],
+          "results": [
+            {
+              "id": 1,
+              "name": "Available Potassium",
+              "unit": "kg/ha",
+              "ranges": "0, 10, 20, 30, 40",
+              "criticalMin": 110,
+              "criticalMax": 280,
+              "timeDelay": 300,
+              "formula": "(%1$f * 11.2)",
+              "risks": [
+                {
+                  "value": 108,
+                  "risk": 1,
+                  "sign": "<"
+                },
+                {
+                  "value": 280,
+                  "risk": 2
+                },
+                {
+                  "value": 280,
+                  "risk": 3,
+                  "sign": ">"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "pH",
+          "sampleType": "soil",
+          "subtype": "cuvette",
+          "uuid": "SB-FM-pH",
+          "calibrate": true,
+          "monthsValid": 6,
+          "results": [
+            {
+              "id": 1,
+              "name": "pH",
+              "ranges": "5, 6, 7, 8, 9",
+              "criticalMin": "6.5",
+              "criticalMax": "7.5",
+              "timeDelay": 30,
+              "riskType": "alkalinity",
+              "risks": [
+                {
+                  "value": 4.6,
+                  "risk": 0,
+                  "sign": "<"
+                },
+                {
+                  "value": 5.5,
+                  "risk": 1
+                },
+                {
+                  "value": 6.5,
+                  "risk": 2
+                },
+                {
+                  "value": 7,
+                  "risk": 3,
+                  "sign": "<"
+                },
+                {
+                  "value": 7,
+                  "risk": 4,
+                  "sign": "="
+                },
+                {
+                  "value": 8.5,
+                  "risk": 5
+                },
+                {
+                  "value": 8.5,
+                  "risk": 6,
+                  "sign": ">"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Available Boron",
+          "sampleType": "soil",
+          "subtype": "cuvette",
+          "uuid": "SB-FM-B",
+          "calibrate": true,
+          "monthsValid": 3,
+          "dilutions": [
+            1,
+            2,
+            5,
+            -1
+          ],
+          "results": [
+            {
+              "id": 1,
+              "name": "Available Boron",
+              "unit": "mg/kg",
+              "ranges": "0, 0.25, 0.5, 1, 1.5, 2",
+              "timeDelay": 600,
+              "formula": "(%1$f * 5)",
+              "criticalLimit": "0.5",
+              "risks": [
+                {
+                  "value": 0.5,
+                  "risk": 3,
+                  "sign": "<"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Available Iron",
+          "sampleType": "soil",
+          "subtype": "cuvette",
+          "uuid": "SB-FM-Fe",
+          "calibrate": true,
+          "monthsValid": 6,
+          "dilutions": [
+            1,
+            2,
+            5,
+            -1
+          ],
+          "results": [
+            {
+              "id": 1,
+              "name": "Available Iron",
+              "unit": "mg/kg",
+              "ranges": "0, 0.5, 1, 1.5, 2",
+              "criticalMin": 4,
+              "criticalMax": 6,
+              "timeDelay": 180,
+              "formula": "(%1$f * 5)",
+              "risks": [
+                {
+                  "value": 2,
+                  "risk": 0,
+                  "sign": "<"
+                },
+                {
+                  "value": 4,
+                  "risk": 1,
+                  "sign": "<"
+                },
+                {
+                  "value": 6,
+                  "risk": 2,
+                  "sign": "<"
+                },
+                {
+                  "value": 10,
+                  "risk": 3
+                },
+                {
+                  "value": 10,
+                  "risk": 4,
+                  "sign": ">"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Calcium and Magnesium",
+          "sampleType": "soil",
+          "subtype": "titration",
+          "uuid": "ST-FM-CaMg",
+          "results": [
+            {
+              "id": 1,
+              "name": "Titration drops 1",
+              "unit": "mg/kg",
+              "input": true
+            },
+            {
+              "id": 2,
+              "name": "Titration drops 2",
+              "unit": "mg/kg",
+              "input": true
+            },
+            {
+              "id": 3,
+              "name": "Exchangeable Calcium",
+              "unit": "mg/kg",
+              "formula": "(%1$f/3) * 125",
+              "display": 2,
+              "criticalLimit": "300",
+              "criticalLimitSign": "<",
+              "risks": [
+                {
+                  "value": 300,
+                  "risk": 3,
+                  "sign": "<"
+                }
+              ]
+            },
+            {
+              "id": 4,
+              "name": "Exchangeable Magnesium",
+              "unit": "mg/kg",
+              "formula": "(%2$f-%1$f) * 25",
+              "display": 3,
+              "criticalLimit": "120",
+              "criticalLimitSign": "<",
+              "risks": [
+                {
+                  "value": 120,
+                  "risk": 3,
+                  "sign": "<"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Available Copper",
+          "sampleType": "soil",
+          "subtype": "cuvette",
+          "uuid": "SB-FM-Cu",
+          "calibrate": true,
+          "monthsValid": 12,
+          "dilutions": [
+            1,
+            2,
+            5,
+            -1
+          ],
+          "results": [
+            {
+              "id": 1,
+              "name": "Available Copper",
+              "unit": "mg/kg",
+              "ranges": " 0, 0.2, 0.4, 0.6, 0.8, 1",
+              "formula": "(%1$f * 5)",
+              "timeDelay": 60,
+              "criticalLimit": "0.2",
+              "risks": [
+                {
+                  "value": 0.1,
+                  "risk": 0,
+                  "sign": "<"
+                },
+                {
+                  "value": 0.3,
+                  "risk": 1,
+                  "sign": "<"
+                },
+                {
+                  "value": 0.8,
+                  "risk": 2,
+                  "sign": "<"
+                },
+                {
+                  "value": 3,
+                  "risk": 3
+                },
+                {
+                  "value": 3,
+                  "risk": 4,
+                  "sign": ">"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Available Zinc",
+          "sampleType": "soil",
+          "subtype": "cuvette",
+          "uuid": "SB-FM-Zn",
+          "calibrate": true,
+          "monthsValid": 12,
+          "dilutions": [
+            1,
+            2,
+            5,
+            -1
+          ],
+          "results": [
+            {
+              "id": 1,
+              "name": "Available Zinc",
+              "unit": "mg/kg",
+              "ranges": "0.1, 0.5, 1, 2, 3, 5",
+              "formula": "(%1$f * 5)",
+              "timeDelay": 300,
+              "criticalLimit": "0.6",
+              "risks": [
+                {
+                  "value": 0.5,
+                  "risk": 0,
+                  "sign": "<"
+                },
+                {
+                  "value": 1,
+                  "risk": 1,
+                  "sign": "<"
+                },
+                {
+                  "value": 3,
+                  "risk": 2,
+                  "sign": "<"
+                },
+                {
+                  "value": 5,
+                  "risk": 3
+                },
+                {
+                  "value": 5,
+                  "risk": 4,
+                  "sign": ">"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Organic Carbon",
+          "sampleType": "soil",
+          "subtype": "cuvette",
+          "uuid": "SB-FM-OC",
+          "calibrate": true,
+          "monthsValid": 6,
+          "results": [
+            {
+              "id": 1,
+              "name": "Organic Carbon",
+              "unit": "%",
+              "ranges": "0, 0.5, 1, 1.5, 2",
+              "criticalMin": 0.5,
+              "criticalMax": 0.75,
+              "risks": [
+                {
+                  "value": 0.5,
+                  "risk": 1,
+                  "sign": "<"
+                },
+                {
+                  "value": 0.75,
+                  "risk": 2
+                },
+                {
+                  "value": 0.75,
+                  "risk": 3,
+                  "sign": ">"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Available Manganese",
+          "sampleType": "soil",
+          "subtype": "cuvette",
+          "uuid": "SB-FM-Mn",
+          "calibrate": true,
+          "monthsValid": 6,
+          "results": [
+            {
+              "id": 1,
+              "name": "Available Manganese",
+              "unit": "mg/kg",
+              "ranges": "0, 0.5, 1, 1.5, 2",
+              "formula": "(%1$f * 5)",
+              "timeDelay": 600,
+              "criticalLimit": "2",
+              "risks": [
+                {
+                  "value": 0.5,
+                  "risk": 0,
+                  "sign": "<"
+                },
+                {
+                  "value": 1.2,
+                  "risk": 1,
+                  "sign": "<"
+                },
+                {
+                  "value": 3.5,
+                  "risk": 2,
+                  "sign": "<"
+                },
+                {
+                  "value": 6,
+                  "risk": 3
+                },
+                {
+                  "value": 6,
+                  "risk": 4,
+                  "sign": ">"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Available Sulfur",
+          "sampleType": "soil",
+          "subtype": "cuvette",
+          "uuid": "SB-FM-S",
+          "calibrate": true,
+          "monthsValid": 12,
+          "results": [
+            {
+              "id": 1,
+              "name": "Available Sulfur",
+              "unit": "mg/kg",
+              "ranges": "0, 5, 10, 15",
+              "formula": "(%1$f * 5)",
+              "criticalLimit": "8"
+            }
+          ]
+        },
+        {
+          "name": "Electrical Conductivity",
+          "sampleType": "soil",
+          "subtype": "api",
+          "uuid": "SB-FM-EC",
+          "results": [
+            {
+              "id": 1,
+              "name": "Electrical Conductivity",
+              "unit": "S/m"
+            }
+          ]
+        },
+        {
+          "name": "Fertilizer Recommendation",
+          "sampleType": "soil",
+          "subtype": "api",
+          "uuid": "SB-FM-FER",
+          "calibrate": false,
+          "results": [
+            {
+              "id": 1,
+              "name": "Comb1Fert1"
+            },
+            {
+              "id": 2,
+              "name": "Comb1Value1"
+            },
+            {
+              "id": 3,
+              "name": "Comb1Fert2"
+            },
+            {
+              "id": 4,
+              "name": "Comb1Value2"
+            },
+            {
+              "id": 5,
+              "name": "Comb1Fert3"
+            },
+            {
+              "id": 6,
+              "name": "Comb1Value3"
+            },
+            {
+              "id": 7,
+              "name": "Comb2Fert1"
+            },
+            {
+              "id": 8,
+              "name": "Comb2Value1"
+            },
+            {
+              "id": 9,
+              "name": "Comb2Fert2"
+            },
+            {
+              "id": 10,
+              "name": "Comb2Value2"
+            },
+            {
+              "id": 11,
+              "name": "Comb2Fert3"
+            },
+            {
+              "id": 12,
+              "name": "Comb2Value3"
+            }
+          ]
+        }
+      ]
+    },
+    "water_card": {
+      "tests": [
+        {
+          "name": "Fluoride",
+          "sampleType": "water",
+          "subtype": "card",
+          "uuid": "WC-FM-F",
+          "dilutions": [
+            1,
+            2,
+            5
+          ],
+          "results": [
+            {
+              "id": 1,
+              "unit": "mg/l",
+              "minMarginError": 0.25,
+              "risks": [
+                {
+                  "value": 1,
+                  "risk": 1,
+                  "sign": "<"
+                },
+                {
+                  "value": 1.5,
+                  "risk": 2,
+                  "sign": "<"
+                }
+              ],
+              "values": [
+                {
+                  "value": 0,
+                  "calibrate": true,
+                  "color": "#E91B75"
+                },
+                {
+                  "value": 0.5,
+                  "color": "#E64260"
+                },
+                {
+                  "value": 1.0,
+                  "color": "#EA6851"
+                },
+                {
+                  "value": 1.5,
+                  "color": "#F37E43"
+                },
+                {
+                  "value": 2.0,
+                  "color": "#F37E43"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "pH",
+          "sampleType": "water",
+          "subtype": "card",
+          "uuid": "WC-FM-pH",
+          "results": [
+            {
+              "id": 1,
+              "timeDelay": 45,
+              "minMarginError": 0.5,
+              "riskType": "alkalinity",
+              "risks": [
+                {
+                  "value": 0,
+                  "risk": 0
+                },
+                {
+                  "value": 6.8,
+                  "risk": 1
+                },
+                {
+                  "value": 7.2,
+                  "risk": 2
+                }
+              ],
+              "values": [
+                {
+                  "value": 4,
+                  "calibrate": true,
+                  "color": "#F27060"
+                },
+                {
+                  "value": 5,
+                  "color": "#F17F3F"
+                },
+                {
+                  "value": 6,
+                  "color": "#DBB43C"
+                },
+                {
+                  "value": 7,
+                  "color": "#69B16B"
+                },
+                {
+                  "value": 8,
+                  "color": "#48A687"
+                },
+                {
+                  "value": 9,
+                  "color": "#07819D"
+                },
+                {
+                  "value": 10,
+                  "color": "#3F4D9E"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Nitrate",
+          "sampleType": "water",
+          "subtype": "card",
+          "uuid": "WC-FM-NO3",
+          "dilutions": [
+            1,
+            2,
+            5
+          ],
+          "results": [
+            {
+              "id": 1,
+              "unit": "mg/l",
+              "timeDelay": 360,
+              "minMarginError": 0.8,
+              "risks": [
+                {
+                  "value": 0,
+                  "risk": 0
+                },
+                {
+                  "value": 30,
+                  "risk": 1
+                },
+                {
+                  "value": 50,
+                  "risk": 2
+                }
+              ],
+              "values": [
+                {
+                  "value": 0,
+                  "calibrate": true,
+                  "color": "#F2F1E9"
+                },
+                {
+                  "value": 10,
+                  "color": "#E8CDDB"
+                },
+                {
+                  "value": 25,
+                  "color": "#EA9DCD"
+                },
+                {
+                  "value": 50,
+                  "color": "#D271A0"
+                },
+                {
+                  "value": 75,
+                  "color": "#D271A0"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Iron",
+          "sampleType": "water",
+          "subtype": "card",
+          "uuid": "WC-FM-Fe",
+          "dilutions": [
+            1,
+            2,
+            5
+          ],
+          "results": [
+            {
+              "id": 1,
+              "unit": "mg/l",
+              "timeDelay": 300,
+              "minMarginError": 0.15,
+              "riskType": "safety",
+              "risks": [
+                {
+                  "value": 0,
+                  "risk": 0
+                },
+                {
+                  "value": 0.2,
+                  "risk": 1
+                },
+                {
+                  "value": 0.3,
+                  "risk": 2
+                }
+              ],
+              "values": [
+                {
+                  "value": 0,
+                  "color": "#FFFFFF"
+                },
+                {
+                  "value": 0.5,
+                  "calibrate": true,
+                  "color": "#EEC7A1"
+                },
+                {
+                  "value": 1.0,
+                  "color": "#FBB67C"
+                },
+                {
+                  "value": 1.5,
+                  "color": "#F89E62"
+                },
+                {
+                  "value": 2.0,
+                  "color": "#F89E62"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Free Chlorine",
+          "sampleType": "water",
+          "subtype": "card",
+          "uuid": "WC-FM-Cl",
+          "dilutions": [
+            1,
+            2,
+            5
+          ],
+          "results": [
+            {
+              "id": 1,
+              "unit": "mg/l",
+              "minMarginError": 0.15,
+              "riskType": "safety",
+              "risks": [
+                {
+                  "value": 0,
+                  "risk": 0
+                },
+                {
+                  "value": 0.2,
+                  "risk": 1
+                },
+                {
+                  "value": 1,
+                  "risk": 2
+                }
+              ],
+              "values": [
+                {
+                  "value": 0,
+                  "calibrate": true,
+                  "color": "#FFFFFF"
+                },
+                {
+                  "value": 0.2,
+                  "color": "#EEC7A1"
+                },
+                {
+                  "value": 0.5,
+                  "color": "#FBB67C"
+                },
+                {
+                  "value": 1.5,
+                  "color": "#F89E62"
+                },
+                {
+                  "value": 3,
+                  "color": "#F89E62"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Copper",
+          "sampleType": "water",
+          "subtype": "card",
+          "uuid": "WC-FM-Cu",
+          "dilutions": [
+            1,
+            2,
+            5
+          ],
+          "results": [
+            {
+              "id": 1,
+              "unit": "mg/l",
+              "timeDelay": 60,
+              "minMarginError": 0.15,
+              "riskType": "safety",
+              "risks": [
+                {
+                  "value": 0,
+                  "risk": 0
+                },
+                {
+                  "value": 0.05,
+                  "risk": 1
+                },
+                {
+                  "value": 1.51,
+                  "risk": 2
+                }
+              ],
+              "values": [
+                {
+                  "value": 0,
+                  "calibrate": true,
+                  "color": "#B2A32F"
+                },
+                {
+                  "value": 0.5,
+                  "color": "#C39E56"
+                },
+                {
+                  "value": 1.0,
+                  "color": "#C39E56"
+                },
+                {
+                  "value": 2.0,
+                  "color": "#C59E5D"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Manganese",
+          "sampleType": "water",
+          "subtype": "card",
+          "uuid": "WC-FM-Mn",
+          "dilutions": [
+            1,
+            2,
+            5
+          ],
+          "results": [
+            {
+              "id": 1,
+              "unit": "mg/l",
+              "timeDelay": 300,
+              "minMarginError": 0.15,
+              "riskType": "safety",
+              "risks": [
+                {
+                  "value": 0,
+                  "risk": 0
+                },
+                {
+                  "value": 0.1,
+                  "risk": 1
+                },
+                {
+                  "value": 0.31,
+                  "risk": 2
+                }
+              ],
+              "values": [
+                {
+                  "value": 0,
+                  "calibrate": true,
+                  "color": "#FFFFFF"
+                },
+                {
+                  "value": 0.25,
+                  "color": "#EEC7A1"
+                },
+                {
+                  "value": 0.5,
+                  "color": "#FBB67C"
+                },
+                {
+                  "value": 1.0,
+                  "color": "#F89E62"
+                },
+                {
+                  "value": 1.5,
+                  "color": "#F89E62"
+                },
+                {
+                  "value": 2.0,
+                  "color": "#F89E62"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Zinc",
+          "sampleType": "water",
+          "timeDelay": 600,
+          "subtype": "card",
+          "uuid": "WC-FM-Zn",
+          "dilutions": [
+            1,
+            2,
+            5
+          ],
+          "results": [
+            {
+              "id": 1,
+              "unit": "mg/l",
+              "minMarginError": 0.15,
+              "riskType": "safety",
+              "risks": [
+                {
+                  "value": 0,
+                  "risk": 0
+                },
+                {
+                  "value": 5,
+                  "risk": 1
+                },
+                {
+                  "value": 15.1,
+                  "risk": 2
+                }
+              ],
+              "values": [
+                {
+                  "value": 0,
+                  "calibrate": true,
+                  "color": "#FFFFFF"
+                },
+                {
+                  "value": 2,
+                  "color": "#FBB67C"
+                },
+                {
+                  "value": 4,
+                  "color": "#F89E62"
+                },
+                {
+                  "value": 6,
+                  "color": "#F89E62"
+                },
+                {
+                  "value": 8,
+                  "color": "#F89E62"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Phosphate",
+          "sampleType": "water",
+          "subtype": "card",
+          "uuid": "WC-FM-PO4",
+          "dilutions": [
+            1,
+            2,
+            5
+          ],
+          "results": [
+            {
+              "id": 1,
+              "unit": "mg/l",
+              "timeDelay": 600,
+              "minMarginError": 0.47,
+              "riskType": "safety",
+              "risks": [
+                {
+                  "value": 0,
+                  "risk": 0
+                },
+                {
+                  "value": 0.31,
+                  "risk": 2
+                }
+              ],
+              "values": [
+                {
+                  "value": 0,
+                  "calibrate": true,
+                  "color": "#FFFFFF"
+                },
+                {
+                  "value": 0.3,
+                  "color": "#BFCDD4"
+                },
+                {
+                  "value": 0.9,
+                  "color": "#A4C5D2"
+                },
+                {
+                  "value": 1.8,
+                  "color": "#6199AE"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Ammonia",
+          "sampleType": "water",
+          "subtype": "card",
+          "uuid": "WC-FM-NH3",
+          "dilutions": [
+            1,
+            2,
+            5
+          ],
+          "results": [
+            {
+              "id": 1,
+              "unit": "mg/l",
+              "timeDelay": 300,
+              "minMarginError": 0.38,
+              "riskType": "safety",
+              "risks": [
+                {
+                  "value": 0,
+                  "risk": 0
+                },
+                {
+                  "value": 1.0,
+                  "risk": 1
+                },
+                {
+                  "value": 1.1,
+                  "risk": 2
+                }
+              ],
+              "values": [
+                {
+                  "value": 0,
+                  "calibrate": true,
+                  "color": "#C3BDAD"
+                },
+                {
+                  "value": 0.25,
+                  "color": "#D6CDAD"
+                },
+                {
+                  "value": 0.5,
+                  "color": "#C9BB92"
+                },
+                {
+                  "value": 1.0,
+                  "color": "#BC9941"
+                },
+                {
+                  "value": 2.0,
+                  "color": "#B58A29"
+                },
+                {
+                  "value": 4.0,
+                  "color": "#C07D06"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Nitrite",
+          "sampleType": "water",
+          "subtype": "card",
+          "uuid": "WC-FM-NO2",
+          "dilutions": [
+            1,
+            2,
+            5
+          ],
+          "results": [
+            {
+              "id": 1,
+              "unit": "mg/l",
+              "timeDelay": 600,
+              "minMarginError": 0.17,
+              "riskType": "safety",
+              "risks": [
+                {
+                  "value": 0,
+                  "risk": 0
+                },
+                {
+                  "value": 0.25,
+                  "risk": 1
+                },
+                {
+                  "value": 0.26,
+                  "risk": 2
+                }
+              ],
+              "values": [
+                {
+                  "value": 0,
+                  "calibrate": true,
+                  "color": "#B7B2AD"
+                },
+                {
+                  "value": 0.05,
+                  "color": "#B7A6AD"
+                },
+                {
+                  "value": 0.1,
+                  "color": "#BC9CB3"
+                },
+                {
+                  "value": 0.25,
+                  "color": "#B454AC"
+                },
+                {
+                  "value": 0.5,
+                  "color": "#9F1E96"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Arsenic",
+          "sampleType": "water",
+          "subtype": "card",
+          "uuid": "WC-FM-As",
+          "results": [
+            {
+              "id": 1,
+              "unit": "mg/l",
+              "timeDelay": 600,
+              "minMarginError": 0.17,
+              "riskType": "safety",
+              "risks": [
+                {
+                  "value": 0,
+                  "risk": 0
+                },
+                {
+                  "value": 0.05,
+                  "risk": 1
+                },
+                {
+                  "value": 0.051,
+                  "risk": 2
+                }
+              ],
+              "values": [
+                {
+                  "value": 0,
+                  "calibrate": true,
+                  "color": "#CED5D5"
+                },
+                {
+                  "value": 0.05,
+                  "color": "#CED2D3"
+                },
+                {
+                  "value": 0.1,
+                  "color": "#B8BCB4"
+                },
+                {
+                  "value": 0.3,
+                  "color": "#B9BCB6"
+                },
+                {
+                  "value": 0.5,
+                  "color": "#B0AFA6"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Available Potassium",
+          "sampleType": "soil",
+          "subtype": "card",
+          "uuid": "SC-FM-K",
+          "dilutions": [
+            1,
+            2,
+            5
+          ],
+          "results": [
+            {
+              "id": 1,
+              "unit": "mg/kg",
+              "timeDelay": 300,
+              "minMarginError": 0.16,
+              "formula": "(%1$f * 5)",
+              "risks": [
+                {
+                  "value": 0,
+                  "risk": 0
+                },
+                {
+                  "value": 80,
+                  "risk": 1
+                },
+                {
+                  "value": 134,
+                  "risk": 2
+                }
+              ],
+              "values": [
+                {
+                  "value": 0,
+                  "calibrate": true,
+                  "color": "#2A271F"
+                },
+                {
+                  "value": 10,
+                  "color": "#56544D"
+                },
+                {
+                  "value": 20,
+                  "color": "#65645D"
+                },
+                {
+                  "value": 30,
+                  "color": "#82817B"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Available Phosphorous",
+          "sampleType": "soil",
+          "subtype": "card",
+          "uuid": "SC-FM-P",
+          "dilutions": [
+            1,
+            2,
+            5
+          ],
+          "results": [
+            {
+              "id": 1,
+              "unit": "mg/kg",
+              "timeDelay": 300,
+              "minMarginError": 0.322,
+              "formula": "(%1$f * 5)",
+              "risks": [
+                {
+                  "value": 0,
+                  "risk": 0
+                },
+                {
+                  "value": 13,
+                  "risk": 1
+                },
+                {
+                  "value": 22,
+                  "risk": 2
+                }
+              ],
+              "values": [
+                {
+                  "value": 0,
+                  "calibrate": true,
+                  "color": "#F4F3E4"
+                },
+                {
+                  "value": 2.5,
+                  "color": "#FFFABE"
+                },
+                {
+                  "value": 5.0,
+                  "color": "#F4F2B5"
+                },
+                {
+                  "value": 7.5,
+                  "color": "#FFF8A1"
+                },
+                {
+                  "value": 10,
+                  "color": "#F1E19E"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Available Nitrogen",
+          "sampleType": "soil",
+          "subtype": "card",
+          "uuid": "SC-FM-N",
+          "dilutions": [
+            1,
+            2,
+            5
+          ],
+          "results": [
+            {
+              "id": 1,
+              "unit": "mg/kg",
+              "timeDelay": 300,
+              "minMarginError": 0.21,
+              "formula": "(%1$f / 4.43) * 5",
+              "risks": [
+                {
+                  "value": 0,
+                  "risk": 0
+                },
+                {
+                  "value": 125,
+                  "risk": 1
+                },
+                {
+                  "value": 188,
+                  "risk": 2
+                }
+              ],
+              "values": [
+                {
+                  "value": 0,
+                  "calibrate": true,
+                  "color": "#E4E5DA"
+                },
+                {
+                  "value": 10,
+                  "color": "#E8CDDB"
+                },
+                {
+                  "value": 20,
+                  "color": "#FFB2DF"
+                },
+                {
+                  "value": 40,
+                  "color": "#F88DD0"
+                },
+                {
+                  "value": 60,
+                  "color": "#EE71BD"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Organic Carbon",
+          "sampleType": "soil",
+          "subtype": "card",
+          "uuid": "SC-FM-OC",
+          "dilutions": [
+            1,
+            2,
+            5
+          ],
+          "results": [
+            {
+              "id": 1,
+              "unit": "%",
+              "minMarginError": 0.33,
+              "risks": [
+                {
+                  "value": 0,
+                  "risk": 0
+                },
+                {
+                  "value": 0.401,
+                  "risk": 1
+                },
+                {
+                  "value": 0.801,
+                  "risk": 2
+                }
+              ],
+              "values": [
+                {
+                  "value": 0,
+                  "calibrate": true,
+                  "color": "#FFFFFF"
+                },
+                {
+                  "value": 0.5,
+                  "color": "#974E22"
+                },
+                {
+                  "value": 1,
+                  "color": "#4E1212"
+                },
+                {
+                  "value": 2,
+                  "color": "#290F10"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "pH",
+          "sampleType": "soil",
+          "subtype": "card",
+          "uuid": "SC-FM-pH",
+          "results": [
+            {
+              "id": 1,
+              "timeDelay": 30,
+              "minMarginError": 0.5,
+              "riskType": "alkalinity",
+              "risks": [
+                {
+                  "value": 0,
+                  "risk": 0
+                },
+                {
+                  "value": 6.8,
+                  "risk": 1
+                },
+                {
+                  "value": 7.2,
+                  "risk": 2
+                }
+              ],
+              "values": [
+                {
+                  "value": 4,
+                  "calibrate": true,
+                  "color": "#F27060"
+                },
+                {
+                  "value": 5,
+                  "color": "#F17F3F"
+                },
+                {
+                  "value": 6,
+                  "color": "#DBB43C"
+                },
+                {
+                  "value": 7,
+                  "color": "#69B16B"
+                },
+                {
+                  "value": 8,
+                  "color": "#48A687"
+                },
+                {
+                  "value": 9,
+                  "color": "#07819D"
+                },
+                {
+                  "value": 10,
+                  "color": "#3F4D9E"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Hazen Units",
+          "sampleType": "water",
+          "subtype": "card",
+          "uuid": "WC-FM-HU",
+          "dilutions": [
+            1,
+            2,
+            5
+          ],
+          "results": [
+            {
+              "id": 1,
+              "unit": "HU",
+              "values": [
+                {
+                  "value": 0,
+                  "calibrate": true
+                },
+                {
+                  "value": 10
+                },
+                {
+                  "value": 20
+                },
+                {
+                  "value": 50
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Turbidity",
+          "sampleType": "water",
+          "subtype": "card",
+          "uuid": "WC-FM-Trb",
+          "dilutions": [
+            1,
+            2,
+            5
+          ],
+          "results": [
+            {
+              "id": 1,
+              "unit": "NTU",
+              "values": [
+                {
+                  "value": 0,
+                  "calibrate": true
+                },
+                {
+                  "value": 10
+                },
+                {
+                  "value": 20
+                },
+                {
+                  "value": 30
+                },
+                {
+                  "value": 50
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Sulphate",
+          "sampleType": "water",
+          "subtype": "card",
+          "uuid": "WC-FM-SO42",
+          "dilutions": [
+            1,
+            2,
+            5
+          ],
+          "results": [
+            {
+              "id": 1,
+              "unit": "mg/l",
+              "values": [
+                {
+                  "value": 0,
+                  "calibrate": true
+                },
+                {
+                  "value": 10
+                },
+                {
+                  "value": 20
+                },
+                {
+                  "value": 40
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Unknown",
+          "sampleType": "water",
+          "subtype": "card",
+          "uuid": "e19db2",
+          "results": [
+            {
+              "id": 1,
+              "unit": "mg/l"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

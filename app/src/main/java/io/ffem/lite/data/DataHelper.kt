@@ -31,6 +31,27 @@ object DataHelper {
         }
     }
 
+    suspend fun getParametersFromTheCloud(
+        deviceId: String,
+        type: String
+    ): ArrayList<TestInfo>? {
+        val ref = FirebaseDatabase.getInstance().getReference("$deviceId/$type/tests")
+        return try {
+            val testInfoList: ArrayList<TestInfo> = ArrayList()
+            val testConfig = ref.get().await().children.map { snapShot ->
+                snapShot.getValue(ParameterInfoDto::class.java)!!
+            }
+
+            for (test in testConfig) {
+                testInfoList.add(test.toTestInfo())
+            }
+            return testInfoList
+        } catch (exception: Exception) {
+            print(exception.message)
+            null
+        }
+    }
+
     private suspend fun getParameterDataFromTheCloud(
         deviceId: String,
         testId: String
@@ -134,7 +155,7 @@ object DataHelper {
                                 calibrate = it.calibrate
                             )
                         }
-                        values.addAll(values.map {
+                        testInfo.results[0].values.addAll(values.map {
                             CalibrationValue(
                                 value = it.value,
                                 color = Color.TRANSPARENT,

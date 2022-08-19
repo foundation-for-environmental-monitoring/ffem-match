@@ -12,10 +12,7 @@ import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.model.CalibrationValue
 import io.ffem.lite.model.TestConfig
-import io.ffem.lite.model.TestInfo
-import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.preference.isDiagnosticMode
-import io.ffem.lite.util.FileUtil
 import timber.log.Timber
 import java.lang.reflect.Type
 
@@ -144,45 +141,6 @@ class App : BaseApplication() {
                 })
                 return values
             }
-        }
-
-        /**
-         * Adds the hyphen separators to the parameter id if not already included
-         */
-        private fun checkHyphens(str: String): String {
-            return if (!str.contains("-")) {
-                val stringBuilder = StringBuilder(str)
-                stringBuilder.insert(2, '-')
-                stringBuilder.insert(5, '-')
-                stringBuilder.toString()
-            } else {
-                str
-            }
-        }
-
-        fun getTestInfo(parameterId: String): TestInfo? {
-            if (parameterId.isNotEmpty()) {
-                val id = checkHyphens(parameterId.uppercase())
-
-                // The second character in the parameter id specifies the color card type
-                val input = app.resources.openRawResource(R.raw.tests_circle)
-                val content = FileUtil.readTextFile(input)
-                testConfig = gson.fromJson(content, TestConfig::class.java)
-
-                for (test in testConfig.tests) {
-                    if (test.uuid.uppercase() == id) {
-                        val newTest = test.copy()
-                        newTest.fileName = AppPreferences.getImageFilename()
-                        return newTest
-                    }
-                }
-            }
-            return null
-        }
-
-        fun getParameterValues(id: String): List<CalibrationValue> {
-            val test = getTestInfo(id)
-            return test?.subTest()?.values ?: emptyList()
         }
     }
 }

@@ -7,21 +7,16 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
-import com.google.gson.Gson
 import io.ffem.lite.R
 import io.ffem.lite.data.CalibrationDatabase
+import io.ffem.lite.data.DataHelper.getParametersFromTheCloud
 import io.ffem.lite.databinding.FragmentTestListBinding
-import io.ffem.lite.model.TestConfig
 import io.ffem.lite.model.TestInfo
 import io.ffem.lite.model.TestType
 import io.ffem.lite.preference.AppPreferences
-import io.ffem.lite.util.FileUtil
 import io.ffem.lite.util.PreferencesUtil
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import timber.log.Timber
 
 
@@ -77,65 +72,72 @@ class TestListFragment : BaseFragment() {
     }
 
     private fun setAdapter(sampleType: Int) {
-        val input = if (sampleType == 0) {
-            resources.openRawResource(R.raw.soil_tests)
+        val type = if (sampleType == 0) {
+            "soil_cuvette"
         } else {
-            resources.openRawResource(R.raw.water_tests)
+            "water_cuvette"
         }
-
-        val content = FileUtil.readTextFile(input)
-        val tests = Gson().fromJson(content, TestConfig::class.java).tests
-
-        for (i in tests.indices.reversed()) {
-            if (tests[i].subtype == TestType.TITRATION || tests[i].subtype == TestType.API) {
-                tests.removeAt(i)
+        var list: ArrayList<TestInfo>? = null
+        runBlocking {
+            launch {
+                list = getParametersFromTheCloud("customer1", type)
             }
         }
-
-        tests.sortWith { object1: TestInfo, object2: TestInfo ->
-            object1.name!!.compareTo(object2.name!!, ignoreCase = true)
-        }
-
-        val db: CalibrationDatabase = CalibrationDatabase.getDatabase(requireContext())
-        val calibratedList = ArrayList<TestInfo>()
-        try {
-            val dao = db.calibrationDao()
-            for (i in tests.indices) {
-                val calibrationInfo = dao.getCalibrations(tests[i].uuid)
-                if (calibrationInfo != null) {
-                    if (calibrationInfo.calibrations.isNotEmpty()) {
-                        calibratedList.add(tests[i])
-                        continue
-                    }
+        val tests = list
+        if (tests != null) {
+            for (i in tests.indices.reversed()) {
+                if (tests[i].subtype == TestType.TITRATION || tests[i].subtype == TestType.API) {
+                    tests.removeAt(i)
                 }
             }
-        } catch (e: Exception) {
-            Timber.e(e)
-        } finally {
-            db.close()
-        }
 
-        val sectionAdapter = SectionedRecyclerViewAdapter()
-        val testInfoSection = TestInfoSection(
-            getString(R.string.all),
-            tests,
-            this@TestListFragment::onItemRootViewClicked
-        )
-        if (calibratedList.size > 0 && calibratedList.size < tests.size * 0.8) {
-            sectionAdapter.addSection(
-                TestInfoSection(
-                    getString(R.string.recent),
-                    calibratedList,
-                    this@TestListFragment::onItemRootViewClicked
-                )
+            tests.sortWith { object1: TestInfo, object2: TestInfo ->
+                object1.name!!.compareTo(object2.name!!, ignoreCase = true)
+            }
+
+            val db: CalibrationDatabase = CalibrationDatabase.getDatabase(requireContext())
+            val calibratedList = ArrayList<TestInfo>()
+            try {
+                val dao = db.calibrationDao()
+                for (i in tests.indices) {
+                    val calibrationInfo = dao.getCalibrations(tests[i].uuid)
+                    if (calibrationInfo != null) {
+                        if (calibrationInfo.calibrations.isNotEmpty()) {
+                            calibratedList.add(tests[i])
+                            continue
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Timber.e(e)
+            } finally {
+                db.close()
+            }
+
+            val sectionAdapter = SectionedRecyclerViewAdapter()
+            val testInfoSection = TestInfoSection(
+                getString(R.string.all),
+                tests,
+                this@TestListFragment::onItemRootViewClicked
             )
-        } else {
-            testInfoSection.setHasHeader(false)
-        }
-        sectionAdapter.addSection(testInfoSection)
 
-        b.testsLst.layoutManager = LinearLayoutManager(context)
-        b.testsLst.adapter = sectionAdapter
+            if (calibratedList.size > 0 && calibratedList.size < tests.size * 0.8) {
+                sectionAdapter.addSection(
+                    TestInfoSection(
+                        getString(R.string.recent),
+                        calibratedList,
+                        this@TestListFragment::onItemRootViewClicked
+                    )
+                )
+            } else {
+                testInfoSection.setHasHeader(false)
+            }
+
+            sectionAdapter.addSection(testInfoSection)
+
+            b.testsLst.layoutManager = LinearLayoutManager(context)
+            b.testsLst.adapter = sectionAdapter
+        }
     }
 
     override fun onDestroy() {
