@@ -56,7 +56,15 @@ object DataHelper {
         deviceId: String,
         testId: String
     ): TestInfo? {
-        val ref = FirebaseDatabase.getInstance().getReference("$deviceId/tests")
+        val type = if (testId.startsWith("SB-")) {
+            "soil_cuvette"
+        } else if (testId.startsWith("WB-")) {
+            "water_cuvette"
+        } else {
+            "water_card"
+        }
+
+        val ref = FirebaseDatabase.getInstance().getReference("$deviceId/$type/tests")
         return try {
             var factoryConfig: ParameterInfoDto? = null
             val calibrationConfig = ref.get().await().children.map { snapShot ->
@@ -73,33 +81,6 @@ object DataHelper {
             null
         }
     }
-
-    // Append a reversed list of calibration point values to the calibration values list
-    // to represent the colors on the right side of color card
-//    internal class CalibrationValuesDeserializer(val context: Context) :
-//        JsonDeserializer<MutableList<CalibrationValue>> {
-//        override fun deserialize(
-//            json: JsonElement?, typeOfT: Type?, jsonContext: JsonDeserializationContext?
-//        ): MutableList<CalibrationValue> {
-//            val values = ArrayList<CalibrationValue>()
-//            json!!.asJsonArray.mapTo(values) {
-//                CalibrationValue(
-//                    value = it.asJsonObject.get("value").asDouble,
-//                    color = Color.TRANSPARENT,
-//                    calibrate = it.asJsonObject.get("calibrate")?.asBoolean ?: false
-//                )
-//            }
-//            values.addAll(values.map {
-//                CalibrationValue(
-//                    value = it.value,
-//                    color = Color.TRANSPARENT,
-//                    calibrate = it.calibrate
-//                )
-//            })
-//
-//            return values
-//        }
-//    }
 
     internal fun checkHyphens(str: String): String {
         val code = str.replace("TOC", "OC")

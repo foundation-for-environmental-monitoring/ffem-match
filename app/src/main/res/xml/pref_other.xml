@@ -8,6 +8,17 @@
         app:allowDividerAbove="true"
         app:allowDividerBelow="true"
         app:iconSpaceReserved="false" />
+
+    <ListPreference
+        android:defaultValue="0"
+        android:entries="@array/pref_calibration_options"
+        android:entryValues="@array/pref_calibration_option_values"
+        android:key="@string/calibrationTypePrefKey"
+        android:summary="%s"
+        android:title="Calibration Type"
+        app:allowDividerAbove="true"
+        app:iconSpaceReserved="false" />
+
     <Preference
         android:key="@string/aboutKey"
         android:title="@string/about"

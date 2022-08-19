@@ -6,6 +6,7 @@ import android.os.Parcelable
 import io.ffem.lite.R
 import io.ffem.lite.common.Constants
 import io.ffem.lite.data.RecommendationDatabase
+import io.ffem.lite.preference.getCalibrationType
 import io.ffem.lite.util.MathUtil.applyFormula
 import io.ffem.lite.util.StringUtil.getStringByLocale
 import kotlinx.parcelize.Parcelize
@@ -78,7 +79,10 @@ data class Result(
     // if range values are defined as comma delimited text then convert to array
     fun splitRanges() {
         try {
-            val range = ranges
+            var range = ranges
+            if (getCalibrationType() == 0) {
+                range = rangeMin
+            }
             if (range != null) {
                 if (range.isNotEmpty()) {
                     val points = range.split(",").toTypedArray()

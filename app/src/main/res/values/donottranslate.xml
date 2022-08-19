@@ -59,6 +59,7 @@
     <string name="dummyResultKey">dummyResults</string>
     <string name="showDebugMessagesKey">showDebugMessages</string>
     <string name="useCamera2ApiKey">useCamera2Api</string>
+    <string name="calibrationTypePrefKey">calibrationTypePref</string>
 
     <string name="_1">1.</string>
     <string name="_2">2.</string>
@@ -121,6 +122,16 @@
         <item>0</item>
         <item>1</item>
         <item>2</item>
+    </string-array>
+
+    <string-array name="pref_calibration_options">
+        <item>"Minimal Calibration"</item>
+        <item>"Full Calibration"</item>
+    </string-array>
+
+    <string-array name="pref_calibration_option_values">
+        <item>0</item>
+        <item>1</item>
     </string-array>
 
 </resources>

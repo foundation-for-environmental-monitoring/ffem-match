@@ -138,6 +138,13 @@ fun getShadowTolerance(): Int {
     }
 }
 
+fun getCalibrationType(): Int {
+    return PreferencesUtil.getString(
+        App.app,
+        R.string.calibrationTypePrefKey, "0"
+    ).toInt()
+}
+
 object AppPreferences {
 
     fun enableDiagnosticMode() {
