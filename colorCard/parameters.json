@@ -14,7 +14,8 @@
               "id": 1,
               "name": "Ammonia",
               "unit": "mg/l",
-              "ranges": "0, 0.1, 0.25, 0.5, 0.75, 1, 2",
+              "ranges": "0, 1, 2, 3, 4",
+              "rangeMin": "0, 0.5, 2",
               "timeDelay": 300
             }
           ]
@@ -85,6 +86,7 @@
               "name": "Arsenic",
               "unit": "mg/l",
               "ranges": "0, 0.05, 0.1, 0.2, 0.5",
+              "rangeMin": "0, 0.05, 0.2",
               "timeDelay": 600
             }
           ]
@@ -105,7 +107,8 @@
               "id": 1,
               "name": "Hazen Units",
               "unit": "HU",
-              "ranges": "0, 25, 50, 100"
+              "ranges": "0, 25, 50, 100",
+              "rangeMin": "0, 5, 15"
             }
           ]
         },
@@ -127,6 +130,7 @@
               "name": "Chromium",
               "unit": "mg/l",
               "ranges": "0, 0.1, 0.5, 1, 2, 3",
+              "rangeMin": "0, 0.1, 1.5",
               "timeDelay": 300
             }
           ]
@@ -148,7 +152,8 @@
               "id": 1,
               "name": "Copper",
               "unit": "mg/l",
-              "ranges": "0, 0.05, 0.1, 0.5, 1, 1.5, 2"
+              "ranges": "0, 0.5, 1, 1.5, 2",
+              "rangeMin": "0, 0.5, 1.5"
             }
           ]
         },
@@ -254,6 +259,7 @@
               "name": "Free Chlorine",
               "unit": "mg/l",
               "ranges": "0, 0.2, 0.5, 1.5, 3",
+              "rangeMin": "0, 0.2, 1.5",
               "risks": [
                 {
                   "value": 0.2,
@@ -308,6 +314,7 @@
               "name": "Nitrate",
               "unit": "mg/l",
               "ranges": "0, 10, 25, 50, 75",
+              "rangeMin": "0, 45, 75",
               "timeDelay": 360,
               "risks": [
                 {
@@ -342,6 +349,7 @@
               "name": "Nitrite",
               "unit": "mg/l",
               "ranges": "0, 0.05, 0.1, 0.2, 0.3, 0.4",
+              "rangeMin": "0, 0.05, 0.3",
               "timeDelay": 600,
               "grayScale": false
             }
@@ -359,6 +367,7 @@
               "id": 1,
               "name": "pH",
               "ranges": "4, 5, 6, 7, 8, 9, 10",
+              "rangeMin": "6, 7, 8",
               "acceptable": "6.5 - 8.5",
               "permissible": "",
               "timeDelay": 45,
@@ -420,6 +429,7 @@
               "name": "Potassium",
               "unit": "mg/l",
               "ranges": "0, 10, 20, 30",
+              "rangeMin": "0, 10, 30",
               "timeDelay": 300,
               "grayScale": false
             }
@@ -442,7 +452,8 @@
               "id": 1,
               "name": "Phosphate",
               "unit": "mg/l",
-              "ranges": "0, 0.3, 0.6, 0.9, 1.2, 1.5, 2",
+              "ranges": "0, 0.3, 0.6, 0.9, 1.2, 2",
+              "rangeMin": "0, 0.3, 1.2",
               "timeDelay": 600
             }
           ]
@@ -459,7 +470,8 @@
               "id": 1,
               "name": "Silica",
               "unit": "mg/l",
-              "ranges": "0, 0.5, 1, 1.5, 2",
+              "ranges": "0, 0.5, 1.0, 1.5, 2",
+              "rangeMin": "0, 0.5, 1.5",
               "timeDelay": 480
             }
           ]
@@ -501,7 +513,8 @@
               "id": 1,
               "name": "Total Iron",
               "unit": "mg/l",
-              "ranges": "0, 0.5, 1, 1.5, 2",
+              "ranges": "0, 0.5, 1.0, 1.5, 2",
+              "rangeMin": "0, 0.5, 1.5",
               "timeDelay": 300,
               "risks": [
                 {
@@ -546,6 +559,7 @@
               "name": "Turbidity",
               "unit": "NTU",
               "ranges": "0, 10, 20, 40",
+              "rangeMin": "0, 1, 5",
               "risks": [
                 {
                   "value": 1,
@@ -580,7 +594,8 @@
               "id": 1,
               "name": "Zinc",
               "unit": "mg/l",
-              "ranges": "0.1, 0.25, 0.5, 1, 2.5, 5",
+              "ranges": "0.10, 0.25, 0.5, 1.0, 2.5, 5",
+              "rangeMin": "0.10, 0.5, 2.5",
               "timeDelay": 600
             }
           ]
