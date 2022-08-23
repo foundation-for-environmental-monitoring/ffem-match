@@ -3,24 +3,6 @@
     "water_cuvette": {
       "tests": [
         {
-          "name": "Ammonia",
-          "sampleType": "water",
-          "subtype": "cuvette",
-          "uuid": "WB-FM-NH3",
-          "calibrate": true,
-          "monthsValid": 6,
-          "results": [
-            {
-              "id": 1,
-              "name": "Ammonia",
-              "unit": "mg/l",
-              "ranges": "0, 1, 2, 3, 4",
-              "rangeMin": "0, 0.5, 2",
-              "timeDelay": 300
-            }
-          ]
-        },
-        {
           "name": "Aluminum",
           "sampleType": "water",
           "subtype": "cuvette",
@@ -37,34 +19,20 @@
           ]
         },
         {
-          "name": "Manganese",
+          "name": "Ammonia",
           "sampleType": "water",
-          "subtype": "card",
-          "uuid": "WB-FM-Mn",
+          "subtype": "cuvette",
+          "uuid": "WB-FM-NH3",
           "calibrate": true,
-          "monthsValid": 12,
+          "monthsValid": 6,
           "results": [
             {
               "id": 1,
-              "name": "Manganese",
+              "name": "Ammonia",
               "unit": "mg/l",
-              "ranges": "0, 0.25, 0.5, 1.0, 1.5, 2.0"
-            }
-          ]
-        },
-        {
-          "name": "Zinc",
-          "sampleType": "water",
-          "subtype": "card",
-          "uuid": "WB-FM-Zn",
-          "calibrate": true,
-          "monthsValid": 12,
-          "results": [
-            {
-              "id": 1,
-              "name": "Zinc",
-              "unit": "mg/l",
-              "ranges": "0, 2, 4, 6, 8"
+              "ranges": "0, 1, 2, 3, 4",
+              "rangeMin": "0, 0.5, 2",
+              "timeDelay": 300
             }
           ]
         },
@@ -92,23 +60,19 @@
           ]
         },
         {
-          "name": "Hazen Units",
+          "name": "Chlorophyll A",
           "sampleType": "water",
           "subtype": "cuvette",
-          "uuid": "WB-FM-HU",
+          "uuid": "WB-FM-ChlA",
           "calibrate": true,
-          "dilutions": [
-            1,
-            2,
-            5
-          ],
+          "monthsValid": 6,
           "results": [
             {
               "id": 1,
-              "name": "Hazen Units",
-              "unit": "HU",
-              "ranges": "0, 25, 50, 100",
-              "rangeMin": "0, 5, 15"
+              "name": "Chlorophyll A",
+              "unit": "mg/l",
+              "ranges": "0, 0.20, 0.50, 1, 5, 10, 25",
+              "timeDelay": 30
             }
           ]
         },
@@ -243,41 +207,23 @@
           ]
         },
         {
-          "name": "Free Chlorine",
+          "name": "Hazen Units",
           "sampleType": "water",
           "subtype": "cuvette",
-          "uuid": "WB-FM-Cl",
+          "uuid": "WB-FM-HU",
           "calibrate": true,
-          "monthsValid": 24,
           "dilutions": [
             1,
+            2,
             5
           ],
           "results": [
             {
               "id": 1,
-              "name": "Free Chlorine",
-              "unit": "mg/l",
-              "ranges": "0, 0.2, 0.5, 1.5, 3",
-              "rangeMin": "0, 0.2, 1.5",
-              "risks": [
-                {
-                  "value": 0.2,
-                  "risk": 1,
-                  "safety": 0
-                },
-                {
-                  "value": 1,
-                  "risk": 2,
-                  "safety": 1
-                },
-                {
-                  "value": 1,
-                  "sign": ">",
-                  "risk": 3,
-                  "safety": 2
-                }
-              ]
+              "name": "Hazen Units",
+              "unit": "HU",
+              "ranges": "0, 25, 50, 100",
+              "rangeMin": "0, 5, 15"
             }
           ]
         },
@@ -294,6 +240,22 @@
               "name": "Hydrogen Peroxide",
               "unit": "M",
               "ranges": "0, 0.05, 0.1, 0.5, 1"
+            }
+          ]
+        },
+        {
+          "name": "Manganese",
+          "sampleType": "water",
+          "subtype": "card",
+          "uuid": "WB-FM-Mn",
+          "calibrate": true,
+          "monthsValid": 12,
+          "results": [
+            {
+              "id": 1,
+              "name": "Manganese",
+              "unit": "mg/l",
+              "ranges": "0, 0.25, 0.5, 1.0, 1.5, 2.0"
             }
           ]
         },
@@ -412,6 +374,29 @@
           ]
         },
         {
+          "name": "Phosphate",
+          "sampleType": "water",
+          "subtype": "cuvette",
+          "uuid": "WB-FM-PO4",
+          "calibrate": true,
+          "monthsValid": 24,
+          "dilutions": [
+            1,
+            2,
+            5
+          ],
+          "results": [
+            {
+              "id": 1,
+              "name": "Phosphate",
+              "unit": "mg/l",
+              "ranges": "0, 0.3, 0.6, 0.9, 1.2, 2",
+              "rangeMin": "0, 0.3, 1.2",
+              "timeDelay": 600
+            }
+          ]
+        },
+        {
           "name": "Potassium",
           "sampleType": "water",
           "subtype": "cuvette",
@@ -436,25 +421,41 @@
           ]
         },
         {
-          "name": "Phosphate",
+          "name": "Residual Chlorine",
           "sampleType": "water",
           "subtype": "cuvette",
-          "uuid": "WB-FM-PO4",
+          "uuid": "WB-FM-Cl",
           "calibrate": true,
           "monthsValid": 24,
           "dilutions": [
             1,
-            2,
             5
           ],
           "results": [
             {
               "id": 1,
-              "name": "Phosphate",
+              "name": "Residual Chlorine",
               "unit": "mg/l",
-              "ranges": "0, 0.3, 0.6, 0.9, 1.2, 2",
-              "rangeMin": "0, 0.3, 1.2",
-              "timeDelay": 600
+              "ranges": "0, 0.2, 0.5, 1.5, 3",
+              "rangeMin": "0, 0.2, 1.5",
+              "risks": [
+                {
+                  "value": 0.2,
+                  "risk": 1,
+                  "safety": 0
+                },
+                {
+                  "value": 1,
+                  "risk": 2,
+                  "safety": 1
+                },
+                {
+                  "value": 1,
+                  "sign": ">",
+                  "risk": 3,
+                  "safety": 2
+                }
+              ]
             }
           ]
         },
@@ -527,23 +528,6 @@
                   "safety": 2
                 }
               ]
-            }
-          ]
-        },
-        {
-          "name": "Chlorophyll A",
-          "sampleType": "water",
-          "subtype": "cuvette",
-          "uuid": "WB-FM-ChlA",
-          "calibrate": true,
-          "monthsValid": 6,
-          "results": [
-            {
-              "id": 1,
-              "name": "Chlorophyll A",
-              "unit": "mg/l",
-              "ranges": "0, 0.20, 0.50, 1, 5, 10, 25",
-              "timeDelay": 30
             }
           ]
         },
@@ -1582,7 +1566,7 @@
           ]
         },
         {
-          "name": "Free Chlorine",
+          "name": "Residual Chlorine",
           "sampleType": "water",
           "subtype": "card",
           "uuid": "WC-FM-Cl",
