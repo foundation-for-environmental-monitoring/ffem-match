@@ -145,12 +145,12 @@ object PreferencesUtil {
 //        setInt(context, getKey(context, keyId), value)
 //    }
 
-//    private fun setInt(context: Context, key: String, value: Int) {
-//        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-//        val editor = sharedPreferences.edit()
-//        editor.putInt(key, value)
-//        editor.apply()
-//    }
+    fun setInt(context: Context, key: String, value: Int) {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val editor = sharedPreferences.edit()
+        editor.putInt(key, value)
+        editor.apply()
+    }
 
     fun removeKey(context: Context, @StringRes keyId: Int) {
         removeKey(context, context.getString(keyId))

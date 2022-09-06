@@ -16,7 +16,6 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.ArrayAdapter
 import android.widget.Chronometer
 import android.widget.TextView
 import android.widget.Toast
@@ -29,7 +28,6 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.core.widget.doOnTextChanged
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.common.api.ApiException
@@ -49,7 +47,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
-class FormSubmitFragment : Fragment() {
+class FormSubmitFragment : BaseFragment() {
     private var _binding: FragmentFormSubmitBinding? = null
     private val b get() = _binding!!
     private val model: TestInfoViewModel by activityViewModels()
@@ -117,10 +115,10 @@ class FormSubmitFragment : Fragment() {
                     b.sourceDescEdit.error = requireContext().getString(R.string.required_error)
                     b.sourceDescEdit.requestFocus()
                 }
-                b.sourceSelect.text.toString().isEmpty() -> {
-                    b.sourceSelect.error = requireContext().getString(R.string.required_error)
-                    b.sourceSelect.requestFocus()
-                }
+//                b.sourceSelect.text.toString().isEmpty() -> {
+//                    b.sourceSelect.error = requireContext().getString(R.string.required_error)
+//                    b.sourceSelect.requestFocus()
+//                }
                 else -> {
                     submitForm()
                 }
@@ -161,16 +159,16 @@ class FormSubmitFragment : Fragment() {
 
         validateDescription()
 
-        b.sourceSelect.doAfterTextChanged {
-            validateDescription()
-        }
+//        b.sourceSelect.doAfterTextChanged {
+//            validateDescription()
+//        }
 
-        val waterSource = resources.getStringArray(R.array.WaterSource)
+//        val waterSource = resources.getStringArray(R.array.WaterSource)
 
-        val adapter = ArrayAdapter(
-            requireContext(), android.R.layout.simple_list_item_1, waterSource
-        )
-        b.sourceSelect.setAdapter(adapter)
+//        val adapter = ArrayAdapter(
+//            requireContext(), android.R.layout.simple_list_item_1, waterSource
+//        )
+//        b.sourceSelect.setAdapter(adapter)
 
         createLocationCallback()
     }
@@ -187,8 +185,8 @@ class FormSubmitFragment : Fragment() {
 
     private fun validateDescription() {
         b.descLayout.setStatusColor(
-            !b.sourceDescEdit.text.isNullOrEmpty()
-                    && !b.sourceSelect.text.isNullOrEmpty(),
+            !b.sourceDescEdit.text.isNullOrEmpty(),
+//                    && !b.sourceSelect.text.isNullOrEmpty(),
             true
         )
     }
@@ -201,7 +199,7 @@ class FormSubmitFragment : Fragment() {
         saveData()
         submitted = true
         // todo: fix submit result
-//        (requireActivity() as TestActivity).submitResult()
+        (requireActivity() as TestActivity).submitResult()
     }
 
     override fun onResume() {
@@ -221,7 +219,7 @@ class FormSubmitFragment : Fragment() {
             model.form.comment = b.commentEdit.text.toString().trim()
         }
         model.form.source = b.sourceDescEdit.text.toString().trim()
-        model.form.sourceType = b.sourceSelect.text.toString().trim()
+//        model.form.sourceType = b.sourceSelect.text.toString().trim()
         val dao = model.db.resultDao()
         dao.update(model.form)
     }
@@ -427,5 +425,9 @@ class FormSubmitFragment : Fragment() {
         mainScope.cancel()
         cancelLocation()
         super.onDestroy()
+    }
+
+    companion object {
+        fun newInstance() = FormSubmitFragment()
     }
 }

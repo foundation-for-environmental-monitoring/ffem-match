@@ -1,16 +1,16 @@
 package io.ffem.lite.ui
 
 import android.app.AlertDialog
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Environment.DIRECTORY_PICTURES
-import android.os.Handler
-import android.os.Process
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -25,7 +25,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
-import io.ffem.lite.common.Constants.SURVEY_APP
 import io.ffem.lite.common.IS_CALIBRATION
 import io.ffem.lite.common.RESULT_EVENT_BROADCAST
 import io.ffem.lite.common.RESULT_ID
@@ -39,7 +38,6 @@ import io.ffem.lite.model.toLocalString
 import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.preference.SettingsActivity
 import io.ffem.lite.preference.useDummyImage
-import io.ffem.lite.util.AlertUtil
 import io.ffem.lite.util.FileUtil.getPathFromURI
 import io.ffem.lite.util.PreferencesUtil
 import io.ffem.lite.util.snackBar
@@ -167,7 +165,7 @@ class ResultListActivity : BaseActivity() {
         val view = binding.root
         setContentView(view)
 
-        title = getString(R.string.app_name)
+        title = getString(R.string.results)
 
         broadcastManager = LocalBroadcastManager.getInstance(this)
 
@@ -225,18 +223,11 @@ class ResultListActivity : BaseActivity() {
     private fun showHideList() {
         if (adapter.itemCount > 0) {
             binding.testResultsLst.visibility = VISIBLE
-            binding.launchInfoTxt.visibility = GONE
             binding.noResultTxt.visibility = GONE
         } else {
             binding.testResultsLst.visibility = GONE
-            binding.launchInfoTxt.visibility = VISIBLE
             binding.noResultTxt.visibility = VISIBLE
         }
-    }
-
-    override fun onPostCreate(savedInstanceState: Bundle?) {
-        super.onPostCreate(savedInstanceState)
-        supportActionBar?.setDisplayHomeAsUpEnabled(false)
     }
 
     override fun onResume() {
@@ -271,42 +262,6 @@ class ResultListActivity : BaseActivity() {
         db.close()
     }
 
-    fun onStartClick(@Suppress("UNUSED_PARAMETER") view: View) {
-        val externalIntent: Intent? = packageManager
-            .getLaunchIntentForPackage(SURVEY_APP)
-        if (externalIntent != null) {
-            externalIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            startActivity(externalIntent)
-            closeApp(1000)
-        } else {
-            alertExternalAppNotFound()
-        }
-    }
-
-    private fun closeApp(delay: Int) {
-        Handler().postDelayed({
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                finishAndRemoveTask()
-            } else {
-                val pid = Process.myPid()
-                Process.killProcess(pid)
-            }
-        }, delay.toLong())
-    }
-
-    private fun alertExternalAppNotFound() {
-        val message = String.format(
-            "%s\r\n\r\n%s",
-            getString(R.string.external_app_not_installed),
-            getString(R.string.install_external_app)
-        )
-        AlertUtil.showAlert(
-            this, R.string.notFound, message, R.string.close,
-            { _: DialogInterface?, _: Int -> closeApp(0) },
-            null, null
-        )
-    }
-
     private fun refreshList() {
         adapter.setTestList(db.resultDao().getResults())
         binding.testResultsLst.adapter = adapter
@@ -330,11 +285,6 @@ class ResultListActivity : BaseActivity() {
         intent.type = "image/*"
         startFileExplorer.launch(intent)
     }
-
-    private val startTest =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            reset()
-        }
 
     private val startSettings =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -399,5 +349,13 @@ class ResultListActivity : BaseActivity() {
 
     fun onLoadFileClick(@Suppress("UNUSED_PARAMETER") view: View) {
         performFileSearch()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            onBackPressed()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

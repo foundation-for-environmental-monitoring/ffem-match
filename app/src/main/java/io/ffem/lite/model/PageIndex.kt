@@ -10,7 +10,7 @@ class PageIndex {
     var testPage = -1
     var confirmationPage = -1
     var resultPage = -1
-    var donePage = -1
+    var submitPage = -1
     var totalPageCount = -1
     var instructionFirstIndex = -1
 
@@ -19,7 +19,7 @@ class PageIndex {
         listPage = 0
         calibrateOptionPage = -1
         resultPage = -1
-        donePage = -1
+        submitPage = -1
         startTimerPage = -1
         dilutionPage = -1
         testPage = -1

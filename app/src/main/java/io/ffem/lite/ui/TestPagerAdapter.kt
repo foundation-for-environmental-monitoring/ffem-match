@@ -88,11 +88,8 @@ class TestPagerAdapter(
                     ResultFragment(true)
                 }
             }
-            pageIndex.donePage -> {
-                InstructionFragment.newInstance(
-                    instructions!![position],
-                    ButtonType.ACCEPT
-                )
+            pageIndex.submitPage -> {
+                FormSubmitFragment.newInstance()
             }
             pageIndex.listPage -> {
                 TestListFragment()

@@ -6,6 +6,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.gson.JsonSyntaxException
 import io.ffem.lite.common.ConstantJsonKey
 import io.ffem.lite.common.Constants
+import io.ffem.lite.common.Constants.CUSTOMER_ID
 import io.ffem.lite.model.*
 import io.ffem.lite.remote.dto.ParameterInfoDto
 import kotlinx.coroutines.launch
@@ -34,8 +35,9 @@ object DataHelper {
     suspend fun getParametersFromTheCloud(
         deviceId: String,
         type: String
-    ): ArrayList<TestInfo>? {
+    ): ArrayList<TestInfo> {
         val ref = FirebaseDatabase.getInstance().getReference("$deviceId/$type/tests")
+        ref.keepSynced(true)
         return try {
             val testInfoList: ArrayList<TestInfo> = ArrayList()
             val testConfig = ref.get().await().children.map { snapShot ->
@@ -48,7 +50,7 @@ object DataHelper {
             return testInfoList
         } catch (exception: Exception) {
             print(exception.message)
-            null
+            ArrayList()
         }
     }
 
@@ -104,7 +106,7 @@ object DataHelper {
             var info: TestInfo? = null
             runBlocking {
                 launch {
-                    info = getParameterDataFromTheCloud("customer1", id)
+                    info = getParameterDataFromTheCloud(CUSTOMER_ID, id)
                 }
             }
             val db: CalibrationDatabase = CalibrationDatabase.getDatabase(context)

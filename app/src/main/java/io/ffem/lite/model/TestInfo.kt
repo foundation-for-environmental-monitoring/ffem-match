@@ -30,17 +30,17 @@ data class TestInfo(
             if (results.isNotEmpty()) {
                 val minMaxRange = StringBuilder()
                 for (result in results) {
-                    if (result.colors.size > 0) {
-                        val valueCount = result.colors.size
+                    if (result.values.size > 0) {
+                        val valueCount = result.values.size
                         if (minMaxRange.isNotEmpty()) {
                             minMaxRange.append(", ")
                         }
-                        if (result.colors.size > 0) {
+                        if (result.values.size > 0) {
                             minMaxRange.append(
                                 String.format(
                                     Locale.US, "%s - %s",
-                                    DECIMAL_FORMAT.format(result.colors[0].value),
-                                    DECIMAL_FORMAT.format(result.colors[valueCount - 1].value)
+                                    DECIMAL_FORMAT.format(result.values[0].value),
+                                    DECIMAL_FORMAT.format(result.values[valueCount - 1].value)
                                 )
                             )
                         }
@@ -62,7 +62,7 @@ data class TestInfo(
                     val maxDilution = getMaxDilution()
                     val result = subTest()
                     val maxRangeValue = result.calculateResult(getMaxRangeValue())
-                    val text: String = if (dilutions.size > 2) {
+                    val text: String = if (dilutions.contains(-1)) {
                         String.format(
                             Locale.US, " (<dilutionRange>%s+</dilutionRange>)",
                             DECIMAL_FORMAT.format(maxDilution * maxRangeValue)
@@ -82,8 +82,12 @@ data class TestInfo(
 
     private fun getMaxRangeValue(): Double {
         return try {
-            val array = subTest().ranges!!.split(",").toTypedArray()
-            array[array.size - 1].toDouble()
+            if (subTest().values.size > 0) {
+                subTest().values[subTest().values.size - 1].value
+            } else {
+                val array = subTest().ranges!!.split(",").toTypedArray()
+                array[array.size - 1].toDouble()
+            }
         } catch (e: NumberFormatException) {
             (-1).toDouble()
         }

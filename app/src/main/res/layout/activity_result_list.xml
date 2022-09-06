@@ -13,6 +13,8 @@
         android:layout_height="match_parent"
         tools:context=".ui.ResultListActivity">
 
+        <include layout="@layout/app_bar_layout" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/test_results_lst"
             android:layout_width="match_parent"
@@ -26,7 +28,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+            app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
 
         <TextView
             android:id="@+id/no_result_txt"
@@ -35,24 +37,11 @@
             android:text="@string/no_data"
             android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/button_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/launch_info_txt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:lineSpacingExtra="5dp"
-            android:maxWidth="200dp"
-            android:text="@string/tap_to_start"
-            android:textAlignment="center"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/no_result_txt" />
 
         <LinearLayout
             android:id="@+id/progress_lyt"
@@ -89,31 +78,16 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/activity_horizontal_margin"
             android:layout_marginBottom="@dimen/activity_horizontal_margin"
-            android:backgroundTint="@color/colorPrimary"
-            android:contentDescription="@string/start_test"
+            android:contentDescription="@string/result_image"
             android:onClick="onLoadFileClick"
             android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/start_test_fab"
+            app:backgroundTint="@color/colorPrimary"
+            app:layout_constraintBottom_toTopOf="@+id/button_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/ic_baseline_photo_library_24"
             app:tint="@android:color/white"
             tools:visibility="visible" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/start_test_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/activity_horizontal_margin"
-            android:layout_marginBottom="@dimen/activity_horizontal_margin"
-            android:backgroundTint="@color/colorPrimary"
-            android:contentDescription="@string/start_test"
-            android:onClick="onStartClick"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:srcCompat="@drawable/ic_add_black_24dp"
-            app:tint="@android:color/white" />
-
-        <include layout="@layout/app_bar_layout" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

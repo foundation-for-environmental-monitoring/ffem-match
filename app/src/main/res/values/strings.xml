@@ -29,6 +29,12 @@
     <string name="no_data">No test results yet</string>
     <string name="tap_to_start">Tap the <b>+</b> button below to\nlaunch a new test.</string>
     <string name="start_test">Start test</string>
+    <string name="card_test">Card Test</string>
+    <string name="colorimetric_test">Colorimetric Test</string>
+    <string name="titration_test">Titration Test</string>
+    <string name="external_meter">External Meter</string>
+    <string name="view_results">View Results</string>
+    <string name="results">Results</string>
     <string name="analyzed_image">Analyzed image</string>
     <string name="disable_diagnostics">Disable diagnostics</string>
     <string name="settings_not_clickable">Settings not clickable</string>
@@ -117,6 +123,7 @@
     <string name="back">Back</string>
     <string name="next">Next</string>
     <string name="calibrate">Calibrate</string>
+    <string name="select_test">Select Test</string>
     <string name="calibrate_summary">Calibrate using a standard</string>
     <string name="calibrated_successfully">%s calibrated successfully</string>
     <string name="tilt_backwards">Tilt phone backwards</string>
@@ -269,6 +276,7 @@
     <string name="no_result">No result</string>
     <string name="print">Print</string>
     <string name="name">Name</string>
+    <string name="your_name">Your Name</string>
     <string name="could_not_calibrate">Could not calibrate</string>
     <string name="error_test_failed">Colour does not match any calibrated colours.</string>
     <string name="check_chamber_placement">Check that the chamber has been placed correctly.</string>

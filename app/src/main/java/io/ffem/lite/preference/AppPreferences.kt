@@ -7,6 +7,7 @@ import androidx.preference.PreferenceManager
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.app.App
+import io.ffem.lite.common.*
 import io.ffem.lite.common.Constants.DEFAULT_MAXIMUM_BRIGHTNESS
 import io.ffem.lite.common.Constants.DEFAULT_MINIMUM_BRIGHTNESS
 import io.ffem.lite.common.Constants.DEFAULT_SHADOW_TOLERANCE
@@ -15,10 +16,6 @@ import io.ffem.lite.common.Constants.MAX_COLOR_DISTANCE_CALIBRATION
 import io.ffem.lite.common.Constants.MAX_COLOR_DISTANCE_RGB
 import io.ffem.lite.common.Constants.SAMPLING_COUNT_DEFAULT
 import io.ffem.lite.common.Constants.SKIP_SAMPLING_COUNT
-import io.ffem.lite.common.IMAGE_FILE_NAME
-import io.ffem.lite.common.IS_CALIBRATION
-import io.ffem.lite.common.IS_FLIP_PROJECT
-import io.ffem.lite.common.WATER_SELECTED
 import io.ffem.lite.model.TestType
 import io.ffem.lite.util.PreferencesUtil
 import java.util.*
@@ -265,14 +262,6 @@ object AppPreferences {
         }
     }
 
-    fun setIsFlipProject(context: Context, value: Boolean?) {
-        if (null == value) {
-            PreferencesUtil.removeKey(context, IS_FLIP_PROJECT)
-        } else {
-            PreferencesUtil.setBoolean(context, IS_FLIP_PROJECT, value)
-        }
-    }
-
     fun isSoundOn(context: Context): Boolean {
         return !isDiagnosticMode() ||
                 PreferencesUtil.getBoolean(context, R.string.soundOnKey, true)
@@ -396,6 +385,19 @@ object AppPreferences {
 
     fun setCalibration(context: Context, isCalibration: Boolean) {
         PreferencesUtil.setBoolean(context, IS_CALIBRATION, isCalibration)
+    }
+
+    fun setTestType(context: Context, testType: TestType) {
+        PreferencesUtil.setString(context, START_TEST_TYPE, testType.toString())
+    }
+
+    fun getTestType(): TestType {
+        val value = PreferencesUtil.getString(App.app, START_TEST_TYPE, TestType.CARD.toString())
+        return if (value.isNullOrEmpty()) {
+            TestType.CARD
+        } else {
+            TestType.valueOf(value)
+        }
     }
 
     fun returnDummyResults(context: Context): Boolean {

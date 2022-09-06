@@ -9,7 +9,9 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.media.MediaPlayer
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment.DIRECTORY_PICTURES
 import android.provider.Settings
 import android.util.SparseArray
 import android.view.Menu
@@ -26,12 +28,14 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceFragmentCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
+import io.ffem.lite.app.App
 import io.ffem.lite.common.*
 import io.ffem.lite.common.Constants.MESSAGE_TWO_LINE_FORMAT
-import io.ffem.lite.data.CalibrationDatabase
-import io.ffem.lite.data.DataHelper
+import io.ffem.lite.data.*
 import io.ffem.lite.data.DataHelper.getJsonResult
 import io.ffem.lite.data.DataHelper.getTestInfo
 import io.ffem.lite.databinding.ActivityTestBinding
@@ -44,6 +48,9 @@ import io.ffem.lite.preference.AppPreferences.setCalibration
 import io.ffem.lite.preference.isDiagnosticMode
 import io.ffem.lite.util.*
 import kotlinx.coroutines.*
+import timber.log.Timber
+import java.io.File
+import java.io.File.separator
 import java.util.*
 import kotlin.math.max
 
@@ -126,14 +133,14 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
 
             if (testInfo != null) {
                 testViewModel.setTest(testInfo)
-//                val db = AppDatabase.getDatabase(context)
-//                if (!isCalibration()) {
-//                    val testResult = db.resultDao().getResult(testInfo!!.fileName)
-//                    if (testResult != null) {
-//                        testViewModel.form = testResult
-//                    }
-//                }
-//                testViewModel.db = db
+                val db = AppDatabase.getDatabase(context)
+                if (!isCalibration) {
+                    val testResult = db.resultDao().getResult(testInfo.fileName)
+                    if (testResult != null) {
+                        testViewModel.form = testResult
+                    }
+                }
+                testViewModel.db = db
                 val subTest = testInfo.subTest()
                 if (subTest.error == ErrorType.BAD_LIGHTING ||
                     subTest.error == ErrorType.IMAGE_TILTED
@@ -229,8 +236,12 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
 
                 lifecycleScope.launch {
                     delay(100)
-                    if (isCalibration && b.viewPager.currentItem == 0) {
-                        title = getString(R.string.calibrate)
+                    if (b.viewPager.currentItem == 0) {
+                        title = if (isCalibration) {
+                            getString(R.string.calibrate)
+                        } else {
+                            getString(R.string.select_test)
+                        }
                     } else if (::testInfo.isInitialized) {
                         title = testInfo.name?.toLocalString()
                     } else if (b.viewPager.currentItem == pageIndex.confirmationPage) {
@@ -279,7 +290,7 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
             }
 
             startTest()
-        } else if (isCalibration) {
+        } else {
             val testPagerAdapter = TestPagerAdapter(this, testInfo)
             testPagerAdapter.pageIndex = pageIndex
             b.viewPager.adapter = testPagerAdapter
@@ -407,7 +418,7 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
         b.indicatorPgr.showDots = true
     }
 
-    private suspend fun getTestSelectedByExternalApp(intent: Intent) {
+    private fun getTestSelectedByExternalApp(intent: Intent) {
         var uuid = intent.getStringExtra(TEST_ID_KEY)
         if (uuid.isNullOrEmpty()) {
             uuid = intent.getStringExtra(EXT_TEST_ID_KEY)
@@ -480,7 +491,7 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
             isCalibration && position == 0 -> {
                 b.nextTxt.visibility = View.INVISIBLE
             }
-            position == pageIndex.donePage || position == pageIndex.startTimerPage
+            position == pageIndex.submitPage || position == pageIndex.startTimerPage
                     || position == pageIndex.testPage -> {
                 b.viewPager.isUserInputEnabled = false
                 b.nextTxt.visibility = View.INVISIBLE
@@ -840,7 +851,8 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
         ) {
             menuInflater.inflate(R.menu.menu_calibrate_dev, menu)
         }
-        if (instructionList.size > 0 && b.viewPager.currentItem > 0 &&
+        if ((::testInfo.isInitialized && testInfo.subtype != TestType.CARD) &&
+            instructionList.size > 0 && b.viewPager.currentItem > 0 &&
             instructionList[b.viewPager.currentItem].section.size > 0
         ) {
             if (b.viewPager.currentItem != pageIndex.dilutionPage &&
@@ -1040,8 +1052,6 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
 
         b.indicatorPgr.pageCount = pageIndex.totalPageCount
 
-        b.viewPager.currentItem = 0
-
         testViewModel.loadCalibrations()
         testViewModel.isCalibration = isCalibration
 
@@ -1050,6 +1060,93 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
         testPagerAdapter.pageIndex = pageIndex
         b.viewPager.adapter = testPagerAdapter
         b.indicatorPgr.showDots = true
+        b.viewPager.currentItem = 1
         pageNext()
+    }
+
+    fun submitResult() {
+        val resultIntent = Intent()
+        val subTest = testInfo.subTest()
+        if (subTest.getResult() >= 0) {
+            val db = AppDatabase.getDatabase(baseContext)
+            val form = db.resultDao().getResult(testInfo.fileName)
+            if (form != null) {
+                sendResultToCloudDatabase(testInfo, form)
+                resultIntent.putExtra(TEST_VALUE_KEY, subTest.getResultString())
+                resultIntent.putExtra(
+                    testInfo.name + "_Result",
+                    subTest.getResultString()
+                )
+                resultIntent.putExtra(testInfo.name + "_Risk", subTest.getRiskEnglish(this))
+                resultIntent.putExtra("meta_device", Build.BRAND + ", " + Build.MODEL)
+            }
+        } else {
+            resultIntent.putExtra(TEST_VALUE_KEY, "")
+        }
+        setResult(Activity.RESULT_OK, resultIntent)
+        finish()
+    }
+
+    private fun sendResultToCloudDatabase(testInfo: TestInfo, form: TestResult) {
+        if (!BuildConfig.INSTRUMENTED_TEST_RUNNING.get()) {
+            val path = if (BuildConfig.DEBUG) {
+                "result-debug"
+            } else {
+                "result"
+            }
+            val ref = FirebaseDatabase.getInstance().getReference(path).push()
+            val subTest = testInfo.subTest()
+            ref.setValue(
+                RemoteResult(
+                    testInfo.uuid,
+                    testInfo.name,
+                    testInfo.sampleType.toString(),
+                    subTest.getRiskEnglish(this),
+                    subTest.getResultString(),
+                    subTest.unit,
+                    System.currentTimeMillis(),
+                    form.source,
+                    form.sourceType,
+                    form.latitude,
+                    form.longitude,
+                    form.geoAccuracy,
+                    form.comment,
+                    App.getAppVersion(true),
+                    Build.MODEL
+                )
+            )
+
+            val filePath = getExternalFilesDir(DIRECTORY_PICTURES).toString() +
+                    separator + "captures" + separator
+            val fileName = testInfo.name!!.replace(" ", "")
+
+            val storageRef = FirebaseStorage.getInstance().reference
+            storageRef.child(path + "/${testInfo.fileName}/swatch.jpg")
+                .putFile(Uri.fromFile(File(filePath + testInfo.fileName + separator + fileName + "_swatch.jpg")))
+                .addOnFailureListener {
+                    Timber.e(it)
+                }.addOnSuccessListener {
+                }
+
+            storageRef.child(path + "/${testInfo.fileName}/image.jpg")
+                .putFile(Uri.fromFile(File(filePath + testInfo.fileName + separator + fileName + ".jpg")))
+                .addOnFailureListener {
+                    Timber.e(it)
+                }.addOnSuccessListener {
+                }
+
+            storageRef.child(path + "/${testInfo.fileName}/result.png")
+                .putFile(Uri.fromFile(File(filePath + testInfo.fileName + separator + fileName + "_result.png")))
+                .addOnFailureListener {
+                    Timber.e(it)
+                }.addOnSuccessListener {
+                }
+        }
+    }
+
+    companion object {
+        init {
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true)
+        }
     }
 }

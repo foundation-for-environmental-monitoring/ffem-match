@@ -85,7 +85,7 @@ object InstructionHelper {
                     pageIndex.testPage = instructionIndex
                 } else if (text.contains("<result>")) {
                     pageIndex.resultPage = instructionIndex
-                    pageIndex.donePage = instructionIndex + 1
+                    pageIndex.submitPage = instructionIndex + 1
                 } else if (text.contains("<dilution>")) {
                     if (isCalibration) {
                         continue

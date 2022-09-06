@@ -44,6 +44,7 @@ internal class TestInfoSection(
 
         if (testInfo.subtype == TestType.TITRATION || testInfo.subtype == TestType.API) {
             itemHolder.subtitleView.setText(R.string.titration)
+            itemHolder.subtitle2View.visibility = GONE
         } else {
             var subTitle = testInfo.minMaxRange
             if (testInfo.minMaxRange.isNotEmpty()) {
