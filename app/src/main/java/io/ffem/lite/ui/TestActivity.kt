@@ -512,6 +512,9 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
         if (isCalibration && b.viewPager.currentItem == 1) {
             b.footerLyt.visibility = View.GONE
         }
+        if (isCalibration && b.viewPager.currentItem == pageIndex.resultPage) {
+            b.footerLyt.visibility = View.GONE
+        }
         if (this::testInfo.isInitialized && testInfo.subtype == TestType.CARD) {
             if (position == pageIndex.resultPage && !isCalibration) {
                 b.footerLyt.visibility = View.VISIBLE
@@ -673,7 +676,7 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
         if (b.viewPager.currentItem > 0) {
             pageBack()
         } else {
-            super.onBackPressed()
+            finish()
         }
     }
 

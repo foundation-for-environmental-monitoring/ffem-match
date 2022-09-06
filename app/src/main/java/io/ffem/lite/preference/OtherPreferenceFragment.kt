@@ -9,6 +9,7 @@ import androidx.preference.PreferenceFragmentCompat
 import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.common.IS_CALIBRATION
+import io.ffem.lite.model.TestType
 import io.ffem.lite.preference.AppPreferences.runColorCardTest
 import io.ffem.lite.preference.AppPreferences.useExternalSensor
 import io.ffem.lite.ui.AboutActivity
@@ -62,6 +63,7 @@ class OtherPreferenceFragment : PreferenceFragmentCompat() {
     private fun calibrate(): PreferenceFragmentCompat? {
         val intent = Intent(requireActivity(), TestActivity::class.java)
         intent.putExtra(IS_CALIBRATION, true)
+        AppPreferences.setTestType(requireContext(), TestType.CUVETTE)
         AppPreferences.setCalibration(requireContext(), true)
         startCalibrate.launch(intent)
         return null

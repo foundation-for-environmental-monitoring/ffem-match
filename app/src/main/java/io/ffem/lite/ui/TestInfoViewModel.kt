@@ -151,6 +151,10 @@ class TestInfoViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
+    fun formInitialized(): Boolean {
+        return ::form.isInitialized
+    }
+
     companion object {
         private var testInfo: TestInfo = TestInfo()
 

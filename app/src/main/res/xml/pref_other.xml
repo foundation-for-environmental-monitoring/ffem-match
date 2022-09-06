@@ -15,7 +15,7 @@
         android:entryValues="@array/pref_calibration_option_values"
         android:key="@string/calibrationTypePrefKey"
         android:summary="%s"
-        android:title="Calibration Type"
+        android:title="@string/calibration_type"
         app:allowDividerAbove="true"
         app:iconSpaceReserved="false" />
 

@@ -105,7 +105,9 @@ class FormSubmitFragment : BaseFragment() {
         }
         super.onViewCreated(view, savedInstanceState)
 
-        form = model.form
+        if (model.formInitialized()) {
+            form = model.form
+        }
 
         showHideControls()
 
@@ -125,31 +127,33 @@ class FormSubmitFragment : BaseFragment() {
             }
         }
 
-        b.commentEdit.setText(model.form.comment)
-        b.commentEdit.setHorizontallyScrolling(false)
-        b.commentEdit.maxLines = Integer.MAX_VALUE
-        b.commentEdit.setMultiLineCapSentencesAndDoneAction()
-        b.commentEdit.doOnTextChanged { _, _, _, _ ->
+        if (::form.isInitialized) {
+            b.commentEdit.setText(model.form.comment)
+            b.commentEdit.setHorizontallyScrolling(false)
+            b.commentEdit.maxLines = Integer.MAX_VALUE
+            b.commentEdit.setMultiLineCapSentencesAndDoneAction()
+            b.commentEdit.doOnTextChanged { _, _, _, _ ->
+                validateComment()
+            }
             validateComment()
-        }
-        validateComment()
 
-        if (form.longitude != null && !form.longitude!!.isNaN()) {
-            val gpsLocation = form.latitude.toString() + " / " + form.longitude.toString()
-            b.latitudeText.text = gpsLocation
-            val accuracyText = "${form.geoAccuracy} m"
-            b.accuracyText.text = accuracyText
-        }
+            if (form.longitude != null && !form.longitude!!.isNaN()) {
+                val gpsLocation = form.latitude.toString() + " / " + form.longitude.toString()
+                b.latitudeText.text = gpsLocation
+                val accuracyText = "${form.geoAccuracy} m"
+                b.accuracyText.text = accuracyText
+            }
+            b.locationButton.setOnClickListener {
+                startLocation()
+            }
 
-        b.locationButton.setOnClickListener {
-            startLocation()
-        }
+            b.redoButton.setOnClickListener {
+                startLocation()
+            }
 
-        b.redoButton.setOnClickListener {
-            startLocation()
-        }
+            b.sourceDescEdit.setText(model.form.source)
 
-        b.sourceDescEdit.setText(model.form.source)
+        }
 
         b.sourceDescEdit.doAfterTextChanged {
             validateDescription()
@@ -215,13 +219,15 @@ class FormSubmitFragment : BaseFragment() {
     }
 
     private fun saveData() {
-        if (!b.commentEdit.text.isNullOrEmpty()) {
-            model.form.comment = b.commentEdit.text.toString().trim()
-        }
-        model.form.source = b.sourceDescEdit.text.toString().trim()
+        if (::form.isInitialized) {
+            if (!b.commentEdit.text.isNullOrEmpty()) {
+                model.form.comment = b.commentEdit.text.toString().trim()
+            }
+            model.form.source = b.sourceDescEdit.text.toString().trim()
 //        model.form.sourceType = b.sourceSelect.text.toString().trim()
-        val dao = model.db.resultDao()
-        dao.update(model.form)
+            val dao = model.db.resultDao()
+            dao.update(model.form)
+        }
     }
 
     private fun createLocationCallback() {

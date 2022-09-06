@@ -17,7 +17,6 @@ import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
-import io.ffem.lite.common.TEST_SURVEY_NAME
 import io.ffem.lite.common.TestHelper
 import io.ffem.lite.common.TestHelper.clearPreferences
 import io.ffem.lite.common.TestHelper.isDeviceInitialized
@@ -29,7 +28,7 @@ import io.ffem.lite.common.TestUtil.sleep
 import io.ffem.lite.common.TestUtil.withIndex
 import io.ffem.lite.common.getString
 import io.ffem.lite.data.clearData
-import io.ffem.lite.ui.ResultListActivity
+import io.ffem.lite.ui.MainActivity
 import org.hamcrest.Matchers.allOf
 import org.junit.*
 import org.junit.runner.RunWith
@@ -40,7 +39,7 @@ import org.junit.runner.RunWith
 class CalibrateTest {
 
     @get:Rule
-    val mActivityTestRule = activityScenarioRule<ResultListActivity>()
+    val mActivityTestRule = activityScenarioRule<MainActivity>()
 
     @Before
     fun setUp() {
@@ -67,6 +66,9 @@ class CalibrateTest {
         onView(withId(R.id.scrollViewSettings)).perform(swipeDown())
 
         sleep(200)
+
+        onView((withText(R.string.calibration_type))).perform(click())
+        onView((withText("Full Calibration"))).perform(click())
 
         onView((withText(R.string.calibrate))).perform(click())
 
@@ -139,20 +141,7 @@ class CalibrateTest {
 
         onView(
             allOf(
-                withId(R.id.next_txt), withText(R.string.next),
-                childAtPosition(
-                    allOf(
-                        withId(R.id.footer_lyt),
-                    ),
-                    4
-                ),
-                isDisplayed()
-            )
-        ).perform(click())
-
-        onView(
-            allOf(
-                withId(R.id.accept_button), withText(R.string.done),
+                withId(R.id.next_button), withText(R.string.next),
                 isDisplayed()
             )
         ).perform(click())
@@ -181,20 +170,10 @@ class CalibrateTest {
 
         onView(
             allOf(
-                withId(R.id.next_txt),
-                withText(R.string.next),
-                withContentDescription(R.string.next),
-                childAtPosition(
-                    allOf(
-                        withId(R.id.footer_lyt),
-                    ),
-                    4
-                ),
+                withId(R.id.next_button), withText(R.string.next),
                 isDisplayed()
             )
         ).perform(click())
-
-        onView(withText(R.string.done)).perform(click())
 
         sleep(1000)
 
@@ -255,19 +234,10 @@ class CalibrateTest {
 
         onView(
             allOf(
-                withId(R.id.next_txt),
-                withText(R.string.next),
-                withContentDescription(R.string.next),
-                childAtPosition(
-                    allOf(
-                        withId(R.id.footer_lyt),
-                    ),
-                    4
-                ),
+                withId(R.id.next_button), withText(R.string.next),
                 isDisplayed()
             )
         ).perform(click())
-        onView(withText(R.string.done)).perform(click())
 
         sleep(1000)
 
@@ -293,19 +263,10 @@ class CalibrateTest {
 
         onView(
             allOf(
-                withId(R.id.next_txt),
-                withText(R.string.next),
-                withContentDescription(R.string.next),
-                childAtPosition(
-                    allOf(
-                        withId(R.id.footer_lyt),
-                    ),
-                    4
-                ),
+                withId(R.id.next_button), withText(R.string.next),
                 isDisplayed()
             )
         ).perform(click())
-        onView(withText(R.string.done)).perform(click())
 
         sleep(1000)
 
@@ -331,20 +292,10 @@ class CalibrateTest {
 
         onView(
             allOf(
-                withId(R.id.next_txt),
-                withText(R.string.next),
-                withContentDescription(R.string.next),
-                childAtPosition(
-                    allOf(
-                        withId(R.id.footer_lyt),
-                    ),
-                    4
-                ),
+                withId(R.id.next_button), withText(R.string.next),
                 isDisplayed()
             )
         ).perform(click())
-        sleep(1000)
-        onView(withText(R.string.done)).perform(click())
 
         sleep(200)
 
@@ -371,47 +322,49 @@ class CalibrateTest {
             )
         ).check(matches(isDisplayed()))
 
+        sleep(500)
         pressBack()
-
-        pressBack()
-
-        pressBack()
-
         sleep(500)
 
-        onView(withId(R.id.start_test_fab)).perform(click())
-
-        sleep(3000)
-        mDevice.findObject(By.text(getString(R.string.enter_data))).click()
-
-        sleep(1000)
-
-        try {
-            mDevice.findObject(By.text(TEST_SURVEY_NAME)).click()
-        } catch (e: Exception) {
-            swipeUp()
-            mDevice.findObject(By.text(TEST_SURVEY_NAME)).click()
-        }
-        sleep(2000)
-        mDevice.pressBack()
-
+        pressBack()
         sleep(500)
 
-        mDevice.findObject(By.text("Ignore Changes")).click()
-
+        pressBack()
         sleep(500)
-        mDevice.findObject(By.text(getString(R.string.enter_data))).click()
 
-        sleep(1000)
+        onView(withId(R.id.colorimetric_button)).perform(click())
 
-        try {
-            mDevice.findObject(By.text(TEST_SURVEY_NAME)).click()
-        } catch (e: Exception) {
-            swipeUp()
-            mDevice.findObject(By.text(TEST_SURVEY_NAME)).click()
-        }
-        sleep(2000)
-        mDevice.findObject(By.text(getString(R.string.next).uppercase())).click()
+//        sleep(3000)
+//        mDevice.findObject(By.text(getString(R.string.enter_data))).click()
+//
+//        sleep(1000)
+//
+//        try {
+//            mDevice.findObject(By.text(TEST_SURVEY_NAME)).click()
+//        } catch (e: Exception) {
+//            swipeUp()
+//            mDevice.findObject(By.text(TEST_SURVEY_NAME)).click()
+//        }
+//        sleep(2000)
+//        mDevice.pressBack()
+//
+//        sleep(500)
+//
+//        mDevice.findObject(By.text("Ignore Changes")).click()
+//
+//        sleep(500)
+//        mDevice.findObject(By.text(getString(R.string.enter_data))).click()
+//
+//        sleep(1000)
+//
+//        try {
+//            mDevice.findObject(By.text(TEST_SURVEY_NAME)).click()
+//        } catch (e: Exception) {
+//            swipeUp()
+//            mDevice.findObject(By.text(TEST_SURVEY_NAME)).click()
+//        }
+//        sleep(2000)
+//        mDevice.findObject(By.text(getString(R.string.next).uppercase())).click()
 
         sleep(500)
 
@@ -443,8 +396,6 @@ class CalibrateTest {
         ).perform(click())
 
         sleep(2000)
-
-        onView(withText(R.string.done)).perform(click())
 
         onView(allOf(withText(R.string.fluoride), isDisplayed()))
     }

@@ -66,7 +66,7 @@ class ResultListTest {
 
         val floatingActionButton = onView(
             allOf(
-                withId(R.id.start_test_fab), withContentDescription(R.string.start_test),
+                withId(R.id.card_test_button), withContentDescription(R.string.start_test),
                 childAtPosition(
                     allOf(
                         withId(R.id.mainLayout),
@@ -134,18 +134,18 @@ class ResultListTest {
             closeSoftKeyboard()
         )
 
-        val appCompatAutoCompleteTextView = onView(
-            allOf(
-                withId(R.id.source_select),
-                isDisplayed()
-            )
-        )
-        appCompatAutoCompleteTextView.perform(
-            replaceText("Drinking water"),
-            closeSoftKeyboard()
-        )
+//        val appCompatAutoCompleteTextView = onView(
+//            allOf(
+//                withId(R.id.source_select),
+//                isDisplayed()
+//            )
+//        )
+//        appCompatAutoCompleteTextView.perform(
+//            replaceText("Drinking water"),
+//            closeSoftKeyboard()
+//        )
 
-        appCompatAutoCompleteTextView.perform(pressImeActionButton())
+//        appCompatAutoCompleteTextView.perform(pressImeActionButton())
 
         sleep(1000)
         onView(withText(R.string.save)).perform(click())

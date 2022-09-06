@@ -121,7 +121,7 @@ class CircleCardTest {
         )
 
         sleep(500)
-        onView(withId(R.id.start_test_fab)).perform(click())
+        onView(withId(R.id.card_test_button)).perform(click())
 
         sleep(2000)
         TestHelper.mDevice.findObject(By.text(getString(R.string.enter_data))).click()

@@ -68,7 +68,7 @@ class CuvetteTest {
 
         sleep(500)
 
-        onView(withId(R.id.start_test_fab)).perform(click())
+        onView(withId(R.id.colorimetric_button)).perform(click())
 
         sleep(3000)
         mDevice.findObject(By.text(getString(R.string.enter_data))).click()

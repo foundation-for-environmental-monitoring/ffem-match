@@ -155,7 +155,7 @@ class DiagnosticsTest {
 
         val floatingActionButton = onView(
             allOf(
-                withId(R.id.start_test_fab), withContentDescription(R.string.start_test),
+                withId(R.id.colorimetric_button), withContentDescription(R.string.start_test),
                 isDisplayed()
             )
         )

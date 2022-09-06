@@ -79,7 +79,7 @@ class CalibrationTest {
 
         onView(
             allOf(
-                withId(R.id.start_test_fab), withContentDescription(R.string.start_test),
+                withId(R.id.colorimetric_button), withContentDescription(R.string.start_test),
                 isDisplayed()
             )
         ).perform(click())
@@ -128,18 +128,18 @@ class CalibrationTest {
                 ViewActions.closeSoftKeyboard()
             )
 
-            val appCompatAutoCompleteTextView = onView(
-                allOf(
-                    withId(R.id.source_select),
-                    isDisplayed()
-                )
-            )
-            appCompatAutoCompleteTextView.perform(
-                ViewActions.replaceText("Drinking water"),
-                ViewActions.closeSoftKeyboard()
-            )
-
-            appCompatAutoCompleteTextView.perform(ViewActions.pressImeActionButton())
+//            val appCompatAutoCompleteTextView = onView(
+//                allOf(
+//                    withId(R.id.source_select),
+//                    isDisplayed()
+//                )
+//            )
+//            appCompatAutoCompleteTextView.perform(
+//                ViewActions.replaceText("Drinking water"),
+//                ViewActions.closeSoftKeyboard()
+//            )
+//
+//            appCompatAutoCompleteTextView.perform(ViewActions.pressImeActionButton())
 
             sleep(1000)
             onView(withText(R.string.save)).perform(click())
@@ -200,7 +200,7 @@ class CalibrationTest {
 
         onView(
             allOf(
-                withId(R.id.start_test_fab), withContentDescription(R.string.start_test),
+                withId(R.id.colorimetric_button), withContentDescription(R.string.start_test),
                 isDisplayed()
             )
         ).perform(click())
@@ -248,7 +248,7 @@ class CalibrationTest {
 
         onView(
             allOf(
-                withId(R.id.start_test_fab), withContentDescription(R.string.start_test),
+                withId(R.id.colorimetric_button), withContentDescription(R.string.start_test),
                 isDisplayed()
             )
         ).perform(click())
@@ -322,7 +322,7 @@ class CalibrationTest {
 
         onView(
             allOf(
-                withId(R.id.start_test_fab), withContentDescription(R.string.start_test),
+                withId(R.id.colorimetric_button), withContentDescription(R.string.start_test),
                 isDisplayed()
             )
         ).perform(click())

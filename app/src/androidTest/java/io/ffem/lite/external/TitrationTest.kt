@@ -46,7 +46,7 @@ class TitrationTest {
     @Test
     fun titrationTest() {
 
-        onView(withId(R.id.start_test_fab)).perform(click())
+        onView(withId(R.id.titration_button)).perform(click())
 
         val materialButton3 = onView(
             allOf(withText(R.string.enter_data))
@@ -144,7 +144,7 @@ class TitrationTest {
     @Test
     fun calciumTitrationTest() {
 
-        onView(withId(R.id.start_test_fab)).perform(click())
+        onView(withId(R.id.titration_button)).perform(click())
 
         sleep(3000)
         mDevice.findObject(By.text(getString(R.string.enter_data))).click()

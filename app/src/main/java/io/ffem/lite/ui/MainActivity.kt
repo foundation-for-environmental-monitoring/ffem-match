@@ -6,12 +6,15 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Process
+import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
 import io.ffem.lite.R
 import io.ffem.lite.common.Constants
 import io.ffem.lite.databinding.ActivityMainBinding
 import io.ffem.lite.model.TestType
 import io.ffem.lite.preference.AppPreferences
+import io.ffem.lite.preference.SettingsActivity
 import io.ffem.lite.util.AlertUtil
 
 /**
@@ -82,6 +85,19 @@ class MainActivity : BaseActivity() {
             null, null
         )
     }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    fun onSettingsClick(@Suppress("UNUSED_PARAMETER") item: MenuItem) {
+        val intent = Intent(baseContext, SettingsActivity::class.java)
+        startSettings.launch(intent)
+    }
+
+    private val startSettings =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
 
     private fun closeApp(delay: Int) {
         Handler().postDelayed({

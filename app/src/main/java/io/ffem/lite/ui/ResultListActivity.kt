@@ -11,7 +11,6 @@ import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment.DIRECTORY_PICTURES
-import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.View.GONE
@@ -36,7 +35,6 @@ import io.ffem.lite.helper.ApkHelper.isNonStoreVersion
 import io.ffem.lite.model.TestInfo
 import io.ffem.lite.model.toLocalString
 import io.ffem.lite.preference.AppPreferences
-import io.ffem.lite.preference.SettingsActivity
 import io.ffem.lite.preference.useDummyImage
 import io.ffem.lite.util.FileUtil.getPathFromURI
 import io.ffem.lite.util.PreferencesUtil
@@ -269,16 +267,6 @@ class ResultListActivity : BaseActivity() {
         showHideList()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
-
-    fun onSettingsClick(@Suppress("UNUSED_PARAMETER") item: MenuItem) {
-        val intent = Intent(baseContext, SettingsActivity::class.java)
-        startSettings.launch(intent)
-    }
-
     private fun performFileSearch() {
         PreferencesUtil.setBoolean(this, IS_CALIBRATION, false)
         val intent = Intent(Intent.ACTION_PICK)
@@ -286,19 +274,14 @@ class ResultListActivity : BaseActivity() {
         startFileExplorer.launch(intent)
     }
 
-    private val startSettings =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            reset()
-        }
-
-    private fun reset() {
-        broadcastManager.unregisterReceiver(broadcastReceiver)
-        broadcastManager.registerReceiver(
-            broadcastReceiver,
-            IntentFilter(RESULT_EVENT_BROADCAST)
-        )
-        refreshList()
-    }
+//    private fun reset() {
+//        broadcastManager.unregisterReceiver(broadcastReceiver)
+//        broadcastManager.registerReceiver(
+//            broadcastReceiver,
+//            IntentFilter(RESULT_EVENT_BROADCAST)
+//        )
+//        refreshList()
+//    }
 
     private val startFileExplorer =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {

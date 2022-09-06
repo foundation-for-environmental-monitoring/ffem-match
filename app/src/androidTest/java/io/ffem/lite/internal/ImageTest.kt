@@ -18,7 +18,6 @@ import androidx.test.rule.GrantPermissionRule
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.common.TestHelper.clearPreferences
-import io.ffem.lite.common.TestUtil
 import io.ffem.lite.common.TestUtil.checkResult
 import io.ffem.lite.common.TestUtil.childAtPosition
 import io.ffem.lite.common.TestUtil.sleep
@@ -147,7 +146,7 @@ class ImageTest {
 
         sleep(2000)
 
-        onView(withId(R.id.start_test_fab)).perform(click())
+        onView(withId(R.id.card_test_button)).perform(click())
 
         onView(withText(R.string.start)).perform(click())
 
@@ -201,7 +200,7 @@ class ImageTest {
                 )
 
                 onView(withText(R.string.next)).perform(click())
-                TestUtil.sleep(1000)
+                sleep(1000)
 
                 val textInputEditText = onView(
                     allOf(
@@ -214,20 +213,20 @@ class ImageTest {
                     ViewActions.closeSoftKeyboard()
                 )
 
-                val appCompatAutoCompleteTextView = onView(
-                    allOf(
-                        withId(R.id.source_select),
-                        isDisplayed()
-                    )
-                )
-                appCompatAutoCompleteTextView.perform(
-                    ViewActions.replaceText("Drinking water"),
-                    ViewActions.closeSoftKeyboard()
-                )
+//                val appCompatAutoCompleteTextView = onView(
+//                    allOf(
+//                        withId(R.id.source_select),
+//                        isDisplayed()
+//                    )
+//                )
+//                appCompatAutoCompleteTextView.perform(
+//                    ViewActions.replaceText("Drinking water"),
+//                    ViewActions.closeSoftKeyboard()
+//                )
+//
+//                appCompatAutoCompleteTextView.perform(ViewActions.pressImeActionButton())
 
-                appCompatAutoCompleteTextView.perform(ViewActions.pressImeActionButton())
-
-                TestUtil.sleep(1000)
+                sleep(1000)
                 onView(withText(R.string.save)).perform(click())
 
                 sleep(1000)
