@@ -25,7 +25,7 @@ import io.ffem.lite.common.TestUtil.childAtPosition
 import io.ffem.lite.common.TestUtil.sleep
 import io.ffem.lite.common.getString
 import io.ffem.lite.data.clearData
-import io.ffem.lite.ui.ResultListActivity
+import io.ffem.lite.ui.MainActivity
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.core.IsInstanceOf
 import org.junit.*
@@ -37,7 +37,7 @@ import timber.log.Timber
 class CalibrateLoadTest {
 
     @get:Rule
-    val mActivityTestRule = activityScenarioRule<ResultListActivity>()
+    val mActivityTestRule = activityScenarioRule<MainActivity>()
 
     @Rule
     @JvmField
@@ -58,6 +58,20 @@ class CalibrateLoadTest {
 
         pressBack()
 
+        sleep(200)
+        onView(withId(R.id.scrollViewSettings)).perform(swipeUp())
+
+        sleep(200)
+        onView(withText("Return dummy results")).perform(click())
+
+        sleep(200)
+
+        onView(withId(R.id.scrollViewSettings)).perform(swipeDown())
+
+        sleep(200)
+
+        onView((withText(R.string.calibration_type))).perform(click())
+        onView((withText("Full Calibration"))).perform(click())
         sleep(200)
 
         onView((withText(R.string.calibrate))).perform(click())
@@ -393,36 +407,19 @@ class CalibrateLoadTest {
 //
 //        sleep(200)
 
-//        onView(withText(R.string.next)).perform(click())
-//
-//        sleep(200)
+        sleep(200)
 
         onView((withText("Generate Dummy Result"))).perform(click())
 
-        sleep(200)
+        sleep(1000)
 
         onView(
             allOf(
-                withId(R.id.next_txt),
-                withText(R.string.next),
-                withContentDescription(R.string.next),
-                childAtPosition(
-                    allOf(
-                        withId(R.id.footer_lyt),
-                    ),
-                    4
-                ),
+                withId(R.id.next_button), withText(R.string.next),
                 isDisplayed()
             )
         ).perform(click())
 
-        onView(
-            allOf(
-                withId(R.id.accept_button), withText(R.string.done)
-            )
-        ).perform(click())
-
-        sleep(1000)
     }
 
     companion object {

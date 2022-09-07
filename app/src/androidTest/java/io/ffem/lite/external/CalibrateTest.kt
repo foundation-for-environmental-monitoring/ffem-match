@@ -50,15 +50,12 @@ class CalibrateTest {
     fun calibrateTest() {
         TestHelper.startDiagnosticMode()
         sleep(200)
-
         pressBack()
 
         sleep(200)
-
         onView(withId(R.id.scrollViewSettings)).perform(swipeUp())
 
         sleep(200)
-
         onView(withText("Return dummy results")).perform(click())
 
         sleep(200)
