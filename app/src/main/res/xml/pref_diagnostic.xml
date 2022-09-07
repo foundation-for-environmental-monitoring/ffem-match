@@ -15,16 +15,6 @@
             app:iconSpaceReserved="false" />
 
         <EditTextPreference
-            android:dialogMessage="Enter the sample image number. Enter blank to revert to camera image"
-            android:inputType="number"
-            android:key="@string/testImageNumberKey"
-            android:selectAllOnFocus="true"
-            android:title="Test Image Number"
-            app:allowDividerAbove="true"
-            app:allowDividerBelow="true"
-            app:iconSpaceReserved="false" />
-
-        <EditTextPreference
             android:defaultValue="100"
             android:dialogMessage="The minimum brightness (0 - 255)"
             android:inputType="number"

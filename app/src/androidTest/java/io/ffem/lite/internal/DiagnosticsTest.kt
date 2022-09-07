@@ -4,7 +4,6 @@ package io.ffem.lite.internal
 import android.os.Environment
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -17,11 +16,12 @@ import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.common.TestHelper
 import io.ffem.lite.common.TestHelper.startDiagnosticMode
+import io.ffem.lite.common.TestUtil
 import io.ffem.lite.common.TestUtil.childAtPosition
 import io.ffem.lite.common.TestUtil.sleep
 import io.ffem.lite.common.clearData
 import io.ffem.lite.common.fluoride
-import io.ffem.lite.ui.ResultListActivity
+import io.ffem.lite.ui.MainActivity
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.allOf
 import org.junit.*
@@ -34,7 +34,7 @@ import java.io.File
 class DiagnosticsTest {
 
     @get:Rule
-    val mActivityTestRule = activityScenarioRule<ResultListActivity>()
+    val mActivityTestRule = activityScenarioRule<MainActivity>()
 
     @Rule
     @JvmField
@@ -118,11 +118,11 @@ class DiagnosticsTest {
                     1
                 )
             )
-        ).perform(scrollTo(), replaceText("0"))
+        ).perform(scrollTo(), replaceText("1"))
 
         val appCompatEditText2 = onView(
             allOf(
-                withId(android.R.id.edit), withText("0"),
+                withId(android.R.id.edit), withText("1"),
                 childAtPosition(
                     childAtPosition(
                         withClassName(`is`("android.widget.ScrollView")),
@@ -153,15 +153,28 @@ class DiagnosticsTest {
 
         pressBack()
 
-        val floatingActionButton = onView(
+        onView(
             allOf(
-                withId(R.id.colorimetric_button), withContentDescription(R.string.start_test),
+                withId(R.id.card_test_button),
                 isDisplayed()
             )
-        )
-        floatingActionButton.perform(click())
+        ).perform(click())
+
+        onView((withText(R.string.water))).perform(click())
+
+        onView((withText("Fluoride"))).perform(click())
+
+        sleep(1000)
+
+        onView(withText(R.string.start_test)).perform(click())
+
+        onView(withId(R.id.noDilution_btn)).perform(click())
+
+        sleep(200)
 
         onView(withText(R.string.start)).perform(click())
+
+        sleep(1000)
 
         sleep(SCAN_TIME_DELAY)
 
@@ -196,9 +209,13 @@ class DiagnosticsTest {
 //        ).check(matches(TestUtil.checkResult(testDataList[0]!!, 0.25)))
 
         onView(withId(R.id.resultScrollView))
-            .perform(ViewActions.swipeUp())
+            .perform(swipeUp())
 
-        onView(withText(R.string.next)).perform(click())
+        onView(
+            allOf(
+                TestUtil.withIndex(withText(R.string.next), 1),
+            )
+        ).perform(click())
     }
 
     companion object {
