@@ -18,7 +18,7 @@ import io.ffem.lite.common.TestHelper.mDevice
 import io.ffem.lite.common.TestUtil
 import io.ffem.lite.common.TestUtil.sleep
 import io.ffem.lite.common.getString
-import io.ffem.lite.ui.ResultListActivity
+import io.ffem.lite.ui.MainActivity
 import junit.framework.TestCase.assertNotNull
 import org.hamcrest.Matchers.allOf
 import org.junit.*
@@ -28,7 +28,7 @@ import org.junit.runner.RunWith
 class TitrationTest {
 
     @get:Rule
-    val mActivityTestRule = activityScenarioRule<ResultListActivity>()
+    val mActivityTestRule = activityScenarioRule<MainActivity>()
 
     @Rule
     @JvmField

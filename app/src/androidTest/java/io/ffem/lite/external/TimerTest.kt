@@ -27,7 +27,7 @@ import io.ffem.lite.common.TestHelper.waitForTestCompletion
 import io.ffem.lite.common.TestUtil.sleep
 import io.ffem.lite.common.getString
 import io.ffem.lite.data.clearData
-import io.ffem.lite.ui.ResultListActivity
+import io.ffem.lite.ui.MainActivity
 import org.hamcrest.Matchers.allOf
 import org.junit.*
 import org.junit.runner.RunWith
@@ -37,7 +37,7 @@ import org.junit.runner.RunWith
 class TimerTest {
 
     @get:Rule
-    val mActivityTestRule = activityScenarioRule<ResultListActivity>()
+    val mActivityTestRule = activityScenarioRule<MainActivity>()
 
     @Rule
     @JvmField

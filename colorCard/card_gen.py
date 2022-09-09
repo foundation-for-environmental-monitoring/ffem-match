@@ -411,12 +411,12 @@ else:
 
     # Load the appropriate tests json file
     c = CircleCard
-    data = json.load(open(JSON_FILE_PATH + 'tests_circle.json'))
+    data = json.load(open(JSON_FILE_PATH + 'parameters.json'))
 
     input_id = sys.argv[1].casefold().replace('-', '')
     title = ''
 
-    for parameter in data['customer1']['tests']:
+    for parameter in data['customer1']['water_card']['tests']:
 
         parameter_id = parameter['uuid'].casefold().replace('-', '')
 

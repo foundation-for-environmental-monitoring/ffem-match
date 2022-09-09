@@ -26,7 +26,7 @@ import io.ffem.lite.common.clearData
 import io.ffem.lite.common.testDataList
 import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.toResourceId
-import io.ffem.lite.ui.ResultListActivity
+import io.ffem.lite.ui.MainActivity
 import io.ffem.lite.util.PreferencesUtil
 import org.hamcrest.Matchers.allOf
 import org.junit.*
@@ -39,7 +39,7 @@ import java.io.File
 class CalibrationTest {
 
     @get:Rule
-    val mActivityTestRule = activityScenarioRule<ResultListActivity>()
+    val mActivityTestRule = activityScenarioRule<MainActivity>()
 
     @Rule
     @JvmField

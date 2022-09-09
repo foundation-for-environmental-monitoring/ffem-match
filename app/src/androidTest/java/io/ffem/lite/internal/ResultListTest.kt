@@ -21,7 +21,7 @@ import io.ffem.lite.R
 import io.ffem.lite.common.TestHelper
 import io.ffem.lite.common.TestUtil.sleep
 import io.ffem.lite.common.clearData
-import io.ffem.lite.ui.ResultListActivity
+import io.ffem.lite.ui.MainActivity
 import io.ffem.lite.util.PreferencesUtil
 import org.hamcrest.Description
 import org.hamcrest.Matcher
@@ -39,7 +39,7 @@ const val SCAN_TIME_DELAY = 15000
 class ResultListTest {
 
     @get:Rule
-    val mActivityTestRule = activityScenarioRule<ResultListActivity>()
+    val mActivityTestRule = activityScenarioRule<MainActivity>()
 
     @Rule
     @JvmField

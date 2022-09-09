@@ -26,7 +26,7 @@ import io.ffem.lite.common.TestUtil.sleep
 import io.ffem.lite.internal.SCAN_TIME_DELAY
 import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.toLocalString
-import io.ffem.lite.ui.ResultListActivity
+import io.ffem.lite.ui.MainActivity
 import io.ffem.lite.util.PreferencesUtil
 import org.hamcrest.Matchers.allOf
 import org.junit.*
@@ -41,7 +41,7 @@ import java.io.File
 class CircleCardTest {
 
     @get:Rule
-    val mActivityTestRule = activityScenarioRule<ResultListActivity>()
+    val mActivityTestRule = activityScenarioRule<MainActivity>()
 
     @Rule
     @JvmField

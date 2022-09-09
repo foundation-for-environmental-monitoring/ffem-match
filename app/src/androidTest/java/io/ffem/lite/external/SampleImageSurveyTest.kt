@@ -32,7 +32,7 @@ import io.ffem.lite.model.ErrorType
 import io.ffem.lite.model.ErrorType.NO_ERROR
 import io.ffem.lite.model.ErrorType.WRONG_CARD
 import io.ffem.lite.model.toLocalString
-import io.ffem.lite.ui.ResultListActivity
+import io.ffem.lite.ui.MainActivity
 import io.ffem.lite.util.PreferencesUtil
 import org.junit.*
 import org.junit.runner.RunWith
@@ -46,7 +46,7 @@ import java.io.File
 class SampleImageSurveyTest : BaseTest() {
 
     @get:Rule
-    val mActivityTestRule = activityScenarioRule<ResultListActivity>()
+    val mActivityTestRule = activityScenarioRule<MainActivity>()
 
     @Rule
     @JvmField
