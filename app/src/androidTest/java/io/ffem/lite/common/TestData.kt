@@ -16,6 +16,7 @@ val pH =
         "WC-FM-pH",
         45,
         R.string.water_tests_2,
+        false,
         riskType = RiskType.ALKALINITY
     )
 
@@ -43,7 +44,7 @@ val testDataList = mutableMapOf(
     0 to TestData(residualChlorine, 0.2, 0.25, risk = RiskLevel.RISK_1, calibratedResult = 1.0),
     1 to TestData(fluoride, 0.26, 0.25, risk = RiskLevel.RISK_1, calibratedResult = 0.26),
     2 to TestData(fluoride, 0.5, 0.25, risk = RiskLevel.RISK_1, calibratedResult = 1.0),
-    3 to TestData(pH, 4.03, 0.5, risk = RiskLevel.RISK_1, calibratedResult = 1.0),
+    3 to TestData(pH, 4.03, 0.5, risk = RiskLevel.RISK_1, calibratedResult = 1.0, listIndex = 10),
     4 to TestData(iron, 1.48, 0.15, risk = RiskLevel.RISK_1, calibratedResult = 1.0),
     5 to TestData(
         fluoride,
@@ -72,7 +73,8 @@ data class TestData(
     var risk: RiskLevel = RiskLevel.RISK_0,
     var maxResult: Double = -1.0,
     var calibratedResult: Double = -1.0,
-    var calibratedRisk: RiskLevel = RiskLevel.RISK_0
+    var calibratedRisk: RiskLevel = RiskLevel.RISK_0,
+    var listIndex: Int = 0
 )
 
 data class TestDetails(
@@ -81,5 +83,6 @@ data class TestDetails(
     var id: String,
     var timeDelay: Int,
     var group: Int,
+    var hasDilution: Boolean = true,
     var riskType: RiskType = RiskType.NORMAL
 )

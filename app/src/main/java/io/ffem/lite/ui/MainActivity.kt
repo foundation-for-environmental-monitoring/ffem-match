@@ -10,7 +10,6 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
 import io.ffem.lite.R
-import io.ffem.lite.common.Constants
 import io.ffem.lite.databinding.ActivityMainBinding
 import io.ffem.lite.model.TestType
 import io.ffem.lite.preference.AppPreferences
@@ -37,18 +36,18 @@ class MainActivity : BaseActivity() {
         }
 
         b.colorimetricButton.setOnClickListener {
-            val externalIntent: Intent? = packageManager
-                .getLaunchIntentForPackage(Constants.SURVEY_APP)
-            if (externalIntent != null) {
-                externalIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                startActivity(externalIntent)
-//                closeApp(1000)
-            } else {
-                val intent = Intent(this, TestActivity::class.java)
-                AppPreferences.setCalibration(this, false)
-                AppPreferences.setTestType(this, TestType.CUVETTE)
-                startTest.launch(intent)
-            }
+//            val externalIntent: Intent? = packageManager
+//                .getLaunchIntentForPackage(Constants.SURVEY_APP)
+//            if (externalIntent != null) {
+//                externalIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+//                startActivity(externalIntent)
+////                closeApp(1000)
+//            } else {
+            val intent = Intent(this, TestActivity::class.java)
+            AppPreferences.setCalibration(this, false)
+            AppPreferences.setTestType(this, TestType.CUVETTE)
+            startTest.launch(intent)
+//            }
         }
 
         b.titrationButton.setOnClickListener {
