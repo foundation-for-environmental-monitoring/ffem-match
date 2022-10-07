@@ -9,6 +9,7 @@ import android.os.Process
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.ffem.lite.R
 import io.ffem.lite.databinding.ActivityMainBinding
 import io.ffem.lite.model.TestType
@@ -68,6 +69,13 @@ class MainActivity : BaseActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (!AppPreferences.isShareDataSet()) {
+            showDataCollectionConfirmAlert()
+        }
+    }
+
     private val startTest =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         }
@@ -107,5 +115,18 @@ class MainActivity : BaseActivity() {
                 Process.killProcess(pid)
             }
         }, delay.toLong())
+    }
+
+    private fun showDataCollectionConfirmAlert() {
+        MaterialAlertDialogBuilder(this@MainActivity, R.style.ConfirmDialogTheme)
+            .setTitle(getString(R.string.data_sharing))
+            .setMessage("Share test data?\n\nYou can change your selection at any time in the settings\n")
+            .setPositiveButton(
+                getString(R.string.yes_share)
+            ) { _, _ -> AppPreferences.setShareData(true) }
+            .setNeutralButton(
+                getString(R.string.no_thanks)
+            ) { _, _ -> AppPreferences.setShareData(false) }
+            .show()
     }
 }

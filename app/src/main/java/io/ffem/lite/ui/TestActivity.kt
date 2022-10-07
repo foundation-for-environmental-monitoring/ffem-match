@@ -29,6 +29,8 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
@@ -115,6 +117,32 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
                 )
             } else {
                 SoundUtil.playShortResource(context, R.raw.success)
+
+                val db = AppDatabase.getDatabase(baseContext)
+                val subTest = testInfo.subTest()
+                db.resultDao().insert(
+                    TestResult(
+                        testInfo.fileName,
+                        testInfo.uuid,
+                        0,
+                        testInfo.name!!,
+                        testInfo.sampleType.toString(),
+                        Date().time,
+                        subTest.getResult(),
+                        subTest.maxValue,
+                        subTest.getMarginOfError(),
+                        error = ErrorType.NO_ERROR
+                    )
+                )
+
+                testViewModel.setTest(testInfo)
+                if (!isCalibration) {
+                    val testResult = db.resultDao().getResult(testInfo.fileName)
+                    if (testResult != null) {
+                        testViewModel.form = testResult
+                    }
+                }
+                testViewModel.db = db
                 pageNext()
             }
         }
@@ -515,7 +543,7 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
         if (isCalibration && b.viewPager.currentItem == pageIndex.resultPage) {
             b.footerLyt.visibility = View.GONE
         }
-        if (this::testInfo.isInitialized && testInfo.subtype == TestType.CARD) {
+        if (this::testInfo.isInitialized) {
             if (position == pageIndex.resultPage && !isCalibration) {
                 b.footerLyt.visibility = View.VISIBLE
             } else {
@@ -554,6 +582,32 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
 
     override fun onSubmitResult(results: ArrayList<Result>) {
         setTestResult()
+
+        val db = AppDatabase.getDatabase(this)
+        val subTest = testInfo.subTest()
+        db.resultDao().insert(
+            TestResult(
+                testInfo.fileName,
+                testInfo.uuid,
+                0,
+                testInfo.name!!,
+                testInfo.sampleType.toString(),
+                Date().time,
+                subTest.getResult(),
+                subTest.maxValue,
+                subTest.getMarginOfError(),
+                error = ErrorType.NO_ERROR
+            )
+        )
+
+        testViewModel.setTest(testInfo)
+        if (!isCalibration) {
+            val testResult = db.resultDao().getResult(testInfo.fileName)
+            if (testResult != null) {
+                testViewModel.form = testResult
+            }
+        }
+        testViewModel.db = db
         pageNext()
     }
 
@@ -1091,33 +1145,39 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
     }
 
     private fun sendResultToCloudDatabase(testInfo: TestInfo, form: TestResult) {
+        if (!AppPreferences.getShareData()) {
+            return
+        }
         if (!BuildConfig.INSTRUMENTED_TEST_RUNNING.get()) {
             val path = if (BuildConfig.DEBUG) {
                 "result-debug"
             } else {
                 "result"
             }
-            val ref = FirebaseDatabase.getInstance().getReference(path).push()
+
             val subTest = testInfo.subTest()
-            ref.setValue(
-                RemoteResult(
-                    testInfo.uuid,
-                    testInfo.name,
-                    testInfo.sampleType.toString(),
-                    subTest.getRiskEnglish(this),
-                    subTest.getResultString(),
-                    subTest.unit,
-                    System.currentTimeMillis(),
-                    form.source,
-                    form.sourceType,
-                    form.latitude,
-                    form.longitude,
-                    form.geoAccuracy,
-                    form.comment,
-                    App.getAppVersion(true),
-                    Build.MODEL
-                )
+            val result = RemoteResult(
+                testInfo.uuid,
+                testInfo.name,
+                testInfo.sampleType.toString(),
+                testInfo.subtype.toString(),
+                subTest.getRiskEnglish(this),
+                subTest.getResultString(),
+                subTest.unit,
+                System.currentTimeMillis(),
+                AppPreferences.getEmailAddress(),
+                form.latitude,
+                form.longitude,
+                form.geoAccuracy,
+                form.comment,
+                App.getAppVersion(true),
+                Build.MODEL,
+                Build.VERSION.RELEASE
             )
+
+            val db = Firebase.firestore
+            db.collection("users").document(AppPreferences.getEmailAddress()).collection("results")
+                .add(result)
 
             val filePath = getExternalFilesDir(DIRECTORY_PICTURES).toString() +
                     separator + "captures" + separator

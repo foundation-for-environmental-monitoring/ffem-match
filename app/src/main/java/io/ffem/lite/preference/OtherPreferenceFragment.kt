@@ -30,13 +30,20 @@ class OtherPreferenceFragment : PreferenceFragmentCompat() {
             calibratePreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
                 if (!calibrateClicked) {
                     calibrateClicked = true
-
                     calibrate()
-
-//                    PreferencesUtil.setBoolean(requireContext(), IS_CALIBRATION, true)
-//                    val intent = Intent(requireContext(), TestActivity::class.java)
-//                    startActivity(intent)
                 }
+                true
+            }
+        }
+
+        val dataPreference = findPreference<Preference>("dataSharingPreference")
+        if (dataPreference != null) {
+            dataPreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+                requireActivity().supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.layoutOther, DataSharePreferenceFragment())
+                    .addToBackStack(null)
+                    .commit()
                 true
             }
         }

@@ -41,10 +41,10 @@
                 android:layout_height="wrap_content"
                 android:clickable="false"
                 android:focusable="false"
-                android:text="@{result.source}"
+                android:text="@{result.email}"
                 android:textIsSelectable="false"
                 android:textSize="18sp"
-                android:visibility="@{result.source.isEmpty() ? View.GONE : View.VISIBLE}"
+                android:visibility="@{result.email.isEmpty() ? View.GONE : View.VISIBLE}"
                 tools:text="Description" />
 
             <LinearLayout

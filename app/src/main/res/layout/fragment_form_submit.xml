@@ -28,8 +28,7 @@
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/desc_layout"
-                style="@style/CustomCardView"
-                android:foreground="@drawable/status_incomplete_required">
+                style="@style/CustomCardView">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -38,14 +37,16 @@
                     android:padding="@dimen/activity_horizontal_margin">
 
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/email_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/activity_vertical_margin"
-                        android:hint="@string/your_name"
+                        android:hint="@string/email_address"
+                        android:visibility="gone"
                         app:hintTextAppearance="@style/TextLabel">
 
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/source_desc_edit"
+                            android:id="@+id/email_edit"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:backgroundTint="@color/card_bg"
@@ -86,8 +87,7 @@
             <androidx.cardview.widget.CardView
                 android:id="@+id/location_view"
                 style="@style/CustomCardView"
-                android:layout_marginTop="10dp"
-                android:foreground="@drawable/status_incomplete">
+                android:layout_marginTop="10dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -190,19 +190,8 @@
                                     tools:ignore="RelativeOverlap" />
                             </RelativeLayout>
                         </androidx.appcompat.widget.LinearLayoutCompat>
-
                     </LinearLayout>
-
-
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/comment_layout"
-                style="@style/CustomCardView"
-                android:foreground="@drawable/status_completed">
-
-
             </androidx.cardview.widget.CardView>
 
             <com.google.android.material.button.MaterialButton

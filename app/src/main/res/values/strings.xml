@@ -132,6 +132,10 @@
     <string name="tilt_left_backwards">Tilt phone left side backwards</string>
     <string name="remove_response">Remove response</string>
     <string name="cancel">Cancel</string>
+    <string name="yes_share">Yes Share</string>
+    <string name="no_thanks">No Thanks</string>
+    <string name="data_sharing">Data Sharing</string>
+
     <string name="comment">Comment</string>
     <string name="location">Location</string>
     <string name="get_location">GPS location</string>
@@ -145,6 +149,7 @@
     <string name="lat_lon">Lat/Lon</string>
     <string name="save">Save</string>
     <string name="required_error">This is required</string>
+    <string name="invalid_email">Please enter valid email</string>
     <string name="info">Info</string>
     <string name="manual_photo_capture">Manual photo capture</string>
     <string name="manual_photo_summary">Turn this on if the auto photo capture is not working well on this phone</string>
@@ -276,7 +281,7 @@
     <string name="no_result">No result</string>
     <string name="print">Print</string>
     <string name="name">Name</string>
-    <string name="your_name">Your Name</string>
+    <string name="email_address">Email Address</string>
     <string name="could_not_calibrate">Could not calibrate</string>
     <string name="error_test_failed">Colour does not match any calibrated colours.</string>
     <string name="check_chamber_placement">Check that the chamber has been placed correctly.</string>
@@ -294,6 +299,9 @@
     <string name="external_app_not_installed">Akvo Flow is not installed.</string>
     <string name="install_external_app">Please install the Akvo Flow app from your instance.</string>
 
+    <string name="analytics_preferences">Usage data</string>
+    <string name="analytics">Collect anonymous usage data</string>
+    <string name="analytics_summary">Anonymous usage data helps the support team prioritize fixes and features</string>
     <string name="calcium_and_magnesium">Calcium and Magnesium</string>
     <string name="accept_result">Accept Result</string>
     <string name="other">Other</string>

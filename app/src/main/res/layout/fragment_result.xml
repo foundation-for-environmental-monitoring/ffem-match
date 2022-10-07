@@ -622,7 +622,8 @@
                 android:padding="10dp"
                 android:text="@string/next"
                 android:textColor="@color/white"
-                android:textSize="17sp" />
+                android:textSize="17sp"
+                android:visibility="gone" />
 
         </LinearLayout>
     </ScrollView>

@@ -62,6 +62,10 @@ object DataHelper {
             "soil_cuvette"
         } else if (testId.startsWith("WB-")) {
             "water_cuvette"
+        } else if (testId.startsWith("WT-")) {
+            "water_titration"
+        } else if (testId.startsWith("ST-")) {
+            "soil_titration"
         } else {
             "water_card"
         }

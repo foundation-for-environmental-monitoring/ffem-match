@@ -45,9 +45,9 @@ object InstructionHelper {
                 list.add(Instruction("<confirm>", ""))
             }
             list.add(Instruction("<result>", ""))
-            if (testInfo.subtype == TestType.CUVETTE || testInfo.subtype == TestType.CARD) {
-                list.add(Instruction(value = "c_empty", "image:c_empty"))
-            }
+
+            list.add(Instruction(value = "c_empty", "image:c_empty"))
+
         } else {
             for (instruction in testInfo.instructions!!) {
                 list.add(instruction)

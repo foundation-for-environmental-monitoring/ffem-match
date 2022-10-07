@@ -61,6 +61,8 @@
     <string name="showDebugMessagesKey">showDebugMessages</string>
     <string name="useCamera2ApiKey">useCamera2Api</string>
     <string name="calibrationTypePrefKey">calibrationTypePref</string>
+    <string name="dataSharingKey">dataSharingPref</string>
+    <string name="emailAddressKey">emailAddressPref</string>
 
     <string name="_1">1.</string>
     <string name="_2">2.</string>

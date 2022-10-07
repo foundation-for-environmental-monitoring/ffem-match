@@ -7,43 +7,28 @@
         <item name="android:layout_marginRight">16dp</item>
     </style>
 
-    <!--    <style name="AppTheme.Main.FullScreen" parent="Theme.Main">-->
-    <!--        <item name="android:windowNoTitle">true</item>-->
-    <!--        <item name="android:windowActionBar">false</item>-->
-    <!--        <item name="android:windowFullscreen">true</item>-->
-    <!--        <item name="android:windowContentOverlay">@null</item>-->
-    <!--    </style>-->
+    <style name="ConfirmDialogTheme">
+        <item name="buttonBarPositiveButtonStyle">@style/Alert.Button.Positive</item>
+        <item name="buttonBarNeutralButtonStyle">@style/Alert.Button.Neutral</item>
+    </style>
 
-    <!--    <style name="CustomCardView" parent="CardView">-->
-    <!--        <item name="cardCornerRadius">3dp</item>-->
-    <!--        <item name="cardBackgroundColor">@color/card_bg</item>-->
-    <!--        <item name="android:layout_width">match_parent</item>-->
-    <!--        <item name="android:layout_height">wrap_content</item>-->
-    <!--        <item name="android:layout_marginTop">5dp</item>-->
-    <!--        <item name="android:layout_marginBottom">5dp</item>-->
-    <!--        <item name="android:layout_marginStart">10dp</item>-->
-    <!--        <item name="android:layout_marginEnd">10dp</item>-->
-    <!--    </style>-->
+    <style name="Alert.Button.Positive" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="backgroundTint">@color/colorPrimaryDark</item>
+        <item name="rippleColor">@color/colorAccent</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:layout_marginEnd">8dp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:layout_marginTop">16dp</item>
+    </style>
 
-    <!--    <style name="TextLabel" parent="TextAppearance.Design.Hint">-->
-    <!--        <item name="android:paddingBottom">15dp</item>-->
-    <!--        <item name="android:textSize">15sp</item>-->
-    <!--    </style>-->
-
-    <!--    <style name="ButtonThemeOverlay">-->
-    <!--        <item name="colorOnPrimary">@color/white</item>-->
-    <!--    </style>-->
-
-    <!--    <style name="ButtonStyle" parent="Widget.MaterialComponents.Button">-->
-    <!--        <item name="materialThemeOverlay">@style/ButtonThemeOverlay</item>-->
-    <!--    </style>-->
-
-    <!--    <style name="ImpButtonThemeOverlay">-->
-    <!--        <item name="android:backgroundTint">@color/button_state</item>-->
-    <!--        <item name="colorOnPrimary">@color/white</item>-->
-    <!--    </style>-->
-
-    <!--    <style name="ImpButtonStyle" parent="Widget.MaterialComponents.Button">-->
-    <!--        <item name="materialThemeOverlay">@style/ImpButtonThemeOverlay</item>-->
-    <!--    </style>-->
+    <style name="Alert.Button.Neutral" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="backgroundTint">@android:color/transparent</item>
+        <item name="rippleColor">@color/colorAccent</item>
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:textColor">@android:color/darker_gray</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:layout_marginTop">16dp</item>
+    </style>
 </resources>

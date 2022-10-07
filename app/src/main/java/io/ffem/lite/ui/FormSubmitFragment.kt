@@ -10,6 +10,7 @@ import android.content.IntentSender
 import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
+import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -26,8 +27,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
-import androidx.core.widget.doAfterTextChanged
-import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.common.api.ApiException
@@ -37,6 +36,7 @@ import io.ffem.lite.R
 import io.ffem.lite.common.BROADCAST_HIDE_KEYBOARD
 import io.ffem.lite.data.TestResult
 import io.ffem.lite.databinding.FragmentFormSubmitBinding
+import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.preference.isDiagnosticMode
 import io.ffem.lite.util.WidgetUtil.setStatusColor
 import io.ffem.lite.util.setMultiLineCapSentencesAndDoneAction
@@ -84,6 +84,9 @@ class FormSubmitFragment : BaseFragment() {
         return b.root
     }
 
+    private fun CharSequence?.isValidEmail() =
+        !isNullOrEmpty() && Patterns.EMAIL_ADDRESS.matcher(this).matches()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
         if (toolbar != null) {
@@ -111,19 +114,29 @@ class FormSubmitFragment : BaseFragment() {
 
         showHideControls()
 
+        if (AppPreferences.getShareData() && AppPreferences.getEmailAddress().isEmpty()) {
+            b.emailLayout.visibility = VISIBLE
+        } else {
+            b.emailLayout.visibility = GONE
+        }
+
         b.submitBtn.setOnClickListener {
-            when {
-                b.sourceDescEdit.text.toString().isEmpty() -> {
-                    b.sourceDescEdit.error = requireContext().getString(R.string.required_error)
-                    b.sourceDescEdit.requestFocus()
+            if (b.emailLayout.visibility == VISIBLE) {
+                when {
+                    b.emailEdit.text.toString().isEmpty() -> {
+                        b.emailEdit.error = requireContext().getString(R.string.required_error)
+                        b.emailEdit.requestFocus()
+                    }
+                    !b.emailEdit.text.toString().isValidEmail() -> {
+                        b.emailEdit.error = requireContext().getString(R.string.invalid_email)
+                        b.emailEdit.requestFocus()
+                    }
+                    else -> {
+                        submitForm()
+                    }
                 }
-//                b.sourceSelect.text.toString().isEmpty() -> {
-//                    b.sourceSelect.error = requireContext().getString(R.string.required_error)
-//                    b.sourceSelect.requestFocus()
-//                }
-                else -> {
-                    submitForm()
-                }
+            } else {
+                submitForm()
             }
         }
 
@@ -132,10 +145,6 @@ class FormSubmitFragment : BaseFragment() {
             b.commentEdit.setHorizontallyScrolling(false)
             b.commentEdit.maxLines = Integer.MAX_VALUE
             b.commentEdit.setMultiLineCapSentencesAndDoneAction()
-            b.commentEdit.doOnTextChanged { _, _, _, _ ->
-                validateComment()
-            }
-            validateComment()
 
             if (form.longitude != null && !form.longitude!!.isNaN()) {
                 val gpsLocation = form.latitude.toString() + " / " + form.longitude.toString()
@@ -151,28 +160,10 @@ class FormSubmitFragment : BaseFragment() {
                 startLocation()
             }
 
-            b.sourceDescEdit.setText(model.form.source)
-
+            b.emailEdit.setText(model.form.email)
         }
 
-        b.sourceDescEdit.doAfterTextChanged {
-            validateDescription()
-        }
-
-        b.sourceDescEdit.error = null
-
-        validateDescription()
-
-//        b.sourceSelect.doAfterTextChanged {
-//            validateDescription()
-//        }
-
-//        val waterSource = resources.getStringArray(R.array.WaterSource)
-
-//        val adapter = ArrayAdapter(
-//            requireContext(), android.R.layout.simple_list_item_1, waterSource
-//        )
-//        b.sourceSelect.setAdapter(adapter)
+        b.emailEdit.error = null
 
         createLocationCallback()
     }
@@ -180,23 +171,11 @@ class FormSubmitFragment : BaseFragment() {
     override fun setMenuVisibility(menuVisible: Boolean) {
         super.setMenuVisibility(menuVisible)
 
-        if (menuVisible && b.sourceDescEdit.requestFocus()) {
+        if (menuVisible && b.emailEdit.requestFocus()) {
             val imm =
-                b.sourceDescEdit.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+                b.emailEdit.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
             imm?.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0)
         }
-    }
-
-    private fun validateDescription() {
-        b.descLayout.setStatusColor(
-            !b.sourceDescEdit.text.isNullOrEmpty(),
-//                    && !b.sourceSelect.text.isNullOrEmpty(),
-            true
-        )
-    }
-
-    private fun validateComment() {
-        b.commentLayout.setStatusColor(!b.commentEdit.text.isNullOrEmpty(), false)
     }
 
     private fun submitForm() {
@@ -209,6 +188,7 @@ class FormSubmitFragment : BaseFragment() {
     override fun onResume() {
         super.onResume()
         requireActivity().setTitle(R.string.details)
+        hideSystemUI()
     }
 
     override fun onPause() {
@@ -223,8 +203,10 @@ class FormSubmitFragment : BaseFragment() {
             if (!b.commentEdit.text.isNullOrEmpty()) {
                 model.form.comment = b.commentEdit.text.toString().trim()
             }
-            model.form.source = b.sourceDescEdit.text.toString().trim()
-//        model.form.sourceType = b.sourceSelect.text.toString().trim()
+            model.form.email = b.emailEdit.text.toString().trim()
+            if (b.emailLayout.visibility == VISIBLE) {
+                AppPreferences.setEmailAddress(model.form.email)
+            }
             val dao = model.db.resultDao()
             dao.update(model.form)
         }
@@ -400,12 +382,14 @@ class FormSubmitFragment : BaseFragment() {
                 dialog.dismiss()
                 cancelLocation()
                 showHideControls()
+                hideSystemUI()
             }
 
             dialog.findViewById<TextView>(R.id.cancel_txt).setOnClickListener {
                 dialog.dismiss()
                 cancelLocation()
                 showHideControls()
+                hideSystemUI()
             }
             dialog.show()
             dialog.findViewById<Chronometer>(R.id.chronometer).start()
@@ -431,6 +415,16 @@ class FormSubmitFragment : BaseFragment() {
         mainScope.cancel()
         cancelLocation()
         super.onDestroy()
+    }
+
+    private fun hideSystemUI() {
+        requireActivity().window.decorView.systemUiVisibility =
+            (View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    or View.SYSTEM_UI_FLAG_FULLSCREEN)
     }
 
     companion object {

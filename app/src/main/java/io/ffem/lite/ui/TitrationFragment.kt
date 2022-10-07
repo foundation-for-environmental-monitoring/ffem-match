@@ -15,6 +15,7 @@ import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.activityViewModels
 import io.ffem.lite.R
+import io.ffem.lite.data.AppDatabase
 import io.ffem.lite.databinding.FragmentTitrationBinding
 import io.ffem.lite.model.Result
 import io.ffem.lite.util.MathUtil
@@ -116,6 +117,18 @@ class TitrationFragment : BaseFragment() {
                                             )
                                         }
                                     }
+
+                                    val db = AppDatabase.getDatabase(requireContext())
+                                    val subTest = testInfo.subTest()
+                                    db.resultDao().updateResult(
+                                        testInfo.fileName,
+                                        testInfo.uuid,
+                                        testInfo.name!!,
+                                        testInfo.sampleType.toString(),
+                                        subTest.getResult(),
+                                        subTest.getMarginOfError(),
+                                        subTest.error.ordinal
+                                    )
                                     submitResultListener!!.onSubmitResult(testInfo.results)
                                 }
                             }

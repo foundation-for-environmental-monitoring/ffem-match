@@ -18,6 +18,7 @@ const val UNIT = "Unit"
 const val VALUE = "value"
 const val RESULT_NO_DATA = Activity.RESULT_FIRST_USER
 const val WATER_SELECTED = "water_selected"
+const val DATA_SHARING_SET = "data_sharing_set"
 const val BROADCAST_RESET_TIMER = "reset_timer"
 const val BROADCAST_SKIP_TIMER = "skip_timer"
 

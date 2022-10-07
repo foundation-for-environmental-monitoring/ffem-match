@@ -425,6 +425,35 @@ object AppPreferences {
         false
     ))
 
+    fun setShareData(value: Boolean) {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(App.app)
+        sharedPreferences!!.edit().putBoolean(App.app.getString(R.string.dataSharingKey), value)
+            .apply()
+        sharedPreferences.edit().putBoolean(DATA_SHARING_SET, true).apply()
+    }
+
+    fun getShareData(): Boolean {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(App.app)
+        return sharedPreferences.getBoolean(App.app.getString(R.string.dataSharingKey), false)
+    }
+
+    fun isShareDataSet(): Boolean {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(App.app)
+        return sharedPreferences.getBoolean(DATA_SHARING_SET, false)
+    }
+
+    fun getEmailAddress(): String {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(App.app)
+        return sharedPreferences.getString(App.app.getString(R.string.emailAddressKey), "")
+            .toString()
+    }
+
+    fun setEmailAddress(value: String) {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(App.app)
+        sharedPreferences!!.edit().putString(App.app.getString(R.string.emailAddressKey), value)
+            .apply()
+    }
+
 //    fun isAppUpdateCheckRequired(): Boolean {
 //        if (BuildConfig.INSTRUMENTED_TEST_RUNNING.get()) {
 //            return true

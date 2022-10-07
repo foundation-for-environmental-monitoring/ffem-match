@@ -20,6 +20,14 @@
         app:iconSpaceReserved="false" />
 
     <Preference
+        android:key="dataSharingPreference"
+        android:summary="Edit privacy settings"
+        android:title="Data Collection"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="true"
+        app:iconSpaceReserved="false" />
+
+    <Preference
         android:key="@string/aboutKey"
         android:title="@string/about"
         app:allowDividerAbove="true"
