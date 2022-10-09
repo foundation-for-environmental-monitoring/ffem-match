@@ -105,8 +105,9 @@ class ResultFragment(var externalRequest: Boolean) : BaseFragment() {
 
             if (testInfo.subtype == TestType.CUVETTE || testInfo.subtype == TestType.CARD) {
                 b.dilutionTxt.visibility = VISIBLE
-                setInfo(testInfo)
             }
+
+            setInfo(testInfo)
 
             var subTest = testInfo.subTest()
             var displayMainResult = true
@@ -283,7 +284,14 @@ class ResultFragment(var externalRequest: Boolean) : BaseFragment() {
 //            b.colorBar.setImageBitmap(resultImage)
 //            b.colorBar.visibility = VISIBLE
 
-            if (model.test.get()!!.sampleType == TestSampleType.WATER) {
+            if (model.form.comment.isNullOrEmpty()) {
+                b.commentLayout.visibility = GONE
+            } else {
+                b.comment.text = model.form.comment
+                b.commentLayout.visibility = VISIBLE
+            }
+
+            if (testInfo.sampleType == TestSampleType.WATER && testInfo.subtype != TestType.TITRATION) {
                 when (subTest.getSafetyLevel()) {
                     SafetyLevel.ACCEPTABLE -> {
                         b.safetyHeading.setTextColor(

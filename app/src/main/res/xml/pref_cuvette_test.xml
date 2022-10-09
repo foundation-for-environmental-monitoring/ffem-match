@@ -1,0 +1,38 @@
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        android:title="Colorimetric test"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="true"
+        app:iconSpaceReserved="false">
+
+        <Preference
+            android:key="calibrate"
+            android:summary="@string/calibrate_summary"
+            android:title="@string/calibrate"
+            app:allowDividerAbove="true"
+            app:allowDividerBelow="true"
+            app:iconSpaceReserved="false" />
+
+        <ListPreference
+            android:defaultValue="0"
+            android:entries="@array/pref_calibration_options"
+            android:entryValues="@array/pref_calibration_option_values"
+            android:key="@string/calibrationTypePrefKey"
+            android:summary="%s"
+            android:title="@string/calibration_type"
+            app:allowDividerAbove="true"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreference
+            android:key="@string/torchCuvetteKey"
+            android:summary="Enable or disable flash during test"
+            android:title="Torch mode for colorimetric tests"
+            app:allowDividerAbove="true"
+            app:allowDividerBelow="true"
+            app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
+
+</androidx.preference.PreferenceScreen>

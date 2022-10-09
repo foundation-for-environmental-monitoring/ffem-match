@@ -157,6 +157,7 @@
     <string name="version">Version</string>
     <string name="calibration_succeeded">Calibration succeeded</string>
     <string name="times_dilution" tools:ignore="PluralsCandidate">%1$d Times Dilution</string>
+    <string name="check_internet">Please check your internet connection</string>
 
     <string name="high_levels">High Levels</string>
     <string name="high_risk_unsafe">High Risk / Unsafe</string>

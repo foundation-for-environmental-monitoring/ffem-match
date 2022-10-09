@@ -7,13 +7,6 @@
         app:allowDividerBelow="true"
         app:iconSpaceReserved="false">
 
-        <CheckBoxPreference
-            android:disableDependentsState="true"
-            android:key="@string/runColorCardPrefKey"
-            android:title="Run color card test"
-            app:allowDividerAbove="true"
-            app:iconSpaceReserved="false" />
-
         <EditTextPreference
             android:defaultValue="100"
             android:dialogMessage="The minimum brightness (0 - 255)"
@@ -72,29 +65,6 @@
             android:title="Calibration Error tolerance"
             app:allowDividerAbove="true"
             app:allowDividerBelow="true"
-            app:iconSpaceReserved="false" />
-    </PreferenceCategory>
-
-    <PreferenceCategory
-        android:key="preferenceCategoryCamera"
-        android:title="@string/camera"
-        app:allowDividerAbove="true"
-        app:iconSpaceReserved="false">
-        <SwitchPreferenceCompat
-            android:key="@string/useFlashModeKey"
-            android:title="Torch mode"
-            app:iconSpaceReserved="false" />
-    </PreferenceCategory>
-
-    <PreferenceCategory
-        android:key="preferenceCategoryCamera"
-        android:title="@string/other"
-        app:allowDividerAbove="true"
-        app:iconSpaceReserved="false">
-        <CheckBoxPreference
-            android:key="@string/dummyResultKey"
-            android:title="Return dummy results"
-            app:allowDividerAbove="true"
             app:iconSpaceReserved="false" />
     </PreferenceCategory>
 </PreferenceScreen>

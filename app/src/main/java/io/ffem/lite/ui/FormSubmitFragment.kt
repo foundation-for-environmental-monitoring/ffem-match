@@ -192,7 +192,6 @@ class FormSubmitFragment : BaseFragment() {
     }
 
     override fun onPause() {
-        saveData()
         LocalBroadcastManager.getInstance(requireContext())
             .sendBroadcast(Intent(BROADCAST_HIDE_KEYBOARD))
         super.onPause()

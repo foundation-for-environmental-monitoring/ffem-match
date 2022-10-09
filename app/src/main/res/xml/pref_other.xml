@@ -1,36 +1,47 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <Preference
-        android:key="calibrate"
-        android:summary="@string/calibrate_summary"
-        android:title="@string/calibrate"
+    <PreferenceCategory
+        android:title="Testing"
         app:allowDividerAbove="true"
         app:allowDividerBelow="true"
-        app:iconSpaceReserved="false" />
+        app:iconSpaceReserved="false">
 
-    <ListPreference
-        android:defaultValue="0"
-        android:entries="@array/pref_calibration_options"
-        android:entryValues="@array/pref_calibration_option_values"
-        android:key="@string/calibrationTypePrefKey"
-        android:summary="%s"
-        android:title="@string/calibration_type"
-        app:allowDividerAbove="true"
-        app:iconSpaceReserved="false" />
+        <Preference
+            android:key="cardTestPreference"
+            android:summary="Settings for card tests"
+            android:title="Card test"
+            app:allowDividerAbove="true"
+            app:allowDividerBelow="true"
+            app:iconSpaceReserved="false" />
 
-    <Preference
-        android:key="dataSharingPreference"
-        android:summary="Edit privacy settings"
-        android:title="Data Collection"
-        app:allowDividerAbove="true"
-        app:allowDividerBelow="true"
-        app:iconSpaceReserved="false" />
+        <Preference
+            android:key="colorimetricTestPreference"
+            android:summary="Calibration and settings for colorimetric tests"
+            android:title="Colorimetric test"
+            app:allowDividerAbove="true"
+            app:allowDividerBelow="true"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
 
-    <Preference
-        android:key="@string/aboutKey"
-        android:title="@string/about"
+    <PreferenceCategory
+        android:title="Other"
         app:allowDividerAbove="true"
         app:allowDividerBelow="true"
-        app:iconSpaceReserved="false" />
+        app:iconSpaceReserved="false">
+
+        <Preference
+            android:key="dataSharingPreference"
+            android:summary="Edit privacy settings"
+            android:title="Privacy"
+            app:allowDividerAbove="true"
+            app:allowDividerBelow="true"
+            app:iconSpaceReserved="false" />
+
+        <Preference
+            android:key="@string/aboutKey"
+            android:title="@string/about"
+            app:allowDividerAbove="true"
+            app:allowDividerBelow="true"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
 </androidx.preference.PreferenceScreen>

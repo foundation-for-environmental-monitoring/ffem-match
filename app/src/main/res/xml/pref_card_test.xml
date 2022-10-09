@@ -1,0 +1,20 @@
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        android:title="Card test"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="true"
+        app:iconSpaceReserved="false">
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="@string/torchCardKey"
+            android:summary="Enable or disable flash during test"
+            android:title="Torch mode for card tests"
+            app:allowDividerAbove="true"
+            app:allowDividerBelow="true"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+
+</androidx.preference.PreferenceScreen>

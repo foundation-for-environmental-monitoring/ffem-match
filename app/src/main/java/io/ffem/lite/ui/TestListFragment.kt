@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
@@ -79,8 +80,16 @@ class TestListFragment : BaseFragment() {
         runBlocking {
             launch {
                 val testType = AppPreferences.getTestType().toString().lowercase()
-                waterList = getParametersFromTheCloud(CUSTOMER_ID, "water_$testType")
-                soilList = getParametersFromTheCloud(CUSTOMER_ID, "soil_$testType")
+                try {
+                    waterList = getParametersFromTheCloud(CUSTOMER_ID, "water_$testType")
+                    soilList = getParametersFromTheCloud(CUSTOMER_ID, "soil_$testType")
+                } catch (e: Exception) {
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.check_internet),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
         }
 

@@ -7,6 +7,11 @@
         app:allowDividerBelow="true"
         app:iconSpaceReserved="false">
         <CheckBoxPreference
+            android:key="@string/dummyResultKey"
+            android:title="Return dummy results"
+            app:allowDividerAbove="true"
+            app:iconSpaceReserved="false" />
+        <CheckBoxPreference
             android:key="@string/dummyImageKey"
             android:summary="Adds a button to pick a photo from the gallery or media folder for analysis"
             android:title="Load a photo file to analyze"

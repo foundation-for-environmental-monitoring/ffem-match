@@ -50,14 +50,6 @@ fun isDiagnosticMode(): Boolean {
     return PreferencesUtil.getBoolean(App.app, R.string.diagnosticModeKey, false)
 }
 
-fun useFlashMode(): Boolean {
-    return isDiagnosticMode() && PreferencesUtil.getBoolean(
-        App.app,
-        R.string.useFlashModeKey,
-        false
-    )
-}
-
 fun useDummyImage(): Boolean {
     return isDiagnosticMode() && PreferencesUtil.getBoolean(
         App.app,
@@ -219,46 +211,14 @@ object AppPreferences {
     }
 
     fun useCameraFlash(isCardTest: Boolean): Boolean {
-        val camera = if (isDiagnosticMode()) {
-            PreferencesUtil.getString(
-                App.app,
-                R.string.torchModeKey, "0"
-            ).toInt()
+        return if (isCardTest) {
+            PreferencesUtil.getBoolean(
+                App.app, R.string.torchCardKey, true
+            )
         } else {
-            0
-        }
-
-        return when (camera) {
-            0 -> {
-                return if (isCardTest) {
-                    if (isFlipProject()) {
-                        false
-                    } else {
-                        isCardTest
-                    }
-                } else {
-                    getProjectUseFlash()
-                }
-            }
-            1 -> {
-                true
-            }
-            else -> {
-                false
-            }
-        }
-    }
-
-
-    private fun getProjectUseFlash(): Boolean {
-        return !isFlipProject()
-    }
-
-    private fun isFlipProject(): Boolean {
-        return if (PreferencesUtil.contains(App.app, IS_FLIP_PROJECT)) {
-            PreferencesUtil.getBoolean(App.app, IS_FLIP_PROJECT, false)
-        } else {
-            false
+            PreferencesUtil.getBoolean(
+                App.app, R.string.torchCuvetteKey, false
+            )
         }
     }
 

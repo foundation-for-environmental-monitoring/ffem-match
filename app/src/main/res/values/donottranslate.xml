@@ -63,6 +63,8 @@
     <string name="calibrationTypePrefKey">calibrationTypePref</string>
     <string name="dataSharingKey">dataSharingPref</string>
     <string name="emailAddressKey">emailAddressPref</string>
+    <string name="torchCuvetteKey">torchCuvettePref</string>
+    <string name="torchCardKey">torchCardPref</string>
 
     <string name="_1">1.</string>
     <string name="_2">2.</string>

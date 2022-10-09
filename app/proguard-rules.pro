@@ -23,3 +23,5 @@
 #noinspection ShrinkerUnresolvedReference
 -keep class io.ffem.lite.model.**{ *; }
 -keep class io.ffem.lite.data.**{ *; }
+-keep class io.ffem.lite.remote.**{ *; }
+-keep class io.ffem.lite.entity.**{ *; }
