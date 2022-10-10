@@ -367,17 +367,6 @@ object AppPreferences {
         ) && isDiagnosticMode()
     }
 
-    fun wasWaterSelected(context: Context): Boolean {
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-        return if (sharedPreferences!!.contains(WATER_SELECTED))
-            sharedPreferences.getBoolean(WATER_SELECTED, true) else true
-    }
-
-    fun setWaterSelected(value: Boolean, context: Context) {
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-        sharedPreferences!!.edit().putBoolean(WATER_SELECTED, value).apply()
-    }
-
     fun getShowDebugInfo(context: Context): Boolean = (isDiagnosticMode()
             && PreferencesUtil.getBoolean(
         context.applicationContext!!,
@@ -412,6 +401,17 @@ object AppPreferences {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(App.app)
         sharedPreferences!!.edit().putString(App.app.getString(R.string.emailAddressKey), value)
             .apply()
+    }
+
+    fun getLastSelectedTestsTab(context: Context): String {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        return if (sharedPreferences!!.contains(LAST_TESTS_TAB_SELECTED))
+            sharedPreferences.getString(LAST_TESTS_TAB_SELECTED, "").toString() else ""
+    }
+
+    fun setLastSelectedTestsTab(value: String, context: Context) {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        sharedPreferences!!.edit().putString(LAST_TESTS_TAB_SELECTED, value).apply()
     }
 
 //    fun isAppUpdateCheckRequired(): Boolean {

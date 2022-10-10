@@ -1,5 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_slogan">Water Quality System</string>
+    <string name="compost">Compost</string>
     <string name="soil">Soil</string>
     <string name="water">Water</string>
     <string name="copyright">Copyright © ffem</string>
@@ -297,8 +298,8 @@
     <string name="redo_test">Redo</string>
     <string name="done">Done</string>
     <string name="c_empty">Empty contents of the cuvette and rinse it</string>
-    <string name="external_app_not_installed">Akvo Flow is not installed.</string>
-    <string name="install_external_app">Please install the Akvo Flow app from your instance.</string>
+    <string name="external_app_not_installed">External app is not installed.</string>
+    <string name="install_external_app">Please install the External app from your instance.</string>
 
     <string name="analytics_preferences">Usage data</string>
     <string name="analytics">Collect anonymous usage data</string>

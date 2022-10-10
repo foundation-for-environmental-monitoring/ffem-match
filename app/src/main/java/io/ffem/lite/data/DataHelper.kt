@@ -36,8 +36,9 @@ object DataHelper {
         deviceId: String,
         type: String
     ): ArrayList<TestInfo> {
-        val ref = FirebaseDatabase.getInstance().getReference("$deviceId/$type/tests")
-        ref.keepSynced(true)
+        val ref1 = FirebaseDatabase.getInstance().getReference(CUSTOMER_ID)
+        ref1.keepSynced(true)
+        val ref = FirebaseDatabase.getInstance().getReference("$CUSTOMER_ID/$type/tests")
         val testInfoList: ArrayList<TestInfo> = ArrayList()
         val testConfig = ref.get().await().children.map { snapShot ->
             snapShot.getValue(ParameterInfoDto::class.java)!!
@@ -46,6 +47,7 @@ object DataHelper {
         for (test in testConfig) {
             testInfoList.add(test.toTestInfo())
         }
+        ref1.keepSynced(false)
         return testInfoList
     }
 

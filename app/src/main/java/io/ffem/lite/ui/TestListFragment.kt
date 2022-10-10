@@ -52,18 +52,27 @@ class TestListFragment : BaseFragment() {
             )
         }
 
-        if (AppPreferences.wasWaterSelected(requireContext())) {
+        b.sampleTypeTab.getTabAt(0)?.tag = "compost"
+        b.sampleTypeTab.getTabAt(1)?.tag = "soil"
+        b.sampleTypeTab.getTabAt(2)?.tag = "water"
+
+        val lastTabSelected = AppPreferences.getLastSelectedTestsTab(requireContext())
+        if (b.sampleTypeTab.getTabAt(0)?.tag == lastTabSelected) {
             b.sampleTypeTab.getTabAt(0)?.select()
-        } else {
+        } else if (b.sampleTypeTab.getTabAt(1)?.tag == lastTabSelected) {
             b.sampleTypeTab.getTabAt(1)?.select()
+        } else if (b.sampleTypeTab.getTabAt(2)?.tag == lastTabSelected) {
+            b.sampleTypeTab.getTabAt(2)?.select()
         }
 
         b.sampleTypeTab.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
-                AppPreferences.setWaterSelected(
-                    b.sampleTypeTab.selectedTabPosition == 1,
-                    requireContext()
-                )
+                b.sampleTypeTab.getTabAt(b.sampleTypeTab.selectedTabPosition)?.let {
+                    AppPreferences.setLastSelectedTestsTab(
+                        it.tag as String,
+                        requireContext()
+                    )
+                }
                 setAdapter()
             }
 
@@ -75,12 +84,14 @@ class TestListFragment : BaseFragment() {
     }
 
     private fun setAdapter() {
+        var compostList: ArrayList<TestInfo> = ArrayList()
         var waterList: ArrayList<TestInfo> = ArrayList()
         var soilList: ArrayList<TestInfo> = ArrayList()
         runBlocking {
             launch {
                 val testType = AppPreferences.getTestType().toString().lowercase()
                 try {
+                    compostList = getParametersFromTheCloud(CUSTOMER_ID, "compost_$testType")
                     waterList = getParametersFromTheCloud(CUSTOMER_ID, "water_$testType")
                     soilList = getParametersFromTheCloud(CUSTOMER_ID, "soil_$testType")
                 } catch (e: Exception) {
@@ -93,9 +104,30 @@ class TestListFragment : BaseFragment() {
             }
         }
 
-        if (soilList.isEmpty()) {
+        if (compostList.isEmpty() && soilList.isEmpty() ||
+            soilList.isEmpty() && waterList.isEmpty() ||
+            compostList.isEmpty() && waterList.isEmpty()
+        ) {
             b.sampleTypeTab.visibility = GONE
+        }
+
+        if (compostList.isNotEmpty()) {
+            for (i in compostList.indices.reversed()) {
+                if (compostList[i].subtype == TestType.API) {
+                    compostList.removeAt(i)
+                }
+            }
+
+            compostList.sortWith { object1: TestInfo, object2: TestInfo ->
+                object1.name!!.compareTo(object2.name!!, ignoreCase = true)
+            }
         } else {
+            if (b.sampleTypeTab.getTabAt(0)?.tag == "compost") {
+                b.sampleTypeTab.getTabAt(0)?.let { b.sampleTypeTab.removeTab(it) }
+            }
+        }
+
+        if (soilList.isNotEmpty()) {
             for (i in soilList.indices.reversed()) {
                 if (soilList[i].subtype == TestType.API) {
                     soilList.removeAt(i)
@@ -105,11 +137,11 @@ class TestListFragment : BaseFragment() {
             soilList.sortWith { object1: TestInfo, object2: TestInfo ->
                 object1.name!!.compareTo(object2.name!!, ignoreCase = true)
             }
+        } else {
+            b.sampleTypeTab.getTabAt(1)?.let { b.sampleTypeTab.removeTab(it) }
         }
 
-        if (waterList.isEmpty()) {
-            b.sampleTypeTab.visibility = GONE
-        } else {
+        if (waterList.isNotEmpty()) {
             for (i in waterList.indices.reversed()) {
                 if (waterList[i].subtype == TestType.API) {
                     waterList.removeAt(i)
@@ -119,25 +151,29 @@ class TestListFragment : BaseFragment() {
             waterList.sortWith { object1: TestInfo, object2: TestInfo ->
                 object1.name!!.compareTo(object2.name!!, ignoreCase = true)
             }
-        }
-
-        if (AppPreferences.wasWaterSelected(requireContext())) {
-            if (waterList.isNotEmpty()) {
-                b.sampleTypeTab.getTabAt(1)?.select()
-            } else if (soilList.isNotEmpty()) {
-                b.sampleTypeTab.getTabAt(0)?.select()
-            }
         } else {
-            if (soilList.isNotEmpty()) {
-                b.sampleTypeTab.getTabAt(0)?.select()
-            } else if (waterList.isNotEmpty()) {
-                b.sampleTypeTab.getTabAt(1)?.select()
-            }
+            b.sampleTypeTab.getTabAt(2)?.let { b.sampleTypeTab.removeTab(it) }
         }
 
-        var tests = soilList
-        if (b.sampleTypeTab.selectedTabPosition == 1) {
-            tests = waterList
+        val lastTabSelected = AppPreferences.getLastSelectedTestsTab(requireContext())
+        if (b.sampleTypeTab.getTabAt(0)?.tag == lastTabSelected) {
+            b.sampleTypeTab.getTabAt(0)?.select()
+        } else if (b.sampleTypeTab.getTabAt(1)?.tag == lastTabSelected) {
+            b.sampleTypeTab.getTabAt(1)?.select()
+        } else if (b.sampleTypeTab.getTabAt(2)?.tag == lastTabSelected) {
+            b.sampleTypeTab.getTabAt(2)?.select()
+        }
+
+        val tests = when (b.sampleTypeTab.getTabAt(b.sampleTypeTab.selectedTabPosition)?.tag) {
+            "compost" -> {
+                compostList
+            }
+            "soil" -> {
+                soilList
+            }
+            else -> {
+                waterList
+            }
         }
 
         for (i in tests.indices.reversed()) {
