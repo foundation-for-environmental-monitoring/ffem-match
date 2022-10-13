@@ -68,8 +68,13 @@ class ResultFragment(var externalRequest: Boolean) : BaseFragment() {
             val subTest = model.test.get()!!.subTest()
             if (subTest.error != ErrorType.NO_ERROR || !externalRequest
                 || model.test.get()!!.subtype == TestType.TITRATION
+                || model.isCalibration
             ) {
                 b.nextButton.setText(R.string.close)
+            }
+
+            if (model.isCalibration) {
+                b.nextButton.visibility = VISIBLE
             }
 
             b.nextButton.setOnClickListener {
@@ -248,6 +253,7 @@ class ResultFragment(var externalRequest: Boolean) : BaseFragment() {
             b.valueTxt.visibility = VISIBLE
             b.colorVue.visibility = VISIBLE
             b.valueTxt.text = model.calibrationPoint.toString()
+            b.commentLayout.visibility = GONE
         } else {
             b.nameTxt.text = testInfo.name?.toLocalString()
             b.dilutionTxt.text = resources.getQuantityString(

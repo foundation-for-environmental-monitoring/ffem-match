@@ -48,6 +48,8 @@ class CalibrateTest {
 
     @Test
     fun calibrateTest() {
+        onView(withText("YES SHARE")).perform(click())
+        sleep(200)
         TestHelper.startDiagnosticMode()
         sleep(200)
         pressBack()
@@ -61,6 +63,8 @@ class CalibrateTest {
         sleep(200)
 
         onView(withId(R.id.scrollViewSettings)).perform(swipeDown())
+
+        onView(withText("Colorimetric test")).perform(click())
 
         sleep(200)
 
@@ -116,7 +120,7 @@ class CalibrateTest {
             ).perform(click())
 
             sleep(200)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
         }
 
         sleep(1000)
@@ -138,7 +142,7 @@ class CalibrateTest {
 
         onView(
             allOf(
-                withId(R.id.next_button), withText(R.string.next),
+                withId(R.id.next_button), withText(R.string.close),
                 isDisplayed()
             )
         ).perform(click())
@@ -167,7 +171,7 @@ class CalibrateTest {
 
         onView(
             allOf(
-                withId(R.id.next_button), withText(R.string.next),
+                withId(R.id.next_button), withText(R.string.close),
                 isDisplayed()
             )
         ).perform(click())
@@ -231,7 +235,7 @@ class CalibrateTest {
 
         onView(
             allOf(
-                withId(R.id.next_button), withText(R.string.next),
+                withId(R.id.next_button), withText(R.string.close),
                 isDisplayed()
             )
         ).perform(click())
@@ -260,7 +264,7 @@ class CalibrateTest {
 
         onView(
             allOf(
-                withId(R.id.next_button), withText(R.string.next),
+                withId(R.id.next_button), withText(R.string.close),
                 isDisplayed()
             )
         ).perform(click())
@@ -289,7 +293,7 @@ class CalibrateTest {
 
         onView(
             allOf(
-                withId(R.id.next_button), withText(R.string.next),
+                withId(R.id.next_button), withText(R.string.close),
                 isDisplayed()
             )
         ).perform(click())
@@ -320,6 +324,9 @@ class CalibrateTest {
         ).check(matches(isDisplayed()))
 
         sleep(500)
+        pressBack()
+        sleep(500)
+
         pressBack()
         sleep(500)
 
