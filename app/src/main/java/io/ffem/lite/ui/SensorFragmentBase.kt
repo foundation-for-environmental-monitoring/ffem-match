@@ -44,7 +44,7 @@ open class SensorFragmentBase : Fragment() {
     private var submitResultListener: OnSubmitResultListener? = null
     private lateinit var timer: Timer
 
-    private var deviceId = ""
+    private var externalSensorId = ""
     var currentPulseWidth = ""
     private var emptyPulseWidth = ""
 
@@ -187,9 +187,9 @@ open class SensorFragmentBase : Fragment() {
                     or View.SYSTEM_UI_FLAG_FULLSCREEN)
     }
 
-    private fun setDeviceId(deviceId: String) {
-        if (deviceId.isEmpty()) {
-            this.deviceId = "FM-ARDTCS"
+    private fun setExternalSensorId(value: String) {
+        if (value.isEmpty()) {
+            this.externalSensorId = "FM-ARDTCS"
         }
     }
 
@@ -200,7 +200,7 @@ open class SensorFragmentBase : Fragment() {
         timer = Timer()
         timer.schedule(timerTask {
             when {
-                currentPulseWidth.isNotEmpty() && deviceId.isNotEmpty() -> {
+                currentPulseWidth.isNotEmpty() && externalSensorId.isNotEmpty() -> {
                     timer.cancel()
                     if (emptyCalibrated) {
 
@@ -218,7 +218,7 @@ open class SensorFragmentBase : Fragment() {
                                     b.standardCalibrateText.text =
                                         currentPulseWidth.replace(",", ", ")
                                     enableAnalysis()
-                                } catch (t: Throwable) {
+                                } catch (_: Throwable) {
                                 }
                             }
 
@@ -226,7 +226,7 @@ open class SensorFragmentBase : Fragment() {
                             MainScope().launch(Dispatchers.Main) {
                                 try {
                                     analyze()
-                                } catch (t: Throwable) {
+                                } catch (_: Throwable) {
                                 }
                             }
                         }
@@ -237,13 +237,13 @@ open class SensorFragmentBase : Fragment() {
                         enableStandardCalibration()
                     }
                 }
-                deviceId.isEmpty() -> {
+                externalSensorId.isEmpty() -> {
                     send("d")
                 }
                 emptyPulseWidth.isNotEmpty() -> {
                     send("s")
                 }
-                deviceId.isNotEmpty() && currentPulseWidth.isEmpty() -> {
+                externalSensorId.isNotEmpty() && currentPulseWidth.isEmpty() -> {
                     send("a")
                 }
             }
@@ -273,12 +273,12 @@ open class SensorFragmentBase : Fragment() {
         display(message)
         when {
             message.startsWith("d=[") && message.endsWith("]") -> {
-                deviceId = message.substring(3, message.length - 1)
-                setDeviceId(deviceId)
-                if (deviceId.contains("[") || deviceId.contains("]")) {
-                    deviceId = ""
+                externalSensorId = message.substring(3, message.length - 1)
+                setExternalSensorId(externalSensorId)
+                if (externalSensorId.contains("[") || externalSensorId.contains("]")) {
+                    externalSensorId = ""
                 } else {
-                    getSensorId(deviceId)
+                    getSensorId(externalSensorId)
                 }
             }
             (message.startsWith("a=[") || message.startsWith("s=[")) && message.endsWith("]") -> {
@@ -288,12 +288,12 @@ open class SensorFragmentBase : Fragment() {
                 }
             }
             message.startsWith("d=") -> {
-                deviceId = message.substring(3, message.length - 1)
-                setDeviceId(deviceId)
-                if (deviceId.contains("[") || deviceId.contains("]")) {
-                    deviceId = ""
+                externalSensorId = message.substring(3, message.length - 1)
+                setExternalSensorId(externalSensorId)
+                if (externalSensorId.contains("[") || externalSensorId.contains("]")) {
+                    externalSensorId = ""
                 } else {
-                    getSensorId(deviceId)
+                    getSensorId(externalSensorId)
                 }
             }
         }
@@ -528,7 +528,7 @@ open class SensorFragmentBase : Fragment() {
                         aPulse[1] += pulse[1]
                         aPulse[2] += pulse[2]
                         aPulse[3] += pulse[3]
-                    } catch (e: Exception) {
+                    } catch (_: Exception) {
                     }
 
                     for (calibration in calibrations) {
@@ -549,7 +549,7 @@ open class SensorFragmentBase : Fragment() {
 
             testInfo.subTest().setResult(result)
 
-        } catch (e: Exception) {
+        } catch (_: Exception) {
         }
 
         return Triple(testInfo.subTest().resultInfo.result, uncalibratedResult, distance)
@@ -560,7 +560,7 @@ open class SensorFragmentBase : Fragment() {
         startStandardCalibration = false
         standardCalibrationCompleted = false
         emptyCalibrated = false
-        deviceId = ""
+        externalSensorId = ""
         currentPulseWidth = ""
         emptyPulseWidth = ""
         emptyCalibration = null
@@ -617,7 +617,7 @@ open class SensorFragmentBase : Fragment() {
             try {
                 Timber.e("device: $message")
 //                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-            } catch (t: Throwable) {
+            } catch (_: Throwable) {
             }
         }
     }

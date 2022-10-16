@@ -5,7 +5,6 @@ import android.os.Environment
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -117,16 +116,16 @@ class CalibrationTest {
             onView(withText(R.string.next)).perform(click())
             sleep(1000)
 
-            val textInputEditText = onView(
-                allOf(
-                    withId(R.id.source_desc_edit),
-                    isDisplayed()
-                )
-            )
-            textInputEditText.perform(
-                ViewActions.replaceText("Description"),
-                ViewActions.closeSoftKeyboard()
-            )
+//            val textInputEditText = onView(
+//                allOf(
+//                    withId(R.id.source_desc_edit),
+//                    isDisplayed()
+//                )
+//            )
+//            textInputEditText.perform(
+//                ViewActions.replaceText("Description"),
+//                ViewActions.closeSoftKeyboard()
+//            )
 
 //            val appCompatAutoCompleteTextView = onView(
 //                allOf(

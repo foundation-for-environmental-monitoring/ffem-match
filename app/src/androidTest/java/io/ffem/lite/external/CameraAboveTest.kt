@@ -50,16 +50,24 @@ class CameraAboveTest {
 
     @Test
     fun cameraAboveTest() {
+        try {
+            onView(withText("YES SHARE")).perform(click())
+        } catch (_: Exception) {
+        }
         startDiagnosticMode()
         sleep(200)
 
         pressBack()
-
         sleep(200)
 
         onView(withId(R.id.scrollViewSettings)).perform(swipeDown())
-
         sleep(200)
+
+        onView(withText("Colorimetric test")).perform(click())
+        sleep(200)
+
+        onView((withText(R.string.calibration_type))).perform(click())
+        onView((withText("Full Calibration"))).perform(click())
 
         onView((withText(R.string.calibrate))).perform(click())
 
@@ -109,7 +117,7 @@ class CameraAboveTest {
             ).perform(click())
 
             sleep(200)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
         }
 
         sleep(1000)
@@ -137,13 +145,7 @@ class CameraAboveTest {
 
         onView(
             allOf(
-                withId(R.id.next_txt), withText(R.string.next)
-            )
-        ).perform(click())
-
-        onView(
-            allOf(
-                withId(R.id.accept_button), withText(R.string.done),
+                withId(R.id.next_button), withText(R.string.close),
                 isDisplayed()
             )
         ).perform(click())
@@ -176,20 +178,10 @@ class CameraAboveTest {
 
         onView(
             allOf(
-                withId(R.id.next_txt),
-                withText(R.string.next),
-                withContentDescription(R.string.next),
-                TestUtil.childAtPosition(
-                    allOf(
-                        withId(R.id.footer_lyt),
-                    ),
-                    4
-                ),
+                withId(R.id.next_button), withText(R.string.close),
                 isDisplayed()
             )
         ).perform(click())
-
-        onView(withText(R.string.done)).perform(click())
 
         sleep(200)
 
@@ -258,19 +250,10 @@ class CameraAboveTest {
 
         onView(
             allOf(
-                withId(R.id.next_txt),
-                withText(R.string.next),
-                withContentDescription(R.string.next),
-                TestUtil.childAtPosition(
-                    allOf(
-                        withId(R.id.footer_lyt),
-                    ),
-                    4
-                ),
+                withId(R.id.next_button), withText(R.string.close),
                 isDisplayed()
             )
         ).perform(click())
-        onView(withText(R.string.done)).perform(click())
 
         sleep(1000)
 
@@ -300,19 +283,10 @@ class CameraAboveTest {
 
         onView(
             allOf(
-                withId(R.id.next_txt),
-                withText(R.string.next),
-                withContentDescription(R.string.next),
-                TestUtil.childAtPosition(
-                    allOf(
-                        withId(R.id.footer_lyt),
-                    ),
-                    4
-                ),
+                withId(R.id.next_button), withText(R.string.close),
                 isDisplayed()
             )
         ).perform(click())
-        onView(withText(R.string.done)).perform(click())
 
         sleep(1000)
 
@@ -342,19 +316,10 @@ class CameraAboveTest {
 
         onView(
             allOf(
-                withId(R.id.next_txt),
-                withText(R.string.next),
-                withContentDescription(R.string.next),
-                TestUtil.childAtPosition(
-                    allOf(
-                        withId(R.id.footer_lyt),
-                    ),
-                    4
-                ),
+                withId(R.id.next_button), withText(R.string.close),
                 isDisplayed()
             )
         ).perform(click())
-        onView(withText(R.string.done)).perform(click())
 
         sleep(200)
 
@@ -441,7 +406,7 @@ class CameraAboveTest {
         try {
             val resultTextView = onView(withId(R.id.subtitle_text))
             resultTextView.check(matches(checkResult(0.0)))
-        } catch (e: Exception) {
+        } catch (_: Exception) {
         }
 
         onView(
@@ -471,7 +436,7 @@ class CameraAboveTest {
 
         try {
             onView(withText(R.string.jump_to_beginning)).perform(click())
-        } catch (e: Exception) {
+        } catch (_: Exception) {
         }
 
         sleep(3000)

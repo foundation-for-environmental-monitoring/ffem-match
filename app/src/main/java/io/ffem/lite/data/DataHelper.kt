@@ -22,18 +22,7 @@ private const val BIT_MASK = 0x00FFFFFF
 
 object DataHelper {
 
-    @JvmStatic
-    fun getUnit(id: String, context: Context): String? {
-        val testInfo = getTestInfo(id, context)
-        return if (testInfo != null) {
-            testInfo.subTest().unit
-        } else {
-            ""
-        }
-    }
-
     suspend fun getParametersFromTheCloud(
-        deviceId: String,
         type: String
     ): ArrayList<TestInfo> {
         val ref1 = FirebaseDatabase.getInstance().getReference(CUSTOMER_ID)
@@ -52,7 +41,6 @@ object DataHelper {
     }
 
     private suspend fun getParameterDataFromTheCloud(
-        deviceId: String,
         testId: String
     ): TestInfo? {
         val type = if (testId.startsWith("SB-")) {
@@ -67,7 +55,7 @@ object DataHelper {
             "water_card"
         }
 
-        val ref = FirebaseDatabase.getInstance().getReference("$deviceId/$type/tests")
+        val ref = FirebaseDatabase.getInstance().getReference("$CUSTOMER_ID/$type/tests")
         return try {
             var factoryConfig: ParameterInfoDto? = null
             val calibrationConfig = ref.get().await().children.map { snapShot ->
@@ -107,7 +95,7 @@ object DataHelper {
             var info: TestInfo? = null
             runBlocking {
                 launch {
-                    info = getParameterDataFromTheCloud(CUSTOMER_ID, id)
+                    info = getParameterDataFromTheCloud(id)
                 }
             }
             val db: CalibrationDatabase = CalibrationDatabase.getDatabase(context)
@@ -179,8 +167,11 @@ object DataHelper {
         return test?.subTest()?.values ?: emptyList()
     }
 
-    suspend fun getCalibrationFromTheCloud(deviceId: String, testId: String): FactoryConfig? {
-        val ref = FirebaseDatabase.getInstance().getReference(deviceId)
+    suspend fun getCalibrationFromTheCloud(
+        externalSensorId: String,
+        testId: String
+    ): FactoryConfig? {
+        val ref = FirebaseDatabase.getInstance().getReference(externalSensorId)
         return try {
             var factoryConfig: FactoryConfig? = null
             val calibrationConfig = ref.get().await().children.map { snapShot ->

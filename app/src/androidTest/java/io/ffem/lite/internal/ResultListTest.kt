@@ -123,16 +123,16 @@ class ResultListTest {
         onView(withText(R.string.next)).perform(click())
         sleep(1000)
 
-        val textInputEditText = onView(
-            allOf(
-                withId(R.id.source_desc_edit),
-                isDisplayed()
-            )
-        )
-        textInputEditText.perform(
-            replaceText("Description"),
-            closeSoftKeyboard()
-        )
+//        val textInputEditText = onView(
+//            allOf(
+//                withId(R.id.source_desc_edit),
+//                isDisplayed()
+//            )
+//        )
+//        textInputEditText.perform(
+//            replaceText("Description"),
+//            closeSoftKeyboard()
+//        )
 
 //        val appCompatAutoCompleteTextView = onView(
 //            allOf(

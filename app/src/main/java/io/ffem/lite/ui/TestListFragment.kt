@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
 import io.ffem.lite.R
-import io.ffem.lite.common.Constants.CUSTOMER_ID
 import io.ffem.lite.data.CalibrationDatabase
 import io.ffem.lite.data.DataHelper.getParametersFromTheCloud
 import io.ffem.lite.databinding.FragmentTestListBinding
@@ -91,9 +90,9 @@ class TestListFragment : BaseFragment() {
             launch {
                 val testType = AppPreferences.getTestType().toString().lowercase()
                 try {
-                    compostList = getParametersFromTheCloud(CUSTOMER_ID, "compost_$testType")
-                    waterList = getParametersFromTheCloud(CUSTOMER_ID, "water_$testType")
-                    soilList = getParametersFromTheCloud(CUSTOMER_ID, "soil_$testType")
+                    compostList = getParametersFromTheCloud("compost_$testType")
+                    waterList = getParametersFromTheCloud("water_$testType")
+                    soilList = getParametersFromTheCloud("soil_$testType")
                 } catch (e: Exception) {
                     Toast.makeText(
                         requireContext(),

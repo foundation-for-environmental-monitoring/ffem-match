@@ -240,16 +240,16 @@ class ImageTest {
                 ).perform(click())
                 sleep(1000)
 
-                val textInputEditText = onView(
-                    allOf(
-                        withId(R.id.source_desc_edit),
-                        isDisplayed()
-                    )
-                )
-                textInputEditText.perform(
-                    ViewActions.replaceText("Description"),
-                    ViewActions.closeSoftKeyboard()
-                )
+//                val textInputEditText = onView(
+//                    allOf(
+//                        withId(R.id.source_desc_edit),
+//                        isDisplayed()
+//                    )
+//                )
+//                textInputEditText.perform(
+//                    ViewActions.replaceText("Description"),
+//                    ViewActions.closeSoftKeyboard()
+//                )
 
 //                val appCompatAutoCompleteTextView = onView(
 //                    allOf(
