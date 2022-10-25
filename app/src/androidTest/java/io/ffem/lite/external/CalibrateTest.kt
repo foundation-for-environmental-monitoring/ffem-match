@@ -48,7 +48,10 @@ class CalibrateTest {
 
     @Test
     fun calibrateTest() {
-        onView(withText("YES SHARE")).perform(click())
+        try {
+            onView(withText("YES SHARE")).perform(click())
+        } catch (_: Exception) {
+        }
         sleep(200)
         TestHelper.startDiagnosticMode()
         sleep(200)

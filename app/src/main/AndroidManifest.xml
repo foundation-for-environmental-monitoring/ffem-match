@@ -30,7 +30,7 @@
         </activity>
         <activity
             android:name=".ui.ResultListActivity"
-            android:screenOrientation="nosensor"></activity>
+            android:screenOrientation="nosensor" />
         <activity
             android:name=".ui.TestActivity"
             android:exported="true"
@@ -55,6 +55,9 @@
             android:screenOrientation="nosensor" />
         <activity
             android:name=".ui.AboutActivity"
+            android:screenOrientation="nosensor" />
+        <activity
+            android:name=".ui.WebViewActivity"
             android:screenOrientation="nosensor" />
 
         <meta-data
