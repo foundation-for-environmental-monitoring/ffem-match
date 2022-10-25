@@ -17,7 +17,6 @@ import android.util.SparseArray
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -25,7 +24,6 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.preference.PreferenceFragmentCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.database.FirebaseDatabase
@@ -382,7 +380,7 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
             .setPositiveButton(R.string.ok) { _, _ ->
                 activity.setResult(Activity.RESULT_CANCELED)
                 activity.finish()
-                calibrate()
+//                calibrate()
             }
             .create()
             .show()
@@ -390,15 +388,15 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
 
     private var startCalibrate =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { }
-
-    private fun calibrate(): PreferenceFragmentCompat? {
-        val intent = Intent(this, TestActivity::class.java)
-        intent.putExtra(IS_CALIBRATION, true)
-        intent.putExtra(TEST_ID_KEY, testInfo.uuid)
-        setCalibration(this, true)
-        startCalibrate.launch(intent)
-        return null
-    }
+//
+//    private fun calibrate(): PreferenceFragmentCompat? {
+//        val intent = Intent(this, TestActivity::class.java)
+//        intent.putExtra(IS_CALIBRATION, true)
+//        intent.putExtra(TEST_ID_KEY, testInfo.uuid)
+//        setCalibration(this, true)
+//        startCalibrate.launch(intent)
+//        return null
+//    }
 
     private fun runCuvetteTest() {
         timerScope = MainScope()
@@ -613,6 +611,12 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.menuDone -> {
+                val intent = Intent(baseContext, MainActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                startActivity(intent)
+                return true
+            }
             R.id.menuLoad -> {
                 loadCalibration()
                 return true
@@ -846,67 +850,84 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
         b.viewPager.setCurrentItem(pageIndex.dilutionPage, false)
     }
 
-    fun onTestSelected(testInfo: TestInfo, redo: Boolean) {
-        when {
-            AppPreferences.useExternalSensor(this) -> {
-                Toast.makeText(
-                    this, getString(
-                        R.string.calibration_not_available
-                    ), Toast.LENGTH_LONG
-                ).show()
-                finish()
-            }
-            AppPreferences.runColorCardTest() -> {
-                Toast.makeText(
-                    this, getString(
-                        R.string.color_card_mode
-                    ), Toast.LENGTH_LONG
-                ).show()
-                finish()
-            }
-            else -> {
-                this.testInfo = testInfo
-                testInfo.subTest().splitRanges()
-                redoTest = redo
+    fun onTestSelected(testInfo: TestInfo?, redo: Boolean) {
 
-                title = testInfo.name?.toLocalString()
+        if (testInfo == null) {
+            return
+        }
 
-                setupInstructions(
-                    testInfo,
-                    instructionList,
-                    pageIndex,
-                    currentDilution,
-                    isCalibration,
-                    redoTest,
-                    this
+        this.testInfo = testInfo
+        testInfo.subTest().splitRanges()
+        testViewModel.setTest(testInfo)
+        testViewModel.loadCalibrations()
+
+        if (!isCalibration) {
+            if (!isDiagnosticMode() && testInfo.subtype == TestType.CUVETTE &&
+                !AppPreferences.useExternalSensor(this) && !isSwatchListValid(testInfo, false)
+            ) {
+                alertCalibrationIncomplete(
+                    this, testInfo
                 )
-                showHideFooter(b.viewPager.currentItem)
+                return
+            }
 
-                b.indicatorPgr.pageCount = pageIndex.totalPageCount
-
-                val adapter = TestPagerAdapter(this, testInfo)
-                adapter.testInfo = testInfo
-                adapter.instructions = instructionList
-                adapter.pageIndex = pageIndex
-                b.viewPager.adapter = adapter
-                adapter.notifyDataSetChanged()
-
-                b.viewPager.currentItem = 0
-
-                testViewModel.setTest(testInfo)
-                testViewModel.loadCalibrations()
-                testViewModel.isCalibration = isCalibration
-
-                pageNext()
+            val db = CalibrationDatabase.getDatabase(this)
+            try {
+                val calibrationDetail = db.calibrationDao().getCalibrationDetail(testInfo.uuid)
+                if (calibrationDetail != null) {
+                    val milliseconds = calibrationDetail.expiry
+                    if (milliseconds > 0 && milliseconds <= Date().time) {
+                        if (!isDiagnosticMode()) {
+                            alertCalibrationExpired(this)
+                            return
+                        }
+                    }
+                }
+            } finally {
+                db.close()
             }
         }
+
+        redoTest = redo
+
+        title = testInfo.name?.toLocalString()
+
+        setupInstructions(
+            testInfo,
+            instructionList,
+            pageIndex,
+            currentDilution,
+            isCalibration,
+            redoTest,
+            this
+        )
+        showHideFooter(b.viewPager.currentItem)
+
+        b.indicatorPgr.pageCount = pageIndex.totalPageCount
+
+        val adapter = TestPagerAdapter(this, testInfo)
+        adapter.testInfo = testInfo
+        adapter.instructions = instructionList
+        adapter.pageIndex = pageIndex
+        b.viewPager.adapter = adapter
+        adapter.notifyDataSetChanged()
+
+        b.viewPager.currentItem = 0
+
+
+        testViewModel.isCalibration = isCalibration
+
+        pageNext()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        if (isDiagnosticMode() && testViewModel.isCalibration
-            && b.viewPager.currentItem == 1
+        if (testViewModel.isCalibration && b.viewPager.currentItem == 1
         ) {
-            menuInflater.inflate(R.menu.menu_calibrate_dev, menu)
+            if (isDiagnosticMode()) {
+                menuInflater.inflate(R.menu.menu_calibrate_dev, menu)
+            } else {
+                menuInflater.inflate(R.menu.menu_calibrate, menu)
+            }
         }
         if ((::testInfo.isInitialized && testInfo.subtype != TestType.CARD) &&
             instructionList.size > 0 && b.viewPager.currentItem > 0 &&
@@ -972,11 +993,12 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
 
     override fun onResume() {
         super.onResume()
+        hideSystemUI()
         registerBroadcastReceiver()
         mainScope.launch {
             val uuid = intent.getStringExtra(TEST_ID_KEY)
             if (isCalibration && uuid != null) {
-                onTestSelected(DataHelper.getTestInfo(uuid, baseContext)!!, false)
+                onTestSelected(getTestInfo(uuid, baseContext), false)
             }
         }
     }

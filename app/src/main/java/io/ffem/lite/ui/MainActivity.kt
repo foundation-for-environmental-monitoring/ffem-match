@@ -20,7 +20,7 @@ import io.ffem.lite.util.AlertUtil
 /**
  * Activity to display info about the app.
  */
-class MainActivity : BaseActivity() {
+class MainActivity : AppUpdateActivity() {
     private lateinit var b: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
