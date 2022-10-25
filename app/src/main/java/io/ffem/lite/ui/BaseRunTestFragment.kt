@@ -35,13 +35,13 @@ import java.util.concurrent.Executors
 typealias ColorListener = (results: ArrayList<ResultInfo>, color: Int) -> Unit
 
 open class BaseRunTestFragment : Fragment() {
-    protected val countdown = intArrayOf(0)
-    protected lateinit var colorAnalyzer: ColorAnalyzer
-    protected lateinit var viewFinder: PreviewView
+    private val countdown = intArrayOf(0)
+    private lateinit var colorAnalyzer: ColorAnalyzer
+    private lateinit var viewFinder: PreviewView
     protected var testInfo: TestInfo? = null
     protected val model: TestInfoViewModel by activityViewModels()
 
-    protected var cameraStarted = false
+    private var cameraStarted = false
 
     private var mainScope = MainScope()
 
@@ -159,9 +159,9 @@ open class BaseRunTestFragment : Fragment() {
                 cameraControl?.setLinearZoom(0f)
                 val useTorch = AppPreferences.useCameraFlash(false)
                 if (useTorch) {
-                    if (camera?.cameraInfo!!.hasFlashUnit()) {
+                    try {
                         cameraControl?.enableTorch(true)
-                    } else {
+                    } catch (e: Exception) {
                         Toast.makeText(
                             context,
                             "Camera flash not available", Toast.LENGTH_SHORT

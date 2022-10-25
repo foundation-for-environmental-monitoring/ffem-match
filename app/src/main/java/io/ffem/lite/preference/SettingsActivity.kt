@@ -29,6 +29,10 @@ class SettingsActivity : BaseActivity() {
         setContentView(view)
 
         setupActivity()
+
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.layoutOther, OtherPreferenceFragment())
+            .commit()
     }
 
     override fun onResume() {
@@ -37,15 +41,10 @@ class SettingsActivity : BaseActivity() {
     }
 
     private fun setupActivity() {
-
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.layoutOther, OtherPreferenceFragment())
-            .commit()
-
         if (isDiagnosticMode()) {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.layoutDiagnostics, DiagnosticPreferenceFragment())
-                .commit()
+//            supportFragmentManager.beginTransaction()
+//                .replace(R.id.layoutDiagnostics, DiagnosticPreferenceFragment())
+//                .commit()
 
             supportFragmentManager.beginTransaction()
                 .replace(R.id.layoutTesting, TestingPreferenceFragment())

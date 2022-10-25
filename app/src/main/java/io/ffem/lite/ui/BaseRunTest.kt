@@ -242,7 +242,7 @@ open class BaseRunTest : Fragment(), RunTest {
         try {
             camera!!.parameters = parameters
             isFlashOn = false
-        } catch (e: Exception) {
+        } catch (_: Exception) {
         }
     }
 

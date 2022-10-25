@@ -255,7 +255,7 @@ open class CameraFragment : Fragment() {
         return b.root
     }
 
-    fun startTest() {
+    private fun startTest() {
         startCamera()
     }
 
@@ -316,8 +316,9 @@ open class CameraFragment : Fragment() {
         val useTorch = useCameraFlash(true)
         if (useTorch) {
             if (::camera.isInitialized) {
-                if (camera.cameraInfo.hasFlashUnit()) {
+                try {
                     cameraControl.enableTorch(false)
+                } catch (_: Exception) {
                 }
             }
         }
@@ -330,7 +331,7 @@ open class CameraFragment : Fragment() {
             cameraContainer.let {
                 container.removeView(it)
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
         }
         super.onPause()
         mainScope.cancel(null)
@@ -412,11 +413,10 @@ open class CameraFragment : Fragment() {
                 )
                 cameraControl = camera.cameraControl
                 cameraControl.setLinearZoom(0f)
-                val useTorch = useCameraFlash(true)
-                if (useTorch) {
-                    if (camera.cameraInfo.hasFlashUnit()) {
+                if (useCameraFlash(true)) {
+                    try {
                         cameraControl.enableTorch(true)
-                    } else {
+                    } catch (_: Exception) {
                         Toast.makeText(
                             context,
                             "Camera flash not available", Toast.LENGTH_SHORT
