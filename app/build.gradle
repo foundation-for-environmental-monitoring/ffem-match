@@ -16,10 +16,10 @@ android {
     compileSdkVersion 33
     defaultConfig {
         applicationId "com.hasirudalainnovations.unwastecompost"
-        minSdkVersion 26
+        minSdkVersion 27
         targetSdkVersion 33
-        versionCode 139
-        versionName "0.13"
+        versionCode 142
+        versionName "0.16"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 

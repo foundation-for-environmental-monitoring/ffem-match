@@ -1,10 +1,13 @@
 package io.ffem.lite.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
-import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import io.ffem.lite.R
 import io.ffem.lite.app.App
+import io.ffem.lite.common.Constants.PRIVACY_POLICY_LINK
 import io.ffem.lite.databinding.ActivityAboutBinding
 import io.ffem.lite.helper.ApkHelper.isTestDevice
 import io.ffem.lite.preference.AppPreferences
@@ -38,6 +41,18 @@ class AboutActivity : BaseActivity() {
                 dialog = NoticesDialogFragment.newInstance()
                 dialog!!.show(supportFragmentManager, "NoticesDialog")
             }
+        }
+
+        if (PRIVACY_POLICY_LINK.isNotEmpty()) {
+            b.privacyPolicyLink.setOnClickListener {
+                if (!isTestDevice(this)) {
+                    val intent = Intent(this, WebViewActivity::class.java)
+                    intent.putExtra("url", PRIVACY_POLICY_LINK)
+                    startActivity(intent)
+                }
+            }
+        } else {
+            b.privacyPolicyLink.visibility = GONE
         }
 
         b.disableDiagnosticsFab.setOnClickListener {
@@ -77,10 +92,10 @@ class AboutActivity : BaseActivity() {
      */
     private fun switchLayoutForDiagnosticOrUserMode() {
         if (isDiagnosticMode()) {
-            b.layoutDiagnostics.visibility = View.VISIBLE
+            b.layoutDiagnostics.visibility = VISIBLE
         } else {
-            if (b.layoutDiagnostics.visibility == View.VISIBLE) {
-                b.layoutDiagnostics.visibility = View.GONE
+            if (b.layoutDiagnostics.visibility == VISIBLE) {
+                b.layoutDiagnostics.visibility = GONE
             }
         }
         b.versionText.text = App.getAppVersion(false)

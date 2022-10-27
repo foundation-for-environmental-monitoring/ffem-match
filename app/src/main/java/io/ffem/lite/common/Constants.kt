@@ -12,6 +12,8 @@ object Constants {
     val DECIMAL_FORMAT = DecimalFormat("#.##", DecimalFormatSymbols(Locale.US))
     const val DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm"
 
+    const val PRIVACY_POLICY_LINK = ""
+
     const val GET_READY_SECONDS = 12
 
     /**

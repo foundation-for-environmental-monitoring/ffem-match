@@ -5,6 +5,7 @@
     <string name="water">Water</string>
     <string name="copyright">Copyright © ffem</string>
     <string name="legal_info">Legal Information</string>
+    <string name="privacy_policy">Privacy Policy</string>
 
     <string name="testing">Testing</string>
     <string name="align_color_card">Align the color card within the view above</string>
