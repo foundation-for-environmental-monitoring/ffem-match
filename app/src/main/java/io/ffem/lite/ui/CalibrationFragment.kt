@@ -20,6 +20,8 @@ import io.ffem.lite.data.CalibrationDatabase
 import io.ffem.lite.databinding.FragmentCalibrationBinding
 import io.ffem.lite.helper.SwatchHelper
 import io.ffem.lite.model.TestInfo
+import io.ffem.lite.preference.AppPreferences.getShowDebugInfo
+import io.ffem.lite.preference.AppPreferences.setShowDebugInfo
 import java.text.DateFormat
 import java.util.*
 
@@ -53,6 +55,12 @@ class CalibrationFragment : BaseFragment(),
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentCalibrationBinding.inflate(inflater, container, false)
+        b.showAdvancedInfoCheckbox.isChecked = getShowDebugInfo(requireContext())
+        b.showAdvancedInfoCheckbox.setOnClickListener {
+            setShowDebugInfo(b.showAdvancedInfoCheckbox.isChecked)
+            loadInfo()
+        }
+
         return b.root
     }
 
@@ -147,6 +155,13 @@ class CalibrationFragment : BaseFragment(),
                     }
                 }
             }
+
+            if (SwatchHelper.isCalibrationEmpty(model.test.get())) {
+                b.showAdvancedInfoCheckbox.visibility = GONE
+            } else {
+                b.showAdvancedInfoCheckbox.visibility = VISIBLE
+            }
+
         } finally {
             db.close()
         }

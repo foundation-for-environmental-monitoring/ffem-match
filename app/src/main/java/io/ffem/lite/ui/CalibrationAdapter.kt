@@ -43,8 +43,8 @@ class CalibrationAdapter internal constructor(
 
             //display additional information if we are in diagnostic mode
             if (getShowDebugInfo(holder.textValue.context)) {
-                holder.textUnit.visibility = View.GONE
                 if (color != Color.TRANSPARENT) {
+                    holder.textUnit.visibility = View.GONE
                     holder.textRgb.text = String.format("r: %s", ColorUtil.getColorRgbString(color))
                     holder.textRgb.visibility = View.VISIBLE
                     val colorHsv = FloatArray(3)

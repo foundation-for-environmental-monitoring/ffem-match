@@ -159,6 +159,27 @@ object SwatchHelper {
         return min(255, max(0, y2 + diff))
     }
 
+    fun isCalibrationEmpty(testInfo: TestInfo?): Boolean {
+        if (testInfo == null) {
+            return true
+        }
+        val calibrations = testInfo.subTest().colors
+        if (calibrations.isEmpty()) {
+            return true
+        }
+
+        if (calibrations.size < testInfo.subTest().values.size) {
+            return true
+        }
+
+        for (swatch1 in calibrations) {
+            if (swatch1.color != Color.TRANSPARENT) {
+                return false
+            }
+        }
+        return true
+    }
+
     /**
      * Validate the color by looking for missing color, duplicate colors, color out of sequence etc...
      *

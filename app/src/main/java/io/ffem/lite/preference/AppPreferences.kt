@@ -367,12 +367,19 @@ object AppPreferences {
         ) && isDiagnosticMode()
     }
 
-    fun getShowDebugInfo(context: Context): Boolean = (isDiagnosticMode()
-            && PreferencesUtil.getBoolean(
+    fun getShowDebugInfo(context: Context): Boolean = PreferencesUtil.getBoolean(
         context.applicationContext!!,
         R.string.showDebugMessagesKey,
         false
-    ))
+    )
+
+    fun setShowDebugInfo(value: Boolean) {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(App.app)
+        sharedPreferences!!.edit()
+            .putBoolean(App.app.getString(R.string.showDebugMessagesKey), value)
+            .apply()
+        sharedPreferences.edit().putBoolean(DATA_SHARING_SET, true).apply()
+    }
 
     fun setShareData(value: Boolean) {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(App.app)

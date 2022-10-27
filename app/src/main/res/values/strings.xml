@@ -307,4 +307,5 @@
     <string name="calcium_and_magnesium">Calcium and Magnesium</string>
     <string name="accept_result">Accept Result</string>
     <string name="other">Other</string>
+    <string name="show_advanced_color_info">Show advanced color info</string>
 </resources>
