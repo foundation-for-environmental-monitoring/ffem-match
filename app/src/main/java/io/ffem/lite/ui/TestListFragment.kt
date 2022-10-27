@@ -10,10 +10,13 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
 import io.ffem.lite.R
+import io.ffem.lite.common.Constants.SHOW_RECENT_PARAMETER_LIST
+import io.ffem.lite.common.SAMPLE_TEST_TYPE
 import io.ffem.lite.data.CalibrationDatabase
 import io.ffem.lite.data.DataHelper.getParametersFromTheCloud
 import io.ffem.lite.databinding.FragmentTestListBinding
 import io.ffem.lite.model.TestInfo
+import io.ffem.lite.model.TestSampleType
 import io.ffem.lite.model.TestType
 import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.util.PreferencesUtil
@@ -55,7 +58,11 @@ class TestListFragment : BaseFragment() {
         b.sampleTypeTab.getTabAt(1)?.tag = "soil"
         b.sampleTypeTab.getTabAt(2)?.tag = "water"
 
-        val lastTabSelected = AppPreferences.getLastSelectedTestsTab(requireContext())
+        val sampleType =
+            requireActivity().intent.getSerializableExtra(SAMPLE_TEST_TYPE) as TestSampleType?
+        val lastTabSelected =
+            sampleType?.name?.lowercase()
+                ?: AppPreferences.getLastSelectedTestsTab(requireContext())
         if (b.sampleTypeTab.getTabAt(0)?.tag == lastTabSelected) {
             b.sampleTypeTab.getTabAt(0)?.select()
         } else if (b.sampleTypeTab.getTabAt(1)?.tag == lastTabSelected) {
@@ -103,7 +110,11 @@ class TestListFragment : BaseFragment() {
             }
         }
 
-        if (compostList.isEmpty() && soilList.isEmpty() ||
+        val sampleType =
+            requireActivity().intent.getSerializableExtra(SAMPLE_TEST_TYPE) as TestSampleType?
+
+        if (sampleType != null ||
+            compostList.isEmpty() && soilList.isEmpty() ||
             soilList.isEmpty() && waterList.isEmpty() ||
             compostList.isEmpty() && waterList.isEmpty()
         ) {
@@ -154,7 +165,10 @@ class TestListFragment : BaseFragment() {
             b.sampleTypeTab.getTabAt(2)?.let { b.sampleTypeTab.removeTab(it) }
         }
 
-        val lastTabSelected = AppPreferences.getLastSelectedTestsTab(requireContext())
+        val lastTabSelected =
+            sampleType?.name?.lowercase()
+                ?: AppPreferences.getLastSelectedTestsTab(requireContext())
+
         if (b.sampleTypeTab.getTabAt(0)?.tag == lastTabSelected) {
             b.sampleTypeTab.getTabAt(0)?.select()
         } else if (b.sampleTypeTab.getTabAt(1)?.tag == lastTabSelected) {
@@ -211,7 +225,7 @@ class TestListFragment : BaseFragment() {
             this@TestListFragment::onItemRootViewClicked
         )
 
-        if (calibratedList.size > 0 && calibratedList.size < tests.size * 0.8) {
+        if (SHOW_RECENT_PARAMETER_LIST && calibratedList.size > 0 && calibratedList.size < tests.size * 0.8) {
             sectionAdapter.addSection(
                 TestInfoSection(
                     getString(R.string.recent),

@@ -43,7 +43,9 @@ object DataHelper {
     private suspend fun getParameterDataFromTheCloud(
         testId: String
     ): TestInfo? {
-        val type = if (testId.startsWith("SB-")) {
+        val type = if (testId.startsWith("CB-")) {
+            "compost_cuvette"
+        } else if (testId.startsWith("SB-")) {
             "soil_cuvette"
         } else if (testId.startsWith("WB-")) {
             "water_cuvette"

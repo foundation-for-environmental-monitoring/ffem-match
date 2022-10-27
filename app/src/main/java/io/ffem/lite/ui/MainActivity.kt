@@ -11,7 +11,9 @@ import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.ffem.lite.R
+import io.ffem.lite.common.SAMPLE_TEST_TYPE
 import io.ffem.lite.databinding.ActivityMainBinding
+import io.ffem.lite.model.TestSampleType
 import io.ffem.lite.model.TestType
 import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.preference.SettingsActivity
@@ -62,6 +64,22 @@ class MainActivity : AppUpdateActivity() {
             val intent = Intent(this, ResultListActivity::class.java)
             startTest.launch(intent)
         }
+
+        b.compostButton.setOnClickListener {
+            val intent = Intent(this, TestActivity::class.java)
+            AppPreferences.setCalibration(this, false)
+            AppPreferences.setTestType(this, TestType.CUVETTE)
+            intent.putExtra(SAMPLE_TEST_TYPE, TestSampleType.COMPOST)
+            startTest.launch(intent)
+        }
+
+        b.soilButton.setOnClickListener {
+            val intent = Intent(this, TestActivity::class.java)
+            AppPreferences.setCalibration(this, false)
+            AppPreferences.setTestType(this, TestType.CUVETTE)
+            intent.putExtra(SAMPLE_TEST_TYPE, TestSampleType.SOIL)
+            startTest.launch(intent)
+        }
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -98,9 +116,14 @@ class MainActivity : AppUpdateActivity() {
         return true
     }
 
-    fun onSettingsClick(@Suppress("UNUSED_PARAMETER") item: MenuItem) {
-        val intent = Intent(baseContext, SettingsActivity::class.java)
-        startSettings.launch(intent)
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_settings -> {
+                val intent = Intent(baseContext, SettingsActivity::class.java)
+                startSettings.launch(intent)
+            }
+        }
+        return true
     }
 
     private val startSettings =

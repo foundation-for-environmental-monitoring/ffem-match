@@ -12,7 +12,8 @@
             android:title="Card test"
             app:allowDividerAbove="true"
             app:allowDividerBelow="true"
-            app:iconSpaceReserved="false" />
+            app:iconSpaceReserved="false"
+            app:isPreferenceVisible="false" />
 
         <Preference
             android:key="colorimetricTestPreference"

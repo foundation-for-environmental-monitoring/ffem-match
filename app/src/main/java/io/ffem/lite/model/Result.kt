@@ -80,6 +80,9 @@ data class Result(
     fun splitRanges() {
         try {
             var range = ranges
+            if (range.isNullOrEmpty()) {
+                range = rangeMin
+            }
             if (getCalibrationType() == 0 && rangeMin != null && rangeMin!!.isNotEmpty()) {
                 range = rangeMin
             }

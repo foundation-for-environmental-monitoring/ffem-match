@@ -17,6 +17,22 @@
         android:paddingBottom="@dimen/margin_standard">
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/compost_button"
+            style="@style/Widget.Collect.Button.FullWidth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_extra_small"
+            android:text="@string/compost_test" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/soil_button"
+            style="@style/Widget.Collect.Button.FullWidth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_extra_small"
+            android:text="@string/soil_test" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/card_test_button"
             style="@style/Widget.Collect.Button.FullWidth"
             android:layout_width="match_parent"
@@ -38,7 +54,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_extra_small"
-            android:text="@string/titration_test" />
+            android:text="@string/titration_test"
+            android:visibility="gone" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/view_result_button"

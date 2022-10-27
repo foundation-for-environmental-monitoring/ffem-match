@@ -2,6 +2,7 @@ package io.ffem.lite.model
 
 import android.os.Parcelable
 import io.ffem.lite.common.Constants.DECIMAL_FORMAT
+import io.ffem.lite.preference.getCalibrationType
 import kotlinx.parcelize.Parcelize
 import java.util.*
 import kotlin.math.max
@@ -45,16 +46,25 @@ data class TestInfo(
                             )
                         }
                     } else {
-                        val rangeArray = subTest().ranges!!.split(",").toTypedArray()
-                        if (rangeArray.size > 1) {
-                            if (minMaxRange.isNotEmpty()) {
-                                minMaxRange.append(", ")
+                        var range = subTest().ranges
+                        if (range.isNullOrEmpty()) {
+                            range = subTest().rangeMin
+                        }
+                        if (getCalibrationType() == 0 && subTest().rangeMin != null && subTest().rangeMin!!.isNotEmpty()) {
+                            range = subTest().rangeMin
+                        }
+                        if (range != null) {
+                            val rangeArray = range.split(",").toTypedArray()
+                            if (rangeArray.size > 1) {
+                                if (minMaxRange.isNotEmpty()) {
+                                    minMaxRange.append(", ")
+                                }
+                                val maxRangeValue = result.calculateResult(getMaxRangeValue())
+                                minMaxRange.append(rangeArray[0].trim { it <= ' ' }).append(" - ")
+                                    .append(DECIMAL_FORMAT.format(maxRangeValue))
+                                minMaxRange.append(" ")
+                                minMaxRange.append(result.unit)
                             }
-                            val maxRangeValue = result.calculateResult(getMaxRangeValue())
-                            minMaxRange.append(rangeArray[0].trim { it <= ' ' }).append(" - ")
-                                .append(DECIMAL_FORMAT.format(maxRangeValue))
-                            minMaxRange.append(" ")
-                            minMaxRange.append(result.unit)
                         }
                     }
                 }
@@ -85,8 +95,19 @@ data class TestInfo(
             if (subTest().values.size > 0) {
                 subTest().values[subTest().values.size - 1].value
             } else {
-                val array = subTest().ranges!!.split(",").toTypedArray()
-                array[array.size - 1].toDouble()
+                var range = subTest().ranges
+                if (range.isNullOrEmpty()) {
+                    range = subTest().rangeMin
+                }
+                if (getCalibrationType() == 0 && subTest().rangeMin != null && subTest().rangeMin!!.isNotEmpty()) {
+                    range = subTest().rangeMin
+                }
+                if (range != null) {
+                    val array = range.split(",").toTypedArray()
+                    array[array.size - 1].toDouble()
+                } else {
+                    (-1).toDouble()
+                }
             }
         } catch (e: NumberFormatException) {
             (-1).toDouble()
