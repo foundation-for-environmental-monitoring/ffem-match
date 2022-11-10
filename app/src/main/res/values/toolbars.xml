@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <style name="Widget.AndroidShared.Toolbar.Surface.HighEmphasisControls" parent="Widget.MaterialComponents.Toolbar.Surface">
         <!-- Note: this theme overlay will only work if the style is applied directly to a Toolbar. -->
         <item name="android:theme">

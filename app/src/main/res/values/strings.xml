@@ -38,6 +38,7 @@
     <string name="titration_test">Titration Test</string>
     <string name="external_meter">External Meter</string>
     <string name="view_results">View Results</string>
+    <string name="resources">Resources</string>
     <string name="results">Results</string>
     <string name="analyzed_image">Analyzed image</string>
     <string name="disable_diagnostics">Disable diagnostics</string>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Alpha">
+        <item name="android:alpha">0.4</item>
+    </style>
+</resources>

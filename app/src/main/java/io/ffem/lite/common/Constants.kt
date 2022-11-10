@@ -6,8 +6,9 @@ import java.util.*
 
 object Constants {
 
-    const val CUSTOMER_ID = "customer1"
-    const val SURVEY_APP = "io.ffem.collect"
+    const val CUSTOMER_ID = "ffem_lite"
+    const val EXTERNAL_ACTION = "ffem.lite"
+    const val IS_COMPOST_APP = false
 
     val DECIMAL_FORMAT = DecimalFormat("#.##", DecimalFormatSymbols(Locale.US))
     const val DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm"

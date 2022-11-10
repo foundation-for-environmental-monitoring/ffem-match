@@ -16,8 +16,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Collect"
-        android:usesCleartextTraffic="true"
+        android:theme="@style/Theme.App.Starting"
+        android:usesCleartextTraffic="false"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name=".ui.MainActivity"
@@ -30,35 +30,48 @@
         </activity>
         <activity
             android:name=".ui.ResultListActivity"
-            android:screenOrientation="nosensor" />
+            android:screenOrientation="nosensor"
+            android:theme="@style/Theme.Collect" />
         <activity
             android:name=".ui.TestActivity"
             android:exported="true"
             android:screenOrientation="nosensor"
             android:theme="@style/Theme.Collect">
             <intent-filter>
-                <action android:name="io.ffem.lite" />
+                <action android:name="ffem.lite" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
+            android:name=".ResourcesActivity"
+            android:exported="false"
+            android:screenOrientation="nosensor"
+            android:theme="@style/Theme.Collect" />
+        <activity
             android:name=".ui.ResultViewActivity"
-            android:screenOrientation="nosensor" />
+            android:screenOrientation="nosensor"
+            android:theme="@style/Theme.Collect" />
         <activity
             android:name=".preference.SettingsActivity"
-            android:screenOrientation="nosensor" />
+            android:screenOrientation="nosensor"
+            android:theme="@style/Theme.Collect" />
         <activity
             android:name=".ui.CalibrationGraphActivity"
-            android:screenOrientation="nosensor" />
+            android:screenOrientation="nosensor"
+            android:theme="@style/Theme.Collect" />
         <activity
             android:name=".ui.CalibrationsActivity"
-            android:screenOrientation="nosensor" />
+            android:screenOrientation="nosensor"
+            android:theme="@style/Theme.Collect" />
         <activity
             android:name=".ui.AboutActivity"
-            android:screenOrientation="nosensor" />
+            android:screenOrientation="nosensor"
+            android:theme="@style/Theme.Collect" />
         <activity
             android:name=".ui.WebViewActivity"
-            android:screenOrientation="nosensor" />
+            android:screenOrientation="nosensor"
+            android:theme="@style/Theme.Collect" />
 
         <meta-data
             android:name="firebase_analytics_collection_enabled"
@@ -68,7 +81,6 @@
         <meta-data
             android:name="google_analytics_adid_collection_enabled"
             android:value="false" />
-
     </application>
 
 </manifest>

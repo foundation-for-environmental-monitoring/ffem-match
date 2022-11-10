@@ -46,94 +46,94 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory
-        android:key="preferenceCategoryDiagnostics"
-        android:title="@string/color_card"
-        app:allowDividerAbove="true"
-        app:allowDividerBelow="true"
-        app:iconSpaceReserved="false">
+    <!--    <PreferenceCategory-->
+    <!--        android:key="preferenceCategoryDiagnostics"-->
+    <!--        android:title="@string/color_card"-->
+    <!--        app:allowDividerAbove="true"-->
+    <!--        app:allowDividerBelow="true"-->
+    <!--        app:iconSpaceReserved="false">-->
 
-        <ListPreference
-            android:defaultValue="0"
-            android:entries="@array/pref_card_options"
-            android:entryValues="@array/pref_card_option_values"
-            android:key="@string/runColorCardPrefKey"
-            android:summary="%s"
-            android:title="Run color card test"
-            app:allowDividerAbove="true"
-            app:iconSpaceReserved="false" />
+    <!--        <ListPreference-->
+    <!--            android:defaultValue="0"-->
+    <!--            android:entries="@array/pref_card_options"-->
+    <!--            android:entryValues="@array/pref_card_option_values"-->
+    <!--            android:key="@string/runColorCardPrefKey"-->
+    <!--            android:summary="%s"-->
+    <!--            android:title="Run color card test"-->
+    <!--            app:allowDividerAbove="true"-->
+    <!--            app:iconSpaceReserved="false" />-->
 
-        <EditTextPreference
-            android:dialogMessage="Enter the sample image number. Enter blank to revert to camera image"
-            android:inputType="number"
-            android:key="@string/testImageNumberKey"
-            android:selectAllOnFocus="true"
-            android:title="Test Image Number"
-            app:allowDividerAbove="true"
-            app:allowDividerBelow="true"
-            app:iconSpaceReserved="false" />
+    <!--        <EditTextPreference-->
+    <!--            android:dialogMessage="Enter the sample image number. Enter blank to revert to camera image"-->
+    <!--            android:inputType="number"-->
+    <!--            android:key="@string/testImageNumberKey"-->
+    <!--            android:selectAllOnFocus="true"-->
+    <!--            android:title="Test Image Number"-->
+    <!--            app:allowDividerAbove="true"-->
+    <!--            app:allowDividerBelow="true"-->
+    <!--            app:iconSpaceReserved="false" />-->
 
-        <EditTextPreference
-            android:defaultValue="100"
-            android:dialogMessage="The minimum brightness (0 - 255)"
-            android:inputType="number"
-            android:key="@string/minimum_brightness"
-            android:maxLength="3"
-            android:selectAllOnFocus="true"
-            android:title="Minimum brightness"
-            app:allowDividerAbove="true"
-            app:allowDividerBelow="true"
-            app:iconSpaceReserved="false" />
+    <!--        <EditTextPreference-->
+    <!--            android:defaultValue="100"-->
+    <!--            android:dialogMessage="The minimum brightness (0 - 255)"-->
+    <!--            android:inputType="number"-->
+    <!--            android:key="@string/minimum_brightness"-->
+    <!--            android:maxLength="3"-->
+    <!--            android:selectAllOnFocus="true"-->
+    <!--            android:title="Minimum brightness"-->
+    <!--            app:allowDividerAbove="true"-->
+    <!--            app:allowDividerBelow="true"-->
+    <!--            app:iconSpaceReserved="false" />-->
 
-        <EditTextPreference
-            android:defaultValue="240"
-            android:dialogMessage="The max brightness (0 - 255)"
-            android:inputType="number"
-            android:key="@string/maximum_brightness"
-            android:maxLength="3"
-            android:selectAllOnFocus="true"
-            android:title="Maximum brightness"
-            app:allowDividerAbove="true"
-            app:allowDividerBelow="true"
-            app:iconSpaceReserved="false" />
+    <!--        <EditTextPreference-->
+    <!--            android:defaultValue="240"-->
+    <!--            android:dialogMessage="The max brightness (0 - 255)"-->
+    <!--            android:inputType="number"-->
+    <!--            android:key="@string/maximum_brightness"-->
+    <!--            android:maxLength="3"-->
+    <!--            android:selectAllOnFocus="true"-->
+    <!--            android:title="Maximum brightness"-->
+    <!--            app:allowDividerAbove="true"-->
+    <!--            app:allowDividerBelow="true"-->
+    <!--            app:iconSpaceReserved="false" />-->
 
-        <EditTextPreference
-            android:defaultValue="40"
-            android:dialogMessage="Shadow tolerance (0 - 255)"
-            android:inputType="number"
-            android:key="@string/shadow_tolerance"
-            android:maxLength="3"
-            android:selectAllOnFocus="true"
-            android:title="Shadow tolerance"
-            app:allowDividerAbove="true"
-            app:allowDividerBelow="true"
-            app:iconSpaceReserved="false" />
+    <!--        <EditTextPreference-->
+    <!--            android:defaultValue="40"-->
+    <!--            android:dialogMessage="Shadow tolerance (0 - 255)"-->
+    <!--            android:inputType="number"-->
+    <!--            android:key="@string/shadow_tolerance"-->
+    <!--            android:maxLength="3"-->
+    <!--            android:selectAllOnFocus="true"-->
+    <!--            android:title="Shadow tolerance"-->
+    <!--            app:allowDividerAbove="true"-->
+    <!--            app:allowDividerBelow="true"-->
+    <!--            app:iconSpaceReserved="false" />-->
 
-        <EditTextPreference
-            android:defaultValue="55"
-            android:dialogMessage="The max difference between the sample color &amp; card colors"
-            android:inputType="number"
-            android:key="@string/colorDistanceToleranceKey"
-            android:maxLength="3"
-            android:selectAllOnFocus="true"
-            android:title="No Match Error tolerance"
-            app:allowDividerAbove="true"
-            app:allowDividerBelow="true"
-            app:iconSpaceReserved="false" />
+    <!--        <EditTextPreference-->
+    <!--            android:defaultValue="55"-->
+    <!--            android:dialogMessage="The max difference between the sample color &amp; card colors"-->
+    <!--            android:inputType="number"-->
+    <!--            android:key="@string/colorDistanceToleranceKey"-->
+    <!--            android:maxLength="3"-->
+    <!--            android:selectAllOnFocus="true"-->
+    <!--            android:title="No Match Error tolerance"-->
+    <!--            app:allowDividerAbove="true"-->
+    <!--            app:allowDividerBelow="true"-->
+    <!--            app:iconSpaceReserved="false" />-->
 
-        <EditTextPreference
-            android:defaultValue="80"
-            android:dialogMessage="The max difference between left &amp; right colors columns"
-            android:inputType="number"
-            android:key="@string/maxCardColorDistanceAllowedKey"
-            android:maxLength="3"
-            android:selectAllOnFocus="true"
-            android:title="Calibration Error tolerance"
-            app:allowDividerAbove="true"
-            app:allowDividerBelow="true"
-            app:iconSpaceReserved="false" />
+    <!--        <EditTextPreference-->
+    <!--            android:defaultValue="80"-->
+    <!--            android:dialogMessage="The max difference between left &amp; right colors columns"-->
+    <!--            android:inputType="number"-->
+    <!--            android:key="@string/maxCardColorDistanceAllowedKey"-->
+    <!--            android:maxLength="3"-->
+    <!--            android:selectAllOnFocus="true"-->
+    <!--            android:title="Calibration Error tolerance"-->
+    <!--            app:allowDividerAbove="true"-->
+    <!--            app:allowDividerBelow="true"-->
+    <!--            app:iconSpaceReserved="false" />-->
 
-    </PreferenceCategory>
+    <!--    </PreferenceCategory>-->
 
     <PreferenceCategory
         android:key="preferenceCategoryDiagnostics"

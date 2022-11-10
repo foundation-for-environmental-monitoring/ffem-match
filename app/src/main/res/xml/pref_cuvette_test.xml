@@ -28,7 +28,7 @@
         <SwitchPreference
             android:key="@string/torchCuvetteKey"
             android:summary="Enable or disable flash during test"
-            android:title="Torch mode for colorimetric tests"
+            android:title="Torch mode"
             app:allowDividerAbove="true"
             app:allowDividerBelow="true"
             app:iconSpaceReserved="false" />

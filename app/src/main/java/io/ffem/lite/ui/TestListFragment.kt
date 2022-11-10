@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
@@ -86,7 +88,10 @@ class TestListFragment : BaseFragment() {
             override fun onTabReselected(tab: TabLayout.Tab) {}
         })
 
-        setAdapter()
+        lifecycleScope.launch {
+            delay(300)
+            setAdapter()
+        }
     }
 
     private fun setAdapter() {
@@ -241,6 +246,8 @@ class TestListFragment : BaseFragment() {
 
         b.testsLst.layoutManager = LinearLayoutManager(context)
         b.testsLst.adapter = sectionAdapter
+        b.testsLst.visibility = VISIBLE
+        b.progressBar.visibility = GONE
     }
 
     override fun onDestroy() {

@@ -12,61 +12,30 @@
     <color name="colorAccent">#A8A8A8</color>
     <color name="colorSurface">#FFFFFF</color>
     <color name="colorOnSurface">#000000</color>
+    <color name="colorAccent">#A8A8A8</color>
     <color name="colorPrimarySurface">#ffffff</color>
 
-    <bool name="lightStatusBar">true</bool>
-
-    <!-- This color is used for buttons that should have a similar color to colorSurface (but still
-    stand out from the background).
-
-    {@deprecated These components should be replaced with material ones and this
-    color should be deleted} -->
-    <color name="surfaceButtonColor">#f7f7f7</color>
-
-    <!--    <color name="app_bar">#007CA6</color>-->
-    <!--    <color name="status_bar">#00698C</color>-->
-    <color name="dialog_button">#222222</color>
-
-    <color name="intro">#006485</color>
-    <color name="intro_button">#FFF3F0</color>
-
-    <color name="drawer_start">#016B8E</color>
-    <color name="drawer_center">#055570</color>
-    <color name="drawer_end">#FF0099cc</color>
+    <color name="tabTextColor">#7CD2E6</color>
+    <color name="tabIconColor">#8DE4F8</color>
+    <color name="tabIndicatorColor">#193136</color>
+    <color name="tabSelectedTextColor">#D3F4FB</color>
 
     <color name="text_links">#0668BD</color>
-    <color name="text_click">#FFFFFF</color>
-
-    <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="title">#222222</color>
+    <color name="black">#FF000000</color>
     <color name="gray">#E6E6E6</color>
-    <color name="gray_bg">#707070</color>
-    <color name="dk_gray">#1E1E1E</color>
     <color name="main_text">#2E2E2E</color>
+
     <color name="sub_text">#323131</color>
     <color name="card_header">#ECECEC</color>
 
-    <color name="survey_bg">#F4F4F4</color>
     <color name="card_bg">#FFFFFF</color>
-    <color name="edit_bg">#F8F8F8</color>
-
-    <color name="button_bg">#005C9A</color>
-
-    <color name="secondary">#016587</color>
-    <color name="secondary_variant">#016587</color>
-    <color name="ic_launcher_background">#FFFFFF</color>
-
-    <color name="error_background">#2afac900</color>
-    <color name="destructive">#ff0000</color>
-    <color name="button_green">#CDCDCD</color>
     <color name="safe_green">#387700</color>
-    <color name="done_row">#FAFFF6</color>
+    <color name="ic_launcher_background">#FFFFFF</color>
     <color name="risk_red">#980000</color>
     <color name="draft_orange">#F44336</color>
-    <color name="water_blue">#65B5F0FF</color>
-    <color name="soil_brown">#3BFF9081</color>
     <color name="diagnostic_option_background">#FFF0DC</color>
+    <color name="error_background">#2afac900</color>
 
     <!-- Diagnostic -->
     <color name="diagnostic">#910228</color>

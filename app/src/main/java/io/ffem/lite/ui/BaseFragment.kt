@@ -15,6 +15,10 @@ abstract class BaseFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         changeActionBarStyleBasedOnCurrentMode()
+        val appActivity = (requireActivity() as AppCompatActivity)
+        if (appActivity.supportActionBar != null) {
+            appActivity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        }
     }
 
     /**

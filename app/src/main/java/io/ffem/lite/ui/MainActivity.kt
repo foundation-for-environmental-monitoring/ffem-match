@@ -8,15 +8,21 @@ import android.os.Handler
 import android.os.Process
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.ffem.lite.R
+import io.ffem.lite.ResourcesActivity
+import io.ffem.lite.common.Constants.IS_COMPOST_APP
 import io.ffem.lite.common.SAMPLE_TEST_TYPE
 import io.ffem.lite.databinding.ActivityMainBinding
 import io.ffem.lite.model.TestSampleType
 import io.ffem.lite.model.TestType
 import io.ffem.lite.preference.AppPreferences
 import io.ffem.lite.preference.SettingsActivity
+import io.ffem.lite.preference.isDiagnosticMode
 import io.ffem.lite.util.AlertUtil
 
 /**
@@ -26,11 +32,44 @@ class MainActivity : AppUpdateActivity() {
     private lateinit var b: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         b = ActivityMainBinding.inflate(layoutInflater)
         val view = b.root
         setContentView(view)
 
+        b.resourceButton.setOnClickListener {
+            val intent = Intent(baseContext, ResourcesActivity::class.java)
+            startSettings.launch(intent)
+        }
+
+        b.settingsButton.setOnClickListener {
+            val intent = Intent(baseContext, SettingsActivity::class.java)
+            startSettings.launch(intent)
+        }
+    }
+
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        title = ""
+        if (!AppPreferences.isShareDataSet()) {
+            showDataCollectionConfirmAlert()
+        }
+
+        if (IS_COMPOST_APP) {
+            if (isDiagnosticMode()) {
+                b.cardTestButton.visibility = VISIBLE
+            } else {
+                b.cardTestButton.visibility = GONE
+            }
+        } else {
+            b.cardTestButton.visibility = VISIBLE
+        }
         b.cardTestButton.setOnClickListener {
             val intent = Intent(this, TestActivity::class.java)
             AppPreferences.setCalibration(this, false)
@@ -38,6 +77,15 @@ class MainActivity : AppUpdateActivity() {
             startTest.launch(intent)
         }
 
+        if (IS_COMPOST_APP) {
+            if (isDiagnosticMode()) {
+                b.colorimetricButton.visibility = VISIBLE
+            } else {
+                b.colorimetricButton.visibility = GONE
+            }
+        } else {
+            b.colorimetricButton.visibility = VISIBLE
+        }
         b.colorimetricButton.setOnClickListener {
 //            val externalIntent: Intent? = packageManager
 //                .getLaunchIntentForPackage(Constants.SURVEY_APP)
@@ -53,6 +101,15 @@ class MainActivity : AppUpdateActivity() {
 //            }
         }
 
+        if (IS_COMPOST_APP) {
+            if (isDiagnosticMode()) {
+                b.titrationButton.visibility = VISIBLE
+            } else {
+                b.titrationButton.visibility = GONE
+            }
+        } else {
+            b.titrationButton.visibility = VISIBLE
+        }
         b.titrationButton.setOnClickListener {
             val intent = Intent(this, TestActivity::class.java)
             AppPreferences.setCalibration(this, false)
@@ -65,32 +122,27 @@ class MainActivity : AppUpdateActivity() {
             startTest.launch(intent)
         }
 
-        b.compostButton.setOnClickListener {
-            val intent = Intent(this, TestActivity::class.java)
-            AppPreferences.setCalibration(this, false)
-            AppPreferences.setTestType(this, TestType.CUVETTE)
-            intent.putExtra(SAMPLE_TEST_TYPE, TestSampleType.COMPOST)
-            startTest.launch(intent)
-        }
+        if (IS_COMPOST_APP) {
+            b.compostButton.visibility = VISIBLE
+            b.compostButton.setOnClickListener {
+                val intent = Intent(this, TestActivity::class.java)
+                AppPreferences.setCalibration(this, false)
+                AppPreferences.setTestType(this, TestType.CUVETTE)
+                intent.putExtra(SAMPLE_TEST_TYPE, TestSampleType.COMPOST)
+                startTest.launch(intent)
+            }
 
-        b.soilButton.setOnClickListener {
-            val intent = Intent(this, TestActivity::class.java)
-            AppPreferences.setCalibration(this, false)
-            AppPreferences.setTestType(this, TestType.CUVETTE)
-            intent.putExtra(SAMPLE_TEST_TYPE, TestSampleType.SOIL)
-            startTest.launch(intent)
-        }
-    }
-
-    override fun onPostCreate(savedInstanceState: Bundle?) {
-        super.onPostCreate(savedInstanceState)
-        supportActionBar?.setDisplayHomeAsUpEnabled(false)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        if (!AppPreferences.isShareDataSet()) {
-            showDataCollectionConfirmAlert()
+            b.soilButton.visibility = VISIBLE
+            b.soilButton.setOnClickListener {
+                val intent = Intent(this, TestActivity::class.java)
+                AppPreferences.setCalibration(this, false)
+                AppPreferences.setTestType(this, TestType.CUVETTE)
+                intent.putExtra(SAMPLE_TEST_TYPE, TestSampleType.SOIL)
+                startTest.launch(intent)
+            }
+        } else {
+            b.compostButton.visibility = GONE
+            b.soilButton.visibility = GONE
         }
     }
 

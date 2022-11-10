@@ -8,14 +8,27 @@
 
     <include layout="@layout/app_bar_layout" />
 
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center" />
+
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/sample_type_tab"
         style="@style/Widget.MaterialComponents.TabLayout.Colored"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?colorSecondaryVariant"
+        android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"
-        app:tabMode="fixed">
+        app:tabIconTint="@color/tabIconColor"
+        app:tabIndicatorColor="@color/tabIndicatorColor"
+        app:tabInlineLabel="true"
+        app:tabMode="fixed"
+        app:tabSelectedTextColor="@color/tabSelectedTextColor"
+        app:tabTextAppearance="@style/TextAppearance.AppCompat.Small"
+        app:tabTextColor="@color/tabTextColor">
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
@@ -48,6 +61,7 @@
         android:clipToPadding="false"
         android:contentDescription="@string/select_test"
         android:paddingBottom="120dp"
+        android:visibility="gone"
         app:layoutManager="LinearLayoutManager"
         tools:listitem="@layout/test_item" />
 

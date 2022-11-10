@@ -22,6 +22,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.viewpager2.widget.ViewPager2
@@ -34,6 +35,7 @@ import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.common.*
+import io.ffem.lite.common.Constants.EXTERNAL_ACTION
 import io.ffem.lite.common.Constants.MESSAGE_TWO_LINE_FORMAT
 import io.ffem.lite.data.*
 import io.ffem.lite.data.DataHelper.getJsonResult
@@ -182,10 +184,12 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
     }
 
     private fun registerBroadcastReceiver() {
-        broadcastManager.registerReceiver(
-            testCompletedBroadcastReceiver,
-            IntentFilter(BROADCAST_TEST_COMPLETED)
-        )
+        if (::broadcastManager.isInitialized) {
+            broadcastManager.registerReceiver(
+                testCompletedBroadcastReceiver,
+                IntentFilter(BROADCAST_TEST_COMPLETED)
+            )
+        }
     }
 
 //    fun isCalibration(): Boolean {
@@ -196,7 +200,7 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
         val themeUtils = ThemeUtils(this)
         setTheme(themeUtils.appTheme)
         super.onCreate(savedInstanceState)
-
+        title = ""
         hideSystemUI()
 
         b = ActivityTestBinding.inflate(layoutInflater)
@@ -279,48 +283,54 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
 
         testViewModel = ViewModelProvider(this)[TestInfoViewModel::class.java]
 
-        if ("io.ffem.lite" == intent.action) {
-            runBlocking {
-                launch {
-                    getTestSelectedByExternalApp(intent)
-                }
-            }
-        }
-
-        val testInfo = testViewModel.test.get()
-        if (testInfo != null) {
-            testViewModel.loadCalibrations()
-            if (!isDiagnosticMode() && testInfo.subtype == TestType.CUVETTE &&
-                !AppPreferences.useExternalSensor(this) && !isSwatchListValid(testInfo, false)
-            ) {
-                alertCalibrationIncomplete(
-                    this, testInfo
-                )
-                return
-            }
-
-            val db = CalibrationDatabase.getDatabase(this)
-            try {
-                val calibrationDetail = db.calibrationDao().getCalibrationDetail(testInfo.uuid)
-                if (calibrationDetail != null) {
-                    val milliseconds = calibrationDetail.expiry
-                    if (milliseconds > 0 && milliseconds <= Date().time) {
-                        if (!isDiagnosticMode()) {
-                            alertCalibrationExpired(this)
-                            return
-                        }
+        lifecycle.coroutineScope.launchWhenCreated {
+            delay(300)
+            if (EXTERNAL_ACTION == intent.action) {
+                runBlocking {
+                    launch {
+                        getTestSelectedByExternalApp(intent)
                     }
                 }
-            } finally {
-                db.close()
             }
 
-            startTest()
-        } else {
-            val testPagerAdapter = TestPagerAdapter(this, testInfo)
-            testPagerAdapter.pageIndex = pageIndex
-            b.viewPager.adapter = testPagerAdapter
-            b.indicatorPgr.showDots = true
+            val testInfo = testViewModel.test.get()
+            if (testInfo != null) {
+                testViewModel.loadCalibrations()
+                if (!isDiagnosticMode() && testInfo.subtype == TestType.CUVETTE &&
+                    !AppPreferences.useExternalSensor(this@TestActivity) && !isSwatchListValid(
+                        testInfo,
+                        false
+                    )
+                ) {
+                    alertCalibrationIncomplete(
+                        this@TestActivity, testInfo
+                    )
+                    return@launchWhenCreated
+                }
+
+                val db = CalibrationDatabase.getDatabase(this@TestActivity)
+                try {
+                    val calibrationDetail = db.calibrationDao().getCalibrationDetail(testInfo.uuid)
+                    if (calibrationDetail != null) {
+                        val milliseconds = calibrationDetail.expiry
+                        if (milliseconds > 0 && milliseconds <= Date().time) {
+                            if (!isDiagnosticMode()) {
+                                alertCalibrationExpired(this@TestActivity)
+                                return@launchWhenCreated
+                            }
+                        }
+                    }
+                } finally {
+                    db.close()
+                }
+
+                startTest()
+            } else {
+                val testPagerAdapter = TestPagerAdapter(this@TestActivity, testInfo)
+                testPagerAdapter.pageIndex = pageIndex
+                b.viewPager.adapter = testPagerAdapter
+                b.indicatorPgr.showDots = true
+            }
         }
     }
 
@@ -726,6 +736,7 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (isAppInLockTaskMode(this)) {
             showLockTaskEscapeMessage()
@@ -1008,7 +1019,9 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
         if (::timerScope.isInitialized) {
             timerScope.cancel()
         }
-        broadcastManager.unregisterReceiver(testCompletedBroadcastReceiver)
+        if (::broadcastManager.isInitialized) {
+            broadcastManager.unregisterReceiver(testCompletedBroadcastReceiver)
+        }
     }
 
     private val requestCameraPermission =
@@ -1162,7 +1175,7 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
         } else {
             resultIntent.putExtra(TEST_VALUE_KEY, "")
         }
-        setResult(Activity.RESULT_OK, resultIntent)
+        setTestResult()
         finish()
     }
 

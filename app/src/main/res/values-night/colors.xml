@@ -1,19 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#121212</color>
-    <color name="colorPrimaryVariant">#121212</color>
+    <color name="colorPrimary">#6C6C6C</color>
+    <color name="colorPrimaryVariant">#000000</color>
     <color name="colorSurface">#121212</color>
     <color name="colorOnSurface">#DADADA</color>
     <color name="colorOnPrimary">#E3E3E3</color>
     <color name="colorAccent">#A8A8A8</color>
     <color name="colorSecondaryVariant">#000000</color>
-
-    <bool name="lightStatusBar">false</bool>
-
-    <!-- This color is used for buttons that should have a similar color to colorSurface (but still
-    stand out from the background).
-
-    {@deprecated These components should be replaced with material ones and this
-    color should be deleted} -->
-    <color name="surfaceButtonColor">#282828</color>
+    <color name="colorPrimarySurface">#ffffff</color>
 </resources>

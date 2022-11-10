@@ -55,7 +55,7 @@ abstract class BaseActivity : AppCompatActivity() {
         super.onResume()
         try {
             changeActionBarStyleBasedOnCurrentMode()
-        } catch (e: Exception) {
+        } catch (_: Exception) {
         }
     }
 
@@ -108,7 +108,7 @@ abstract class BaseActivity : AppCompatActivity() {
             if ("true" == testLabSetting) {
                 return true
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
         }
         return false
     }
