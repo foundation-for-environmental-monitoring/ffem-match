@@ -14,7 +14,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.ffem.lite.R
-import io.ffem.lite.ResourcesActivity
 import io.ffem.lite.common.Constants.IS_COMPOST_APP
 import io.ffem.lite.common.SAMPLE_TEST_TYPE
 import io.ffem.lite.databinding.ActivityMainBinding
@@ -37,16 +36,6 @@ class MainActivity : AppUpdateActivity() {
         b = ActivityMainBinding.inflate(layoutInflater)
         val view = b.root
         setContentView(view)
-
-        b.resourceButton.setOnClickListener {
-            val intent = Intent(baseContext, ResourcesActivity::class.java)
-            startSettings.launch(intent)
-        }
-
-        b.settingsButton.setOnClickListener {
-            val intent = Intent(baseContext, SettingsActivity::class.java)
-            startSettings.launch(intent)
-        }
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -56,7 +45,6 @@ class MainActivity : AppUpdateActivity() {
 
     override fun onResume() {
         super.onResume()
-        title = ""
         if (!AppPreferences.isShareDataSet()) {
             showDataCollectionConfirmAlert()
         }
@@ -195,7 +183,11 @@ class MainActivity : AppUpdateActivity() {
     private fun showDataCollectionConfirmAlert() {
         MaterialAlertDialogBuilder(this@MainActivity, R.style.ConfirmDialogTheme)
             .setTitle(getString(R.string.data_sharing))
-            .setMessage("Share test data?\n\nYou can change your selection at any time in the settings\n")
+            .setMessage(
+                "Share test data?\n" +
+                        "\n" +
+                        "You can change your selection at any time in the settings\n"
+            )
             .setPositiveButton(
                 getString(R.string.yes_share)
             ) { _, _ -> AppPreferences.setShareData(true) }

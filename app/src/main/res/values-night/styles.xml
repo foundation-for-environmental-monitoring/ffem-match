@@ -4,4 +4,10 @@
     <style name="Alpha">
         <item name="android:alpha">0.4</item>
     </style>
+
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/black</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/logo_splash</item>
+        <item name="postSplashScreenTheme">@style/Theme.Collect</item>
+    </style>
 </resources>

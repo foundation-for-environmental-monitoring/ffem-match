@@ -15,11 +15,11 @@ if (secretsFile.exists()) {
 android {
     compileSdkVersion 33
     defaultConfig {
-        applicationId "com.hasirudalainnovations.unwastecompost"
-        minSdkVersion 27
+        applicationId "io.ffem.lite"
+        minSdkVersion 28
         targetSdkVersion 33
-        versionCode 151
-        versionName "0.25"
+        versionCode 134
+        versionName "0.84"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -41,18 +41,18 @@ android {
 
     signingConfigs {
         release {
-            if (secrets.getProperty('UWASTE_COMPOST_RELEASE_STORE_FILE')) {
-                storeFile file(secrets.getProperty('UWASTE_COMPOST_RELEASE_STORE_FILE'))
-                storePassword secrets.getProperty('UWASTE_COMPOST_RELEASE_STORE_PASSWORD')
-                keyAlias secrets.getProperty('UWASTE_COMPOST_RELEASE_KEY_ALIAS')
-                keyPassword secrets.getProperty('UWASTE_COMPOST_RELEASE_KEY_PASSWORD')
+            if (secrets.getProperty('FFEM_RELEASE_STORE_FILE')) {
+                storeFile file(secrets.getProperty('FFEM_RELEASE_STORE_FILE'))
+                storePassword secrets.getProperty('FFEM_RELEASE_STORE_PASSWORD')
+                keyAlias secrets.getProperty('FFEM_RELEASE_KEY_ALIAS')
+                keyPassword secrets.getProperty('FFEM_RELEASE_KEY_PASSWORD')
             }
         }
     }
 
     buildTypes {
         release {
-            if (secrets.getProperty('UWASTE_COMPOST_RELEASE_STORE_FILE')) {
+            if (secrets.getProperty('FFEM_RELEASE_STORE_FILE')) {
                 signingConfig signingConfigs.release
             }
             minifyEnabled(true)
@@ -171,6 +171,7 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:5.0.1'
 
     testImplementation 'junit:junit:4.13.2'
+    androidTestUtil 'androidx.test:orchestrator:1.4.2'
     androidTestImplementation 'androidx.test:runner:1.5.0'
     androidTestImplementation "androidx.test.ext:junit:1.1.4"
     androidTestImplementation 'androidx.test.ext:junit-ktx:1.1.4'
