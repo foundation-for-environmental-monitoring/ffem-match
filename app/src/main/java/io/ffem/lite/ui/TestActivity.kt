@@ -472,11 +472,9 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
                 }
                 var index = 0
                 for (r in testInfo.results) {
-                    if (!r.input) {
-                        if (formulaList.size > index) {
-                            r.formula = formulaList[index]
-                            index++
-                        }
+                    if (formulaList.size > index) {
+                        r.formula = formulaList[index]
+                        index++
                     }
                 }
 
@@ -576,8 +574,7 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
                 testInfo.subTest().unit
             )
             resultsValues.append(result.id, result.getResultString())
-
-            if (result.display == 1 || testInfo.results.size == 1) {
+            if (testInfo.results.size == 1) {
                 if (result.error == ErrorType.NO_ERROR) {
                     resultIntent.putExtra(VALUE, result.getResultString())
                 }

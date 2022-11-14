@@ -13,6 +13,11 @@ import android.view.View.VISIBLE
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.firebase.FirebaseApp
+import com.google.firebase.appcheck.FirebaseAppCheck
+import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory
+import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
+import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.common.Constants.IS_COMPOST_APP
 import io.ffem.lite.common.SAMPLE_TEST_TYPE
@@ -31,7 +36,20 @@ class MainActivity : AppUpdateActivity() {
     private lateinit var b: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val splashScreen = installSplashScreen()
+        installSplashScreen()
+
+        FirebaseApp.initializeApp(this)
+        val firebaseAppCheck = FirebaseAppCheck.getInstance()
+        if (BuildConfig.DEBUG) {
+            firebaseAppCheck.installAppCheckProviderFactory(
+                DebugAppCheckProviderFactory.getInstance()
+            )
+        } else {
+            firebaseAppCheck.installAppCheckProviderFactory(
+                PlayIntegrityAppCheckProviderFactory.getInstance()
+            )
+        }
+
         super.onCreate(savedInstanceState)
         b = ActivityMainBinding.inflate(layoutInflater)
         val view = b.root

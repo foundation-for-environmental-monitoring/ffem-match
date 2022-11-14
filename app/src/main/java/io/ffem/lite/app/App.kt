@@ -11,7 +11,6 @@ import com.google.gson.reflect.TypeToken
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.model.CalibrationValue
-import io.ffem.lite.model.TestConfig
 import io.ffem.lite.preference.isDiagnosticMode
 import timber.log.Timber
 import java.lang.reflect.Type
@@ -31,8 +30,6 @@ class App : BaseApplication() {
     }
 
     companion object {
-
-        private lateinit var testConfig: TestConfig
 
         /**
          * Gets the singleton app object.

@@ -1,13 +1,11 @@
 package io.ffem.lite.remote.dto
 
-import io.ffem.lite.model.Result
-import io.ffem.lite.model.TestInfo
-import io.ffem.lite.model.TestSampleType
-import io.ffem.lite.model.TestType
+import io.ffem.lite.model.*
 
 data class ParameterInfoDto(
     val dilutions: List<Int> = emptyList(),
     val name: String = "",
+    val inputs: ArrayList<InputDto> = arrayListOf(),
     val results: ArrayList<ResultDto> = arrayListOf(),
     val sampleType: String = "",
     val subtype: String = "",
@@ -20,7 +18,8 @@ data class ParameterInfoDto(
             dilutions = dilutions,
             name = name,
             uuid = uuid,
-            results = results.map { it.toResult() } as ArrayList<Result>
+            results = results.map { it.toResult() } as ArrayList<Result>,
+            inputs = inputs.map { it.toInput() } as ArrayList<Input>
         )
     }
 }

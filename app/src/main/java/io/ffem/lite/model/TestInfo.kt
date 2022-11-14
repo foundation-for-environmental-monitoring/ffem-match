@@ -13,6 +13,7 @@ data class TestInfo(
     var sampleType: TestSampleType = TestSampleType.WATER,
     var subtype: TestType = TestType.CARD,
     var uuid: String = "",
+    var inputs: ArrayList<Input> = ArrayList(),
     var results: ArrayList<Result> = ArrayList(),
     var sampleQuantity: Float = 0f,
     var dilution: Int = 1,

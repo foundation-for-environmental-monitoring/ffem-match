@@ -88,166 +88,170 @@ class TestListFragment : BaseFragment() {
             override fun onTabReselected(tab: TabLayout.Tab) {}
         })
 
-        lifecycleScope.launch {
-            delay(300)
-            setAdapter()
-        }
+        setAdapter()
     }
 
     private fun setAdapter() {
-        var compostList: ArrayList<TestInfo> = ArrayList()
-        var waterList: ArrayList<TestInfo> = ArrayList()
-        var soilList: ArrayList<TestInfo> = ArrayList()
-        runBlocking {
-            launch {
-                val testType = AppPreferences.getTestType().toString().lowercase()
-                try {
-                    compostList = getParametersFromTheCloud("compost_$testType")
-                    waterList = getParametersFromTheCloud("water_$testType")
-                    soilList = getParametersFromTheCloud("soil_$testType")
-                } catch (e: Exception) {
-                    Toast.makeText(
-                        requireContext(),
-                        getString(R.string.check_internet),
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
+        lateinit var fetchCancel: Job
+        val fetchJob = lifecycleScope.launch {
+            var compostList: ArrayList<TestInfo> = ArrayList()
+            var waterList: ArrayList<TestInfo> = ArrayList()
+            var soilList: ArrayList<TestInfo> = ArrayList()
+
+            val testType = AppPreferences.getTestType().toString().lowercase()
+            try {
+                compostList = getParametersFromTheCloud("compost_$testType")
+                waterList = getParametersFromTheCloud("water_$testType")
+                soilList = getParametersFromTheCloud("soil_$testType")
+            } catch (e: Exception) {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.check_internet),
+                    Toast.LENGTH_LONG
+                ).show()
             }
-        }
+            fetchCancel.cancel()
 
-        val sampleType =
-            requireActivity().intent.getSerializableExtra(SAMPLE_TEST_TYPE) as TestSampleType?
+            val sampleType =
+                requireActivity().intent.getSerializableExtra(SAMPLE_TEST_TYPE) as TestSampleType?
 
-        if (sampleType != null ||
-            compostList.isEmpty() && soilList.isEmpty() ||
-            soilList.isEmpty() && waterList.isEmpty() ||
-            compostList.isEmpty() && waterList.isEmpty()
-        ) {
-            b.sampleTypeTab.visibility = GONE
-        }
-
-        if (compostList.isNotEmpty()) {
-            for (i in compostList.indices.reversed()) {
-                if (compostList[i].subtype == TestType.API) {
-                    compostList.removeAt(i)
-                }
+            if (sampleType != null ||
+                compostList.isEmpty() && soilList.isEmpty() ||
+                soilList.isEmpty() && waterList.isEmpty() ||
+                compostList.isEmpty() && waterList.isEmpty()
+            ) {
+                b.sampleTypeTab.visibility = GONE
             }
 
-            compostList.sortWith { object1: TestInfo, object2: TestInfo ->
-                object1.name!!.compareTo(object2.name!!, ignoreCase = true)
-            }
-        } else {
-            if (b.sampleTypeTab.getTabAt(0)?.tag == "compost") {
-                b.sampleTypeTab.getTabAt(0)?.let { b.sampleTypeTab.removeTab(it) }
-            }
-        }
-
-        if (soilList.isNotEmpty()) {
-            for (i in soilList.indices.reversed()) {
-                if (soilList[i].subtype == TestType.API) {
-                    soilList.removeAt(i)
-                }
-            }
-
-            soilList.sortWith { object1: TestInfo, object2: TestInfo ->
-                object1.name!!.compareTo(object2.name!!, ignoreCase = true)
-            }
-        } else {
-            b.sampleTypeTab.getTabAt(1)?.let { b.sampleTypeTab.removeTab(it) }
-        }
-
-        if (waterList.isNotEmpty()) {
-            for (i in waterList.indices.reversed()) {
-                if (waterList[i].subtype == TestType.API) {
-                    waterList.removeAt(i)
-                }
-            }
-
-            waterList.sortWith { object1: TestInfo, object2: TestInfo ->
-                object1.name!!.compareTo(object2.name!!, ignoreCase = true)
-            }
-        } else {
-            b.sampleTypeTab.getTabAt(2)?.let { b.sampleTypeTab.removeTab(it) }
-        }
-
-        val lastTabSelected =
-            sampleType?.name?.lowercase()
-                ?: AppPreferences.getLastSelectedTestsTab(requireContext())
-
-        if (b.sampleTypeTab.getTabAt(0)?.tag == lastTabSelected) {
-            b.sampleTypeTab.getTabAt(0)?.select()
-        } else if (b.sampleTypeTab.getTabAt(1)?.tag == lastTabSelected) {
-            b.sampleTypeTab.getTabAt(1)?.select()
-        } else if (b.sampleTypeTab.getTabAt(2)?.tag == lastTabSelected) {
-            b.sampleTypeTab.getTabAt(2)?.select()
-        }
-
-        val tests = when (b.sampleTypeTab.getTabAt(b.sampleTypeTab.selectedTabPosition)?.tag) {
-            "compost" -> {
-                compostList
-            }
-            "soil" -> {
-                soilList
-            }
-            else -> {
-                waterList
-            }
-        }
-
-        for (i in tests.indices.reversed()) {
-            if (tests[i].subtype == TestType.API) {
-                tests.removeAt(i)
-            }
-        }
-
-        tests.sortWith { object1: TestInfo, object2: TestInfo ->
-            object1.name!!.compareTo(object2.name!!, ignoreCase = true)
-        }
-
-        val db: CalibrationDatabase = CalibrationDatabase.getDatabase(requireContext())
-        val calibratedList = ArrayList<TestInfo>()
-        try {
-            val dao = db.calibrationDao()
-            for (i in tests.indices) {
-                val calibrationInfo = dao.getCalibrations(tests[i].uuid)
-                if (calibrationInfo != null) {
-                    if (calibrationInfo.calibrations.isNotEmpty()) {
-                        calibratedList.add(tests[i])
-                        continue
+            if (compostList.isNotEmpty()) {
+                for (i in compostList.indices.reversed()) {
+                    if (compostList[i].subtype == TestType.API) {
+                        compostList.removeAt(i)
                     }
                 }
+
+                compostList.sortWith { object1: TestInfo, object2: TestInfo ->
+                    object1.name!!.compareTo(object2.name!!, ignoreCase = true)
+                }
+            } else {
+                if (b.sampleTypeTab.getTabAt(0)?.tag == "compost") {
+                    b.sampleTypeTab.getTabAt(0)?.let { b.sampleTypeTab.removeTab(it) }
+                }
             }
-        } catch (e: Exception) {
-            Timber.e(e)
-        } finally {
-            db.close()
-        }
 
-        val sectionAdapter = SectionedRecyclerViewAdapter()
-        val testInfoSection = TestInfoSection(
-            getString(R.string.all),
-            tests,
-            this@TestListFragment::onItemRootViewClicked
-        )
+            if (soilList.isNotEmpty()) {
+                for (i in soilList.indices.reversed()) {
+                    if (soilList[i].subtype == TestType.API) {
+                        soilList.removeAt(i)
+                    }
+                }
 
-        if (SHOW_RECENT_PARAMETER_LIST && calibratedList.size > 0 && calibratedList.size < tests.size * 0.8) {
-            sectionAdapter.addSection(
-                TestInfoSection(
-                    getString(R.string.recent),
-                    calibratedList,
-                    this@TestListFragment::onItemRootViewClicked
-                )
+                soilList.sortWith { object1: TestInfo, object2: TestInfo ->
+                    object1.name!!.compareTo(object2.name!!, ignoreCase = true)
+                }
+            } else {
+                b.sampleTypeTab.getTabAt(1)?.let { b.sampleTypeTab.removeTab(it) }
+            }
+
+            if (waterList.isNotEmpty()) {
+                for (i in waterList.indices.reversed()) {
+                    if (waterList[i].subtype == TestType.API) {
+                        waterList.removeAt(i)
+                    }
+                }
+
+                waterList.sortWith { object1: TestInfo, object2: TestInfo ->
+                    object1.name!!.compareTo(object2.name!!, ignoreCase = true)
+                }
+            } else {
+                b.sampleTypeTab.getTabAt(2)?.let { b.sampleTypeTab.removeTab(it) }
+            }
+
+            val lastTabSelected =
+                sampleType?.name?.lowercase()
+                    ?: AppPreferences.getLastSelectedTestsTab(requireContext())
+
+            if (b.sampleTypeTab.getTabAt(0)?.tag == lastTabSelected) {
+                b.sampleTypeTab.getTabAt(0)?.select()
+            } else if (b.sampleTypeTab.getTabAt(1)?.tag == lastTabSelected) {
+                b.sampleTypeTab.getTabAt(1)?.select()
+            } else if (b.sampleTypeTab.getTabAt(2)?.tag == lastTabSelected) {
+                b.sampleTypeTab.getTabAt(2)?.select()
+            }
+
+            val tests = when (b.sampleTypeTab.getTabAt(b.sampleTypeTab.selectedTabPosition)?.tag) {
+                "compost" -> {
+                    compostList
+                }
+                "soil" -> {
+                    soilList
+                }
+                else -> {
+                    waterList
+                }
+            }
+
+            for (i in tests.indices.reversed()) {
+                if (tests[i].subtype == TestType.API) {
+                    tests.removeAt(i)
+                }
+            }
+
+            tests.sortWith { object1: TestInfo, object2: TestInfo ->
+                object1.name!!.compareTo(object2.name!!, ignoreCase = true)
+            }
+
+            val db: CalibrationDatabase = CalibrationDatabase.getDatabase(requireContext())
+            val calibratedList = ArrayList<TestInfo>()
+            try {
+                val dao = db.calibrationDao()
+                for (i in tests.indices) {
+                    val calibrationInfo = dao.getCalibrations(tests[i].uuid)
+                    if (calibrationInfo != null) {
+                        if (calibrationInfo.calibrations.isNotEmpty()) {
+                            calibratedList.add(tests[i])
+                            continue
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Timber.e(e)
+            } finally {
+                db.close()
+            }
+
+            val sectionAdapter = SectionedRecyclerViewAdapter()
+            val testInfoSection = TestInfoSection(
+                getString(R.string.all),
+                tests,
+                this@TestListFragment::onItemRootViewClicked
             )
-        } else {
-            testInfoSection.setHasHeader(false)
+
+            if (SHOW_RECENT_PARAMETER_LIST && calibratedList.size > 0 && calibratedList.size < tests.size * 0.8) {
+                sectionAdapter.addSection(
+                    TestInfoSection(
+                        getString(R.string.recent),
+                        calibratedList,
+                        this@TestListFragment::onItemRootViewClicked
+                    )
+                )
+            } else {
+                testInfoSection.setHasHeader(false)
+            }
+
+            sectionAdapter.addSection(testInfoSection)
+
+            b.testsLst.layoutManager = LinearLayoutManager(context)
+            b.testsLst.adapter = sectionAdapter
+            b.testsLst.visibility = VISIBLE
+            b.progressBar.visibility = GONE
         }
 
-        sectionAdapter.addSection(testInfoSection)
-
-        b.testsLst.layoutManager = LinearLayoutManager(context)
-        b.testsLst.adapter = sectionAdapter
-        b.testsLst.visibility = VISIBLE
-        b.progressBar.visibility = GONE
+        fetchCancel = lifecycleScope.launch {
+            delay(8000)
+            fetchJob.cancel()
+            requireActivity().finish()
+        }
     }
 
     override fun onDestroy() {

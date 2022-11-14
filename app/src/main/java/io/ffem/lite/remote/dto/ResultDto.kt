@@ -14,7 +14,8 @@ data class ResultDto(
     val formula: String = "",
     val ranges: String = "",
     val rangeMin: String = "",
-    val values: List<ValueDto> = emptyList()
+    val values: List<ValueDto> = emptyList(),
+    var input: Boolean = false
 ) {
     fun toResult(): Result {
         return Result(
@@ -27,7 +28,8 @@ data class ResultDto(
             timeDelay = timeDelay,
             formula = formula,
             values = values.map { it.toCalibrationValue() } as MutableList<CalibrationValue>,
-            risks = risks.map { it.toRiskValue() } as MutableList<RiskValue>
+            risks = risks.map { it.toRiskValue() } as MutableList<RiskValue>,
+            input = input
         )
     }
 }

@@ -53,6 +53,11 @@ class CalibrateLoadTest {
 
     @Test
     fun calibrateTest() {
+        try {
+            onView(withText("YES SHARE")).perform(click())
+        } catch (_: Exception) {
+        }
+
         startDiagnosticMode()
         sleep(200)
 
@@ -70,11 +75,17 @@ class CalibrateLoadTest {
 
         sleep(200)
 
+        onView(withText("Colorimetric test")).perform(click())
+
+        sleep(200)
+
         onView((withText(R.string.calibration_type))).perform(click())
         onView((withText("Full Calibration"))).perform(click())
         sleep(200)
 
         onView((withText(R.string.calibrate))).perform(click())
+
+        sleep(400)
 
         onView((withText(R.string.water))).perform(click())
 
@@ -276,7 +287,7 @@ class CalibrateLoadTest {
                     isDisplayed()
                 )
             ).check(matches(withText("Calibration saved")))
-        } catch (e: Exception) {
+        } catch (_: Exception) {
         }
 
         sleep(1500)
@@ -414,10 +425,7 @@ class CalibrateLoadTest {
         sleep(1000)
 
         onView(
-            allOf(
-                withId(R.id.next_button), withText(R.string.next),
-                isDisplayed()
-            )
+            withText(R.string.close)
         ).perform(click())
 
     }

@@ -207,10 +207,6 @@ object DataHelper {
         resultJson.put(ConstantJsonKey.PARAMETER_ID, testInfo.uuid)
         val resultsJsonArray = JSONArray()
         for (subTest in testInfo.results) {
-            if (subTest.input) {
-                continue
-            }
-
             val subTestJson = JSONObject()
             subTestJson.put(ConstantJsonKey.DILUTION, subTest.dilution)
             subTestJson.put(ConstantJsonKey.NAME, subTest.name)

@@ -75,8 +75,12 @@ class TitrationFragment : BaseFragment() {
 
         val testInfo = model.test.get()!!
         if (testInfo.results.size > 1) {
-            b.textInput1.text = testInfo.subTest().name!!.toLocalString()
-            b.textInput2.text = testInfo.results[1].name!!.toLocalString()
+            if (testInfo.inputs.isNotEmpty()) {
+                b.textInput1.text = testInfo.inputs[0].name!!.toLocalString()
+                b.textInput2.text = testInfo.inputs[1].name!!.toLocalString()
+            } else {
+                b.textInput1.text = testInfo.subTest().name!!.toLocalString()
+            }
             b.editTitration2.setOnEditorActionListener { _: TextView?, actionId: Int, _: KeyEvent? ->
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     if (submitResultListener != null) {
