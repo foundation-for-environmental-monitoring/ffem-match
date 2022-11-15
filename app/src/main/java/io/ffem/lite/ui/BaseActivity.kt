@@ -3,16 +3,12 @@ package io.ffem.lite.ui
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.provider.Settings
 import android.util.TypedValue
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.analytics
-import com.google.firebase.ktx.Firebase
-import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.preference.isDiagnosticMode
 
@@ -21,10 +17,6 @@ abstract class BaseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (!BuildConfig.DEBUG && !isTestLab()) {
-            firebaseAnalytics = Firebase.analytics
-            FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(true)
-        }
 //        updateTheme()
         changeActionBarStyleBasedOnCurrentMode()
     }
@@ -100,17 +92,6 @@ abstract class BaseActivity : AppCompatActivity() {
         if (supportActionBar != null) {
             supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         }
-    }
-
-    private fun isTestLab(): Boolean {
-        try {
-            val testLabSetting = Settings.System.getString(contentResolver, "firebase.test.lab")
-            if ("true" == testLabSetting) {
-                return true
-            }
-        } catch (_: Exception) {
-        }
-        return false
     }
 }
 

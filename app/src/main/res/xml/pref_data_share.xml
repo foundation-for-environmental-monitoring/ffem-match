@@ -24,22 +24,4 @@
             app:iconSpaceReserved="false" />
     </PreferenceCategory>
 
-
-    <PreferenceCategory
-        android:key="usage_data"
-        android:title="@string/analytics_preferences"
-        app:allowDividerAbove="true"
-        app:allowDividerBelow="true"
-        app:iconSpaceReserved="false">
-
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="analytics"
-            android:summary="@string/analytics_summary"
-            android:title="@string/analytics"
-            app:allowDividerAbove="true"
-            app:allowDividerBelow="true"
-            app:iconSpaceReserved="false" />
-    </PreferenceCategory>
-
 </androidx.preference.PreferenceScreen>

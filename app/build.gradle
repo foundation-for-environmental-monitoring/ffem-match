@@ -51,6 +51,9 @@ android {
     }
 
     buildTypes {
+        debug {
+            resValue("bool", "FIREBASE_ANALYTICS_ENABLED", "false")
+        }
         release {
             if (secrets.getProperty('FFEM_RELEASE_STORE_FILE')) {
                 signingConfig signingConfigs.release
@@ -58,6 +61,7 @@ android {
             minifyEnabled(true)
             shrinkResources true
             zipAlignEnabled true
+            resValue("bool", "FIREBASE_ANALYTICS_ENABLED", "true")
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField "java.util.Date", "BUILD_TIME", "new java.util.Date(" +
                     (System.currentTimeMillis()) + "L)"
@@ -147,10 +151,10 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore-ktx'
     implementation 'com.google.firebase:firebase-database-ktx'
     implementation 'com.google.firebase:firebase-storage-ktx'
-    implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4'
     implementation 'com.google.firebase:firebase-appcheck-playintegrity'
     implementation 'com.google.firebase:firebase-appcheck-debug:16.1.0'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
     releaseImplementation 'com.google.firebase:firebase-crashlytics-ktx'
 
     // Arduino

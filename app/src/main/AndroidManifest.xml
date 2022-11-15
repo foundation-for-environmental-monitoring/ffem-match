@@ -75,7 +75,7 @@
 
         <meta-data
             android:name="firebase_analytics_collection_enabled"
-            android:value="false" />
+            android:value="@bool/FIREBASE_ANALYTICS_ENABLED" />
 
         <!-- Disable Firebase advertising id -->
         <meta-data

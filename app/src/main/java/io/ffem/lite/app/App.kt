@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.*
 import com.google.gson.reflect.TypeToken
 import io.ffem.lite.BuildConfig
@@ -26,7 +27,21 @@ class App : BaseApplication() {
             Timber.plant(Timber.DebugTree())
         }
 
+        FirebaseAnalytics.getInstance(this)
+            .setAnalyticsCollectionEnabled(!BuildConfig.DEBUG && !isTestLab())
+
 //        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+    }
+
+    private fun isTestLab(): Boolean {
+        try {
+            val testLabSetting = Settings.System.getString(contentResolver, "firebase.test.lab")
+            if ("true" == testLabSetting) {
+                return true
+            }
+        } catch (_: Exception) {
+        }
+        return false
     }
 
     companion object {
