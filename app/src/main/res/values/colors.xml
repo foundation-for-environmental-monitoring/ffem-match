@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#007CA6</color>
-    <color name="colorPrimaryVariant">#00698C</color>
+    <color name="colorPrimary">#939393</color>
+    <color name="colorPrimaryVariant">#838383</color>
     <color name="colorOnPrimary">#ffffff</color>
-    <color name="colorOnDark">#00698C</color>
-    <color name="colorPrimaryDark">#00698C</color>
-    <color name="colorSecondaryVariant">#00698C</color>
+    <color name="colorOnDark">#919191</color>
+    <color name="colorPrimaryDark">#8F8F8F</color>
+    <color name="colorSecondaryVariant">#8C8C8C</color>
 
     <color name="colorError">#D42C2C</color>
     <color name="colorOnError">#ffffff</color>
@@ -14,8 +14,7 @@
     <color name="colorOnSurface">#000000</color>
     <color name="colorPrimarySurface">#ffffff</color>
 
-    <color name="tabTextColor">#66C5DC</color>
-    <color name="tabIconColor">#8DE4F8</color>
+    <color name="tabTextColor">#D6D6D6</color>
     <color name="tabIndicatorColor">#FEFFFF</color>
     <color name="tabSelectedTextColor">#FFFFFF</color>
 
@@ -30,7 +29,7 @@
 
     <color name="card_bg">#FFFFFF</color>
     <color name="safe_green">#387700</color>
-    <color name="ic_launcher_background">#055570</color>
+    <color name="ic_launcher_background">#727272</color>
     <color name="risk_red">#980000</color>
     <color name="draft_orange">#F44336</color>
     <color name="diagnostic_option_background">#FFF0DC</color>
