@@ -8,7 +8,7 @@
 
         <Preference
             android:key="cardTestPreference"
-            android:summary="Settings for card tests"
+            android:summary="Settings for card test"
             android:title="Card test"
             app:allowDividerAbove="true"
             app:allowDividerBelow="true"
@@ -16,7 +16,7 @@
 
         <Preference
             android:key="colorimetricTestPreference"
-            android:summary="Calibration and settings for colorimetric tests"
+            android:summary="Calibration &amp; settings for colorimetric test"
             android:title="Colorimetric test"
             app:allowDividerAbove="true"
             app:allowDividerBelow="true"
