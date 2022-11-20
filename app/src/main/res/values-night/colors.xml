@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#6C6C6C</color>
+    <color name="colorPrimary">#5A5A5A</color>
     <color name="colorPrimaryVariant">#000000</color>
     <color name="colorSurface">#121212</color>
     <color name="colorOnSurface">#DADADA</color>

@@ -22,6 +22,7 @@
         android:background="?colorSecondaryVariant"
         app:layout_constraintTop_toTopOf="parent"
         app:tabIconTint="@color/tabIconColor"
+        app:tabIndicatorHeight="4dp"
         app:tabIndicatorColor="@color/tabIndicatorColor"
         app:tabInlineLabel="true"
         app:tabMode="fixed"
@@ -32,21 +33,18 @@
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:icon="@drawable/dust"
             android:tag="compost"
             android:text="@string/compost" />
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:icon="@drawable/leaf"
             android:tag="soil"
             android:text="@string/soil" />
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:icon="@drawable/drop"
             android:tag="water"
             android:text="@string/water" />
 

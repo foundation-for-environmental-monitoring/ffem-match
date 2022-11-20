@@ -9,15 +9,15 @@
 
     <color name="colorError">#D42C2C</color>
     <color name="colorOnError">#ffffff</color>
-    <color name="colorAccent">#A8A8A8</color>
+    <color name="colorAccent">#6C6C6C</color>
     <color name="colorSurface">#FFFFFF</color>
     <color name="colorOnSurface">#000000</color>
     <color name="colorPrimarySurface">#ffffff</color>
 
-    <color name="tabTextColor">#7CD2E6</color>
+    <color name="tabTextColor">#66C5DC</color>
     <color name="tabIconColor">#8DE4F8</color>
-    <color name="tabIndicatorColor">#193136</color>
-    <color name="tabSelectedTextColor">#D3F4FB</color>
+    <color name="tabIndicatorColor">#FEFFFF</color>
+    <color name="tabSelectedTextColor">#FFFFFF</color>
 
     <color name="text_links">#0668BD</color>
     <color name="white">#FFFFFFFF</color>
@@ -30,7 +30,7 @@
 
     <color name="card_bg">#FFFFFF</color>
     <color name="safe_green">#387700</color>
-    <color name="ic_launcher_background">#FFFFFF</color>
+    <color name="ic_launcher_background">#055570</color>
     <color name="risk_red">#980000</color>
     <color name="draft_orange">#F44336</color>
     <color name="diagnostic_option_background">#FFF0DC</color>
