@@ -33,7 +33,7 @@ import java.util.*
 
 
 const val EXTERNAL_SURVEY_PACKAGE_NAME = "io.ffem.collect"
-const val TEST_SURVEY_NAME = "ffem Lite Testing"
+const val TEST_SURVEY_NAME = "ffem match Testing"
 
 fun clearData() {
     val db = AppDatabase.getDatabase(ApplicationProvider.getApplicationContext())

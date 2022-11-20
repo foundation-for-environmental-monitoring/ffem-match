@@ -6,8 +6,8 @@ import java.util.*
 
 object Constants {
 
-    const val CUSTOMER_ID = "ffem_lite"
-    const val EXTERNAL_ACTION = "ffem.lite"
+    const val CUSTOMER_ID = "ffem_match"
+    const val EXTERNAL_ACTION = "ffem.match"
     const val IS_COMPOST_APP = false
 
     val DECIMAL_FORMAT = DecimalFormat("#.##", DecimalFormatSymbols(Locale.US))

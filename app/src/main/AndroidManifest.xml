@@ -38,7 +38,7 @@
             android:screenOrientation="nosensor"
             android:theme="@style/Theme.Collect">
             <intent-filter>
-                <action android:name="ffem.lite" />
+                <action android:name="ffem.match" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>

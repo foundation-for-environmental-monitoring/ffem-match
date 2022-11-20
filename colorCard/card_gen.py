@@ -1,6 +1,6 @@
 
 """
-Generates color cards with rectangle or circle swatches for ffem Lite app
+Generates color cards with rectangle or circle swatches
 Python version: 3.7+
 _________________________________________________________________________________________________
 
