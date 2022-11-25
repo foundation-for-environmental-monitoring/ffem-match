@@ -8,8 +8,9 @@
     </style>
 
     <style name="ThemeOverlay.AndroidShared.Toolbar.Surface.HighEmphasisControls" parent="">
-        <item name="colorControlNormal">?colorPrimarySurface</item>
-        <item name="actionMenuTextColor">?colorPrimarySurface</item>
+        <item name="colorControlNormal">@color/white</item>
+        <item name="actionMenuTextColor">@color/white</item>
+        <item name="android:actionMenuTextColor">@color/white</item>
     </style>
 
     <style name="Widget.AndroidShared.Toolbar.Surface.HighEmphasisControls.CloseIcon" parent="Widget.AndroidShared.Toolbar.Surface.HighEmphasisControls">
