@@ -6,7 +6,7 @@
           "name": "Available Nitrogen",
           "sampleType": "soil",
           "subtype": "card",
-          "uuid": "SC-FM-N",
+          "uuid": "SC-FL-N",
           "dilutions": [
             1,
             2,
@@ -63,7 +63,7 @@
           "name": "Available Phosphorous",
           "sampleType": "soil",
           "subtype": "card",
-          "uuid": "SC-FM-P",
+          "uuid": "SC-FL-P",
           "dilutions": [
             1,
             2,
@@ -120,7 +120,7 @@
           "name": "Available Potassium",
           "sampleType": "soil",
           "subtype": "card",
-          "uuid": "SC-FM-K",
+          "uuid": "SC-FL-K",
           "dilutions": [
             1,
             2,
@@ -173,7 +173,7 @@
           "name": "Organic Carbon",
           "sampleType": "soil",
           "subtype": "card",
-          "uuid": "SC-FM-OC",
+          "uuid": "SC-FL-OC",
           "dilutions": [
             1,
             2,
@@ -224,7 +224,7 @@
           "name": "pH",
           "sampleType": "soil",
           "subtype": "card",
-          "uuid": "SC-FM-pH",
+          "uuid": "SC-FL-pH",
           "results": [
             {
               "id": 1,
@@ -287,7 +287,7 @@
           "name": "Ammonia",
           "sampleType": "water",
           "subtype": "card",
-          "uuid": "WC-FM-NH3",
+          "uuid": "WC-FL-NH3",
           "dilutions": [
             1,
             2,
@@ -348,7 +348,7 @@
           "name": "Arsenic",
           "sampleType": "water",
           "subtype": "card",
-          "uuid": "WC-FM-As",
+          "uuid": "WC-FL-As",
           "results": [
             {
               "id": 1,
@@ -400,7 +400,7 @@
           "name": "Copper",
           "sampleType": "water",
           "subtype": "card",
-          "uuid": "WC-FM-Cu",
+          "uuid": "WC-FL-Cu",
           "dilutions": [
             1,
             2,
@@ -453,7 +453,7 @@
           "name": "Fluoride",
           "sampleType": "water",
           "subtype": "card",
-          "uuid": "WC-FM-F",
+          "uuid": "WC-FL-F",
           "dilutions": [
             1,
             2,
@@ -506,7 +506,7 @@
           "name": "Hazen Units",
           "sampleType": "water",
           "subtype": "card",
-          "uuid": "WC-FM-HU",
+          "uuid": "WC-FL-HU",
           "dilutions": [
             1,
             2,
@@ -538,7 +538,7 @@
           "name": "Iron",
           "sampleType": "water",
           "subtype": "card",
-          "uuid": "WC-FM-Fe",
+          "uuid": "WC-FL-Fe",
           "dilutions": [
             1,
             2,
@@ -595,7 +595,7 @@
           "name": "Manganese",
           "sampleType": "water",
           "subtype": "card",
-          "uuid": "WC-FM-Mn",
+          "uuid": "WC-FL-Mn",
           "dilutions": [
             1,
             2,
@@ -656,7 +656,7 @@
           "name": "Nitrate",
           "sampleType": "water",
           "subtype": "card",
-          "uuid": "WC-FM-NO3",
+          "uuid": "WC-FL-NO3",
           "dilutions": [
             1,
             2,
@@ -712,7 +712,7 @@
           "name": "Nitrite",
           "sampleType": "water",
           "subtype": "card",
-          "uuid": "WC-FM-NO2",
+          "uuid": "WC-FL-NO2",
           "dilutions": [
             1,
             2,
@@ -769,7 +769,7 @@
           "name": "pH",
           "sampleType": "water",
           "subtype": "card",
-          "uuid": "WC-FM-pH",
+          "uuid": "WC-FL-pH",
           "results": [
             {
               "id": 1,
@@ -828,7 +828,7 @@
           "name": "Phosphate",
           "sampleType": "water",
           "subtype": "card",
-          "uuid": "WC-FM-PO4",
+          "uuid": "WC-FL-PO4",
           "dilutions": [
             1,
             2,
@@ -877,7 +877,7 @@
           "name": "Residual Chlorine",
           "sampleType": "water",
           "subtype": "card",
-          "uuid": "WC-FM-Cl",
+          "uuid": "WC-FL-Cl",
           "dilutions": [
             1,
             2,
@@ -933,7 +933,7 @@
           "name": "Sulphate",
           "sampleType": "water",
           "subtype": "card",
-          "uuid": "WC-FM-SO42",
+          "uuid": "WC-FL-SO42",
           "dilutions": [
             1,
             2,
@@ -965,7 +965,7 @@
           "name": "Turbidity",
           "sampleType": "water",
           "subtype": "card",
-          "uuid": "WC-FM-Trb",
+          "uuid": "WC-FL-Trb",
           "dilutions": [
             1,
             2,
@@ -1001,7 +1001,7 @@
           "sampleType": "water",
           "timeDelay": 600,
           "subtype": "card",
-          "uuid": "WC-FM-Zn",
+          "uuid": "WC-FL-Zn",
           "dilutions": [
             1,
             2,
@@ -1061,7 +1061,7 @@
           "name": "Available Boron",
           "sampleType": "soil",
           "subtype": "cuvette",
-          "uuid": "SB-FM-B",
+          "uuid": "SB-FL-B",
           "calibrate": true,
           "monthsValid": 3,
           "dilutions": [
@@ -1093,7 +1093,7 @@
           "name": "Available Copper",
           "sampleType": "soil",
           "subtype": "cuvette",
-          "uuid": "SB-FM-Cu",
+          "uuid": "SB-FL-Cu",
           "calibrate": true,
           "monthsValid": 12,
           "dilutions": [
@@ -1144,7 +1144,7 @@
           "name": "Available Iron",
           "sampleType": "soil",
           "subtype": "cuvette",
-          "uuid": "SB-FM-Fe",
+          "uuid": "SB-FL-Fe",
           "calibrate": true,
           "monthsValid": 6,
           "dilutions": [
@@ -1196,7 +1196,7 @@
           "name": "Available Manganese",
           "sampleType": "soil",
           "subtype": "cuvette",
-          "uuid": "SB-FM-Mn",
+          "uuid": "SB-FL-Mn",
           "calibrate": true,
           "monthsValid": 6,
           "results": [
@@ -1241,7 +1241,7 @@
           "name": "Available Nitrogen",
           "sampleType": "soil",
           "subtype": "cuvette",
-          "uuid": "SB-FM-N",
+          "uuid": "SB-FL-N",
           "calibrate": true,
           "monthsValid": 6,
           "dilutions": [
@@ -1283,7 +1283,7 @@
           "name": "Available Phosphorous",
           "sampleType": "soil",
           "subtype": "cuvette",
-          "uuid": "SB-FM-P",
+          "uuid": "SB-FL-P",
           "calibrate": true,
           "monthsValid": 6,
           "dilutions": [
@@ -1326,7 +1326,7 @@
           "name": "Available Potassium",
           "sampleType": "soil",
           "subtype": "cuvette",
-          "uuid": "SB-FM-K",
+          "uuid": "SB-FL-K",
           "calibrate": true,
           "monthsValid": 6,
           "dilutions": [
@@ -1368,7 +1368,7 @@
           "name": "Available Sulfur",
           "sampleType": "soil",
           "subtype": "cuvette",
-          "uuid": "SB-FM-S",
+          "uuid": "SB-FL-S",
           "calibrate": true,
           "monthsValid": 12,
           "results": [
@@ -1386,7 +1386,7 @@
           "name": "Available Zinc",
           "sampleType": "soil",
           "subtype": "cuvette",
-          "uuid": "SB-FM-Zn",
+          "uuid": "SB-FL-Zn",
           "calibrate": true,
           "monthsValid": 12,
           "dilutions": [
@@ -1437,7 +1437,7 @@
           "name": "Organic Carbon",
           "sampleType": "soil",
           "subtype": "cuvette",
-          "uuid": "SB-FM-OC",
+          "uuid": "SB-FL-OC",
           "calibrate": true,
           "monthsValid": 6,
           "results": [
@@ -1471,7 +1471,7 @@
           "name": "pH",
           "sampleType": "soil",
           "subtype": "cuvette",
-          "uuid": "SB-FM-pH",
+          "uuid": "SB-FL-pH",
           "calibrate": true,
           "monthsValid": 6,
           "results": [
@@ -1528,7 +1528,7 @@
           "name": "Aluminum",
           "sampleType": "water",
           "subtype": "cuvette",
-          "uuid": "WB-FM-Al",
+          "uuid": "WB-FL-Al",
           "calibrate": true,
           "monthsValid": 12,
           "results": [
@@ -1544,7 +1544,7 @@
           "name": "Ammonia",
           "sampleType": "water",
           "subtype": "cuvette",
-          "uuid": "WB-FM-NH3",
+          "uuid": "WB-FL-NH3",
           "calibrate": true,
           "monthsValid": 6,
           "results": [
@@ -1562,7 +1562,7 @@
           "name": "Arsenic",
           "sampleType": "water",
           "subtype": "cuvette",
-          "uuid": "WB-FM-As",
+          "uuid": "WB-FL-As",
           "calibrate": true,
           "monthsValid": 2,
           "dilutions": [
@@ -1585,7 +1585,7 @@
           "name": "Chlorophyll A",
           "sampleType": "water",
           "subtype": "cuvette",
-          "uuid": "WB-FM-ChlA",
+          "uuid": "WB-FL-ChlA",
           "calibrate": true,
           "monthsValid": 6,
           "results": [
@@ -1602,7 +1602,7 @@
           "name": "Chromium",
           "sampleType": "water",
           "subtype": "cuvette",
-          "uuid": "WB-FM-Cr",
+          "uuid": "WB-FL-Cr",
           "calibrate": true,
           "monthsValid": 3,
           "dilutions": [
@@ -1625,7 +1625,7 @@
           "name": "Copper",
           "sampleType": "water",
           "subtype": "cuvette",
-          "uuid": "WB-FM-Cu",
+          "uuid": "WB-FL-Cu",
           "calibrate": true,
           "monthsValid": 12,
           "dilutions": [
@@ -1647,7 +1647,7 @@
           "name": "Dissolved Oxygen",
           "sampleType": "water",
           "subtype": "cuvette",
-          "uuid": "WB-FM-DO2",
+          "uuid": "WB-FL-DO2",
           "calibrate": true,
           "monthsValid": 12,
           "dilutions": [
@@ -1669,7 +1669,7 @@
           "name": "Fluoride",
           "sampleType": "water",
           "subtype": "cuvette",
-          "uuid": "WB-FM-F",
+          "uuid": "WB-FL-F",
           "calibrate": true,
           "monthsValid": 12,
           "dilutions": [
@@ -1711,7 +1711,7 @@
           "name": "Fluoride - High Range",
           "sampleType": "water",
           "subtype": "cuvette",
-          "uuid": "WB-FM-F-1",
+          "uuid": "WB-FL-F-1",
           "calibrate": true,
           "monthsValid": 12,
           "dilutions": [
@@ -1732,7 +1732,7 @@
           "name": "Hazen Units",
           "sampleType": "water",
           "subtype": "cuvette",
-          "uuid": "WB-FM-HU",
+          "uuid": "WB-FL-HU",
           "calibrate": true,
           "dilutions": [
             1,
@@ -1753,7 +1753,7 @@
           "name": "Hydrogen Peroxide",
           "sampleType": "water",
           "subtype": "cuvette",
-          "uuid": "WB-FM-H2O2",
+          "uuid": "WB-FL-H2O2",
           "calibrate": true,
           "monthsValid": 2,
           "results": [
@@ -1769,7 +1769,7 @@
           "name": "Manganese",
           "sampleType": "water",
           "subtype": "card",
-          "uuid": "WB-FM-Mn",
+          "uuid": "WB-FL-Mn",
           "calibrate": true,
           "monthsValid": 12,
           "results": [
@@ -1785,7 +1785,7 @@
           "name": "Nitrate",
           "sampleType": "water",
           "subtype": "cuvette",
-          "uuid": "WB-FM-NO3",
+          "uuid": "WB-FL-NO3",
           "calibrate": true,
           "monthsValid": 24,
           "dilutions": [
@@ -1818,7 +1818,7 @@
           "name": "Nitrite",
           "sampleType": "water",
           "subtype": "cuvette",
-          "uuid": "WB-FM-NO2",
+          "uuid": "WB-FL-NO2",
           "calibrate": true,
           "monthsValid": 6,
           "dilutions": [
@@ -1843,7 +1843,7 @@
           "name": "pH",
           "sampleType": "water",
           "subtype": "cuvette",
-          "uuid": "WB-FM-pH",
+          "uuid": "WB-FL-pH",
           "calibrate": true,
           "monthsValid": 12,
           "results": [
@@ -1899,7 +1899,7 @@
           "name": "Phosphate",
           "sampleType": "water",
           "subtype": "cuvette",
-          "uuid": "WB-FM-PO4",
+          "uuid": "WB-FL-PO4",
           "calibrate": true,
           "monthsValid": 24,
           "dilutions": [
@@ -1922,7 +1922,7 @@
           "name": "Potassium",
           "sampleType": "water",
           "subtype": "cuvette",
-          "uuid": "WB-FM-K",
+          "uuid": "WB-FL-K",
           "calibrate": true,
           "monthsValid": 6,
           "dilutions": [
@@ -1946,7 +1946,7 @@
           "name": "Residual Chlorine",
           "sampleType": "water",
           "subtype": "cuvette",
-          "uuid": "WB-FM-Cl",
+          "uuid": "WB-FL-Cl",
           "calibrate": true,
           "monthsValid": 24,
           "dilutions": [
@@ -1985,7 +1985,7 @@
           "name": "Silica",
           "sampleType": "water",
           "subtype": "cuvette",
-          "uuid": "WB-FM-SiO2",
+          "uuid": "WB-FL-SiO2",
           "calibrate": true,
           "monthsValid": 12,
           "results": [
@@ -2003,7 +2003,7 @@
           "name": "Sulphate",
           "sampleType": "water",
           "subtype": "cuvette",
-          "uuid": "WB-FM-SO42",
+          "uuid": "WB-FL-SO42",
           "calibrate": true,
           "monthsValid": 12,
           "dilutions": [
@@ -2024,7 +2024,7 @@
           "name": "Total Iron",
           "sampleType": "water",
           "subtype": "cuvette",
-          "uuid": "WB-FM-Fe",
+          "uuid": "WB-FL-Fe",
           "calibrate": true,
           "monthsValid": 6,
           "dilutions": [
@@ -2057,7 +2057,7 @@
           "name": "Turbidity",
           "sampleType": "water",
           "subtype": "cuvette",
-          "uuid": "WB-FM-Trb",
+          "uuid": "WB-FL-Trb",
           "calibrate": true,
           "results": [
             {
@@ -2092,7 +2092,7 @@
           "name": "Zinc",
           "sampleType": "water",
           "subtype": "cuvette",
-          "uuid": "WB-FM-Zn",
+          "uuid": "WB-FL-Zn",
           "calibrate": true,
           "monthsValid": 12,
           "results": [
@@ -2114,7 +2114,7 @@
           "name": "Calcium and Magnesium",
           "sampleType": "soil",
           "subtype": "titration",
-          "uuid": "ST-FM-CaMg",
+          "uuid": "ST-FL-CaMg",
           "inputs": [
             {
               "id": 1,
@@ -2127,7 +2127,7 @@
           ],
           "results": [
             {
-              "id": 3,
+              "id": 1,
               "name": "Exchangeable Calcium",
               "unit": "mg/kg",
               "formula": "(%1$f/3) * 125",
@@ -2143,7 +2143,7 @@
               ]
             },
             {
-              "id": 4,
+              "id": 2,
               "name": "Exchangeable Magnesium",
               "unit": "mg/kg",
               "formula": "(%2$f-%1$f) * 25",
@@ -2168,7 +2168,7 @@
           "name": "Total Hardness",
           "sampleType": "water",
           "subtype": "titration",
-          "uuid": "WT-FM-THrd",
+          "uuid": "WT-FL-THrd",
           "results": [
             {
               "id": 1,
@@ -2184,7 +2184,7 @@
           "name": "Total Alkalinity",
           "sampleType": "water",
           "subtype": "titration",
-          "uuid": "WT-FM-TAlk",
+          "uuid": "WT-FL-TAlk",
           "inputs": [
             {
               "id": 1,
@@ -2197,7 +2197,7 @@
           ],
           "results": [
             {
-              "id": 3,
+              "id": 1,
               "name": "P-Alkalinity",
               "unit": "mg/l",
               "formula": "%1$f * 10",
@@ -2206,7 +2206,7 @@
               "display": 2
             },
             {
-              "id": 4,
+              "id": 2,
               "name": "T-Alkalinity",
               "unit": "mg/l",
               "formula": "(%1$f + %2$f) * 10",
@@ -2220,7 +2220,17 @@
           "name": "Calcium and Magnesium",
           "sampleType": "water",
           "subtype": "titration",
-          "uuid": "WT-FM-CaMg",
+          "uuid": "WT-FL-CaMg",
+          "inputs": [
+            {
+              "id": 1,
+              "name": "Titration drops 1"
+            },
+            {
+              "id": 2,
+              "name": "Titration drops 2"
+            }
+          ],
           "results": [
             {
               "id": 1,
@@ -2246,7 +2256,7 @@
           "name": "Carbonate",
           "sampleType": "water",
           "subtype": "titration",
-          "uuid": "WT-FM-CO32",
+          "uuid": "WT-FL-CO32",
           "results": [
             {
               "id": 1,
@@ -2260,7 +2270,7 @@
           "name": "Bicarbonate",
           "sampleType": "water",
           "subtype": "titration",
-          "uuid": "WT-FM-HCO3",
+          "uuid": "WT-FL-HCO3",
           "results": [
             {
               "id": 1,
@@ -2274,7 +2284,7 @@
           "name": "Chloride",
           "sampleType": "water",
           "subtype": "titration",
-          "uuid": "WT-FM-Cld",
+          "uuid": "WT-FL-Cld",
           "results": [
             {
               "id": 1,
@@ -2302,7 +2312,7 @@
           "name": "Dissolved Oxygen",
           "sampleType": "water",
           "subtype": "titration",
-          "uuid": "WT-FM-DO2",
+          "uuid": "WT-FL-DO2",
           "results": [
             {
               "id": 1,
@@ -2316,7 +2326,7 @@
           "name": "Sulfite",
           "sampleType": "water",
           "subtype": "titration",
-          "uuid": "WT-FM-SO3",
+          "uuid": "WT-FL-SO3",
           "results": [
             {
               "id": 1,
