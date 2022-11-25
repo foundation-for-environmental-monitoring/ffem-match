@@ -21,6 +21,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat.startActivity
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.lifecycleScope
@@ -80,6 +81,7 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
     ImageConfirmFragment.OnConfirmImageListener,
     CalibrationDetailsDialog.OnCalibrationDetailsSavedListener,
     CalibrationExpiryDialog.OnCalibrationExpirySavedListener {
+    internal var isExternalSurvey: Boolean = false
     private lateinit var b: ActivityTestBinding
     private val mainScope = MainScope()
     private lateinit var timerScope: CoroutineScope
@@ -197,6 +199,7 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
 //    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         val themeUtils = ThemeUtils(this)
         setTheme(themeUtils.appTheme)
         super.onCreate(savedInstanceState)
@@ -326,7 +329,8 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
 
                 startTest()
             } else {
-                val testPagerAdapter = TestPagerAdapter(this@TestActivity, testInfo)
+                val testPagerAdapter =
+                    TestPagerAdapter(this@TestActivity, testInfo, isExternalSurvey)
                 testPagerAdapter.pageIndex = pageIndex
                 b.viewPager.adapter = testPagerAdapter
                 b.indicatorPgr.showDots = true
@@ -424,10 +428,11 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
     }
 
     private fun startTest() {
-        val testPagerAdapter = TestPagerAdapter(this, testInfo)
+        val testPagerAdapter = TestPagerAdapter(this, testInfo, isExternalSurvey)
         redoTest = true
         setupInstructions(
             testInfo,
+            isExternalSurvey,
             instructionList,
             pageIndex,
             currentDilution,
@@ -479,6 +484,7 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
                 }
 
                 testViewModel.setTest(testInfo)
+                isExternalSurvey = true
             } else {
                 setTitle(R.string.not_found)
                 alertTestTypeNotSupported()
@@ -772,6 +778,7 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
         val currentPage = b.viewPager.currentItem
         setupInstructions(
             testInfo,
+            isExternalSurvey,
             instructionList,
             pageIndex,
             currentDilution,
@@ -902,6 +909,7 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
 
         setupInstructions(
             testInfo,
+            isExternalSurvey,
             instructionList,
             pageIndex,
             currentDilution,
@@ -913,7 +921,7 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
 
         b.indicatorPgr.pageCount = pageIndex.totalPageCount
 
-        val adapter = TestPagerAdapter(this, testInfo)
+        val adapter = TestPagerAdapter(this, testInfo, isExternalSurvey)
         adapter.testInfo = testInfo
         adapter.instructions = instructionList
         adapter.pageIndex = pageIndex
@@ -1117,7 +1125,7 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
             }
             b.viewPager.currentItem = pageIndex.resultPage
         } else {
-            val testPagerAdapter = TestPagerAdapter(this)
+            val testPagerAdapter = TestPagerAdapter(this, testInfo, isExternalSurvey)
             testPagerAdapter.pageIndex = pageIndex
             b.viewPager.adapter = testPagerAdapter
         }
@@ -1128,6 +1136,7 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
         isCalibration = calibrate
         setupInstructions(
             testInfo,
+            isExternalSurvey,
             instructionList,
             pageIndex,
             currentDilution,
@@ -1135,7 +1144,7 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
             redoTest,
             this
         )
-        val testPagerAdapter = TestPagerAdapter(this, testInfo)
+        val testPagerAdapter = TestPagerAdapter(this, testInfo, isExternalSurvey)
         testPagerAdapter.testInfo = testInfo
         testPagerAdapter.instructions = instructionList
 

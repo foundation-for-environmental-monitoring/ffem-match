@@ -658,7 +658,8 @@
                 android:text="@string/next"
                 android:textColor="@color/white"
                 android:textSize="17sp"
-                android:visibility="gone" />
+                android:visibility="gone"
+                tools:visibility="visible" />
 
         </LinearLayout>
     </ScrollView>

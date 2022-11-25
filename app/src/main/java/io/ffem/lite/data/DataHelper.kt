@@ -213,15 +213,13 @@ object DataHelper {
             subTestJson.put(ConstantJsonKey.UNIT, subTest.unit)
             subTestJson.put(ConstantJsonKey.ID, subTest.id)
             // If a result exists for the sub test id then add it
-            for (i in 1..10) {
-                for (result in results) {
-                    if (result.id == i) {
-                        if (result.getResult() > -1) {
-                            subTestJson.put(
-                                ConstantJsonKey.VALUE,
-                                result.getResultString()
-                            )
-                        }
+            for (result in results) {
+                if (result.id == subTest.id) {
+                    if (result.getResult() > -1) {
+                        subTestJson.put(
+                            ConstantJsonKey.VALUE,
+                            result.getResultString()
+                        )
                     }
                 }
             }
