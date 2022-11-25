@@ -10,8 +10,9 @@ import io.ffem.lite.preference.AppPreferences
 object InstructionHelper {
 
     fun setupInstructions(
-        testInfo: TestInfo, instructions: ArrayList<Instruction>, pageIndex: PageIndex,
-        currentDilution: Int, isCalibration: Boolean, redo: Boolean, context: Context
+        testInfo: TestInfo, isExternalSurvey: Boolean, instructions: ArrayList<Instruction>,
+        pageIndex: PageIndex, currentDilution: Int, isCalibration: Boolean, redo: Boolean,
+        context: Context
     ) {
         var instructionIndex = 0
         instructions.clear()
@@ -85,7 +86,9 @@ object InstructionHelper {
                     pageIndex.testPage = instructionIndex
                 } else if (text.contains("<result>")) {
                     pageIndex.resultPage = instructionIndex
-                    pageIndex.submitPage = instructionIndex + 1
+                    if (!isExternalSurvey) {
+                        pageIndex.submitPage = instructionIndex + 1
+                    }
                 } else if (text.contains("<dilution>")) {
                     if (isCalibration) {
                         continue

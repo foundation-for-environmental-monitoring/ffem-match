@@ -35,8 +35,7 @@
         <activity
             android:name=".ui.TestActivity"
             android:exported="true"
-            android:screenOrientation="nosensor"
-            android:theme="@style/Theme.Collect">
+            android:screenOrientation="nosensor">
             <intent-filter>
                 <action android:name="ffem.match" />
 

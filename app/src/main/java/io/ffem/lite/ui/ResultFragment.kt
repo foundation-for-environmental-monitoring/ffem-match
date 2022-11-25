@@ -45,6 +45,12 @@ class ResultFragment(var externalRequest: Boolean) : BaseFragment() {
         if (activity is ResultViewActivity) {
             b.nextButton.visibility = GONE
         } else {
+            if ((activity as TestActivity).isExternalSurvey) {
+                b.nextButton.setText(R.string.save)
+                b.nextButton.visibility = VISIBLE
+            } else {
+                b.nextButton.visibility = GONE
+            }
 //            b.infoLayout.visibility = GONE
             val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
             if (toolbar != null) {
@@ -70,7 +76,7 @@ class ResultFragment(var externalRequest: Boolean) : BaseFragment() {
                 || model.test.get()!!.subtype == TestType.TITRATION
                 || model.isCalibration
             ) {
-                b.nextButton.setText(R.string.close)
+                b.nextButton.setText(R.string.save)
             }
 
             if (model.isCalibration) {

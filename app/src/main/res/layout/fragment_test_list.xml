@@ -21,7 +21,6 @@
         android:layout_height="wrap_content"
         android:background="?colorSecondaryVariant"
         app:layout_constraintTop_toTopOf="parent"
-        app:tabIconTint="@color/tabIconColor"
         app:tabIndicatorHeight="4dp"
         app:tabIndicatorColor="@color/tabIndicatorColor"
         app:tabInlineLabel="true"
