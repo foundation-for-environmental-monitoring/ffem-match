@@ -1446,6 +1446,7 @@
               "name": "Organic Carbon",
               "unit": "%",
               "ranges": "0, 0.5, 1, 1.5, 2",
+              "rangeMin": "0, 1, 2",
               "criticalMin": 0.5,
               "criticalMax": 0.75,
               "risks": [
