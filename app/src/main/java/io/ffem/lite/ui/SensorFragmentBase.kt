@@ -640,7 +640,10 @@ open class SensorFragmentBase : Fragment() {
 
     companion object {
         init {
-            FirebaseDatabase.getInstance().setPersistenceEnabled(true)
+            try {
+                FirebaseDatabase.getInstance().setPersistenceEnabled(true)
+            } catch (_: Exception) {
+            }
         }
     }
 }

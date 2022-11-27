@@ -596,18 +596,27 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
 
         val db = AppDatabase.getDatabase(this)
         val subTest = testInfo.subTest()
+        var name2 = ""
+        var value2 = -2.0
+        if (testInfo.results.size > 1) {
+            name2 = testInfo.results[1].name.toString()
+            value2 = testInfo.results[1].resultInfo.result
+        }
         db.resultDao().insert(
             TestResult(
                 testInfo.fileName,
                 testInfo.uuid,
                 0,
-                testInfo.name!!,
+                subTest.name!!,
                 testInfo.sampleType.toString(),
                 Date().time,
                 subTest.getResult(),
                 subTest.maxValue,
                 subTest.getMarginOfError(),
-                error = ErrorType.NO_ERROR
+                error = ErrorType.NO_ERROR,
+                name2 = name2,
+                value2 = value2,
+                unit = subTest.unit.toString()
             )
         )
 
@@ -1250,7 +1259,10 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
 
     companion object {
         init {
-            FirebaseDatabase.getInstance().setPersistenceEnabled(true)
+            try {
+                FirebaseDatabase.getInstance().setPersistenceEnabled(true)
+            } catch (_: Exception) {
+            }
         }
     }
 }

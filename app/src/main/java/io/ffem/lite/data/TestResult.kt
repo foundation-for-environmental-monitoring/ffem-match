@@ -25,5 +25,8 @@ data class TestResult(
     var latitude: Double? = Double.NaN,
     var longitude: Double? = Double.NaN,
     var geoAccuracy: Float? = Float.NaN,
-    var comment: String? = null
+    var comment: String? = null,
+    val name2: String = "",
+    val value2: Double = -2.00,
+    val unit: String = ""
 )

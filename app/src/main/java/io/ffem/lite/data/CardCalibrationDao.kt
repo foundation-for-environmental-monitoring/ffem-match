@@ -1,5 +1,6 @@
 package io.ffem.lite.data
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.REPLACE
@@ -20,7 +21,7 @@ interface CardCalibrationDao {
     fun deleteCalibration(id: String?)
 
     @Query("SELECT * FROM TestResult ORDER BY date DESC")
-    fun getResults(): List<TestResult>
+    fun getResults(): LiveData<List<TestResult>>
 
     @Query("SELECT * FROM TestResult WHERE id = :id")
     fun getResult(id: String?): TestResult?

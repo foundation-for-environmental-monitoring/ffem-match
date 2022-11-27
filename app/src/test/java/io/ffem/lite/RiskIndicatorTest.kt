@@ -8,7 +8,7 @@ import io.ffem.lite.model.RiskLevel
 import io.ffem.lite.model.RiskLevel.*
 import io.ffem.lite.model.RiskType
 import io.ffem.lite.model.TestInfo
-import io.ffem.lite.ui.ResultListActivity
+import io.ffem.lite.ui.ResultListViewActivity
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -486,7 +486,7 @@ class RiskIndicatorTest {
 
     companion object {
         private val controller: ActivityController<*> =
-            Robolectric.buildActivity(ResultListActivity::class.java).create().start()
+            Robolectric.buildActivity(ResultListViewActivity::class.java).create().start()
         val context: Context = (controller.get() as Activity)
     }
 }

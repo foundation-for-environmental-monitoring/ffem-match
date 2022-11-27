@@ -424,7 +424,7 @@ data class Result(
     fun getPermissibleLimit(context: Context): String {
         try {
             return permissible ?: context.getString(R.string.no_relaxation)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
         }
         return ""
     }

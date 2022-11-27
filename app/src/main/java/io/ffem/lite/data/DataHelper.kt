@@ -36,7 +36,6 @@ object DataHelper {
         for (test in testConfig) {
             testInfoList.add(test.toTestInfo())
         }
-        ref1.keepSynced(false)
         return testInfoList
     }
 
@@ -58,6 +57,7 @@ object DataHelper {
         }
 
         val ref = FirebaseDatabase.getInstance().getReference("$CUSTOMER_ID/$type/tests")
+        ref.keepSynced(true)
         return try {
             var factoryConfig: ParameterInfoDto? = null
             val calibrationConfig = ref.get().await().children.map { snapShot ->

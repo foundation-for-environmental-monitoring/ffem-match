@@ -335,7 +335,10 @@ class RecommendationFragment(private val intent: Intent) : Fragment() {
         private const val DATE_FORMAT = "dd MMM yyyy"
 
         init {
-            FirebaseDatabase.getInstance().setPersistenceEnabled(true)
+            try {
+                FirebaseDatabase.getInstance().setPersistenceEnabled(true)
+            } catch (_: Exception) {
+            }
         }
 
 //        fun isNumeric(strNum: String): Boolean {
