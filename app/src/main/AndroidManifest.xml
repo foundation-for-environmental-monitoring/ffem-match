@@ -29,9 +29,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.ResultListActivity"
+            android:name=".ui.ResultListViewActivity"
+            android:exported="false"
             android:screenOrientation="nosensor"
-            android:theme="@style/Theme.Collect" />
+            android:theme="@style/Theme.Collect">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
         <activity
             android:name=".ui.TestActivity"
             android:exported="true"

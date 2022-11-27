@@ -27,6 +27,10 @@ class ResultViewActivity : BaseActivity() {
         testInfo.fileName = testResult.id
         result.resultInfo = ResultInfo(testResult.value)
         result.resultInfo.luminosity = testResult.luminosity
+
+        if (testResult.value2 > -2) {
+            testInfo.results[1].resultInfo = ResultInfo(testResult.value2)
+        }
         // todo: fix this
 //        result.setMarginOfError(testResult.marginOfError)
         model.setTest(testInfo)

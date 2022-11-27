@@ -17,6 +17,7 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.appcheck.FirebaseAppCheck
 import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
+import com.google.firebase.database.FirebaseDatabase
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.common.Constants.IS_COMPOST_APP
@@ -124,7 +125,7 @@ class MainActivity : AppUpdateActivity() {
         }
 
         b.viewResultButton.setOnClickListener {
-            val intent = Intent(this, ResultListActivity::class.java)
+            val intent = Intent(this, ResultListViewActivity::class.java)
             startTest.launch(intent)
         }
 
@@ -213,5 +214,14 @@ class MainActivity : AppUpdateActivity() {
                 getString(R.string.no_thanks)
             ) { _, _ -> AppPreferences.setShareData(false) }
             .show()
+    }
+
+    companion object {
+        init {
+            try {
+                FirebaseDatabase.getInstance().setPersistenceEnabled(true)
+            } catch (_: Exception) {
+            }
+        }
     }
 }

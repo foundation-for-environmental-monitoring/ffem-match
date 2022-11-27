@@ -32,6 +32,7 @@ class TestListFragment : BaseFragment() {
     private val b get() = _binding!!
     private val mainScope = MainScope()
     private var itemClicked: Boolean = false
+    lateinit var fetchCancel: Job
 
     override fun onResume() {
         super.onResume()
@@ -92,7 +93,6 @@ class TestListFragment : BaseFragment() {
     }
 
     private fun setAdapter() {
-        lateinit var fetchCancel: Job
         val fetchJob = lifecycleScope.launch {
             var compostList: ArrayList<TestInfo> = ArrayList()
             var waterList: ArrayList<TestInfo> = ArrayList()
@@ -110,7 +110,9 @@ class TestListFragment : BaseFragment() {
                     Toast.LENGTH_LONG
                 ).show()
             }
-            fetchCancel.cancel()
+            if (::fetchCancel.isInitialized) {
+                fetchCancel.cancel()
+            }
 
             val sampleType =
                 requireActivity().intent.getSerializableExtra(SAMPLE_TEST_TYPE) as TestSampleType?
