@@ -133,7 +133,8 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
                         subTest.getResult(),
                         subTest.maxValue,
                         subTest.getMarginOfError(),
-                        error = ErrorType.NO_ERROR
+                        error = ErrorType.NO_ERROR,
+                        unit = subTest.unit.toString()
                     )
                 )
 

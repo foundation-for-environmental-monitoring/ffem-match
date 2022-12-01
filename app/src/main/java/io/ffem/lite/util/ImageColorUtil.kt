@@ -151,7 +151,8 @@ object ImageColorUtil {
                                 -1.0,
                                 subTest.maxValue,
                                 0.0,
-                                error = NO_ERROR
+                                error = NO_ERROR,
+                                unit = subTest.unit.toString()
                             )
                         )
 
