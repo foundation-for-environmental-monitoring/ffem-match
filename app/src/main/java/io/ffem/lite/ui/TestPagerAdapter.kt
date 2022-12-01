@@ -12,7 +12,8 @@ import kotlin.math.max
  * one of the sections/tabs/pages.
  */
 class TestPagerAdapter(
-    val activity: TestActivity, var testInfo: TestInfo? = null, var isExternalSurvey: Boolean
+    val activity: TestActivity, var testInfo: TestInfo? = null, var isExternalSurvey: Boolean,
+    var isCalibration: Boolean
 ) : FragmentStateAdapter(activity) {
 
     var instructions: List<Instruction>? = ArrayList()
@@ -82,10 +83,10 @@ class TestPagerAdapter(
                     if (activity.isCalibration) {
                         CalibrationResultFragment()
                     } else {
-                        ResultFragment(isExternalSurvey)
+                        ResultFragment(isExternalSurvey, isCalibration)
                     }
                 } else {
-                    ResultFragment(isExternalSurvey)
+                    ResultFragment(isExternalSurvey, isCalibration)
                 }
             }
             pageIndex.submitPage -> {

@@ -55,6 +55,7 @@
                             android:paddingStart="0dp"
                             android:paddingEnd="0dp"
                             android:scrollHorizontally="false"
+                            android:textColor="@color/black"
                             android:textSize="18sp" />
 
                     </com.google.android.material.textfield.TextInputLayout>
@@ -77,6 +78,7 @@
                             android:paddingStart="0dp"
                             android:paddingEnd="0dp"
                             android:scrollHorizontally="false"
+                            android:textColor="@color/black"
                             android:textSize="18sp" />
 
                     </com.google.android.material.textfield.TextInputLayout>

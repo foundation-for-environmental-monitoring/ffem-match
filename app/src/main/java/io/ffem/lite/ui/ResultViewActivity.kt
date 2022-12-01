@@ -38,7 +38,7 @@ class ResultViewActivity : BaseActivity() {
 
         supportFragmentManager
             .beginTransaction()
-            .add(R.id.fragment_container, ResultFragment(false))
+            .add(R.id.fragment_container, ResultFragment(false, false))
             .commit()
     }
 

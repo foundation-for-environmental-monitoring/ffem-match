@@ -331,7 +331,7 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
                 startTest()
             } else {
                 val testPagerAdapter =
-                    TestPagerAdapter(this@TestActivity, testInfo, isExternalSurvey)
+                    TestPagerAdapter(this@TestActivity, testInfo, isExternalSurvey, isCalibration)
                 testPagerAdapter.pageIndex = pageIndex
                 b.viewPager.adapter = testPagerAdapter
                 b.indicatorPgr.showDots = true
@@ -401,8 +401,8 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
             .show()
     }
 
-    private var startCalibrate =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { }
+//    private var startCalibrate =
+//        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { }
 //
 //    private fun calibrate(): PreferenceFragmentCompat? {
 //        val intent = Intent(this, TestActivity::class.java)
@@ -429,7 +429,7 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
     }
 
     private fun startTest() {
-        val testPagerAdapter = TestPagerAdapter(this, testInfo, isExternalSurvey)
+        val testPagerAdapter = TestPagerAdapter(this, testInfo, isExternalSurvey, isCalibration)
         redoTest = true
         setupInstructions(
             testInfo,
@@ -813,9 +813,7 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
             pageNext()
         }
 
-        val model = ViewModelProvider(this).get(
-            TestInfoViewModel::class.java
-        )
+        val model = ViewModelProvider(this)[TestInfoViewModel::class.java]
         model.setTest(testInfo)
 
         b.indicatorPgr.pageCount = pageIndex.totalPageCount
@@ -934,7 +932,7 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
 
         b.indicatorPgr.pageCount = pageIndex.totalPageCount
 
-        val adapter = TestPagerAdapter(this, testInfo, isExternalSurvey)
+        val adapter = TestPagerAdapter(this, testInfo, isExternalSurvey, isCalibration)
         adapter.testInfo = testInfo
         adapter.instructions = instructionList
         adapter.pageIndex = pageIndex
@@ -1138,7 +1136,7 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
             }
             b.viewPager.currentItem = pageIndex.resultPage
         } else {
-            val testPagerAdapter = TestPagerAdapter(this, testInfo, isExternalSurvey)
+            val testPagerAdapter = TestPagerAdapter(this, testInfo, isExternalSurvey, isCalibration)
             testPagerAdapter.pageIndex = pageIndex
             b.viewPager.adapter = testPagerAdapter
         }
@@ -1157,7 +1155,7 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
             redoTest,
             this
         )
-        val testPagerAdapter = TestPagerAdapter(this, testInfo, isExternalSurvey)
+        val testPagerAdapter = TestPagerAdapter(this, testInfo, isExternalSurvey, isCalibration)
         testPagerAdapter.testInfo = testInfo
         testPagerAdapter.instructions = instructionList
 
@@ -1237,27 +1235,29 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
                     separator + "captures" + separator
             val fileName = testInfo.name!!.replace(" ", "")
 
-            val storageRef = FirebaseStorage.getInstance().reference
-            storageRef.child(path + "/${testInfo.fileName}/swatch.jpg")
-                .putFile(Uri.fromFile(File(filePath + testInfo.fileName + separator + fileName + "_swatch.jpg")))
-                .addOnFailureListener {
-                    Timber.e(it)
-                }.addOnSuccessListener {
-                }
+            if (File(filePath + testInfo.fileName + separator + fileName + "_swatch.jpg").exists()) {
+                val storageRef = FirebaseStorage.getInstance().reference
+                storageRef.child(path + "/${testInfo.fileName}/swatch.jpg")
+                    .putFile(Uri.fromFile(File(filePath + testInfo.fileName + separator + fileName + "_swatch.jpg")))
+                    .addOnFailureListener {
+                        Timber.e(it)
+                    }.addOnSuccessListener {
+                    }
 
-            storageRef.child(path + "/${testInfo.fileName}/image.jpg")
-                .putFile(Uri.fromFile(File(filePath + testInfo.fileName + separator + fileName + ".jpg")))
-                .addOnFailureListener {
-                    Timber.e(it)
-                }.addOnSuccessListener {
-                }
+                storageRef.child(path + "/${testInfo.fileName}/image.jpg")
+                    .putFile(Uri.fromFile(File(filePath + testInfo.fileName + separator + fileName + ".jpg")))
+                    .addOnFailureListener {
+                        Timber.e(it)
+                    }.addOnSuccessListener {
+                    }
 
-            storageRef.child(path + "/${testInfo.fileName}/result.png")
-                .putFile(Uri.fromFile(File(filePath + testInfo.fileName + separator + fileName + "_result.png")))
-                .addOnFailureListener {
-                    Timber.e(it)
-                }.addOnSuccessListener {
-                }
+                storageRef.child(path + "/${testInfo.fileName}/result.png")
+                    .putFile(Uri.fromFile(File(filePath + testInfo.fileName + separator + fileName + "_result.png")))
+                    .addOnFailureListener {
+                        Timber.e(it)
+                    }.addOnSuccessListener {
+                    }
+            }
         }
     }
 

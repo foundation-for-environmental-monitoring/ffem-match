@@ -22,7 +22,7 @@ import io.ffem.lite.preference.isDiagnosticMode
 import io.ffem.lite.util.toLocalString
 import java.io.File
 
-class ResultFragment(var externalRequest: Boolean) : BaseFragment() {
+class ResultFragment(var externalRequest: Boolean, var isCalibration: Boolean) : BaseFragment() {
     private var _binding: FragmentResultBinding? = null
     private val b get() = _binding!!
     private val model: TestInfoViewModel by activityViewModels()
@@ -84,7 +84,7 @@ class ResultFragment(var externalRequest: Boolean) : BaseFragment() {
             }
 
             b.nextButton.setOnClickListener {
-                if (subTest.error != ErrorType.NO_ERROR || externalRequest) {
+                if (isCalibration || subTest.error != ErrorType.NO_ERROR || externalRequest) {
                     (requireActivity() as TestActivity).onAcceptClick()
                 } else {
                     (requireActivity() as TestActivity).pageNext()
