@@ -133,7 +133,8 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
                         subTest.getResult(),
                         subTest.maxValue,
                         subTest.getMarginOfError(),
-                        error = ErrorType.NO_ERROR
+                        error = ErrorType.NO_ERROR,
+                        unit = subTest.unit.toString()
                     )
                 )
 
@@ -564,6 +565,9 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
         }
         if (position == pageIndex.resultPage) {
             b.viewPager.isUserInputEnabled = false
+        }
+        if (isExternalSurvey && b.viewPager.currentItem == pageIndex.resultPage) {
+            b.nextTxt.visibility = View.INVISIBLE
         }
     }
 
