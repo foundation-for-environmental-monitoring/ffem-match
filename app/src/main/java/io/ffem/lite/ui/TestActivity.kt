@@ -566,6 +566,9 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
         if (position == pageIndex.resultPage) {
             b.viewPager.isUserInputEnabled = false
         }
+        if (isExternalSurvey && b.viewPager.currentItem == pageIndex.resultPage) {
+            b.nextTxt.visibility = View.INVISIBLE
+        }
     }
 
     private fun setTestResult() {
