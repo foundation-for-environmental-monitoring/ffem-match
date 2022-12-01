@@ -1709,27 +1709,6 @@
           ]
         },
         {
-          "name": "Fluoride - High Range",
-          "sampleType": "water",
-          "subtype": "cuvette",
-          "uuid": "WB-FM-F-1",
-          "calibrate": true,
-          "monthsValid": 12,
-          "dilutions": [
-            1,
-            2,
-            5
-          ],
-          "results": [
-            {
-              "id": 1,
-              "name": "Fluoride",
-              "unit": "mg/l",
-              "ranges": "0, 1, 2, 4, 6"
-            }
-          ]
-        },
-        {
           "name": "Hazen Units",
           "sampleType": "water",
           "subtype": "cuvette",
