@@ -32,11 +32,21 @@ class TestListFragment : BaseFragment() {
     private val b get() = _binding!!
     private val mainScope = MainScope()
     private var itemClicked: Boolean = false
-    lateinit var fetchCancel: Job
+    private lateinit var fetchCancel: Job
 
     override fun onResume() {
         super.onResume()
         itemClicked = false
+        if (::fetchCancel.isInitialized) {
+            fetchCancel.cancel()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (::fetchCancel.isInitialized) {
+            fetchCancel.cancel()
+        }
     }
 
     override fun onCreateView(

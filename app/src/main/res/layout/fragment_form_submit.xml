@@ -43,7 +43,8 @@
                         android:layout_marginBottom="@dimen/activity_vertical_margin"
                         android:hint="@string/email_address"
                         android:visibility="gone"
-                        app:hintTextAppearance="@style/TextLabel">
+                        app:hintTextAppearance="@style/TextLabel"
+                        tools:visibility="visible">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/email_edit"
@@ -52,11 +53,11 @@
                             android:backgroundTint="@color/card_bg"
                             android:inputType="text|textEmailAddress"
                             android:maxLength="60"
-                            android:paddingStart="0dp"
-                            android:paddingEnd="0dp"
+                            android:paddingStart="6dp"
+                            android:paddingEnd="6dp"
                             android:scrollHorizontally="false"
-                            android:textColor="@color/black"
-                            android:textSize="18sp" />
+                            android:textSize="18sp"
+                            tools:text="Email" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -75,11 +76,11 @@
                             android:imeOptions="actionDone"
                             android:inputType="text|textCapSentences"
                             android:maxLength="200"
-                            android:paddingStart="0dp"
-                            android:paddingEnd="0dp"
+                            android:paddingStart="6dp"
+                            android:paddingEnd="6dp"
                             android:scrollHorizontally="false"
-                            android:textColor="@color/black"
-                            android:textSize="18sp" />
+                            android:textSize="18sp"
+                            tools:text="Comment" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -107,7 +108,8 @@
                         android:paddingTop="10dp"
                         android:paddingBottom="10dp"
                         android:text="@string/get_location"
-                        android:textSize="15sp" />
+                        android:textSize="15sp"
+                        app:cornerRadius="15dp" />
 
                     <LinearLayout
                         android:id="@+id/location_layout"
@@ -209,6 +211,7 @@
                 android:padding="10dp"
                 android:text="@string/save"
                 android:textSize="17sp"
+                app:cornerRadius="15dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

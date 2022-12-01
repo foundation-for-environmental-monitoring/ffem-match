@@ -14,6 +14,9 @@
     <color name="colorOnSurface">#000000</color>
     <color name="colorPrimarySurface">#ffffff</color>
 
+    <color name="buttonTextColor">#505050</color>
+    <color name="buttonBackground">#EAE6DC</color>
+
     <color name="tabTextColor">#D6D6D6</color>
     <color name="tabIndicatorColor">#FEFFFF</color>
     <color name="tabSelectedTextColor">#FFFFFF</color>
