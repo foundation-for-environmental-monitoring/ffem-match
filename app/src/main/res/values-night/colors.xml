@@ -9,8 +9,13 @@
     <color name="colorSecondaryVariant">#000000</color>
     <color name="colorPrimarySurface">#ffffff</color>
 
+    <color name="card_bg">#1C1C1C</color>
+    <color name="text_links">#6ABAFF</color>
+
+    <color name="buttonTextColor">#BABABA</color>
+    <color name="buttonBackground">#323232</color>
+
     <color name="tabTextColor">@color/colorPrimary</color>
-    <color name="tabIconColor">@color/colorPrimary</color>
     <color name="tabIndicatorColor">#DDDDDD</color>
     <color name="tabSelectedTextColor">#EDEDED</color>
 
