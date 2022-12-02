@@ -14,6 +14,10 @@
     <color name="colorOnSurface">#000000</color>
     <color name="colorPrimarySurface">#ffffff</color>
 
+    <color name="buttonTextColor">#ffffff</color>
+    <color name="borderlessButtonTextColor">#383838</color>
+    <color name="buttonBackground">#007CA6</color>
+
     <color name="tabTextColor">#66C5DC</color>
     <color name="tabIconColor">#8DE4F8</color>
     <color name="tabIndicatorColor">#FEFFFF</color>

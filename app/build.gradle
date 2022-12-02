@@ -18,8 +18,8 @@ android {
         applicationId "io.ffem.match"
         minSdkVersion 28
         targetSdkVersion 33
-        versionCode 149
-        versionName "0.19"
+        versionCode 151
+        versionName "0.21"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 

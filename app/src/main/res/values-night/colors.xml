@@ -13,6 +13,7 @@
     <color name="text_links">#6ABAFF</color>
 
     <color name="buttonTextColor">#BABABA</color>
+    <color name="borderlessButtonTextColor">#979797</color>
     <color name="buttonBackground">#323232</color>
 
     <color name="tabTextColor">@color/colorPrimary</color>
