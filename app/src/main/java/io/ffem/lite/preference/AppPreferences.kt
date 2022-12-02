@@ -368,9 +368,7 @@ object AppPreferences {
     }
 
     fun getShowDebugInfo(context: Context): Boolean = PreferencesUtil.getBoolean(
-        context.applicationContext!!,
-        R.string.showDebugMessagesKey,
-        false
+        context.applicationContext!!, R.string.showDebugMessagesKey, false
     )
 
     fun setShowDebugInfo(value: Boolean) {
@@ -378,7 +376,6 @@ object AppPreferences {
         sharedPreferences!!.edit()
             .putBoolean(App.app.getString(R.string.showDebugMessagesKey), value)
             .apply()
-        sharedPreferences.edit().putBoolean(DATA_SHARING_SET, true).apply()
     }
 
     fun setShareData(value: Boolean) {
