@@ -25,6 +25,7 @@ import io.ffem.lite.common.Constants.SAMPLING_COUNT_DEFAULT
 import io.ffem.lite.common.Constants.SKIP_SAMPLING_COUNT
 import io.ffem.lite.common.TestUtil.sleep
 import io.ffem.lite.data.AppDatabase
+import io.ffem.lite.data.CalibrationDatabase
 import io.ffem.lite.preference.isDiagnosticMode
 import org.hamcrest.Matchers
 import timber.log.Timber
@@ -41,6 +42,12 @@ fun clearData() {
         db.clearAllTables()
     } finally {
         db.close()
+    }
+    val db2 = CalibrationDatabase.getDatabase(ApplicationProvider.getApplicationContext())
+    try {
+        db2.clearAllTables()
+    } finally {
+        db2.close()
     }
 }
 
@@ -148,7 +155,7 @@ object TestHelper {
             ) {
                 removeResponse(stringId)
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
         }
 
         mDevice.findObject(
@@ -390,12 +397,12 @@ object TestHelper {
         mDevice.waitForIdle()
     }
 
-    fun nextPage() {
-        onView(
-            Matchers.allOf(
-                withText(R.string.next)
-            )
-        ).perform(click())
-        sleep(1000)
-    }
+//    fun nextPage() {
+//        onView(
+//            Matchers.allOf(
+//                withText(R.string.next)
+//            )
+//        ).perform(click())
+//        sleep(1000)
+//    }
 }
