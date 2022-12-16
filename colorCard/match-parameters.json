@@ -1256,6 +1256,7 @@
               "name": "Available Nitrogen",
               "unit": "kg/ha",
               "ranges": "0, 10, 20, 40, 60",
+              "rangeMin": "0, 20, 60",
               "criticalMin": 280,
               "criticalMax": 560,
               "timeDelay": 300,
@@ -1341,6 +1342,7 @@
               "name": "Available Potassium",
               "unit": "kg/ha",
               "ranges": "0, 10, 20, 30, 40",
+              "rangeMin": "0, 20, 40",
               "criticalMin": 110,
               "criticalMax": 280,
               "timeDelay": 300,
@@ -1553,7 +1555,7 @@
               "id": 1,
               "name": "Ammonia",
               "unit": "mg/l",
-              "ranges": "0, 1, 2, 3, 4",
+              "ranges": "0, 0.5, 1, 2, 3, 4",
               "rangeMin": "0, 0.5, 2",
               "timeDelay": 300
             }
