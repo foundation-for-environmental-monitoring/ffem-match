@@ -2047,7 +2047,7 @@
               "name": "Turbidity",
               "unit": "NTU",
               "ranges": "0, 10, 20, 40",
-              "rangeMin": "0, 1, 5",
+              "rangeMin": "0, 10, 40",
               "risks": [
                 {
                   "value": 1,
