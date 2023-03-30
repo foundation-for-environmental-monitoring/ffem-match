@@ -2300,7 +2300,7 @@
               "id": 1,
               "name": "Dissolved Oxygen",
               "unit": "mg/l",
-              "formula": "%1$f * 0.05"
+              "formula": "%1$f * 20"
             }
           ]
         },
