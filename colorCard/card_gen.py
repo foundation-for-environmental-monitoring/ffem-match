@@ -219,7 +219,7 @@ def get_circle_values():
             x = x + 1
             y = y + 0.7
 
-        svg += f'\t\t<text x="{x}" y="{y + 1.2}">{calibration_points[i - 1]["value"]}</text>\n'
+        svg += f'\t\t<text x="{x}" y="{y + 1.2}">{calibration_points[i - 1]["range"]}</text>\n'
     svg += '\t</g>\n'
     return svg
 

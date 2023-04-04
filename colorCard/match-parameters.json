@@ -686,23 +686,23 @@
                 {
                   "value": 0,
                   "calibrate": true,
-                  "color": "#F2F1E9"
+                  "color": "#F4F1EE",
+                  "range": "Zero"
                 },
                 {
                   "value": 10,
-                  "color": "#E8CDDB"
+                  "color": "#E8ACC6",
+                  "range": "Low"
                 },
                 {
                   "value": 25,
-                  "color": "#EA9DCD"
+                  "color": "#D1397C",
+                  "range": "Medium"
                 },
                 {
                   "value": 50,
-                  "color": "#D271A0"
-                },
-                {
-                  "value": 75,
-                  "color": "#D271A0"
+                  "color": "#9E0D4F",
+                  "range": "High"
                 }
               ]
             }
