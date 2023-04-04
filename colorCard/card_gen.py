@@ -1,6 +1,6 @@
 
 """
-Generates color cards with rectangle or circle swatches
+Generates color cards with circle swatches
 Python version: 3.7+
 _________________________________________________________________________________________________
 
@@ -45,9 +45,6 @@ Circle swatch card for specific test parameter:
 Circle swatch cards for all water test parameters:
 > python card_gen.py WC
 
-Rectangle swatch cards for all soil test parameters:
-> python card_gen.py SR
-
 Include a sample area color for a calibration point e.g. 0.5:
 > python card_gen.py WC-FM-F 0.5
 
@@ -88,19 +85,6 @@ from decimal import Context, Decimal
 from sty import fg, ef, rs
 
 # Unit = mm
-class RectangleCard:
-    CARD_WIDTH = 130
-    CARD_HEIGHT = 84.5
-    QR_WIDTH = 7.5
-    QR_HORIZONTAL_DISTANCE = 85
-    QR_VERTICAL_DISTANCE = 54
-    QR_STROKE_WIDTH = 1
-
-    TOP_MARGIN = 4.5    
-    TITLE_Y_POS = 7
-    TITLE_FONT_SIZE = 3
-
-
 class CircleCard:
     CARD_WIDTH = 83
     CARD_HEIGHT = 63
@@ -133,8 +117,6 @@ class SampleType(enum.Enum):
 
 class CardType(enum.Enum):
     Circle = 1
-    Rectangle = 2
-
 
 class ExportType(enum.Enum):
     none = ''
@@ -142,7 +124,7 @@ class ExportType(enum.Enum):
     Png = 'png'
 
 sample_type = SampleType.Soil
-card_type = CardType.Rectangle
+card_type = CardType.Circle
 export_type = ExportType.none
 
 error_msg = ''
@@ -154,10 +136,7 @@ def get_logo():
     logo = logo.replace('<svg>', '').strip()
     logo = logo.replace('</svg>', '').strip()
 
-    if card_type == CardType.Rectangle:
-        matrix = "translate(0.17663044,-0.65413773)"
-    else:
-        matrix = "matrix(0.75094849,0,0,0.75094849,-6.6105598,0.80413316)"
+    matrix = "matrix(0.75094849,0,0,0.75094849,-6.6105598,0.80413316)"
     
     return f'\t<g transform="{matrix}">\n\t\t{logo}\n\t</g>\n'
 
@@ -165,10 +144,7 @@ def get_logo():
 def get_header_title(title):
     """Creates the title text"""
     
-    if card_type == CardType.Rectangle:
-        c = RectangleCard
-    else:
-        c = CircleCard
+    c = CircleCard
     
     x = c.QR_HORIZONTAL_DISTANCE
     x = x + (c.CARD_WIDTH - x) / 2
@@ -177,10 +153,7 @@ def get_header_title(title):
 
 def get_QR_corners():
         
-    if card_type == CardType.Rectangle:
-        c = RectangleCard
-    else:
-        c = CircleCard
+    c = CircleCard
 
     x = ((c.CARD_WIDTH - c.QR_HORIZONTAL_DISTANCE) / 2) + (c.QR_STROKE_WIDTH / 2)
     y = (((c.CARD_HEIGHT - c.QR_VERTICAL_DISTANCE) / 2) + (c.QR_STROKE_WIDTH / 2)) + c.TOP_MARGIN
@@ -215,47 +188,15 @@ def get_data_matrix(parameter_id):
     if remove_index > -1:
         svg = svg[: remove_index]
 
-    if card_type == CardType.Rectangle:
-        transform_matrix = '1.5,0,0,1.5,88,33.25'
-        if len(data) == 6:
-            transform_matrix = '1.2857143,0,0,1.2857166,88.214286,33.464267'
-        elif len(data) == 7:
-            transform_matrix = '1.2857143,0,0,1.2857166,88.214286,33.464267'
-    else:
-        transform_matrix = '0.83333333,0,0,0.83332561,64.316668,27.66672'
-        if len(data) == 6:
-            transform_matrix = '0.71428571,0,0,0.7142469,64.435716,27.786025'
-        elif len(data) == 7:
-            transform_matrix = '0.71428571,0,0,0.7142887,64.435716,27.78569'
+    transform_matrix = '0.83333333,0,0,0.83332561,64.316668,27.66672'
+    if len(data) == 6:
+        transform_matrix = '0.71428571,0,0,0.7142469,64.435716,27.786025'
+    elif len(data) == 7:
+        transform_matrix = '0.71428571,0,0,0.7142887,64.435716,27.78569'
 
     return f'\t<g stroke="#000" stroke-width="1" transform="matrix({transform_matrix})">\n' \
            + f'\t\t<path d="{svg}" />\n' \
            + '\t</g>\n'
-
-
-def get_rectangle_cuvette_area():
-    """Creates the dotted line for the cuvette cutout"""
-
-    return '\t<rect fill="none" style="stroke:#000;stroke-width:0.1;stroke-dasharray:0.8, 0.8;" width="16" height="54" x="56.681301" y="16.833235" />\n'
-
-
-def get_rectangle_swatch():
-    """Creates the 2 columns of swatches for the rectangle color card"""
-
-    height = 54 / color_count
-    svg = ''
-
-    for i in range(color_count):
-        svg += f'\t<text x="42.80323" y="{16.783234  + 1.2525 + (height/2) + height*i}" text-anchor="end" style="font-size:3.52777778px;">'
-        svg += f'{calibration_points[i]["value"]}</text>\n'
-        svg += f'\t<rect fill="{calibration_points[i]["color"]}" width="9" height="{height}" x="45.621677" y="{16.783234 + height*i}" />\n'
-
-    for i in range(color_count - 1, -1, -1):
-        svg += f'\t<rect fill="{calibration_points[abs(i - color_count + 1)]["color"]}" width="9" height="{height}" x="74.634193" y="{16.783234 + height*i}" />\n'
-
-    svg += get_rectangle_cuvette_area()
-
-    return svg
 
 
 def get_circle_values():
@@ -372,9 +313,7 @@ def parse_arguments():
     elif sys.argv[1].casefold().startswith('c'):
         sample_type = SampleType.Compost
 
-    card_type = CardType.Rectangle
-    if sys.argv[1][1:2].casefold() == 'c':
-        card_type = CardType.Circle
+    card_type = CardType.Circle
 
     if len(sys.argv) > 3:
         if sys.argv[3] == '--pdf':
@@ -411,12 +350,12 @@ else:
 
     # Load the appropriate tests json file
     c = CircleCard
-    data = json.load(open(JSON_FILE_PATH + 'parameters.json'))
+    data = json.load(open(JSON_FILE_PATH + 'match-parameters.json'))
 
     input_id = sys.argv[1].casefold().replace('-', '')
     title = ''
 
-    for parameter in data['customer1']['water_card']['tests']:
+    for parameter in data['ffem_match']['water_card']['tests']:
 
         parameter_id = parameter['uuid'].casefold().replace('-', '')
 
@@ -445,7 +384,7 @@ else:
                    + '\t' + 'xmlns="http://www.w3.org/2000/svg"\n\t' + 'xmlns:xlink="http://www.w3.org/1999/xlink">\n' \
                    + '\t<rect width="100%" height="100%" fill="white"/>\n'
 
-            card += get_logo()
+            # card += get_logo()
 
             card += get_header_title(title)
 
@@ -453,10 +392,7 @@ else:
 
             card += get_data_matrix(parameter_id)
 
-            if card_type == CardType.Rectangle:
-                card += get_rectangle_swatch()
-            else:
-                card += get_circle_swatch()
+            card += get_circle_swatch()
 
             card += get_sample_color()
 
