@@ -310,6 +310,8 @@ def parse_arguments():
     sample_type = SampleType.Soil
     if sys.argv[1].casefold().startswith('w'):
         sample_type = SampleType.Water
+    elif sys.argv[1].casefold().startswith('s'):
+        sample_type = SampleType.Soil        
     elif sys.argv[1].casefold().startswith('c'):
         sample_type = SampleType.Compost
 
@@ -355,7 +357,12 @@ else:
     input_id = sys.argv[1].casefold().replace('-', '')
     title = ''
 
-    for parameter in data['ffem_match']['water_card']['tests']:
+    if sample_type == SampleType.Water:
+        tests = data['ffem_match']['water_card']['tests']
+    else:
+        tests = data['ffem_match']['soil_card']['tests']
+
+    for parameter in tests:
 
         parameter_id = parameter['uuid'].casefold().replace('-', '')
 

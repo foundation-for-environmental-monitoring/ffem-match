@@ -37,23 +37,28 @@
                 {
                   "value": 0,
                   "calibrate": true,
-                  "color": "#E4E5DA"
+                  "color": "#E4E5DA",
+                  "range": "Zero"
                 },
                 {
                   "value": 10,
-                  "color": "#E8CDDB"
+                  "color": "#E8CDDB",
+                  "range": "Low"
                 },
                 {
                   "value": 20,
-                  "color": "#FFB2DF"
+                  "color": "#FFB2DF",
+                  "range": "Medium"
                 },
                 {
                   "value": 40,
-                  "color": "#F88DD0"
+                  "color": "#F88DD0",
+                  "range": "High"
                 },
                 {
                   "value": 60,
-                  "color": "#EE71BD"
+                  "color": "#EE71BD",
+                  "range": "Very High"
                 }
               ]
             }
@@ -94,23 +99,28 @@
                 {
                   "value": 0,
                   "calibrate": true,
-                  "color": "#F4F3E4"
+                  "color": "#F4F3E4",
+                  "range": "Zero"
                 },
                 {
                   "value": 2.5,
-                  "color": "#FFFABE"
+                  "color": "#FFFABE",
+                  "range": "Low"
                 },
                 {
                   "value": 5.0,
-                  "color": "#F4F2B5"
+                  "color": "#F4F2B5",
+                  "range": "Medium"
                 },
                 {
                   "value": 7.5,
-                  "color": "#FFF8A1"
+                  "color": "#FFF8A1",
+                  "range": "High"
                 },
                 {
                   "value": 10,
-                  "color": "#F1E19E"
+                  "color": "#F1E19E",
+                  "range": "Very High"
                 }
               ]
             }
@@ -151,19 +161,23 @@
                 {
                   "value": 0,
                   "calibrate": true,
-                  "color": "#2A271F"
+                  "color": "#2A271F",
+                  "range": "Zero"
                 },
                 {
                   "value": 10,
-                  "color": "#56544D"
+                  "color": "#56544D",
+                  "range": "Low"
                 },
                 {
                   "value": 20,
-                  "color": "#65645D"
+                  "color": "#65645D",
+                  "range": "Medium"
                 },
                 {
                   "value": 30,
-                  "color": "#82817B"
+                  "color": "#82817B",
+                  "range": "High"
                 }
               ]
             }
@@ -202,19 +216,23 @@
                 {
                   "value": 0,
                   "calibrate": true,
-                  "color": "#FFFFFF"
+                  "color": "#FFFFFF",
+                  "range": "Zero"
                 },
                 {
                   "value": 0.5,
-                  "color": "#974E22"
+                  "color": "#974E22",
+                  "range": "Low"
                 },
                 {
                   "value": 1,
-                  "color": "#4E1212"
+                  "color": "#4E1212",
+                  "range": "Medium"
                 },
                 {
                   "value": 2,
-                  "color": "#290F10"
+                  "color": "#290F10",
+                  "range": "High"
                 }
               ]
             }
@@ -249,31 +267,38 @@
                 {
                   "value": 4,
                   "calibrate": true,
-                  "color": "#F27060"
+                  "color": "#F27060",
+                  "range": "Strongly Acidic"
                 },
                 {
                   "value": 5,
-                  "color": "#F17F3F"
+                  "color": "#F17F3F",
+                  "range": "Acidic"
                 },
                 {
                   "value": 6,
-                  "color": "#DBB43C"
+                  "color": "#DBB43C",
+                  "range": "Slightly Acidic"
                 },
                 {
                   "value": 7,
-                  "color": "#69B16B"
+                  "color": "#69B16B",
+                  "range": "Neutral"
                 },
                 {
                   "value": 8,
-                  "color": "#48A687"
+                  "color": "#48A687",
+                  "range": "Slightly Alkaline"
                 },
                 {
                   "value": 9,
-                  "color": "#07819D"
+                  "color": "#07819D",
+                  "range": "Alkaline"
                 },
                 {
                   "value": 10,
-                  "color": "#3F4D9E"
+                  "color": "#3F4D9E",
+                  "range": "Strongly Alkaline"
                 }
               ]
             }
@@ -318,27 +343,33 @@
                 {
                   "value": 0,
                   "calibrate": true,
-                  "color": "#C3BDAD"
+                  "color": "#C3BDAD",
+                  "range": "Zero"
                 },
                 {
                   "value": 0.25,
-                  "color": "#D6CDAD"
+                  "color": "#D6CDAD",
+                  "range": "Very Low"
                 },
                 {
                   "value": 0.5,
-                  "color": "#C9BB92"
+                  "color": "#C9BB92",
+                  "range": "Low"
                 },
                 {
                   "value": 1.0,
-                  "color": "#BC9941"
+                  "color": "#BC9941",
+                  "range": "Medium"
                 },
                 {
                   "value": 2.0,
-                  "color": "#B58A29"
+                  "color": "#B58A29",
+                  "range": "High"
                 },
                 {
                   "value": 4.0,
-                  "color": "#C07D06"
+                  "color": "#C07D06",
+                  "range": "Very High"
                 }
               ]
             }
@@ -374,23 +405,28 @@
                 {
                   "value": 0,
                   "calibrate": true,
-                  "color": "#CED5D5"
+                  "color": "#CED5D5",
+                  "range": "Zero"
                 },
                 {
                   "value": 0.05,
-                  "color": "#CED2D3"
+                  "color": "#CED2D3",
+                  "range": "Low"
                 },
                 {
                   "value": 0.1,
-                  "color": "#B8BCB4"
+                  "color": "#B8BCB4",
+                  "range": "Medium"
                 },
                 {
                   "value": 0.3,
-                  "color": "#B9BCB6"
+                  "color": "#B9BCB6",
+                  "range": "High"
                 },
                 {
                   "value": 0.5,
-                  "color": "#B0AFA6"
+                  "color": "#B0AFA6",
+                  "range": "Very High"
                 }
               ]
             }
@@ -431,19 +467,23 @@
                 {
                   "value": 0,
                   "calibrate": true,
-                  "color": "#B2A32F"
+                  "color": "#B2A32F",
+                  "range": "Zero"
                 },
                 {
                   "value": 0.5,
-                  "color": "#C39E56"
+                  "color": "#C39E56",
+                  "range": "Low"
                 },
                 {
                   "value": 1.0,
-                  "color": "#C39E56"
+                  "color": "#C39E56",
+                  "range": "Medium"
                 },
                 {
                   "value": 2.0,
-                  "color": "#C59E5D"
+                  "color": "#C59E5D",
+                  "range": "High"
                 }
               ]
             }
@@ -480,23 +520,28 @@
                 {
                   "value": 0,
                   "calibrate": true,
-                  "color": "#E91B75"
+                  "color": "#E91B75",
+                  "range": "Zero"
                 },
                 {
                   "value": 0.5,
-                  "color": "#E64260"
+                  "color": "#E64260",
+                  "range": "Low"
                 },
                 {
                   "value": 1.0,
-                  "color": "#EA6851"
+                  "color": "#EA6851",
+                  "range": "Medium"
                 },
                 {
                   "value": 1.5,
-                  "color": "#F37E43"
+                  "color": "#F37E43",
+                  "range": "High"
                 },
                 {
                   "value": 2.0,
-                  "color": "#F37E43"
+                  "color": "#F37E43",
+                  "range": "Very High"
                 }
               ]
             }
@@ -519,16 +564,20 @@
               "values": [
                 {
                   "value": 0,
-                  "calibrate": true
+                  "calibrate": true,
+                  "range": "Zero"
                 },
                 {
-                  "value": 10
+                  "value": 10,
+                  "range": "Low"
                 },
                 {
-                  "value": 20
+                  "value": 20,
+                  "range": "Medium"
                 },
                 {
-                  "value": 50
+                  "value": 50,
+                  "range": "High"
                 }
               ]
             }
@@ -568,24 +617,29 @@
               "values": [
                 {
                   "value": 0,
-                  "color": "#FFFFFF"
+                  "color": "#FFFFFF",
+                  "range": "Zero"
                 },
                 {
                   "value": 0.5,
                   "calibrate": true,
-                  "color": "#EEC7A1"
+                  "color": "#EEC7A1",
+                  "range": "Low"
                 },
                 {
                   "value": 1.0,
-                  "color": "#FBB67C"
+                  "color": "#FBB67C",
+                  "range": "Medium"
                 },
                 {
                   "value": 1.5,
-                  "color": "#F89E62"
+                  "color": "#F89E62",
+                  "range": "High"
                 },
                 {
                   "value": 2.0,
-                  "color": "#F89E62"
+                  "color": "#F89E62",
+                  "range": "Very High"
                 }
               ]
             }
@@ -626,27 +680,33 @@
                 {
                   "value": 0,
                   "calibrate": true,
-                  "color": "#FFFFFF"
+                  "color": "#FFFFFF",
+                  "range": "Zero"
                 },
                 {
                   "value": 0.25,
-                  "color": "#EEC7A1"
+                  "color": "#EEC7A1",
+                  "range": "Very Low"
                 },
                 {
                   "value": 0.5,
-                  "color": "#FBB67C"
+                  "color": "#FBB67C",
+                  "range": "Low"
                 },
                 {
                   "value": 1.0,
-                  "color": "#F89E62"
+                  "color": "#F89E62",
+                  "range": "Medium"
                 },
                 {
                   "value": 1.5,
-                  "color": "#F89E62"
+                  "color": "#F89E62",
+                  "range": "High"
                 },
                 {
                   "value": 2.0,
-                  "color": "#F89E62"
+                  "color": "#F89E62",
+                  "range": "Very High"
                 }
               ]
             }
@@ -743,23 +803,28 @@
                 {
                   "value": 0,
                   "calibrate": true,
-                  "color": "#B7B2AD"
+                  "color": "#B7B2AD",
+                  "range": "Zero"
                 },
                 {
                   "value": 0.05,
-                  "color": "#B7A6AD"
+                  "color": "#B7A6AD",
+                  "range": "Low"
                 },
                 {
                   "value": 0.1,
-                  "color": "#BC9CB3"
+                  "color": "#BC9CB3",
+                  "range": "Medium"
                 },
                 {
                   "value": 0.25,
-                  "color": "#B454AC"
+                  "color": "#B454AC",
+                  "range": "High"
                 },
                 {
                   "value": 0.5,
-                  "color": "#9F1E96"
+                  "color": "#9F1E96",
+                  "range": "Very High"
                 }
               ]
             }
@@ -794,31 +859,38 @@
                 {
                   "value": 4,
                   "calibrate": true,
-                  "color": "#F27060"
+                  "color": "#F27060",
+                  "range": "Strongly Acidic"
                 },
                 {
                   "value": 5,
-                  "color": "#F17F3F"
+                  "color": "#F17F3F",
+                  "range": "Acidic"
                 },
                 {
                   "value": 6,
-                  "color": "#DBB43C"
+                  "color": "#DBB43C",
+                  "range": "Slightly Acidic"
                 },
                 {
                   "value": 7,
-                  "color": "#69B16B"
+                  "color": "#69B16B",
+                  "range": "Neutral"
                 },
                 {
                   "value": 8,
-                  "color": "#48A687"
+                  "color": "#48A687",
+                  "range": "Slightly Alkaline"
                 },
                 {
                   "value": 9,
-                  "color": "#07819D"
+                  "color": "#07819D",
+                  "range": "Alkaline"
                 },
                 {
                   "value": 10,
-                  "color": "#3F4D9E"
+                  "color": "#3F4D9E",
+                  "range": "Strongly Alkaline"
                 }
               ]
             }
@@ -855,19 +927,23 @@
                 {
                   "value": 0,
                   "calibrate": true,
-                  "color": "#FFFFFF"
+                  "color": "#FFFFFF",
+                  "range": "Zero"
                 },
                 {
                   "value": 0.3,
-                  "color": "#BFCDD4"
+                  "color": "#BFCDD4",
+                  "range": "Low"
                 },
                 {
                   "value": 0.9,
-                  "color": "#A4C5D2"
+                  "color": "#A4C5D2",
+                  "range": "Medium"
                 },
                 {
                   "value": 1.8,
-                  "color": "#6199AE"
+                  "color": "#6199AE",
+                  "range": "High"
                 }
               ]
             }
@@ -907,23 +983,28 @@
                 {
                   "value": 0,
                   "calibrate": true,
-                  "color": "#FFFFFF"
+                  "color": "#FFFFFF",
+                  "range": "Zero"
                 },
                 {
                   "value": 0.2,
-                  "color": "#EEC7A1"
+                  "color": "#EEC7A1",
+                  "range": "Low"
                 },
                 {
                   "value": 0.5,
-                  "color": "#FBB67C"
+                  "color": "#FBB67C",
+                  "range": "Medium"
                 },
                 {
                   "value": 1.5,
-                  "color": "#F89E62"
+                  "color": "#F89E62",
+                  "range": "High"
                 },
                 {
                   "value": 3,
-                  "color": "#F89E62"
+                  "color": "#F89E62",
+                  "range": "Very High"
                 }
               ]
             }
@@ -946,16 +1027,20 @@
               "values": [
                 {
                   "value": 0,
-                  "calibrate": true
+                  "calibrate": true,
+                  "range": "Zero"
                 },
                 {
-                  "value": 10
+                  "value": 10,
+                  "range": "Low"
                 },
                 {
-                  "value": 20
+                  "value": 20,
+                  "range": "Medium"
                 },
                 {
-                  "value": 40
+                  "value": 40,
+                  "range": "High"
                 }
               ]
             }
@@ -978,19 +1063,24 @@
               "values": [
                 {
                   "value": 0,
-                  "calibrate": true
+                  "calibrate": true,
+                  "range": "Zero"
                 },
                 {
-                  "value": 10
+                  "value": 10,
+                  "range": "Low"
                 },
                 {
-                  "value": 20
+                  "value": 20,
+                  "range": "Medium"
                 },
                 {
-                  "value": 30
+                  "value": 30,
+                  "range": "High"
                 },
                 {
-                  "value": 50
+                  "value": 50,
+                  "range": "Very High"
                 }
               ]
             }
@@ -1031,23 +1121,28 @@
                 {
                   "value": 0,
                   "calibrate": true,
-                  "color": "#FFFFFF"
+                  "color": "#FFFFFF",
+                  "range": "Zero"
                 },
                 {
                   "value": 2,
-                  "color": "#FBB67C"
+                  "color": "#FBB67C",
+                  "range": "Low"
                 },
                 {
                   "value": 4,
-                  "color": "#F89E62"
+                  "color": "#F89E62",
+                  "range": "Medium"
                 },
                 {
                   "value": 6,
-                  "color": "#F89E62"
+                  "color": "#F89E62",
+                  "range": "High"
                 },
                 {
                   "value": 8,
-                  "color": "#F89E62"
+                  "color": "#F89E62",
+                  "range": "Very High"
                 }
               ]
             }
