@@ -37,28 +37,23 @@
                 {
                   "value": 0,
                   "calibrate": true,
-                  "color": "#E4E5DA",
+                  "color": "#A9A397",
                   "range": "Zero"
                 },
                 {
                   "value": 10,
-                  "color": "#E8CDDB",
+                  "color": "#B26CA0",
                   "range": "Low"
                 },
                 {
                   "value": 20,
-                  "color": "#FFB2DF",
+                  "color": "#AB6098",
                   "range": "Medium"
                 },
                 {
                   "value": 40,
-                  "color": "#F88DD0",
+                  "color": "#A73690",
                   "range": "High"
-                },
-                {
-                  "value": 60,
-                  "color": "#EE71BD",
-                  "range": "Very High"
                 }
               ]
             }
@@ -99,28 +94,23 @@
                 {
                   "value": 0,
                   "calibrate": true,
-                  "color": "#F4F3E4",
+                  "color": "#B5B7AF",
                   "range": "Zero"
                 },
                 {
                   "value": 2.5,
-                  "color": "#FFFABE",
+                  "color": "#ACA98D",
                   "range": "Low"
                 },
                 {
                   "value": 5.0,
-                  "color": "#F4F2B5",
+                  "color": "#BBB377",
                   "range": "Medium"
                 },
                 {
                   "value": 7.5,
-                  "color": "#FFF8A1",
+                  "color": "#BBB03E",
                   "range": "High"
-                },
-                {
-                  "value": 10,
-                  "color": "#F1E19E",
-                  "range": "Very High"
                 }
               ]
             }
@@ -161,22 +151,22 @@
                 {
                   "value": 0,
                   "calibrate": true,
-                  "color": "#2A271F",
+                  "color": "#26459F",
                   "range": "Zero"
                 },
                 {
                   "value": 10,
-                  "color": "#56544D",
+                  "color": "#324B98",
                   "range": "Low"
                 },
                 {
                   "value": 20,
-                  "color": "#65645D",
+                  "color": "#435593",
                   "range": "Medium"
                 },
                 {
                   "value": 30,
-                  "color": "#82817B",
+                  "color": "#4E5B88",
                   "range": "High"
                 }
               ]
@@ -216,23 +206,28 @@
                 {
                   "value": 0,
                   "calibrate": true,
-                  "color": "#FFFFFF",
-                  "range": "Zero"
+                  "color": "#edaf87",
+                  "range": "0%"
                 },
                 {
                   "value": 0.5,
-                  "color": "#974E22",
-                  "range": "Low"
+                  "color": "#974e22",
+                  "range": "0.5%"
                 },
                 {
                   "value": 1,
-                  "color": "#4E1212",
-                  "range": "Medium"
+                  "color": "#632304",
+                  "range": "1%"
                 },
                 {
                   "value": 2,
-                  "color": "#290F10",
-                  "range": "High"
+                  "color": "#45090b",
+                  "range": "1.5%"
+                },
+                {
+                  "value": 3,
+                  "color": "#090404",
+                  "range": "2%"
                 }
               ]
             }
