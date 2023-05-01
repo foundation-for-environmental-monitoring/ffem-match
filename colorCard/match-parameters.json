@@ -1817,7 +1817,7 @@
               "name": "Hazen Units",
               "unit": "HU",
               "ranges": "0, 25, 50, 100",
-              "rangeMin": "0, 5, 15"
+              "rangeMin": "0, 50, 100"
             }
           ]
         },
