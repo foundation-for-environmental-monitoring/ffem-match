@@ -140,6 +140,7 @@ class App : BaseApplication() {
                     CalibrationValue(
                         value = it.asJsonObject.get("value").asDouble,
                         color = Color.TRANSPARENT,
+                        range = it.asJsonObject.get("range").asString,
                         calibrate = it.asJsonObject.get("calibrate")?.asBoolean ?: false
                     )
                 }
@@ -148,6 +149,7 @@ class App : BaseApplication() {
                     CalibrationValue(
                         value = it.value,
                         color = Color.TRANSPARENT,
+                        range = it.range,
                         calibrate = it.calibrate
                     )
                 })

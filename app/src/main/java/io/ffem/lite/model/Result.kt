@@ -3,6 +3,7 @@ package io.ffem.lite.model
 import android.content.Context
 import android.graphics.Color
 import android.os.Parcelable
+import com.google.common.collect.Lists
 import io.ffem.lite.R
 import io.ffem.lite.common.Constants
 import io.ffem.lite.data.RecommendationDatabase
@@ -26,6 +27,7 @@ data class Result(
     var timeDelay: Int = 0,
     var ranges: String? = null,
     var rangeMin: String? = null,
+    var range: String? = null,
     var values: MutableList<CalibrationValue> = ArrayList(),
     var risks: List<RiskValue> = ArrayList(),
     var risksIrrigation: List<RiskValue> = ArrayList(),
@@ -246,6 +248,22 @@ data class Result(
         } else {
             ""
         }
+    }
+
+    fun getRangeResult(context: Context): String {
+        var result = getResult()
+        if (resultInfo.highLevelsFound) {
+            result *= 1.05
+        }
+        var rangeText = "No Match"
+        if (result > -1) {
+            for (colorItem in Lists.reverse(values)) {
+                if (result <= colorItem.value) {
+                    rangeText = colorItem.range
+                }
+            }
+        }
+        return rangeText
     }
 
     fun getRiskEnglish(context: Context): String {
@@ -473,9 +491,11 @@ data class Result(
                         RiskLevel.RISK_1 -> {
                             riskLevel?.risk2.toString()
                         }
+
                         RiskLevel.RISK_2 -> {
                             riskLevel?.risk3.toString()
                         }
+
                         else -> {
                             riskLevel?.risk4.toString()
                         }

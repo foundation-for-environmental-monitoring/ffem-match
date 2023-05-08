@@ -33,7 +33,7 @@
     <string name="start_test">Start test</string>
     <string name="compost_test">Compost Test</string>
     <string name="soil_test">Soil Test</string>
-    <string name="card_test">Card Test</string>
+    <string name="card_test">Simple Card Test</string>
     <string name="colorimetric_test">Colorimetric Test</string>
     <string name="titration_test">Titration Test</string>
     <string name="external_meter">External Meter</string>
@@ -312,4 +312,5 @@
     <string name="accept_result">Accept Result</string>
     <string name="other">Other</string>
     <string name="show_advanced_color_info">Show advanced color info</string>
+    <string name="title_activity_about2">AboutActivity2</string>
 </resources>

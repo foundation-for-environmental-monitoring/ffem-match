@@ -7,7 +7,12 @@ import com.google.gson.JsonSyntaxException
 import io.ffem.lite.common.ConstantJsonKey
 import io.ffem.lite.common.Constants
 import io.ffem.lite.common.Constants.CUSTOMER_ID
-import io.ffem.lite.model.*
+import io.ffem.lite.model.CalibrationValue
+import io.ffem.lite.model.FactoryConfig
+import io.ffem.lite.model.Result
+import io.ffem.lite.model.SafetyLevel
+import io.ffem.lite.model.TestInfo
+import io.ffem.lite.model.TestType
 import io.ffem.lite.remote.dto.ParameterInfoDto
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -16,7 +21,8 @@ import org.json.JSONArray
 import org.json.JSONObject
 import timber.log.Timber
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Locale
 
 private const val BIT_MASK = 0x00FFFFFF
 
@@ -52,6 +58,8 @@ object DataHelper {
             "water_titration"
         } else if (testId.startsWith("ST-")) {
             "soil_titration"
+        } else if (testId.startsWith("SC-")) {
+            "soil_card"
         } else {
             "water_card"
         }
@@ -126,6 +134,7 @@ object DataHelper {
                             CalibrationValue(
                                 value = it.value,
                                 color = Color.TRANSPARENT,
+                                range = it.range,
                                 calibrate = it.calibrate
                             )
                         }
@@ -133,6 +142,7 @@ object DataHelper {
                             CalibrationValue(
                                 value = it.value,
                                 color = Color.TRANSPARENT,
+                                range = it.range,
                                 calibrate = it.calibrate
                             )
                         })
@@ -244,7 +254,7 @@ object DataHelper {
             resultsJsonArray.put(subTestJson)
         }
         resultJson.put(ConstantJsonKey.RESULT, resultsJsonArray)
-        if (resultImageUrl != null && resultImageUrl.isNotEmpty()) {
+        if (!resultImageUrl.isNullOrEmpty()) {
             resultJson.put(ConstantJsonKey.IMAGE, resultImageUrl)
         }
         // Add current date to result

@@ -17,7 +17,13 @@ import io.ffem.lite.R
 import io.ffem.lite.common.Constants.DECIMAL_FORMAT
 import io.ffem.lite.databinding.FragmentResultBinding
 import io.ffem.lite.helper.SwatchHelper
-import io.ffem.lite.model.*
+import io.ffem.lite.model.ErrorType
+import io.ffem.lite.model.RiskType
+import io.ffem.lite.model.SafetyLevel
+import io.ffem.lite.model.TestInfo
+import io.ffem.lite.model.TestSampleType
+import io.ffem.lite.model.TestType
+import io.ffem.lite.model.toLocalString
 import io.ffem.lite.preference.isDiagnosticMode
 import io.ffem.lite.util.toLocalString
 import java.io.File
@@ -217,7 +223,7 @@ class ResultFragment(var externalRequest: Boolean, var isCalibration: Boolean) :
 
         b.resultTxt.text = DECIMAL_FORMAT.format(subTest.resultInfo.result)
         b.resultTxt.visibility = VISIBLE
-        b.riskText.text = subTest.getRiskString(requireContext())
+        b.riskText.text = subTest.getRangeResult(requireContext())
 
         val path =
             requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES).toString() +
@@ -296,11 +302,13 @@ class ResultFragment(var externalRequest: Boolean, var isCalibration: Boolean) :
 //            b.colorBar.setImageBitmap(resultImage)
 //            b.colorBar.visibility = VISIBLE
 
-            if (model.form.comment.isNullOrEmpty()) {
-                b.commentLayout.visibility = GONE
-            } else {
-                b.comment.text = model.form.comment
-                b.commentLayout.visibility = VISIBLE
+            if (model.formInitialized()) {
+                if (model.form.comment.isNullOrEmpty()) {
+                    b.commentLayout.visibility = GONE
+                } else {
+                    b.comment.text = model.form.comment
+                    b.commentLayout.visibility = VISIBLE
+                }
             }
 
             if (testInfo.sampleType == TestSampleType.WATER && testInfo.subtype != TestType.TITRATION) {
