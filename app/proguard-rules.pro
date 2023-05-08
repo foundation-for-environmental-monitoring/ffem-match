@@ -19,9 +19,11 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
-
 #noinspection ShrinkerUnresolvedReference
 -keep class io.ffem.lite.model.**{ *; }
 -keep class io.ffem.lite.data.**{ *; }
 -keep class io.ffem.lite.remote.**{ *; }
 -keep class io.ffem.lite.entity.**{ *; }
+-keep class com.google.gson.reflect.TypeToken
+-keep class * extends com.google.gson.reflect.TypeToken
+-keep public class * implements java.lang.reflect.Type
