@@ -13,11 +13,9 @@ import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
-import io.ffem.lite.common.TEST_SURVEY_NAME
 import io.ffem.lite.common.TestHelper.clearPreferences
 import io.ffem.lite.common.TestHelper.isDeviceInitialized
 import io.ffem.lite.common.TestHelper.mDevice
@@ -29,7 +27,6 @@ import io.ffem.lite.common.TestUtil.getBackgroundColor
 import io.ffem.lite.common.TestUtil.hasBackgroundColor
 import io.ffem.lite.common.TestUtil.sleep
 import io.ffem.lite.common.TestUtil.withIndex
-import io.ffem.lite.common.getString
 import io.ffem.lite.data.clearData
 import io.ffem.lite.ui.MainActivity
 import org.hamcrest.Matchers.allOf
@@ -71,7 +68,11 @@ class CameraAboveTest {
 
         onView((withText(R.string.calibrate))).perform(click())
 
+        sleep(5000)
+
         onView((withText(R.string.water))).perform(click())
+
+        sleep(2000)
 
         try {
 //            sleep(500)
@@ -145,7 +146,7 @@ class CameraAboveTest {
 
         onView(
             allOf(
-                withId(R.id.next_button), withText(R.string.close),
+                withId(R.id.next_button), withText(R.string.save),
                 isDisplayed()
             )
         ).perform(click())
@@ -178,7 +179,7 @@ class CameraAboveTest {
 
         onView(
             allOf(
-                withId(R.id.next_button), withText(R.string.close),
+                withId(R.id.next_button), withText(R.string.save),
                 isDisplayed()
             )
         ).perform(click())
@@ -250,7 +251,7 @@ class CameraAboveTest {
 
         onView(
             allOf(
-                withId(R.id.next_button), withText(R.string.close),
+                withId(R.id.next_button), withText(R.string.save),
                 isDisplayed()
             )
         ).perform(click())
@@ -283,7 +284,7 @@ class CameraAboveTest {
 
         onView(
             allOf(
-                withId(R.id.next_button), withText(R.string.close),
+                withId(R.id.next_button), withText(R.string.save),
                 isDisplayed()
             )
         ).perform(click())
@@ -316,7 +317,7 @@ class CameraAboveTest {
 
         onView(
             allOf(
-                withId(R.id.next_button), withText(R.string.close),
+                withId(R.id.next_button), withText(R.string.save),
                 isDisplayed()
             )
         ).perform(click())
@@ -351,45 +352,34 @@ class CameraAboveTest {
 
         pressBack()
 
+        pressBack()
+        sleep(2000)
+        try {
+            onView(withText("YES SHARE")).perform(click())
+        } catch (_: Exception) {
+        }
+        sleep(2000)
         onView(withId(R.id.colorimetric_button)).perform(click())
 
-        sleep(3000)
-        mDevice.findObject(By.text(getString(R.string.enter_data))).click()
+        sleep(1000)
+
+        onView((withText(R.string.water))).perform(click())
 
         sleep(1000)
 
         try {
-            mDevice.findObject(By.text(TEST_SURVEY_NAME)).click()
+//            sleep(500)
+//            onView(withId(R.id.tests_lst)).perform(swipeUp())
+//            sleep(500)
+            onView((withText("Fluoride"))).perform(click())
         } catch (e: Exception) {
-            swipeUp()
-            mDevice.findObject(By.text(TEST_SURVEY_NAME)).click()
+
+            onView(
+                allOf(
+                    withId(R.id.tests_lst),
+                )
+            ).perform(actionOnItemAtPosition<ViewHolder>(7, click()))
         }
-        sleep(2000)
-
-        mDevice.pressBack()
-
-        sleep(500)
-
-        mDevice.findObject(By.text("Ignore Changes")).click()
-
-        sleep(500)
-        mDevice.findObject(By.text(getString(R.string.enter_data))).click()
-
-        sleep(1000)
-
-        try {
-            mDevice.findObject(By.text(TEST_SURVEY_NAME)).click()
-        } catch (e: Exception) {
-            swipeUp()
-            mDevice.findObject(By.text(TEST_SURVEY_NAME)).click()
-        }
-        sleep(2000)
-
-        mDevice.findObject(By.text(getString(R.string.next).uppercase())).click()
-
-        sleep(500)
-
-        mDevice.findObject(By.text(getString(R.string.fluoride))).click()
 
         sleep(500)
 
@@ -409,6 +399,8 @@ class CameraAboveTest {
         } catch (_: Exception) {
         }
 
+        sleep(3000)
+
         onView(
             allOf(
                 withId(R.id.next_txt),
@@ -426,7 +418,12 @@ class CameraAboveTest {
 
         sleep(2000)
 
-        onView(withText(R.string.done)).perform(click())
+        onView(withId(R.id.formLayout)).perform(swipeUp())
+        sleep(1000)
+
+        onView(withId(R.id.formLayout)).perform(swipeUp())
+        sleep(1000)
+        onView(withText(R.string.save)).perform(click())
 
         onView(allOf(withText(R.string.fluoride), isDisplayed()))
         sleep(1000)

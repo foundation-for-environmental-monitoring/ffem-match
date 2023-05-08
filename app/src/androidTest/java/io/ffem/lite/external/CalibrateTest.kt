@@ -77,7 +77,7 @@ class CalibrateTest {
 
         onView((withText(R.string.calibrate))).perform(click())
 
-        sleep(800)
+        sleep(3000)
 
         onView((withText(R.string.water))).perform(click())
 
