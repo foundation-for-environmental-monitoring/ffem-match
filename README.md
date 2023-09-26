@@ -57,6 +57,9 @@ ____________
 5. For a water / soil test question, click the Launch button to start the test
 6. At the end of the survey, select Save Form and Exit
 
+![Kobo Int](https://github.com/foundation-for-environmental-monitoring/ffem-match/assets/4124856/0a44bed5-3e6e-43ac-a590-691ae263030f)
+
+
 &nbsp;
 ____________
 # Viewing the result data
