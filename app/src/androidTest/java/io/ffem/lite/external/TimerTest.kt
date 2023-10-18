@@ -57,7 +57,7 @@ class TimerTest {
 
         sleep(500)
 
-        onView(allOf(withContentDescription(R.string.abc_action_bar_up_description))).perform(click())
+        onView(allOf(withContentDescription(androidx.appcompat.R.string.abc_action_bar_up_description))).perform(click())
         sleep(500)
         Espresso.pressBack()
         sleep(500)

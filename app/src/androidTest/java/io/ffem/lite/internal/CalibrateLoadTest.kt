@@ -167,7 +167,7 @@ class CalibrateLoadTest {
         )
         onView(
             allOf(
-                withId(R.id.snackbar_text), withText(message),
+                withId(com.google.android.material.R.id.snackbar_text), withText(message),
                 withParent(withParent(IsInstanceOf.instanceOf(android.widget.FrameLayout::class.java))),
                 isDisplayed()
             )
@@ -228,7 +228,7 @@ class CalibrateLoadTest {
 
         onView(
             allOf(
-                withId(R.id.snackbar_text), withText("There are no previously saved calibrations"),
+                withId(com.google.android.material.R.id.snackbar_text), withText("There are no previously saved calibrations"),
                 withParent(withParent(IsInstanceOf.instanceOf(android.widget.FrameLayout::class.java))),
                 isDisplayed()
             )
@@ -282,7 +282,7 @@ class CalibrateLoadTest {
         try {
             onView(
                 allOf(
-                    withId(R.id.snackbar_text), withText("Calibration saved"),
+                    withId(com.google.android.material.R.id.snackbar_text), withText("Calibration saved"),
                     withParent(withParent(IsInstanceOf.instanceOf(android.widget.FrameLayout::class.java))),
                     isDisplayed()
                 )
@@ -351,7 +351,7 @@ class CalibrateLoadTest {
                 withId(android.R.id.button1), withText(R.string.load),
                 childAtPosition(
                     childAtPosition(
-                        withId(R.id.buttonPanel),
+                        withId(androidx.appcompat.R.id.buttonPanel),
                         0
                     ),
                     3
@@ -372,7 +372,7 @@ class CalibrateLoadTest {
 
         onView(
             allOf(
-                withId(R.id.snackbar_text), withText("Calibration already saved as: Test Save"),
+                withId(com.google.android.material.R.id.snackbar_text), withText("Calibration already saved as: Test Save"),
                 withParent(withParent(IsInstanceOf.instanceOf(android.widget.FrameLayout::class.java))),
                 isDisplayed()
             )

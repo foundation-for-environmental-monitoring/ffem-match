@@ -239,10 +239,15 @@ class ResultFragment(var externalRequest: Boolean, var isCalibration: Boolean) :
 
         if (resultImagePath.exists()) {
             b.resultImg.setImageURI(Uri.fromFile(resultImagePath))
+        } else {
+            b.resultImg.visibility = GONE
         }
 
         if (analyzedImagePath.exists()) {
             b.fullPhotoImg.setImageURI(Uri.fromFile(analyzedImagePath))
+            b.analyzedPhotoLayout.visibility = VISIBLE
+        } else {
+            b.analyzedPhotoLayout.visibility = GONE
         }
 
         if (extractImagePath.exists()) {
@@ -253,6 +258,9 @@ class ResultFragment(var externalRequest: Boolean, var isCalibration: Boolean) :
             }
             bitmap.recycle()
             b.extractImg.refreshDrawableState()
+            b.colorExtractsLayout.visibility = VISIBLE
+        } else {
+            b.colorExtractsLayout.visibility = GONE
         }
 
         if (model.isCalibration) {
@@ -363,12 +371,10 @@ class ResultFragment(var externalRequest: Boolean, var isCalibration: Boolean) :
                         }
                     }
                 }
-                b.safetyMsgLayout.visibility = VISIBLE
+                b.safetyMsgLayout.visibility = GONE
             }
 
             if (testInfo.subtype == TestType.CARD) {
-                b.colorExtractsLayout.visibility = VISIBLE
-                b.analyzedPhotoLayout.visibility = VISIBLE
                 if (subTest.error == ErrorType.NO_ERROR &&
                     (subTest.resultInfo.result >= 0 || subTest.calibratedResult.result >= 0)
                 ) {

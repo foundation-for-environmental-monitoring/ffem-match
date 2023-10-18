@@ -69,7 +69,7 @@ abstract class BaseActivity : AppCompatActivity() {
         } else {
 
             val typedValue = TypedValue()
-            theme.resolveAttribute(R.attr.colorPrimary, typedValue, true)
+            theme.resolveAttribute(androidx.appcompat.R.attr.colorPrimary, typedValue, true)
             var color = typedValue.data
 
             if (supportActionBar != null) {
@@ -79,7 +79,7 @@ abstract class BaseActivity : AppCompatActivity() {
                 toolbar.setTitleTextColor(Color.WHITE)
             }
 
-            theme.resolveAttribute(R.attr.colorPrimaryVariant, typedValue, true)
+            theme.resolveAttribute(com.google.android.material.R.attr.colorPrimaryVariant, typedValue, true)
             color = typedValue.data
 
             window.statusBarColor = color

@@ -71,18 +71,18 @@ public final class ThemeUtils {
      */
     @ColorInt
     public int getColorOnSurface() {
-        return getAttributeValue(R.attr.colorOnSurface);
+        return getAttributeValue(com.google.android.material.R.attr.colorOnSurface);
     }
 
 
     @ColorInt
     public int getColorPrimary() {
-        return getAttributeValue(R.attr.colorPrimary);
+        return getAttributeValue(androidx.appcompat.R.attr.colorPrimary);
     }
 
     @ColorInt
     public int getColorOnPrimary() {
-        return getAttributeValue(R.attr.colorOnPrimary);
+        return getAttributeValue(com.google.android.material.R.attr.colorOnPrimary);
     }
 
 }

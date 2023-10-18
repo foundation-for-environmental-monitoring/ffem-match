@@ -416,18 +416,30 @@ class CameraAboveTest {
             )
         ).perform(click())
 
+        sleep(3000)
+//
+//        onView(withId(R.id.formLayout)).perform(swipeUp())
+//        sleep(1000)
+//
+//        onView(withId(R.id.formLayout)).perform(swipeUp())
+//        sleep(1000)
+//
+//        onView(withId(R.id.location_view)).perform(swipeUp())
+//        sleep(1000)
+
+
+
+        onView(withId(R.id.email_edit)).perform(closeSoftKeyboard())
+
         sleep(2000)
 
-        onView(withId(R.id.formLayout)).perform(swipeUp())
-        sleep(1000)
+        onView(withText(R.string.get_location)).perform(scrollTo())
 
-        onView(withId(R.id.formLayout)).perform(swipeUp())
-        sleep(1000)
-        onView(withText(R.string.save)).perform(click())
+        onView(withText(R.string.save)).perform(scrollTo()).perform(click())
 
         onView(allOf(withText(R.string.fluoride), isDisplayed()))
         sleep(1000)
-        onView(allOf(withContentDescription(R.string.abc_action_bar_up_description))).perform(click())
+        onView(allOf(withContentDescription(androidx.appcompat.R.string.abc_action_bar_up_description))).perform(click())
 
         sleep(500)
 

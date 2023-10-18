@@ -4,6 +4,7 @@ package io.ffem.lite.ui
 
 import android.Manifest
 import android.app.Activity
+import android.app.ProgressDialog
 import android.content.*
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -12,6 +13,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment.DIRECTORY_PICTURES
+import android.os.Handler
 import android.provider.Settings
 import android.util.SparseArray
 import android.view.Menu
@@ -36,6 +38,7 @@ import io.ffem.lite.BuildConfig
 import io.ffem.lite.R
 import io.ffem.lite.app.App
 import io.ffem.lite.common.*
+import io.ffem.lite.common.ConstantJsonKey.RESULT_JSON
 import io.ffem.lite.common.Constants.EXTERNAL_ACTION
 import io.ffem.lite.common.Constants.MESSAGE_TWO_LINE_FORMAT
 import io.ffem.lite.data.*
@@ -154,7 +157,40 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
     private val colorCardCapturedBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             mediaPlayer.start()
-//            deleteExcessData()
+            deleteExcessData()
+        }
+    }
+
+    private fun deleteExcessData() {
+        val db = AppDatabase.getDatabase(baseContext)
+        try {
+
+            val path = getExternalFilesDir(DIRECTORY_PICTURES).toString() +
+                    separator + "captures"
+            for (i in 0..2) {
+                if (db.resultDao().getCount() > 2000) {
+                    val result = db.resultDao().getOldestResult()
+                    val directory = File("$path$separator${result.id}$separator")
+                    if (directory.exists() && directory.isDirectory) {
+                        directory.deleteRecursively()
+                    }
+                    db.resultDao().deleteResult(result.id)
+                }
+            }
+
+            val folderList = File(path).listFiles()
+            for (folder in folderList!!) {
+                if (folder.exists() && folder.isDirectory) {
+                    val time = Calendar.getInstance()
+                    time.add(Calendar.DAY_OF_YEAR, -1)
+                    val lastModified = Date(folder.lastModified())
+                    if (lastModified.before(time.time)) {
+                        folder.deleteRecursively()
+                    }
+                }
+            }
+        } finally {
+            db.close()
         }
     }
 
@@ -429,6 +465,12 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
     }
 
     private fun startTest() {
+        if (returnDummyResults(this) ||
+            intent.getBooleanExtra(DEBUG_MODE, false)
+        ) {
+            sendDummyResultForDebugging()
+            return
+        }
         val testPagerAdapter = TestPagerAdapter(this, testInfo, isExternalSurvey, isCalibration)
         redoTest = true
         setupInstructions(
@@ -514,6 +556,47 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
         )
     }
 
+    /**
+     * Create dummy results to send when in debug mode
+     */
+    private fun sendDummyResultForDebugging() {
+        val resultIntent = Intent()
+        val results = SparseArray<String>()
+        var maxDilution = testInfo.getMaxDilution()
+        if (maxDilution == -1) {
+            maxDilution = 15
+        }
+        for (i in testInfo.results.indices) {
+            val result = testInfo.results[i]
+            val random = Random()
+            var maxValue = 100.0
+            if (result.colors.isNotEmpty()) {
+                maxValue = result.colors[result.colors.size - 1].value!!
+            }
+            val dilution = random.nextInt(maxDilution) + 1
+            result.setResult(random.nextDouble() * maxValue)
+            var testName = result.name!!.replace(" ", "_")
+
+            if (i == 0) {
+                resultIntent.putExtra(VALUE, result.resultInfo.result)
+            }
+        }
+
+        val resultJson = getJsonResult(testInfo, testInfo.results, -1, null, this)
+        resultIntent.putExtra(RESULT_JSON, resultJson.toString())
+
+        resultIntent.putExtra(RESULT_JSON, resultJson.toString())
+        val pd = ProgressDialog(this)
+        pd.setMessage("Sending dummy result...")
+        pd.setCancelable(false)
+        pd.show()
+        setResult(Activity.RESULT_OK, resultIntent)
+        Handler().postDelayed({
+            pd.dismiss()
+            finish()
+        }, 3000)
+    }
+
     private fun showHideFooter(position: Int) {
         b.indicatorPgr.visibility = View.GONE
         b.indicatorPgr.invalidate()
@@ -591,7 +674,7 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
             }
         }
         val resultJson = getJsonResult(testInfo, testInfo.results, -1, null, this)
-        resultIntent.putExtra(ConstantJsonKey.RESULT_JSON, resultJson.toString())
+        resultIntent.putExtra(RESULT_JSON, resultJson.toString())
         setResult(Activity.RESULT_OK, resultIntent)
     }
 
@@ -852,7 +935,7 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
         }
     }
 
-    fun onStartTimerClick(@Suppress("UNUSED_PARAMETER") view: View) {
+    fun onStartTimerClick(view: View) {
         pageNext()
         mainScope.launch {
             delay(200)
@@ -861,7 +944,7 @@ class TestActivity : BaseActivity(), TitrationFragment.OnSubmitResultListener,
         }
     }
 
-    fun onSkipTimeDelayClick(@Suppress("UNUSED_PARAMETER") view: View) {
+    fun onSkipTimeDelayClick(view: View) {
         pageNext()
         mainScope.launch {
             delay(200)

@@ -43,7 +43,7 @@ abstract class BaseFragment : Fragment() {
                 toolbar.setTitleTextColor(Color.WHITE)
             } else {
                 val typedValue = TypedValue()
-                appActivity.theme.resolveAttribute(R.attr.colorPrimary, typedValue, true)
+                appActivity.theme.resolveAttribute(androidx.appcompat.R.attr.colorPrimary, typedValue, true)
                 val color = typedValue.data
 
                 appActivity.supportActionBar?.setBackgroundDrawable(ColorDrawable(color))

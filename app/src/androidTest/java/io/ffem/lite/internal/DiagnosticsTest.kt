@@ -22,8 +22,8 @@ import io.ffem.lite.common.TestUtil.sleep
 import io.ffem.lite.common.clearData
 import io.ffem.lite.common.fluoride
 import io.ffem.lite.ui.MainActivity
-import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.allOf
+import org.hamcrest.Matchers.`is`
 import org.junit.*
 import org.junit.runner.RunWith
 import java.io.File
@@ -75,7 +75,7 @@ class DiagnosticsTest {
                 withId(android.R.id.button1), withText(R.string.delete),
                 childAtPosition(
                     childAtPosition(
-                        withId(R.id.buttonPanel),
+                        withId(androidx.appcompat.R.id.buttonPanel),
                         0
                     ),
                     3
@@ -140,7 +140,7 @@ class DiagnosticsTest {
                 withId(android.R.id.button1), withText(android.R.string.ok),
                 childAtPosition(
                     childAtPosition(
-                        withId(R.id.buttonPanel),
+                        withId(androidx.appcompat.R.id.buttonPanel),
                         0
                     ),
                     3

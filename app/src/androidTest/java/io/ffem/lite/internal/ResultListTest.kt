@@ -25,8 +25,8 @@ import io.ffem.lite.ui.MainActivity
 import io.ffem.lite.util.PreferencesUtil
 import org.hamcrest.Description
 import org.hamcrest.Matcher
-import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.allOf
+import org.hamcrest.Matchers.`is`
 import org.hamcrest.TypeSafeMatcher
 import org.junit.*
 import org.junit.runner.RunWith
@@ -186,7 +186,7 @@ class ResultListTest {
                 withId(android.R.id.button2), withText(android.R.string.cancel),
                 childAtPosition(
                     childAtPosition(
-                        withId(R.id.buttonPanel),
+                        withId(androidx.appcompat.R.id.buttonPanel),
                         0
                     ),
                     2
@@ -201,7 +201,7 @@ class ResultListTest {
                 withId(android.R.id.button1), withText(R.string.delete),
                 childAtPosition(
                     childAtPosition(
-                        withId(R.id.buttonPanel),
+                        withId(androidx.appcompat.R.id.buttonPanel),
                         0
                     ),
                     3

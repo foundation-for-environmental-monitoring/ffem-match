@@ -21,6 +21,7 @@ const val LAST_TESTS_TAB_SELECTED = "last_tests_tab_selected"
 const val DATA_SHARING_SET = "data_sharing_set"
 const val BROADCAST_RESET_TIMER = "reset_timer"
 const val BROADCAST_SKIP_TIMER = "skip_timer"
+const val DEBUG_MODE = "debugMode"
 
 const val BROADCAST_CALIBRATION_CHANGED = "calibration_changed"
 const val BROADCAST_TEST_COMPLETED = "test_completed"
