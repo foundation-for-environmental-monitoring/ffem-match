@@ -1,0 +1,95 @@
+body {
+    max-width: 900px;
+    margin: 0 auto 0;
+    font-size: 18px;
+    text-align: center;
+    font-family: Calibri;
+}
+
+h3 {
+    margin: 0 0 5px 0;
+}
+
+div {
+    line-height: 1.6;
+}
+
+span {
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.title {
+    text-align: center !important;
+    padding: 20px 0 5px;
+    font-weight: bold;
+    font-size: larger;
+    border: 0;
+    margin: 100px 0 30px;
+}
+
+.info-left {
+    width: 50%;
+    vertical-align: top;
+}
+
+.info-right {
+    vertical-align: top;
+}
+
+table {
+    margin: 0 auto 15px;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    font-weight: bold;
+    border: 1px solid #888;
+}
+
+td {
+    border: 1px solid #777;
+    padding: 2px 8px;
+    text-align: left;
+}
+
+.result {
+    text-align: start !important;
+    padding-left: 20px !important;
+}
+
+.results td {
+    border: 1px solid #777;
+    padding: 2px 8px;
+    text-align: center;
+}
+
+.results td:first-child {
+    text-align: left;
+    padding-left: 15px;
+}
+
+.remarks {
+    text-align: left;
+    margin-top: 12px
+}
+
+.sign {
+    margin: 140px 60px 0 0;
+    text-align: right;
+}
+
+.small-print {
+    padding-top: 5px;
+    border-top: 1px solid #777;
+    text-align: start;
+    font-size: 0.79em;
+    line-height: 18px;
+}
+
+@media print {
+    .page-break {
+        page-break-after: always;
+    }
+}

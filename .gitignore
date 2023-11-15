@@ -77,3 +77,6 @@ generated/
 /colorCard/generated/
 release/
 
+/Reporting/data*.csv
+/Reporting/report.html
+/Reporting/report.pdf
