@@ -14,22 +14,19 @@ ________________________________________________________________________________
 Requirements:
 
 1. pandas (https://www.pythoncentral.io/how-to-install-pandas-in-python/)
-2. Test parameter JSON file from the ffem Match app project in ColorCard folder
-   Save the file in the same folder with the name data.csv
-3. CSV survey data file downloaded from KoboToolbox
-
-Note: The tag names in the report_template.html has to match the column names in the csv data file
-
-Note: Any manually entered test results for test parameters that is 
-not in ffem Match json file should be grouped under the group Tests.
-Example: The column name for TDS would appear as Tests/TDS in the csv data from KoboToolbox
 
 _________________________________________________________________________________________________
 
 Usage:
 
-Download the survey data csv file from Kobotoolbox
+Download the survey data csv file from Kobotoolbox and save it as data.csv
 Instructions: https://support.kobotoolbox.org/export_download.html
+
+Note: The tag names in the report_template.html has to match the column names in the csv data file
+
+Note: Any manually entered test results for test parameters that is
+not in ffem Match json file should be grouped under the group Tests in the survey.
+For example column name for a parameter like TDS would appear as Tests/TDS in the csv data file
 
 To generate reports for all rows in the data csv file
 > python report_gen.py <sampletype>
