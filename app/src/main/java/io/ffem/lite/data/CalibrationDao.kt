@@ -34,19 +34,19 @@ interface CalibrationDao {
     fun getCalibrationColorString(colors: String?): String?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(calibration: Calibration?)
+    fun insert(calibration: Calibration)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(calibrationDetail: CalibrationDetail?): Long
+    fun insert(calibrationDetail: CalibrationDetail): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(calibrations: List<Calibration?>?)
+    fun insertAll(calibrations: List<Calibration>)
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    fun update(calibrationDetail: CalibrationDetail?)
+    fun update(calibrationDetail: CalibrationDetail)
 
     @Update
-    fun update(calibration: Calibration?)
+    fun update(calibration: Calibration)
 
     @Query("DELETE FROM calibrationdetail WHERE calibrationId = :calibrationId")
     fun deleteDetail(calibrationId: Long)

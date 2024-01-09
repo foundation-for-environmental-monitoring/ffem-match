@@ -62,6 +62,12 @@ class CircleCardTest {
     }
 
     private fun setDiagnostics() {
+
+        try {
+            onView(withText("YES SHARE")).perform(click())
+        } catch (_: Exception) {
+        }
+
         sleep(2000)
         startDiagnosticMode()
         sleep(400)
@@ -114,6 +120,12 @@ class CircleCardTest {
 //    }
 
     private fun startInternalTest(imageNumber: Int) {
+
+        try {
+            onView(withText("YES SHARE")).perform(click())
+        } catch (_: Exception) {
+        }
+
         val testData = testDataList[imageNumber]!!
 
         PreferencesUtil.setString(
@@ -129,6 +141,9 @@ class CircleCardTest {
                 withId(R.id.tests_lst),
             )
         )
+
+        onView((withText(R.string.water))).perform(click())
+
         recyclerView2.perform(
             RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(
                 testData.listIndex,
